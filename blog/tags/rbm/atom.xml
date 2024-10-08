@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: RBM | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/rbm/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[基于能量的模型和波尔兹曼机]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines/"/>
+    <updated>2013-04-12T22:12:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines</id>
+    <content type="html"><![CDATA[<p>由于深度置信网络（Deep Belief Networks，DBN）是基于限制性玻尔兹曼机（Restricted Boltzmann Machines，RBM）的深层网络结构，
+所以本文重点讨论一下玻尔兹曼机（BM），以及它的学习算法——对比散度（Contrastive Divergence，CD）算法。在介绍BM前，我们首先介绍一下
+基于能量的模型（Energy Based Model，EBM），因为BM是一种特殊的EBM。</p>
+
+
+
+
+<h2>1. 基于能量的模型(EBM)</h2>
+
+
+<p>基于能量的模型是一种具有普适意义的模型，可以说它是一种模型框架，在它的框架下囊括传统的判别模型和生成模型，图变换网络(Graph-transformer 
+Networks)，条件随机场，最大化边界马尔科夫网络以及一些流形学习的方法等。EBM通过对变量的每个配置施加一个有范围限制的能量来捕获变量之间的依赖
+关系。EBM有两个主要的任务，一个是推断(Inference)，它主要是在给定观察变量的情况，找到使能量值最小的那些隐变量的配置；另一个是学习(Learning)，
+它主要是寻找一个恰当的能量函数，使得观察变量的能量比隐变量的能量低。</p>
+
+
+
+
+<p>基于能量的概率模型通过一个能量函数来定义概率分布，
+<center>$p(x) = \frac{e^{E(x)}}{Z}.$ ... ①</center>
+其中Z为规整因子，
+<center>$Z = \sum _{x} e^{-E(x)}.$ ... ②</center>
+基于能量的模型可以利用使用梯度下降或随机梯度下降的方法来学习，具体而言，就是以训练集的负对数作为损失函数，
+<center>$l(\theta,D) = -L(\theta,D) = - \frac{1}{N}\sum_{x^{(i)}\in D} log p(x^{(i)}).$ ... ③</center>
+其中$\theta$为模型的参数，将损失函数对$\theta$求偏导，
+<center>$\Delta = \frac{\partial l(\theta,D)}{\partial \theta} = - \frac{1}{N} \frac{\partial \sum log p(x^{(i)})}{\partial \theta}.$ ... ④</center>
+即得到损失函数下降最快的方向。</p>
+
+
+
+
+<!--more-->
+
+
+
+
+<h3>包含隐单元的EBMs</h3>
+
+
+<p>在很多情况下，我们无法观察到样本的所有属性，或者我们需要引进一些没有观察到的变量，以增加模型的表达能力，这样得到的就是包含隐含变量的EBM，
+<center>$P(x) = \sum _{h} P(x,h) = \sum _{h} \frac{e^{-E(x,h)}}{Z}.$ ... ⑤</center>
+其中$h$表示隐含变量。在这种情况下，为了与不包含隐含变量的模型进行统一，我们引入如下的自由能量函数，
+<center>$F(x) = - log \sum_{h}e^{-E(x,h)}.$ ... ⑥</center>
+这样$P(x)$就可以写成，
+<center>$P(x) = \frac{e^{-F(x)}}{Z}, where Z = \sum_{x} e^{-F(x)}.$ ... ⑦</center>
+此时，损失函数还是类似的定义，只是在进行梯度下降求解时稍微有些不同，
+<center>$\Delta = - \frac{\partial log p(x)}{\partial \theta} 
+= - \frac{\partial (-F(x) -log Z)}{\partial \theta} 
+= \frac{\partial F(x)}{\partial \theta} - \sum_{\hat{x}} p(\hat{x}) \frac{\partial F(\hat{x})}{\partial \theta}$. ... ⑧</center>
+该梯度表达式中包含两项，他们都影响着模型所定义的分布密度：第一项增加训练数据的概率（通过减小对应的自由能量），而第二项则减小模型
+生成的样本的概率。</p>
+
+
+
+
+<p>通常，我们很难精确计算这个梯度，因为式中第一项涉及到可见单元与隐含单元的联合分布，由于归一化因子$Z(\theta)$的存在，该分布很难获取[3]。
+我们只能通过一些采样方法（如Gibbs采样）获取其近似值，其具体方法将在后文中详述。</p>
+
+
+
+
+<h2>2. 限制性玻尔兹曼机</h2>
+
+
+<p>玻尔兹曼机（Boltzmann Machine，BM）是一种特殊形式的对数线性的马尔科夫随机场（Markov Random Field，MRF），即能量函数是自由变量的线性函数。
+通过引入隐含单元，我们可以提升模型的表达能力，表示非常复杂的概率分布。</p>
+
+
+
+
+<p>限制性玻尔兹曼机（RBM）进一步加一些约束，在RBM中不存在可见单元与可见单元的链接，也不存在隐含单元与隐含单元的链接，如下图所示
+<center><img src="/images/2013/IMAG2013041201.png"></center>
+RBM的能量函数$E(v,h)$定义为，
+<center>$E(v,h) = -b'v - c'h - h'Wv$.</center>
+其中'表示转置，$b,c,W$为模型的参数，$b,c$分别为可见层和隐含层的偏置，$W$为可见层与隐含层的链接权重。此时，对应的自由能量为，
+<center>$F(v) = -b'v - \sum_{i}log\sum_{h_{i}}e^{h_{i}(c_{i}+W_{i}v)}.$ ... ⑨</center>
+另外，由于RBM的特殊结构，可见层/隐含层内个单元之间是相互独立的，所以我们有，
+<center>$p(h|v) = \prod _{i} p(h_{i}|v)$,</center>
+<center>$p(v|h) = \prod _{j} p(v_{j}|h).$ ... ⑩</center>
+</p>
+
+
+
+
+<h3>使用二值单元的RBM</h3>
+
+
+<p>如果RBM中的每个单元都是二值的，即有$v_{j},h_{i} \in \{0,1\}$，我们可以得到，
+<center>$p(h_{i}=1|v) = sigmoid(c_{i} + W_{i}v)$,</center>
+<center>$p(v_{j}=1|h) = sigmoid(b_{j} + W_{j}'h).$ ... ⑪</center>
+而对应的自由能量函数为，
+<center>$F(v) = -b'v - \sum_{i}log(1+e^{c_{i}+W_{i}v}).$ ... ⑫</center>
+使用梯度下降法求解模型参数时，各参数的梯度值如下[2]，
+<center>$-\frac{\partial logp(v)}{\partial W_{ij}} = E_{v}[p(h_{i}|v) * v_{j}] - v_{j}^{(i)} * sigmoid(W_{i} * v^{(i)}+c_{i}),$</center>
+<center>$-\frac{\partial logp(v)}{\partial c_{i}} = E_{v}[p(h_{i}|v) * v_{j}] - sigmoid(W_{i} * v^{(i)}),$</center>
+<center>$-\frac{\partial logp(v)}{\partial b_{j}} = E_{v}[p(h_{i}|v) * v_{j}] - v_{j}^{(i)}.$ ... ⑬</center>
+</p>
+
+
+
+
+<h2>3. RBM的学习</h2>
+
+
+<p>前面提到了，RBM是很难学习的，即模型的参数很难确定，下面我们就具体讨论一下基于采样的近似学习方法。学习RBM的任务是求出模型的参数
+$\theta = \{c, b, W\}$的值。</p>
+
+
+
+
+<h3>3.1 Gibbs采样</h3>
+
+
+<p>Gibbs采样是一种基于马尔科夫链蒙特卡罗(Markov Chain Monte Carlo,MCMC)策略的采样方法。对于一个$K$为随机向量$X = (X_{1},X_{2},...,X_{K})$，
+假设我们无法求得关于$X$的联合分布$P(X)$，但我们知道给定$X$的其他分量时，其第$k$个分量$X_{k}$的条件分布，即$P(X_{k}|X_{k^{-}})$，其中$X_{k^{-}} = 
+(X_{1},X_{2},...,X_{k-1},X_{k+1},...,X_{K})$，那么，我们可以从$X$的一个任意状态(比如[$x_{1}(0),x_{2}(0),...,x_{K}(0)$])开始，利用上述条件
+分布，迭代的对其分量依次采样，随着采样次数的增加，随机变量[$x_{1}(n),x_{2}(n),...,x_{K}(n)$]的概率分布将以$n$的几何级数的速度收敛于$X$的联合
+概率分布$P(X)$。也就是说，我们可以在未知联合概率分布的条件下对其进行采样。</p>
+
+
+
+
+<p>基于RBM的对称结构，以及其中神经元状态的条件独立性，我们可以使用Gibbs采样方法得到服从RBM定义的分布的随机样本。在RBM中进行$k$步Gibbs采样的具体
+算法为：用一个训练样本(或可见层的任何随机化状态)初始化可见层的状态$v0$，交替进行如下采样：
+<center>$h_{0} \sim P(h|v_{0}), v_{1} \sim P(v|h_{0}),$</center>
+<center>$h_{1} \sim P(h|v_{1}), v_{2} \sim P(v|h_{1}),$</center>
+<center>$... ..., v_{k+1} \sim P(v|h_{k})$.</center>
+在经过步数$k$足够大的情况下，我们可以得到服从RBM所定义的分布的样本。此外，使用Gibbs采样我们也可以得到式⑧中第一项的近似。</p>
+
+
+
+
+<h3>3.2 对比散度算法</h3>
+
+
+<p>尽管利用Gibbs采样我们可以得到对数似然函数关于未知参数梯度的近似，但通常情况下需要使用较大的采样步数，这使得RBM的训练效率仍然不高，尤其是当观测数据
+的特征维数较高时。2002年，Hinton[4]提出了RBM的一个快速学习算法，即对比散度（Contrastive Divergence，CD）。与Gibbs采样不同，Hinton指出当使用训练数据初
+始化$v_{0}$时，我们仅需要使用$k$（通常k=1）步Gibbs采样变可以得到足够好的近似。在CD算法一开始，可见单元的状态被设置成一个训练样本，并利用式⑪第一个式子
+来计算所有隐层单元的二值状态，在所有隐层单元的状态确定了之后，根据式⑪第二个式子来确定第$i$个可见单元$v_{i}$取值为1的概率，进而产生可见层的一个重构
+(reconstruction)。然后将重构的可见层作为真实的模型代入式⑬各式中第一项，这样就可以进行梯度下降算法了。</p>
+
+
+
+
+<p>在RBM中，可见单元一般等于训练数据的特征维数，而隐层单元数需要事先给定，这里设可见单元数和隐单元数分别为$n$和$m$，令$W$表示可见层与隐层间的链接权重
+矩阵(m×n阶)，$a$(n维列向量)和$b$(m维列向量)分别表示可见层与隐层的偏置向量。RBM的基于CD的快速学习算法主要步骤如下：
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>//输入：一个训练样本x0; 隐层单元个数m; 学习率alpha; 最大训练周期T
+</span><span class='line'>//输出：链接权重矩阵W, 可见层的偏置向量a, 隐层的偏置向量b
+</span><span class='line'>//训练阶段
+</span><span class='line'>初始化：令可见层单元的初始状态v1 = x0; W, a, b为随机的较小数值
+</span><span class='line'>For t=1,2,...,T
+</span><span class='line'>    For j=1,2,...,m //对所有隐单元
+</span><span class='line'>        计算P(h1j=1|v1), 即P(h1j=1|v1) = sigmoid(bj+sum_i(v1i*Wij));
+</span><span class='line'>        从条件分布P(h1j|v1)中抽取h1j ∈ {0,1}
+</span><span class='line'>    EndFor
+</span><span class='line'>    
+</span><span class='line'>    For i=1,2,...,n //对所有可见单元
+</span><span class='line'>        计算P(v2i=1|h1), 即P(v2i=1|h1) = sigmoid(ai+sum_j(Wij*h1j));
+</span><span class='line'>        从条件分布P(v2i|h1)中抽取v2i ∈ {0,1}
+</span><span class='line'>    EndFor
+</span><span class='line'>    
+</span><span class='line'>    For j=1,2,...,m //对所有隐单元
+</span><span class='line'>        计算P(h2j=1|v2), 即P(h2j=1|v2) = sigmoid(bj+sum_i(v2i*Wij));
+</span><span class='line'>    EndFor
+</span><span class='line'>    
+</span><span class='line'>    //更新RBM的参数
+</span><span class='line'>    W = W + alpha *(P(h1=1|v1)v1' - P(h2=1|v2)v2');
+</span><span class='line'>    a = a + alpha *(v1-v2);
+</span><span class='line'>    b = b + alpha *(P(h1=1|v1) - P(h2=1|v2));
+</span><span class='line'>EndFor</span></code></pre></td></tr></table></div></figure>
+上述基于CD的学习算法是针对RBM的可见单元和隐层单元均为二值变量的情形，我们可以很容易的推广到这些单元为高斯变量的情形。
+</p>
+
+
+
+
+<p>RBM的完整实现参见https://github.com/ibillxia/DeepLearnToolbox/tree/master/DBN的Matlab代码。</p>
+
+
+
+
+<h2>References</h2>
+
+
+<p>
+[1] Learn Deep Architectures for AI, Chapter 5.</br>
+[2] Deep Learning Tutorial, Release 0.1, Chapter 9.</br>
+[3] 受限波尔兹曼机简介. 张春霞. </br>
+[4] Training Products of experts by minimizing contrastive divergence. GE Hinton.
+</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[深度学习简介]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/03/16/introduction-to-deep-learning/"/>
+    <updated>2013-03-16T21:36:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/03/16/introduction-to-deep-learning</id>
+    <content type="html"><![CDATA[<h2>0.概述</h2>
+
+<p>
+以下是Wiki上对深度学习的下的定义：</br>
+Deep learning refers to a sub-field of machine learning that is based on learning several levels of representations, 
+corresponding to a hierarchy of features or factors or concepts, where higher-level concepts are defined from lower-level ones, 
+and the same lower-level concepts can help to define many higher-level concepts.
+</p>
+
+
+<p>
+深度学习就是学习多个级别的表示和抽象，帮助理解数据，如图像、声音和文本。深度学习的概念源于人工神经网络的研究，
+含多隐层的多层感知器就是一种深度学习结构。那些涉及从输入产生输出的计算,我们可以用流程图来表示，
+流程图的一个特殊的概念就是它的深度: 从输入到输出的路径的最长长度。传统的前馈神经网络可以理解为
+深度等于层数(隐层数+1)的网络。深度学习通过组合低层特征形成更加抽象的高层表示（属性类别或特征），
+以发现数据的分布式特征表示。
+</p>
+
+
+<h2>1.深度学习产生的背景</h2>
+
+<h3>1.1深度不够的缺陷</h3>
+
+<p>
+在很多情况下，深度为2就已足以在给定精度范围内表示任何函数了，例如逻辑门、正常
+神经元、sigmoid-神经元、SVM中的RBF(Radial Basis Function)等，但这样也有一个代价：
+那就是图中需要的节点数会很多，这也就意味着当我们学习目标函数时，需要更多的计算
+单元和更多的参数。理论结果显示，对于某一类函数，需要的参数的个数与输入的大小是
+成指数关系的，逻辑门、正常神经元、RBF单元就属于这类。后来Hastad发现，当深度为d时，
+这类函数可以用O(n)个节点（输入为n个）的神经网络有效表示，但当深度被限制为d-1时，
+则需要有O(n2)个节点来表示。
+</p>
+
+
+
+
+<!-- more -->
+
+
+<p>
+我们可以讲深层结构看做是因子分解。大多数随机选择的函数，无论是用深层的结构还是用浅层结构，
+都是无法有效的表示的。但很多可以用深层结构有效表示的却无法用浅层的来有效表示（参见推荐
+阅读[5]中的polynomials example）。这种深层表示的现象表明，对于一些需要表示的函数，
+其中存在一些结构化的特性。如果其中没有结构化的东西，那么它将无法很好的泛化。
+</p>
+
+
+<h3>1.2大脑具有深层的结构</h3>
+
+<p>
+例如，被深入研究的视觉皮层（如下图（a）所示）包含一系列的区域，每个区域都有输入，
+信号流从一个区域到下一个区域（也有跳过连接或在某种程度上的并行路径，所以情况更复杂）。
+在这种功能层次结构中，每个层次上的输入代表了不同层次的抽象特征，越上层的特征，
+又越底层的信息表征，抽象性越高，如下图（c）所示。</br>
+<center><img src="/images/2013/IMAG2013031601.png"></center>
+</p>
+
+
+<p>
+值得注意的是，大脑中的表示是介于密集分布和纯局部之间，也就意味着它们是稀疏的：大脑中大约1%的神经元是同时活动的。
+</p>
+
+
+<h3>1.3认知过程是深层次的</h3>
+
+<p>
+• 人们是使用层次化的方式来组织它们的想法和观念的；</br>
+• 人们首先是学习简单的概念，然后将它们组合起来以表示更加抽象的概念；</br>
+• 工程师们习惯于将解决问题的方案分解为多个层次的抽象和处理过程。
+</p>
+
+
+<p>如果能够像人一样学习到这些概念，那将会是非常棒的。知识工程（Knowledge Engineering）在这方面是失败的，
+但语言表达概念的内省的方法也表明了稀疏表示：对于一个特定的输入（就像一幅视觉的图像），
+仅仅只有一小部分的单词或概念是相关的。
+</p></p>
+
+<h2>2.深度学习的巨大突破</h2>
+
+<h3>2.1学术上的突破</h3>
+
+<p>
+在2006年以前，尝试训练一个深层的、监督的前馈神经网络往往会比浅层的（1~2个隐层）网络产生更糟糕的结果（无论是训练误差，还是测试误差）。
+但在2006年，以Hinton为首的研究人员在深度置信网络（Deep Belief Networks，DBNs）方面的划时代性的工作，将此终结。其代表性的论文是：</br>
+• Hinton, G. E., Osindero, S. and Teh, Y., <a href="http://www.cs.toronto.edu/~hinton/absps/fastnc.pdf" target="_blank">A fast learning algorithm for deep belief nets</a>. Neural Computation. 18:1527-1554, 2006</br>
+• Yoshua Bengio, Pascal Lamblin, Dan Popovici and Hugo Larochelle, <a href="http://www.iro.umontreal.ca/~lisa/publications2/index.php/publications/show/190" target="_blank">Greedy Layer-Wise Training of Deep Networks</a>, in J. Platt et al. (Eds), Advances in Neural Information Processing Systems 19 (NIPS 2006), pp. 153-160, MIT Press, 2007</br>
+• Marc’Aurelio Ranzato, Christopher Poultney, Sumit Chopra and Yann LeCun. <a href="http://yann.lecun.com/exdb/publis/pdf/ranzato-06.pdf" target="_blank">Efficient Learning of Sparse Representations with an Energy-Based Model</a>, in J. Platt et al. (Eds), Advances in Neural Information Processing Systems (NIPS 2006), MIT Press, 2007
+</p>
+
+
+<p>
+在这些论文中提出了以下几个非常关键的原则：</br>
+• 非监督学习被用来（预）训练各个层；</br>
+• 非监督学习在之前学习到的层次之上，一次只学习一个层次，每个层次学习到的结果将作为下一个层次的输入；</br>
+• 除了一些专门用于预测的层次外，用监督学习来调整层与层之间的权重。</br>
+这些DBNs用RBMs（Restricted Boltzmann Machines）来作为每个层的非监督学习，
+Bengio的paper研究并比较了RBMs和auto-encoders（通过瓶颈内部层的表示来预测它的输入的神经网络）。
+Ranzato的paper将稀疏的auto-encoder（与sparse coding相似）用在传统的神经网络结构中。
+关于auto-encoders和传统的神经网络结构将在后续的文章中讲解。
+</p>
+
+
+<h3>2.2学术中的研究和应用</h3>
+
+<h4>(1)计算机视觉</h4>
+
+<p>
+·ImageNet Classification with Deep Convolutional Neural Networks, Alex Krizhevsky, Ilya Sutskever, Geoffrey E Hinton, NIPS 2012.
+</br>
+·Learning Hierarchical Features for Scene Labeling, Clement Farabet, Camille Couprie, Laurent Najman and Yann LeCun, 
+IEEE Transactions on Pattern Analysis and Machine Intelligence, 2013.
+</br>
+·Learning Convolutional Feature Hierachies for Visual Recognition, Koray Kavukcuoglu, Pierre Sermanet, Y-Lan Boureau, 
+Karol Gregor, Micha&euml;l Mathieu and Yann LeCun, Advances in Neural Information Processing Systems (NIPS 2010), 23, 2010.
+</br>……</p>
+
+
+<h4>(2)语音识别</h4>
+
+<p>
+微软研究人员通过与hintion合作，首先将RBM和DBN引入到语音识别声学模型训练中，并且在大词汇量语音识别系统中获得巨大成功，使得语音识别的错误率相对减低30%。
+但是，DNN还没有有效的并行快速算法，目前，很多研究机构都是在利用大规模数据语料通过GPU平台提高DNN声学模型的训练效率。
+</br>
+在国际上，IBM、google等公司都快速进行了DNN语音识别的研究，并且速度飞快。
+</br>
+国内方面，科大讯飞、百度、中科院自动化所等公司或研究单位，也在进行深度学习在语音识别上的研究。
+</p>
+
+
+<h4>(3)自然语言处理等其他领域</h4>
+
+<p>
+很多机构在开展研究，但目前深度学习在自然语言处理方面还没有产生系统性的突破。
+</p>
+
+
+<h3>2.3工程中的应用</h3>
+
+<p>
+• 微软：2009年，首先将深度学习应用到语音识别；如今，已将深度学习融入到实际的产品当中，如Xbox。
+</br>
+• 谷歌：“Google Brain”项目，用1.6万台机器，从1000万张图像中识别出猫，这是完全的非监督学习
+（We never told it during the training, 'This is a cat,' ... It basically invented the concept of a cat.）。
+</br>
+• 百度：2012年夏开始从事深度学习方面的工作，在语音识别和图像识别中取得了巨大成功，
+目前也已初步融入到百度的产品当中，如百度语音助手、百度寻人等产品。
+</p>
+
+
+<h2>3构建深度学习的方法</h2>
+
+<p>
+深度学习的概念和思想很简单，然而如果构建一个合理的深度网络拓扑结构，如何学习网络中的信号传递权值，
+都是非常困难的问题。下面介绍几种非常perfect的方法。
+</p>
+
+
+<h3>3.1 Autoencoder[4]</h3>
+
+<p>
+最简单的一种方法是利用人工神经网络的特点，人工神经网络（ANN）本身就是具有层次结构的系统，
+如果给定一个神经网络，我们假设其输出与输入是相同的，然后训练调整其参数，得到每一层中的权重，
+自然地，我们就得到了输入I的几种不同表示（每一层代表一种表示），这些表示就是特征，在研究中可以发现，
+如果在原有的特征中加入这些自动学习得到的特征可以大大提高精确度，
+甚至在分类问题中比目前最好的分类算法效果还要好！这种方法称为AutoEncoder，如下图所示。</br>
+<center><img src="/images/2013/IMAG2013031602.png"></center>
+</p>
+
+
+<p>
+当然，我们还可以继续加上一些约束条件得到新的Deep Learning方法，例如在AutoEncoder的基础上
+加上L1的Regularity限制（L1主要是约束每一层中的节点中大部分都要为0，只有少数不为0，
+这就是Sparse名字的来源），我们就可以得到Sparse AutoEncoder方法。
+</p>
+
+
+<h3>3.2 Sparse Coding[5]</h3>
+
+<p>
+Sparse Coding是一种利用非监督的方法来学习表示数据的过完备基的方法，它的目的就是为了找到一组基向量$\phi _{i}$，
+进而将输入向量$\mathbf{x}$表示为这组基向量的线性组合:</br>
+<center>$\mathbf{x} = \sum_{i=1}^{k}a _{i} \phi _{i}$.</center>
+</p>
+
+
+<p>
+主成分分析（Principal Component Analysis，PCA）是一种有效的学习一组完备的基向量的方法，
+而Sparse Coding则希望学习一组过完备的基向量。这样做的好处在于，过完备的基向量能够更好
+的捕获到输入数据当中的结构和模式。然而，使用过完备的基向量带来的一个问题是，
+该组基向量表示输入向量的结果不唯一，也就是说系数$a _{i}$是不唯一的。因此，在Sparse Coding当中，
+我们引入一些额外的准则，即稀疏性（sparsity），来解决这个问题。具体而言，这里的稀疏性是指，
+系数$a _{i}$中大多数都为零或接近为零，从优化问题的角度来讲，就是要使得系数中尽可能少的系数是
+尽可能的比零大，这样就可以得到输入的唯一标示。
+</p>
+
+
+<h3>3.3 Restricted Boltzmann Machine（RBM）</h3>
+
+<p>
+Boltzmann Machine其实是一种无向图，里面的节点是互相连接的，但不一定是全连接，也即不是每个节点都两两相连，
+连接着的两个节点之间就有一个权值。为理解方便就假设节点只能取值为0或者1，有些节点值是已知的，有些是未知的，
+把已知的节点集合记为V，未知的节点集合记为H，这样就把所有节点分成两个集合，其实集合V就可以认为是visible层，
+集合H就可以认为是hidden层。如果hidden层中的节点都不互相连接，visible层中的节点也都不互相连接，那么就成为了RBM模型。
+</p>
+
+
+<p>
+在神经网络中，两层神经网络(即一个hidden层和一个output层，visible层不算在内)的建模能力是很强的，
+但要求hidden层的节点数够多，但节点数太多就会导致计算量的复杂，矩阵的维护会相当大。
+一个很好想到的方法就是将层数加大，通过层数的增多来缓解单层中节点数过多的负担，
+比如设置两个hidden层，每层100个节点，就相当于单个hidden层100×100个节点的建模能力，
+同理三个hidden层，每层分别是100、200、300个节点，就相当于单层的100×200×300个节点的建模能力。
+然而这样做的问题在于，当层数大于2时，经典的训练方法效果会较差，因为参数的局部极小值太多，
+容易收敛到一个不好的极值。Hinton把RBM(Restricted Boltzmann Machine)层叠在一起，训练出权值，
+然后把这个权值当成是下一个RBM层的输入作为权值的初始值，利用传统的梯度下降法去训练网络，
+得到了更好的结果，也即在每个RBM层通过筛选得到较好的参数初始值，使得最后的结果更好。
+</p>
+
+
+<h2>4.小结</h2>
+
+<p>
+当前多数分类、回归等学习方法为浅层结构算法，其局限性在于有限样本和计算单元情况下对复杂函数的表示能力有限，
+针对复杂分类问题其泛化能力受到一定制约。深度学习可通过学习一种深层非线性网络结构，实现复杂函数逼近，
+表征输入数据分布式表示，并展现了强大的从少数样本集中学习数据集本质特征的能力。
+</p>
+
+
+<p>
+虽然距离深度学习的突破已经有六年多了，但它仍处于发展初期，大量工作还需要研究。
+模型方面是否有其他更为有效且有理论依据的深度模型学习算法，探索新的特征提取模型是值得深入研究的内容。
+此外有效的可并行训练算法也是值得研究的一个方向。当前基于最小批处理的随机梯度优化算法很难在多计算机中
+进行并行训练。通常办法是利用图形处理单元加速学习过程，然而单个机器GPU对大规模数据识别或相似任务数据集
+并不适用。在深度学习应用拓展方面， 如何充分合理地利用深度学习在增强传统学习算法的
+性能仍是目前各领域的研究重点。
+</p>
+
+
+<h2>参考文献</h2>
+
+<p>
+[1]<a href="http://www.iro.umontreal.ca/~pift6266/H10/notes/deepintro.html#introduction-to-deep-learning-algorithms" target="_blank">Introduction to Deep Learning Algorithms.</a></br>
+[2]<a href="http://bigeye.au.tsinghua.edu.cn/MLA12/program_files/MLA2012_%E4%BD%99%E5%87%AF.pdf" target="_blank">A tutorial on deep learning</a>，
+<a href="http://www.infoq.com/cn/presentations/deep-learning-and-application-to-multimedia#" target="_blank">Video</a>.</br>
+[3]<a href="http://wenku.baidu.com/view/6dcd1e3b5727a5e9856a6180.html " target="_blank">A Brief Introduction to Deep Learning</a></br>
+[4]<a href="http://deeplearning.stanford.edu/wiki/index.php/Autoencoders_and_Sparsity" target="_blank">Autoencoders and Sparsity</a></br>
+[5]<a href="http://deeplearning.stanford.edu/wiki/index.php/Sparse_Coding" target="_blank">Sparse Coding</a></br>
+[6]<a href="http://blog.sina.com.cn/s/blog_70a384770101f58p.html" target="_blank">关于深度学习(deep learning)</a></br>
+[7] 百度百科-<a href="http://baike.baidu.com/view/9964678.htm" target="_blank">深度学习</a></br>
+[8] 孙志军等，深度学习研究综述.</p>
+
+
+<h2>推荐阅读</h2>
+
+<p>
+[1] Chris Bishop, “<a href="http://research.microsoft.com/en-us/um/people/cmbishop/prml/" target="_blank">Pattern Recognition and Machine Learning</a>”, 2007</br>
+[2] Simon Haykin, “<a href="http://www.amazon.com/Neural-Networks-A-Comprehensive-Foundation/dp/B000O8QMAU" target="_blank">Neural Networks: a Comprehensive Foundation</a>”, 2009 (3rd edition)</br>
+[3] Richard O. Duda, Peter E. Hart and David G. Stork, “<a href="http://www.rii.ricoh.com/~stork/DHS.html" target="_blank">Pattern Classification</a>”, 2001 (2nd edition)</br>
+[4]Deep Learning Tutorial：<a href="http://deeplearning.net/tutorial/ " target="_blank">http://deeplearning.net/tutorial/</a></br>
+[5]Yoshua Bengio, <a href="http://www.iro.umontreal.ca/~lisa/publications2/index.php/publications/show/239" target="_blank">Learning Deep Architectures for AI</a>, Foundations & Trends in ML, 2(1), 2009</br>
+[6] Unsupervised Feature Learning and Deep Learning：<a href="http://deeplearning.stanford.edu/wiki/index.php/UFLDL_Tutorial" target="_blank">UFLDL Tutorial</a></br>
+[7] <a href="http://deeplearning.net/" target="_blank">http://deeplearning.net/</a></br>
+[8] 深度学习相关软件包（Matlab）: <a href="https://github.com/rasmusbergpalm/DeepLearnToolbox" target="_blank">https://github.com/rasmusbergpalm/DeepLearnToolbox</a>
+</p>
+
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,345 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>伪造IP地址的原理 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2010/08/31/the-elements-of-ip-faking">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">伪造IP地址的原理</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-08-31T09:41:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>入侵者使用假IP地址发送包，利用基于IP地址证实的应用程序。其结果是未授权的远端用户进入带有防火墙的主机系统。</p>
+
+
+
+
+<p>假设有两台主机A、B和入侵者控制的主机X。假设B授予A某些特权，使得A能够获得B所执行的一些操作。X的目标就是得到与B相同的权利。
+为了实现该目标，X必须执行两步操作：首先，与B建立一个虚假连接；然后，阻止A向B报告网络证实系统的问题。主机X必须假造A的IP地址，
+从而使B相信从X发来的包的确是从A发来的。</p>
+
+
+
+
+<p>我们同时假设主机A和B之间的通信遵守TCP／IP的三次握手机制。握手方法是：</p>
+
+
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>A->：SYN（序列号=M）
+</span><span class='line'>B->A：SYN（序列号＝N），ACK（应答序号=M+1）
+</span><span class='line'>A->B：ACK（应答序号＝N+1）</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+
+<!--more-->
+
+
+<p>主机X伪造IP地址步骤如下：首先，X冒充A，向主机B发送一个带有随机序列号的SYN包。主机B响应，向主机A发送一个带有应答号的SYN+ACK包、
+该应答号等于原序列号加1。同时，主机B产生自己发送包序列号，并将其与应答号一起发送。为了完成三次握手，主机X需要向主</p>
+
+
+
+
+<p>机B回送一个应答包，其应答号等于主机B向主机A发送的包序列号加1。假设主机X与A和B不同在一个子网内，则不能检测到B的包，
+主机X只有算出B的序列号，才能创建TCP连接。其过程描述如下：</p>
+
+
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>X->B：SYN（序列号=M），SRC=A
+</span><span class='line'>B->A：SYN（序列号=N），ACK（应答号=M+1）
+</span><span class='line'>X->B：ACK（应答号＝N+1），SRC＝A</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+
+
+
+<p>同时，主机X应该阻止主机A响应主机B的包。为此，X可以等到主机A因某种原因终止运行，或者阻塞主机A的操作系统协议部分，使它不能响应主机B。
+一旦主机X完成了以上操作，它就可以向主机B发送命令。主机B将执行这些命令，认为他们是由合法主机A发来的。</p>
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2010/08/31/the-elements-of-ip-faking/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2010-08-31T09:41:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/technics/'>Technics</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/wei-zao-ip/'>伪造IP</a>, <a class='tag' href='/blog/tags/an-quan/'>安全</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/" title="Previous Post:
+        超好的HTML解析工具PHP Simple HTML DOM Parser">&laquo; 超好的HTML解析工具PHP Simple HTML DOM Parser</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2010/09/24/PHP-string-filter-methods-for-safety/"
+        title="Next Post: PHP字符串安全过滤全攻略">PHP字符串安全过滤全攻略
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2010/08/31/the-elements-of-ip-faking/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2010/08/31/the-elements-of-ip-faking/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

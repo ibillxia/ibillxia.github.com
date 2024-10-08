@@ -1,0 +1,1131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 神经网络 | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/shen-jing-wang-luo/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[深度学习及其在语音方面的应用]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/04/17/Deep-Learning-and-its-application-in-audio-and-speech-processing/"/>
+    <updated>2013-04-17T22:43:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/04/17/Deep-Learning-and-its-application-in-audio-and-speech-processing</id>
+    <content type="html"><![CDATA[<p>以下是今天在组会上讲的内容，与大家分享一下。有些地方我也没有完全理解，欢迎大家一起来讨论。</p>
+
+
+<p><center>
+<embed width="780"
+    height="574"
+    name="plugin"
+    src="http://ibillxia.github.io/upload/Deep Learning - Bill Xia.pdf"
+    type="application/pdf"
+/>
+</center></p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[基于能量的模型和波尔兹曼机]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines/"/>
+    <updated>2013-04-12T22:12:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines</id>
+    <content type="html"><![CDATA[<p>由于深度置信网络（Deep Belief Networks，DBN）是基于限制性玻尔兹曼机（Restricted Boltzmann Machines，RBM）的深层网络结构，
+所以本文重点讨论一下玻尔兹曼机（BM），以及它的学习算法——对比散度（Contrastive Divergence，CD）算法。在介绍BM前，我们首先介绍一下
+基于能量的模型（Energy Based Model，EBM），因为BM是一种特殊的EBM。</p>
+
+
+
+
+<h2>1. 基于能量的模型(EBM)</h2>
+
+
+<p>基于能量的模型是一种具有普适意义的模型，可以说它是一种模型框架，在它的框架下囊括传统的判别模型和生成模型，图变换网络(Graph-transformer 
+Networks)，条件随机场，最大化边界马尔科夫网络以及一些流形学习的方法等。EBM通过对变量的每个配置施加一个有范围限制的能量来捕获变量之间的依赖
+关系。EBM有两个主要的任务，一个是推断(Inference)，它主要是在给定观察变量的情况，找到使能量值最小的那些隐变量的配置；另一个是学习(Learning)，
+它主要是寻找一个恰当的能量函数，使得观察变量的能量比隐变量的能量低。</p>
+
+
+
+
+<p>基于能量的概率模型通过一个能量函数来定义概率分布，
+<center>$p(x) = \frac{e^{E(x)}}{Z}.$ ... ①</center>
+其中Z为规整因子，
+<center>$Z = \sum _{x} e^{-E(x)}.$ ... ②</center>
+基于能量的模型可以利用使用梯度下降或随机梯度下降的方法来学习，具体而言，就是以训练集的负对数作为损失函数，
+<center>$l(\theta,D) = -L(\theta,D) = - \frac{1}{N}\sum_{x^{(i)}\in D} log p(x^{(i)}).$ ... ③</center>
+其中$\theta$为模型的参数，将损失函数对$\theta$求偏导，
+<center>$\Delta = \frac{\partial l(\theta,D)}{\partial \theta} = - \frac{1}{N} \frac{\partial \sum log p(x^{(i)})}{\partial \theta}.$ ... ④</center>
+即得到损失函数下降最快的方向。</p>
+
+
+
+
+<!--more-->
+
+
+
+
+<h3>包含隐单元的EBMs</h3>
+
+
+<p>在很多情况下，我们无法观察到样本的所有属性，或者我们需要引进一些没有观察到的变量，以增加模型的表达能力，这样得到的就是包含隐含变量的EBM，
+<center>$P(x) = \sum _{h} P(x,h) = \sum _{h} \frac{e^{-E(x,h)}}{Z}.$ ... ⑤</center>
+其中$h$表示隐含变量。在这种情况下，为了与不包含隐含变量的模型进行统一，我们引入如下的自由能量函数，
+<center>$F(x) = - log \sum_{h}e^{-E(x,h)}.$ ... ⑥</center>
+这样$P(x)$就可以写成，
+<center>$P(x) = \frac{e^{-F(x)}}{Z}, where Z = \sum_{x} e^{-F(x)}.$ ... ⑦</center>
+此时，损失函数还是类似的定义，只是在进行梯度下降求解时稍微有些不同，
+<center>$\Delta = - \frac{\partial log p(x)}{\partial \theta} 
+= - \frac{\partial (-F(x) -log Z)}{\partial \theta} 
+= \frac{\partial F(x)}{\partial \theta} - \sum_{\hat{x}} p(\hat{x}) \frac{\partial F(\hat{x})}{\partial \theta}$. ... ⑧</center>
+该梯度表达式中包含两项，他们都影响着模型所定义的分布密度：第一项增加训练数据的概率（通过减小对应的自由能量），而第二项则减小模型
+生成的样本的概率。</p>
+
+
+
+
+<p>通常，我们很难精确计算这个梯度，因为式中第一项涉及到可见单元与隐含单元的联合分布，由于归一化因子$Z(\theta)$的存在，该分布很难获取[3]。
+我们只能通过一些采样方法（如Gibbs采样）获取其近似值，其具体方法将在后文中详述。</p>
+
+
+
+
+<h2>2. 限制性玻尔兹曼机</h2>
+
+
+<p>玻尔兹曼机（Boltzmann Machine，BM）是一种特殊形式的对数线性的马尔科夫随机场（Markov Random Field，MRF），即能量函数是自由变量的线性函数。
+通过引入隐含单元，我们可以提升模型的表达能力，表示非常复杂的概率分布。</p>
+
+
+
+
+<p>限制性玻尔兹曼机（RBM）进一步加一些约束，在RBM中不存在可见单元与可见单元的链接，也不存在隐含单元与隐含单元的链接，如下图所示
+<center><img src="/images/2013/IMAG2013041201.png"></center>
+RBM的能量函数$E(v,h)$定义为，
+<center>$E(v,h) = -b'v - c'h - h'Wv$.</center>
+其中'表示转置，$b,c,W$为模型的参数，$b,c$分别为可见层和隐含层的偏置，$W$为可见层与隐含层的链接权重。此时，对应的自由能量为，
+<center>$F(v) = -b'v - \sum_{i}log\sum_{h_{i}}e^{h_{i}(c_{i}+W_{i}v)}.$ ... ⑨</center>
+另外，由于RBM的特殊结构，可见层/隐含层内个单元之间是相互独立的，所以我们有，
+<center>$p(h|v) = \prod _{i} p(h_{i}|v)$,</center>
+<center>$p(v|h) = \prod _{j} p(v_{j}|h).$ ... ⑩</center>
+</p>
+
+
+
+
+<h3>使用二值单元的RBM</h3>
+
+
+<p>如果RBM中的每个单元都是二值的，即有$v_{j},h_{i} \in \{0,1\}$，我们可以得到，
+<center>$p(h_{i}=1|v) = sigmoid(c_{i} + W_{i}v)$,</center>
+<center>$p(v_{j}=1|h) = sigmoid(b_{j} + W_{j}'h).$ ... ⑪</center>
+而对应的自由能量函数为，
+<center>$F(v) = -b'v - \sum_{i}log(1+e^{c_{i}+W_{i}v}).$ ... ⑫</center>
+使用梯度下降法求解模型参数时，各参数的梯度值如下[2]，
+<center>$-\frac{\partial logp(v)}{\partial W_{ij}} = E_{v}[p(h_{i}|v) * v_{j}] - v_{j}^{(i)} * sigmoid(W_{i} * v^{(i)}+c_{i}),$</center>
+<center>$-\frac{\partial logp(v)}{\partial c_{i}} = E_{v}[p(h_{i}|v) * v_{j}] - sigmoid(W_{i} * v^{(i)}),$</center>
+<center>$-\frac{\partial logp(v)}{\partial b_{j}} = E_{v}[p(h_{i}|v) * v_{j}] - v_{j}^{(i)}.$ ... ⑬</center>
+</p>
+
+
+
+
+<h2>3. RBM的学习</h2>
+
+
+<p>前面提到了，RBM是很难学习的，即模型的参数很难确定，下面我们就具体讨论一下基于采样的近似学习方法。学习RBM的任务是求出模型的参数
+$\theta = \{c, b, W\}$的值。</p>
+
+
+
+
+<h3>3.1 Gibbs采样</h3>
+
+
+<p>Gibbs采样是一种基于马尔科夫链蒙特卡罗(Markov Chain Monte Carlo,MCMC)策略的采样方法。对于一个$K$为随机向量$X = (X_{1},X_{2},...,X_{K})$，
+假设我们无法求得关于$X$的联合分布$P(X)$，但我们知道给定$X$的其他分量时，其第$k$个分量$X_{k}$的条件分布，即$P(X_{k}|X_{k^{-}})$，其中$X_{k^{-}} = 
+(X_{1},X_{2},...,X_{k-1},X_{k+1},...,X_{K})$，那么，我们可以从$X$的一个任意状态(比如[$x_{1}(0),x_{2}(0),...,x_{K}(0)$])开始，利用上述条件
+分布，迭代的对其分量依次采样，随着采样次数的增加，随机变量[$x_{1}(n),x_{2}(n),...,x_{K}(n)$]的概率分布将以$n$的几何级数的速度收敛于$X$的联合
+概率分布$P(X)$。也就是说，我们可以在未知联合概率分布的条件下对其进行采样。</p>
+
+
+
+
+<p>基于RBM的对称结构，以及其中神经元状态的条件独立性，我们可以使用Gibbs采样方法得到服从RBM定义的分布的随机样本。在RBM中进行$k$步Gibbs采样的具体
+算法为：用一个训练样本(或可见层的任何随机化状态)初始化可见层的状态$v0$，交替进行如下采样：
+<center>$h_{0} \sim P(h|v_{0}), v_{1} \sim P(v|h_{0}),$</center>
+<center>$h_{1} \sim P(h|v_{1}), v_{2} \sim P(v|h_{1}),$</center>
+<center>$... ..., v_{k+1} \sim P(v|h_{k})$.</center>
+在经过步数$k$足够大的情况下，我们可以得到服从RBM所定义的分布的样本。此外，使用Gibbs采样我们也可以得到式⑧中第一项的近似。</p>
+
+
+
+
+<h3>3.2 对比散度算法</h3>
+
+
+<p>尽管利用Gibbs采样我们可以得到对数似然函数关于未知参数梯度的近似，但通常情况下需要使用较大的采样步数，这使得RBM的训练效率仍然不高，尤其是当观测数据
+的特征维数较高时。2002年，Hinton[4]提出了RBM的一个快速学习算法，即对比散度（Contrastive Divergence，CD）。与Gibbs采样不同，Hinton指出当使用训练数据初
+始化$v_{0}$时，我们仅需要使用$k$（通常k=1）步Gibbs采样变可以得到足够好的近似。在CD算法一开始，可见单元的状态被设置成一个训练样本，并利用式⑪第一个式子
+来计算所有隐层单元的二值状态，在所有隐层单元的状态确定了之后，根据式⑪第二个式子来确定第$i$个可见单元$v_{i}$取值为1的概率，进而产生可见层的一个重构
+(reconstruction)。然后将重构的可见层作为真实的模型代入式⑬各式中第一项，这样就可以进行梯度下降算法了。</p>
+
+
+
+
+<p>在RBM中，可见单元一般等于训练数据的特征维数，而隐层单元数需要事先给定，这里设可见单元数和隐单元数分别为$n$和$m$，令$W$表示可见层与隐层间的链接权重
+矩阵(m×n阶)，$a$(n维列向量)和$b$(m维列向量)分别表示可见层与隐层的偏置向量。RBM的基于CD的快速学习算法主要步骤如下：
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>//输入：一个训练样本x0; 隐层单元个数m; 学习率alpha; 最大训练周期T
+</span><span class='line'>//输出：链接权重矩阵W, 可见层的偏置向量a, 隐层的偏置向量b
+</span><span class='line'>//训练阶段
+</span><span class='line'>初始化：令可见层单元的初始状态v1 = x0; W, a, b为随机的较小数值
+</span><span class='line'>For t=1,2,...,T
+</span><span class='line'>    For j=1,2,...,m //对所有隐单元
+</span><span class='line'>        计算P(h1j=1|v1), 即P(h1j=1|v1) = sigmoid(bj+sum_i(v1i*Wij));
+</span><span class='line'>        从条件分布P(h1j|v1)中抽取h1j ∈ {0,1}
+</span><span class='line'>    EndFor
+</span><span class='line'>    
+</span><span class='line'>    For i=1,2,...,n //对所有可见单元
+</span><span class='line'>        计算P(v2i=1|h1), 即P(v2i=1|h1) = sigmoid(ai+sum_j(Wij*h1j));
+</span><span class='line'>        从条件分布P(v2i|h1)中抽取v2i ∈ {0,1}
+</span><span class='line'>    EndFor
+</span><span class='line'>    
+</span><span class='line'>    For j=1,2,...,m //对所有隐单元
+</span><span class='line'>        计算P(h2j=1|v2), 即P(h2j=1|v2) = sigmoid(bj+sum_i(v2i*Wij));
+</span><span class='line'>    EndFor
+</span><span class='line'>    
+</span><span class='line'>    //更新RBM的参数
+</span><span class='line'>    W = W + alpha *(P(h1=1|v1)v1' - P(h2=1|v2)v2');
+</span><span class='line'>    a = a + alpha *(v1-v2);
+</span><span class='line'>    b = b + alpha *(P(h1=1|v1) - P(h2=1|v2));
+</span><span class='line'>EndFor</span></code></pre></td></tr></table></div></figure>
+上述基于CD的学习算法是针对RBM的可见单元和隐层单元均为二值变量的情形，我们可以很容易的推广到这些单元为高斯变量的情形。
+</p>
+
+
+
+
+<p>RBM的完整实现参见https://github.com/ibillxia/DeepLearnToolbox/tree/master/DBN的Matlab代码。</p>
+
+
+
+
+<h2>References</h2>
+
+
+<p>
+[1] Learn Deep Architectures for AI, Chapter 5.</br>
+[2] Deep Learning Tutorial, Release 0.1, Chapter 9.</br>
+[3] 受限波尔兹曼机简介. 张春霞. </br>
+[4] Training Products of experts by minimizing contrastive divergence. GE Hinton.
+</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[卷积神经网络（CNN）]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/04/06/Convolutional-Neural-Networks/"/>
+    <updated>2013-04-06T23:34:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/04/06/Convolutional-Neural-Networks</id>
+    <content type="html"><![CDATA[<h2>1. 概述</h2>
+
+
+<p>卷积神经网络是一种特殊的深层的神经网络模型，它的特殊性体现在两个方面，一方面它的神经元间的连接是<strong>非全连接</strong>的，
+另一方面同一层中某些神经元之间的连接的<strong>权重是共享的</strong>（即相同的）。它的非全连接和权值共享的网络结构使之更类似于生物
+神经网络，降低了网络模型的复杂度（对于很难学习的深层结构来说，这是非常重要的），减少了权值的数量。</p>
+
+
+
+
+<p>卷积网络最初是受视觉神经机制的启发而设计的，是为识别二维形状而设计的一个多层感知器，这种网络结构对平移、比例缩放、倾斜或者共他
+形式的变形具有高度不变性。1962年Hubel和Wiesel通过对猫视觉皮层细胞的研究，提出了感受野(receptive field)的概念，1984年日本学者Fukushima
+基于感受野概念提出的神经认知机(neocognitron)模型，它可以看作是卷积神经网络的第一个实现网络，也是感受野概念在人工神经网络领域的首次应用。</p>
+
+
+
+
+<p>神经认知机将一个视觉模式分解成许多子模式(特征)，然后进入分层递阶式相连的特征平面进行处理，它试图将视觉系统模型化，使其能够在即使物体有
+位移或轻微变形的时候，也能完成识别。神经认知机能够利用位移恒定能力从激励模式中学习，并且可识别这些模式的变化形。在其后的应用研究中，Fukushima
+将神经认知机主要用于手写数字的识别。随后，国内外的研究人员提出多种卷积神经网络形式，在邮政编码识别（Y. LeCun etc）、车牌识别和人脸识别等方面
+得到了广泛的应用。</p>
+
+
+
+
+<h2>2. CNN的结构</h2>
+
+
+<p>卷积网络是为识别二维形状而特殊设计的一个多层感知器，这种网络结构对平移、比例缩放、倾斜或者共他形式的变形具有高度不变性。
+这些良好的性能是网络在有监督方式下学会的，网络的结构主要有稀疏连接和权值共享两个特点，包括如下形式的约束：</br>
+1 特征提取。每一个神经元从上一层的局部接受域得到突触输人，因而迫使它提取<strong>局部特征</strong>。一旦一个特征被提取出来，
+只要它相对于其他特征的位置被近似地保留下来，它的精确位置就变得没有那么重要了。</br>
+2 特征映射。网络的每一个计算层都是由<strong>多个特征映射组</strong>成的，每个特征映射都是平面形式的。平面中单独的神经元在约束下<strong>共享
+相同的突触权值</strong>集，这种结构形式具有如下的有益效果：a.平移不变性。b.自由参数数量的缩减(通过权值共享实现)。</br>
+3.子抽样。每个卷积层跟着一个实现局部平均和子抽样的计算层，由此特征映射的分辨率降低。这种操作具有使特征映射的输出对平移和其他
+形式的变形的敏感度下降的作用。</p>
+
+
+<!--more-->
+
+
+
+
+<h3>2.1 稀疏连接(Sparse Connectivity)</h3>
+
+
+<p>卷积网络通过在相邻两层之间强制使用局部连接模式来利用图像的空间局部特性，在第m层的隐层单元只与第m-1层的输入单元的局部区域有连接，第m-1层的这些局部
+区域被称为空间连续的接受域。我们可以将这种结构描述如下：</br>
+设第m-1层为视网膜输入层，第m层的接受域的宽度为3，也就是说该层的每个单元与且仅与输入层的3个相邻的神经元相连，第m层与第m+1层具有类似的链接规则，如下图所示。
+<center><img src="/images/2013/IMAG2013040201.jpg"></center>
+可以看到m+1层的神经元相对于第m层的接受域的宽度也为3，但相对于输入层的接受域为5，这种结构将学习到的过滤器（对应于输入信号中被最大激活的单元）限制在局部空间
+模式（因为每个单元对它接受域外的variation不做反应）。从上图也可以看出，多个这样的层堆叠起来后，会使得过滤器（不再是线性的）逐渐成为全局的（也就是覆盖到了更
+大的视觉区域）。例如上图中第m+1层的神经元可以对宽度为5的输入进行一个非线性的特征编码。
+</p>
+
+
+
+
+<h3>2.2 权值共享(Shared Weights)</h3>
+
+
+<p>在卷积网络中，每个稀疏过滤器<em>$h_{i}$</em>通过共享权值都会覆盖整个可视域，这些共享权值的单元构成一个特征映射，如下图所示。
+<center><img src="/images/2013/IMAG2013040202.jpg"></center>
+在图中，有3个隐层单元，他们属于同一个特征映射。同种颜色的链接的权值是相同的，我们仍然可以使用梯度下降的方法来学习这些权值，只需要对原始算法做一些小的改动，
+这里共享权值的梯度是所有共享参数的梯度的总和。我们不禁会问为什么要权重共享呢？一方面，重复单元能够对特征进行识别，而不考虑它在可视域中的位置。另一方面，权值
+共享使得我们能更有效的进行特征抽取，因为它极大的减少了需要学习的自由变量的个数。通过控制模型的规模，卷积网络对视觉问题可以具有很好的泛化能力。
+</p>
+
+
+
+
+<h3>2.3 The Full Model</h3>
+
+
+<p>卷积神经网络是一个多层的神经网络，每层由多个二维平面组成，而每个平面由多个独立神经元组成。网络中包含一些简单元和复杂元，分别记为S-元
+和C-元。S-元聚合在一起组成S-面，S-面聚合在一起组成S-层，用Us表示。C-元、C-面和C-层(Us)之间存在类似的关系。网络的任一中间级由S-层与C-层
+串接而成，而输入级只含一层，它直接接受二维视觉模式，样本特征提取步骤已嵌入到卷积神经网络模型的互联结构中。</p>
+
+
+
+
+<p>一般地，Us为特征提取层，每个神经元的输入与前一层的局部感受野相连，并提取该局部的特征，一旦该局部特征被提取后，它与其他特征间的位置关系
+也随之确定下来；Uc是特征映射层，网络的每个计算层由多个特征映射组成，每个特征映射为一个平面，平面上所有神经元的权值相等。特征映射结构采用
+影响函数核小的sigmoid函数作为卷积网络的激活函数，使得特征映射具有位移不变性(这一句表示没看懂，那位如果看懂了，请给我讲解一下)。此外，由于
+一个映射面上的神经元共享权值，因而减少了网络自由参数的个数，降低了网络参数选择的复杂度。卷积神经网络中的每一个特征提取层(S-层)都紧跟着一个
+用来求局部平均与二次提取的计算层(C-层)，这种特有的两次特征提取结构使网络在识别时对输入样本有较高的畸变容忍能力。</p>
+
+
+
+
+<p>下图是一个卷积网络的实例
+<center><img src="/images/2013/IMAG2013040203.jpg"></center>
+图中的卷积网络工作流程如下，输入层由32×32个感知节点组成，接收原始图像。然后，计算流程在卷积和子抽样之间交替进行，如下所
+述：第一隐藏层进行卷积，它由8个特征映射组成，每个特征映射由28×28个神经元组成，每个神经元指定一个 5×5 的接受域；第二隐藏层实现子
+抽样和局部平均，它同样由 8 个特征映射组成，但其每个特征映射由14×14 个神经元组成。每个神经元具有一个 2×2 的接受域，一个可训练
+系数，一个可训练偏置和一个 sigmoid 激活函数。可训练系数和偏置控制神经元的操作点。第三隐藏层进行第二次卷积，它由 20 个特征映射组
+成每个特征映射由 10×10 个神经元组成。该隐藏层中的每个神经元可能具有和下一个隐藏层几个特征映射相连的突触连接，它以与第一个卷积
+层相似的方式操作。第四个隐藏层进行第二次子抽样和局部平均汁算。它由 20 个特征映射组成，但每个特征映射由 5×5 个神经元组成，它以
+与第一次抽样相似的方式操作。第五个隐藏层实现卷积的最后阶段，它由 120 个神经元组成，每个神经元指定一个 5×5 的接受域。最后是个全
+连接层，得到输出向量。相继的计算层在卷积和抽样之间的连续交替，我们得到一个“双尖塔”的效果，也就是在每个卷积或抽样层，随着空
+间分辨率下降，与相应的前一层相比特征映射的数量增加。卷积之后进行子抽样的思想是受到动物视觉系统中的“简单的”细胞后面跟着“复
+杂的”细胞的想法的启发而产生的。</p>
+
+
+
+
+<p>图中所示的多层感知器包含近似 100000 个突触连接，但只有大约2600 个自由参数。自由参数在数量上显著地减少是通过权值共享获得
+的，学习机器的能力（以 VC 维的形式度量）因而下降，这又提高它的泛化能力。而且它对自由参数的调整通过反向传播学习的随机形式来实
+现。另一个显著的特点是使用权值共享使得以并行形式实现卷积网络变得可能。这是卷积网络对全连接的多层感知器而言的另一个优点。</p>
+
+
+
+
+<h2>3. CNN的学习</h2>
+
+
+<p>总体而言，前面提到的卷积网络可以简化为下图所示模型：
+<center><img src="/images/2013/IMAG2013040204.jpg"></center>
+其中，input 到C1、S4到C5、C5到output是全连接，C1到S2、C3到S4是一一对应的连接，S2到C3为了消除网络对称性，去掉了一部分连接，
+可以让特征映射更具多样性。需要注意的是 C5 卷积核的尺寸要和 S4 的输出相同，只有这样才能保证输出是一维向量。</p>
+
+
+
+
+<h3>3.1 卷积层的学习</h3>
+
+
+<p>卷积层的典型结构如下图所示。
+<center><img src="/images/2013/IMAG2013040205.jpg"></center>
+</p>
+
+
+
+
+<p>卷积层的前馈运算是通过如下算法实现的：</br>
+<center>卷积层的输出= Sigmoid( Sum(卷积) +偏移量) </center>
+其中卷积核和偏移量都是可训练的。下面是其核心代码：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="n">ConvolutionLayer</span><span class="o">::</span><span class="n">fprop</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="n">output</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="c1">//取得卷积核的个数</span>
+</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="o">=</span><span class="n">kernel</span><span class="p">.</span><span class="n">GetDim</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">        </span><span class="c1">//第i个卷积核对应输入层第a个特征映射，输出层的第b个特征映射</span>
+</span><span class='line'><span class="w">        </span><span class="c1">//这个卷积核可以形象的看作是从输入层第a个特征映射到输出层的第b个特征映射的一个链接</span>
+</span><span class='line'><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="o">=</span><span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">b</span><span class="o">=</span><span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">];</span>
+</span><span class='line'><span class="w">        </span><span class="c1">//用第i个卷积核和输入层第a个特征映射做卷积</span>
+</span><span class='line'><span class="w">        </span><span class="n">convolution</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Conv</span><span class="p">(</span><span class="n">input</span><span class="p">[</span><span class="n">a</span><span class="p">],</span><span class="n">kernel</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span><span class='line'><span class="w">        </span><span class="c1">//把卷积结果求和</span>
+</span><span class='line'><span class="w">        </span><span class="n">sum</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="n">convolution</span><span class="p">;</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">bias</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">        </span><span class="c1">//加上偏移量</span>
+</span><span class='line'><span class="w">        </span><span class="n">sum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">bias</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="c1">//调用Sigmoid函数</span>
+</span><span class='line'><span class="w">    </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Sigmoid</span><span class="p">(</span><span class="n">sum</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+其中，input是 n1×n2×n3 的矩阵，n1是输入层特征映射的个数，n2是输入层特征映射的宽度，n3是输入层特征映射的高度。output, sum, convolution,
+bias是n1×(n2-kw+1)×(n3-kh+1)的矩阵，kw,kh是卷积核的宽度高度(图中是5×5)。kernel是卷积核矩阵。table是连接表，即如果第a输入和第b个输出之间
+有连接，table里就会有[a,b]这一项，而且每个连接都对应一个卷积核。</p>
+
+
+
+
+<p>卷积层的反馈运算的核心代码如下：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="n">ConvolutionLayer</span><span class="o">::</span><span class="n">bprop</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="n">output</span><span class="p">,</span><span class="n">in_dx</span><span class="p">,</span><span class="n">out_dx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="c1">//梯度通过DSigmoid反传</span>
+</span><span class='line'><span class="w">    </span><span class="n">sum_dx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DSigmoid</span><span class="p">(</span><span class="n">out_dx</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="c1">//计算bias的梯度</span>
+</span><span class='line'><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">bias</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">        </span><span class="n">bias_dx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sum_dx</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="c1">//取得卷积核的个数</span>
+</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="o">=</span><span class="n">kernel</span><span class="p">.</span><span class="n">GetDim</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'><span class="w">    </span><span class="p">{</span>
+</span><span class='line'><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="o">=</span><span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">b</span><span class="o">=</span><span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">];</span>
+</span><span class='line'><span class="w">        </span><span class="c1">//用第i个卷积核和第b个输出层反向卷积（即输出层的一点乘卷积模板返回给输入层），并把结果累加到第a个输入层</span>
+</span><span class='line'><span class="w">        </span><span class="n">input_dx</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">DConv</span><span class="p">(</span><span class="n">sum_dx</span><span class="p">[</span><span class="n">b</span><span class="p">],</span><span class="n">kernel</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span><span class='line'><span class="w">        </span><span class="c1">//用同样的方法计算卷积模板的梯度</span>
+</span><span class='line'><span class="w">        </span><span class="n">kernel_dx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">DConv</span><span class="p">(</span><span class="n">sum_dx</span><span class="p">[</span><span class="n">b</span><span class="p">],</span><span class="n">input</span><span class="p">[</span><span class="n">a</span><span class="p">]);</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+其中in_dx,out_dx 的结构和 input,output 相同，代表的是相应点的梯度。
+</p>
+
+
+<p></p>
+
+
+
+
+<h3>3.2 子采样层的学习</h3>
+
+
+<p>子采样层的典型结构如下图所示。
+<center><img src="/images/2013/IMAG2013040206.jpg"></center></p>
+
+
+
+
+<p>类似的字采样层的输出的计算式为：</br>
+<center>输出= Sigmoid( 采样*权重 +偏移量)</center>
+其核心代码如下：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="n">SubSamplingLayer</span><span class="o">::</span><span class="n">fprop</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="n">output</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n1</span><span class="o">=</span><span class="w"> </span><span class="n">input</span><span class="p">.</span><span class="n">GetDim</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n2</span><span class="o">=</span><span class="w"> </span><span class="n">input</span><span class="p">.</span><span class="n">GetDim</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n3</span><span class="o">=</span><span class="w"> </span><span class="n">input</span><span class="p">.</span><span class="n">GetDim</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n1</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">n2</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">k</span><span class="o">&lt;</span><span class="n">n3</span><span class="p">;</span><span class="n">k</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">                </span><span class="c1">//coeff 是可训练的权重，sw 、sh 是采样窗口的尺寸。</span>
+</span><span class='line'><span class="w">                </span><span class="n">sub</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">/</span><span class="n">sw</span><span class="p">][</span><span class="n">k</span><span class="o">/</span><span class="n">sh</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">]</span><span class="o">*</span><span class="n">coeff</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span><span class='line'><span class="w">            </span><span class="p">}</span>
+</span><span class='line'><span class="w">        </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n1</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">        </span><span class="c1">//加上偏移量</span>
+</span><span class='line'><span class="w">        </span><span class="n">sum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sub</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bias</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Sigmoid</span><span class="p">(</span><span class="n">sum</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+</p>
+
+
+
+
+<p>子采样层的反馈运算的核心代码如下：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="n">SubSamplingLayer</span><span class="o">::</span><span class="n">bprop</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="n">output</span><span class="p">,</span><span class="n">in_dx</span><span class="p">,</span><span class="n">out_dx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="c1">//梯度通过DSigmoid反传</span>
+</span><span class='line'><span class="w">    </span><span class="n">sum_dx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DSigmoid</span><span class="p">(</span><span class="n">out_dx</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="c1">//计算bias和coeff的梯度</span>
+</span><span class='line'><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n1</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">        </span><span class="n">coeff_dx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="n">bias_dx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">n2</span><span class="o">/</span><span class="n">sw</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">k</span><span class="o">&lt;</span><span class="n">n3</span><span class="o">/</span><span class="n">sh</span><span class="p">;</span><span class="n">k</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">                </span><span class="n">coeff_dx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">sub</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">]</span><span class="o">*</span><span class="n">sum_dx</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">];</span>
+</span><span class='line'><span class="w">                </span><span class="n">bias_dx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">sum_dx</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">]);</span>
+</span><span class='line'><span class="w">            </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n1</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">n2</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">k</span><span class="o">&lt;</span><span class="n">n3</span><span class="p">;</span><span class="n">k</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">                </span><span class="n">in_dx</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">coeff</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">sum_dx</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">/</span><span class="n">sw</span><span class="p">][</span><span class="n">k</span><span class="o">/</span><span class="n">sh</span><span class="p">];</span>
+</span><span class='line'><span class="w">            </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+</p>
+
+
+
+
+<h3>3.3 全连接层的学习</h3>
+
+
+<p>全连接层的学习与传统的神经网络的学习方法类似，也是使用BP算法，这里就不详述了。</p>
+
+
+
+
+<p>关于CNN的完整代码可以参考https://github.com/ibillxia/DeepLearnToolbox/tree/master/CNN中的Matlab代码。</p>
+
+
+
+
+<h2>References</h2>
+
+
+<p>[1] Learn Deep Architectures for AI, Chapter 4.5.</br>
+[2] Deep Learning Tutorial, Release 0.1, Chapter 6.</br>
+[3] Convolutional Networks for Images Speech and Time-Series.</br>
+[4] 基于卷积网络的三维模型特征提取. 王添翼.</br>
+[5] 卷积神经网络的研究及其在车牌识别系统中的应用. 陆璐.
+</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[反向传播(BP)神经网络]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/03/30/back-propagation-neural-networks/"/>
+    <updated>2013-03-30T21:37:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/03/30/back-propagation-neural-networks</id>
+    <content type="html"><![CDATA[<p>前面几篇文章中对神经网络和深度学习进行一些简介，包括神经网络的发展历史、基本概念和常见的几种神经网络以及神经网络的学习方法等，
+本文具体来介绍一下一种非常常见的神经网络模型——反向传播(Back Propagation)神经网络。</p>
+
+
+
+
+<h2>1.概述</h2>
+
+
+<p>BP（Back Propagation）神经网络是1986年由Rumelhart和McCelland为首的科研小组提出，参见他们发表在Nature上的论文
+<em><a href="http://www.cs.toronto.edu/~hinton/absps/naturebp.pdf">Learning representations by back-propagating errors</a></em>
+值得一提的是，该文的第三作者Geoffrey E. Hinton就是在深度学习邻域率先取得突破的神犇。
+</p>
+
+
+
+
+<p>BP神经网络是一种按误差逆传播算法训练的多层前馈网络，是目前应用最广泛的神经网络模型之一。BP网络能学习和存贮大量的
+输入-输出模式映射关系，而无需事前揭示描述这种映射关系的数学方程。它的学习规则是使用最速下降法，通过反向传播来不断
+调整网络的权值和阈值，使网络的误差平方和最小。</p>
+
+
+
+
+<!-- more -->
+
+
+
+
+<h2>2.BP网络模型</h2>
+
+
+<p>一个典型的BP神经网络模型如图1所示。</br>
+<center><img src="/images/2013/IMAG2013033001.jpg"></center>
+<center>图1 典型的BP神经网络模型</center></p>
+
+
+
+
+<p>BP神经网络与其他神经网络模型类似，不同的是，BP神经元的传输函数为非线性函数(而在感知机中为阶跃函数，在线性神经网络中为线性函数)，最常用的
+是log-sigmoid函数或tan-sigmoid函数。BP神经网络(BPNN)一般为多层神经网络，图1中所示的BP神经网络的隐层的传输函数即为非线性函数，隐层可以有多层，
+而输出层的传输函数为线性函数，当然也可以是非线性函数，只不过线性函数的输出结果取值范围较大，而非线性函数则限制在较小范围（如logsig函数输出
+取值在(0,1)区间）。图1所示的神经网络的输入输出关系如下：</br>
+1)输入层与隐层的关系：</br>
+<center>$\boldsymbol{h} = \mathit{f_{1}} (\boldsymbol{W^{(1)}x}+\boldsymbol{b^{(1)}})$.</center>
+其中$\boldsymbol{x}$为$m$维特征向量(列向量)，$\boldsymbol{W^{(1)}}$为$n × m$维权值矩阵，$\boldsymbol{b^{(1)}}$为$n$维的偏置(bias)向量(列向量)。</br>
+2)隐层与输出层的关系：</br>
+<center>$\boldsymbol{y} = \mathit{f_{2}} (\boldsymbol{W^{(2)}h}+\boldsymbol{b^{(2)}})$.</center>
+</p>
+
+
+
+
+<h2>3.BP网络的学习方法</h2>
+
+
+<p>神经网络的关键之一是权值的确定，也即神经网络的学习，下面主要讨论一下BP神经网络的学习方法，它是一种监督学习的方法。</br>
+假定我们有$q$个带label的样本(即输入)$p_{1},p_{2},...,p_{q}$，对应的label(即期望输出Target)为$T_{1},T_{2},...,T_{q}$，神经网络的实际输出
+为$a2_{1},a2_{2},...,a2_{q}$，隐层的输出为$a1[.]$那么可以定义误差函数：</br>
+<center>$\boldsymbol{E(W,B)} = \frac{1}{2}\sum_{k=1}^{n}(t_{k} - a2_{k})^{2} $.</center>
+BP算法的目标是使得实际输出approximate期望输出，即使得训练误差最小化。BP算法利用梯度下降(Gradient Descent)法来求权值的变化及
+误差的反向传播。对于图1中的BP神经网络，我们首先计算输出层的权值的变化量，从第$i$个输入到第$k$个输出的权值改变为：</br>
+<center>$\Delta w2_{ki} = - \eta \frac{\partial E}{\partial w2_{ki}} \\
+= - \eta \frac{\partial E}{\partial a2_{k}} \frac{\partial a2_{k}}{\partial w2_{ki}} \\
+= \eta (t_{k}-a2_{k})f_{2}'a1_{i} = \eta \delta_{ki}a1_{i}$.</center>
+其中$\eta$为学习速率。同理可得：</br>
+<center>$\Delta b2_{ki} = - \eta \frac{\partial E}{\partial b2_{ki}} 
+= - \eta \frac{\partial E}{\partial a2_{k}} \frac{\partial a2_{k}}{\partial b2_{ki}}
+= \eta (t_{k}-a2_{k})f_{2}' = \eta \delta_{ki}$.</center>
+而隐层的权值变化为：</br>
+<center>$\Delta w1_{ij} = - \eta \frac{\partial E}{\partial w1_{ij}} 
+= - \eta \frac{\partial E}{\partial a2_{k}} \frac{\partial a2_{k}}{\partial a1_{i}} \frac{\partial a1_{i}}{\partial w1_{ij}}
+= \eta \sum_{k=1}^{n}(t_{k}-a2_{k})f_{2}'w2_{ki}f_{1}'p_{j} = \eta \delta_{ij}p_{j}$.</center>
+其中，$\delta_{ij} = e_{i}f_{1}', e_{i} = \sum_{k=1}^{n}\delta_{ki}w2_{ki}$</br>
+同理可得，$\Delta b1_{i} = \eta \delta_{ij}$。</br>
+这里我们注意到，输出层的误差为$e_{j},j=1..n$，隐层的误差为$e_{i},i=1..m$，其中$e_{i}$可以认为是$e_{j}$的加权组合，由于作用函数的
+存在，$e_{j}$的等效作用为$\delta_{ji} = e_{j}f'()$。
+</p>
+
+
+
+
+<h2>4.BP网络的设计</h2>
+
+
+<p>在进行BP网络的设计是，一般应从网络的层数、每层中的神经元个数和激活函数、初始值以及学习速率等几个方面来进行考虑，下面是一些选取的原则。</p>
+
+
+
+
+<p><strong>1.网络的层数</strong></br>
+理论已经证明，具有偏差和至少一个S型隐层加上一个线性输出层的网络，能够逼近任何有理函数，增加层数可以进一步降低误差，提高精度，但同时也是网络
+复杂化。另外不能用仅具有非线性激活函数的单层网络来解决问题，因为能用单层网络解决的问题，用自适应线性网络也一定能解决，而且自适应线性网络的
+运算速度更快，而对于只能用非线性函数解决的问题，单层精度又不够高，也只有增加层数才能达到期望的结果。
+</p>
+
+
+
+
+<p><strong>2.隐层神经元的个数</strong></br>
+网络训练精度的提高，可以通过采用一个隐含层，而增加其神经元个数的方法来获得，这在结构实现上要比增加网络层数简单得多。一般而言，我们用精度和
+训练网络的时间来恒量一个神经网络设计的好坏：</br>
+（1）神经元数太少时，网络不能很好的学习，训练迭代的次数也比较多，训练精度也不高。</br>
+（2）神经元数太多时，网络的功能越强大，精确度也更高，训练迭代的次数也大，可能会出现过拟合(over fitting)现象。</br>
+由此，我们得到神经网络隐层神经元个数的选取原则是：在能够解决问题的前提下，再加上一两个神经元，以加快误差下降速度即可。
+</p>
+
+
+
+
+<p><strong>3.初始权值的选取</strong></br>
+一般初始权值是取值在$(-1,1)$之间的随机数。另外威得罗等人在分析了两层网络是如何对一个函数进行训练后，提出选择初始权值量级为$\sqrt[r]{s}$的策略，
+其中$r$为输入个数，$s$为第一层神经元个数。
+</p>
+
+
+
+
+<p><strong>4.学习速率</strong></br>
+学习速率一般选取为$0.01 - 0.8$，大的学习速率可能导致系统的不稳定，但小的学习速率导致收敛太慢，需要较长的训练时间。对于较复杂的网络，
+在误差曲面的不同位置可能需要不同的学习速率，为了减少寻找学习速率的训练次数及时间，比较合适的方法是采用变化的自适应学习速率，使网络在
+不同的阶段设置不同大小的学习速率。
+</p>
+
+
+
+
+<p><strong>5.期望误差的选取</strong></br>
+在设计网络的过程中，期望误差值也应当通过对比训练后确定一个合适的值，这个合适的值是相对于所需要的隐层节点数来确定的。一般情况下，可以同时对两个不同
+的期望误差值的网络进行训练，最后通过综合因素来确定其中一个网络。
+</p>
+
+
+
+
+<h2>5.BP网络的局限性</h2>
+
+
+<p>BP网络具有以下的几个问题：</br>
+<strong>(1)需要较长的训练时间</strong>：这主要是由于学习速率太小所造成的，可采用变化的或自适应的学习速率来加以改进。</br>
+<strong>(2)完全不能训练</strong>：这主要表现在网络的麻痹上，通常为了避免这种情况的产生，一是选取较小的初始权值，而是采用较小的学习速率。</br>
+<strong>(3)局部最小值</strong>：这里采用的梯度下降法可能收敛到局部最小值，采用多层网络或较多的神经元，有可能得到更好的结果。
+</p>
+
+
+
+
+<h2>6.BP网络的改进</h2>
+
+
+<p>BP算法改进的主要目标是加快训练速度，避免陷入局部极小值等，常见的改进方法有带动量因子算法、自适应学习速率、变化的学习速率以及作用函数后缩法等。
+动量因子法的基本思想是在反向传播的基础上，在每一个权值的变化上加上一项正比于前次权值变化的值，并根据反向传播法来产生新的权值变化。而自适应学习
+速率的方法则是针对一些特定的问题的。改变学习速率的方法的原则是，若连续几次迭代中，若目标函数对某个权倒数的符号相同，则这个权的学习速率增加，
+反之若符号相反则减小它的学习速率。而作用函数后缩法则是将作用函数进行平移，即加上一个常数。</p>
+
+
+
+
+<h2>7.BP网络实现异或</h2>
+
+
+<p>见参考文献[7]或Andrew Ng. 的ML公开课的第8讲。</p>
+
+
+<p>另外BP算法的讲解及C++实现参见[4]。</p>
+
+
+
+
+<h2>参考文献</h2>
+
+
+<p>[1]An Introduction to Back-Propagation Neural Networks: http://www.seattlerobotics.org/encoder/nov98/neural.html</br>
+[2]Wiki - Backpropagation: http://en.wikipedia.org/wiki/Backpropagation</br>
+[3]Chapter 7 The backpropagation algorithm of Neural Networks - A Systematic Introduction by Raúl Rojas: http://page.mi.fu-berlin.de/rojas/neural/chapter/K7.pdf</br>
+[4]Back-propagation Neural Net - C++ 实现: http://www.codeproject.com/Articles/13582/Back-propagation-Neural-Net</br>
+[5]《Visual C++数字图像模式识别技术及工程实践》(第3章)，求实科技 张宏林</br>
+[6]《Matlab神经网络设置及应用》(第5章)，周品，清华大学出版社
+</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[神经网络的学习方法概述]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/03/27/learning-process-of-neural-networks/"/>
+    <updated>2013-03-27T23:51:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/03/27/learning-process-of-neural-networks</id>
+    <content type="html"><![CDATA[<p>本文主要讨论一下神经网络的一般学习方法，主要有error-correction learning，memory-based learning， Hebbian learning，competitive learning，
+Boltzmann learning等。然后介绍一些学习的方式，如监督学习、非监督学习、强化学习等。最后是一些具体的应用领域和实际问题。</p>
+
+
+
+
+<h2>1.Knowledge Representation</h2>
+
+
+<p>好的学习方法固然重要，但知识的表示，直接影响到feature的表示，也是非常重要的，因此在正式讨论学习方法之前，我们首先谈谈知识的表示。
+首先一个问题是，什么是知识？在PRML中我们有如下定义：</br>
+<blockquote><p>Knowledge refers to stored information or models used by a person or machine to interpret, predict, and appropriately respond to the outside world.</p><footer><strong>Fischler and Firschein</strong> <cite>Intelligence: The Eye，the Brain and the Computer</cite></footer></blockquote>
+</p>
+
+
+
+
+<!-- more -->
+
+
+<p>在知识的表示中需要考虑的两个核心问题是：</br>
+1). What information is actually made explicit(明确的；清楚的；直率的；详述的);</br>
+2). How the information is physically encoded for subsequent(后来的，随后的) use.</br>
+很显然，这里知识的表示是目标驱动的(goal directed)，在现实世界的智能设备中，一些好的解决问题的办法依赖于好的知识表示方法。
+</p>
+
+
+
+
+<p>一个精心设计的神经网络应该能够很恰当的表示出现实世界的知识，这是一个极大的挑战，因为知识的表示方式是多种多样的，而现实世界的知识也是丰富多彩的，
+也就意味着我们的神经网络的输入是千变万化的。一般而言，在PRML中我们将现实世界的知识分为以下两种：</br>
+1). Prior information = the known facts.</br>
+2). Observation (measurements). Usually noisy, but give examples(prototypes) for training the neural network.</br>
+其中Observation中的examples包含两种类型的，一种是labeled，另一种是unlabeled。</p>
+
+
+
+
+<p>在神经网络中，那些自由变量(包括weights和biases)是知识表示的关键。知识的表示一般应该满足一下几个规则：</br>
+<strong>Rule 1</strong>. Similar inputs from similar classes should produce similar representations inside the network, and they should be classiﬁed to the same category.</br>
+<strong>Rule 2</strong>. Items to be categorized as separate classes should be given widely diﬀerent representations in the network.</br>
+<strong>Rule 3</strong>. If a particular feature is important, there should be a large number of neurons involved in representing it in the network.</br>
+<strong>Rule 4</strong>. Prior information and invariances should be built into the design of a neural network.</p>
+
+
+
+
+<p>一方面，我们应该如何将先验知识运用到我们的神经网络(简记为NN)的设计中呢？没有通用的方法，但能产生更好结果的专用方法到是有两种：</br>
+1). Restricting the network architecture through the use of local connections known as receptive ﬁelds(接受域).</br>
+2). Constraining the choice of synaptic weights through the use of weight-sharing.</br>
+这两种方法都是通过减少需要学习的自由变量来达到目的的。当然我们也可以利用Bayes公式来将先验知识应用到我们的NN的设计中。</p>
+
+
+
+
+<p>另一方面，我们应该如何将Invariances(不变性；恒定性)融入到我们的NN的设计中呢？我们有三种思路可以考虑：</br>
+<strong>1). Invariance by Structure</strong> - Synaptic connections between the neurons are created so that transformed versions of the 
+same input are forced to produce the same output. Drawback: the number of synaptic connections tends to grow very large.</br>
+<strong>2). Invariance by Training</strong> - The network is trained using diﬀerent examples of the same object corresponding to 
+diﬀerent transformations (for example rotations). Drawbacks: computational load, generalization ability for other objects.</br>
+<strong>3). Invariant feature space</strong> - Try to extract features of the data invariant to transformations. Use these instead of the 
+original input data. Probably the most suitable technique to be used for neural classiﬁers. Requires prior knowledge on the problem.</br>
+然而，要优化一个NN的结构是非常困难的，通常需要一些先验的知识。
+</p>
+
+
+
+
+<h2>2.Basic Learning Rules</h2>
+
+
+<p>首先我们对NN的学习做如下的定义：</br>
+<blockquote><p>Learning is a process by which the free parameters of a neural network are adapted through a process of stimulation by the environment in which the network is embedded. The type of learning is determined by the manner in which the parameters changes take place.</p><footer><strong>Simon Haykin</strong> <cite>Neural Networks: A Comprehensive Foundation</cite></footer></blockquote>
+这个定义蕴含以下几个意思：</br>
+1). The neural network is <em>stimulated</em> by an envirnment.</br>
+2). The neural network <em>undergoes changes</em> in its free parameters as a result of this stimulation.</br>
+3). The neural network <em>responds in a new way</em> to the envirnment because of the changes that have 
+occurred in its internal structure.</br>
+</p>
+
+
+
+
+<h4>2.1 Error-Correction Learning</h4>
+
+
+<p>Error-Correction的学习方法的核心思想是：对于给定输入，优化权值(weights)使得输出(设为$y_{k}(n)$)与真实值(设为$d_{k}(n)$)
+的偏差最小。我们先定义一个error signal如下：</br>
+<center>$e_{k}(n) = d_{k}(n) - y_{k}(n)$.</center></br>
+那么，我们需要优化的目标函数为：</br>
+<center>$\mathscr{E}(n) = \frac{1}{2}e^{2}_{k}(n)$.</center></br>
+其中$\mathscr{E}(n)$称为error energy，也是我们要优化(最小化)的目标函数。</p>
+
+
+
+
+<p>那么如何来求解这个优化问题呢？这里我们有一个所谓的delta-rule，也称为Widrow-Hoff rule</br>
+<center>$\Delta w_{kj}(n) = \eta e_{k}(n)x_{j}(n)$.</center></br>
+这里$w_{kj}(n)$是第$k$个输出神经元的第$j$个输入的权重，$\Delta w_{kj}(n)$为第$n$步迭代过程中，权值$w_{kj}(n)$的改变量，$\eta$称为学习速率，
+是一个$(0,1]$之间的常数。关于该方法的详细内容会在后续文章中深入讨论。</p>
+
+
+
+
+<h4>2.2 Memory-Based Learning</h4>
+
+
+<p>Memory-Based Learning，顾名思义，是一种将past experiences全部保存起来的策略。假设我们的经验数据集为：</br>
+<center>{$(x_{1},d_{1}),(x_{2},d_{2}),...,(x_{N},d_{N})$}.</center></br>
+那么对于新来的测试数据$\mathbf{x} _{test}$，我们需要分析它与经验数据的关系，主要就是需要找出与它最相近的经验数据，即它的local neighborhood。
+在Memory-Based Learning方法中，主要涉及两个问题，一个是定义local neighborhood的标准，另一个是训练样本集上的学习规则。一个最简单的学习规则是
+最近邻规则(nearest-neighbor rule)。另外我们可以构造Memory-Based Classifier，如k-nearest-neighbor classifier，radial-basis function networks 
+classifier等。</p>
+
+
+
+
+<h4>2.3 Hebbian Learning</h4>
+
+
+<p>Hebb规则是最古老也是最流行的NN学习规则，现在一般都是它的扩展版的规则，其基本思想是根据联接的神经元的活化
+水平改变权，即两种神经元间联接权的变化与两神经元的活化值（激活值）相关，若突触(connection)两端的两神经元同时
+兴奋，则联接加强；若不同时兴奋，则联接减弱甚至忽略。</p>
+
+
+
+
+<p>Hebbian规则有以下几个特点：</br>
+Time-dependent: 权值修正仅发生于突触前(如输入$x_{i}$)和突触后(如输出$y_{j}$)同时存在信号的时候；</br>
+Local: 仅使用神经元能够取得的局部的信息；</br>
+Interactive: 权值修正同时依赖于突触前和突触后，信号间的交互可以是确定性的或随机的；</br>
+Conjunctional or Correlational: 突触前与突触后的信号产生时间与权值修正是密切相关的。</p>
+
+
+
+
+<p>权值修正可以分为Hebbian, anti-Hebbian, 和non-Hebbian等三种情况。Hebbian方式会增强正相关的突触前和突触后的信号，而减弱负相关的
+突触前和突触后的信号。anti-Hebbian方式则与Hebbian相反。而non-Hebbian则不使用Hebbian方式。Hebbian的权值修正方式的一般形式为：</br>
+<center>$\Delta w_{kj}(n) = F(y_{k}(n),x_{j}(n))$.</center></br>
+其中$F(y,x)$是关于突触后($y$)和突触前($x$)的函数，对于标准的Hebbian学习规则，该函数为$\eta y_{k}(n)x_{j}(n)$；而对于协方差的Hebbian学习
+规则，该函数为$\eta [x_{j}(n)-m_{x}][y_{k}(n)-m_{y}]$。</p>
+
+
+
+
+<h4>2.4 Competitive Learning</h4>
+
+
+<p>竞争型学习规则是指网络的某神经元群体中所有神经元相互竞争对外界刺激模式响应的能力，竞争取胜的神经元的联接权变化向着对这一
+刺激模式竞争更为有力的方向进行。具体而言，就是任何时候输出层的神经元有且仅有一个(即输出最大的那个神经元)是激活的，这种学习
+规则比较适合于寻找分类任务的相关feature。</p>
+
+
+
+
+<h4>2.5 Boltzmann Learning</h4>
+
+
+<p>Boltzmann的学习方法是一种随机化的学习方法，它结合随机过程、概率和能量等概念来调整网络的变量，从而使网络的能量函数最小（或最大）。
+在学习过程中，网络变量的随机变化不是完全随机的，而是据能量函数的改变有指导的进行。网络的变量可以是联接权，也可以是神经元的状
+态。能量函数可定义为问题的目标函数或者网络输出的均方差函数。 基于Boltzmann的学习方法的NN称为Boltzmann机，关于Boltzmann机的更多
+详细内容将会在后续文章中深入讨论。</p>
+
+
+
+
+<h2>3.Learning Methodologies</h2>
+
+
+<h4>3.1 Credit-Assignment Problem</h4>
+
+
+<p>Credit Assignment(CA) Problem是指，一个learning machine的输出结果应该归功于或归咎于哪些内部或中间decision。在很多情况下，输出结果是由一些列的
+actions来决定的，也就是说，中间决策过程影响需要采取的特定的action，然后这些action而不是那些decision直接影响最终的输出的。在这种情况下，我们
+可以将这个CA问题分解为两个子问题：</br>
+1). The assignment of credit for outcomes to actions. This is called the <em>Temporal Credit-Assignment problem</em> in that it involves the 
+instants of time when the actions that deserve credit were actually taken.</br>
+2). The assignment of credit for actions to internal decisions. This is called the <em>Structural Credit-Assignment problem</em> in that it involves 
+assigning credit to the <em>internal strucures</em> of actions generated by the system.</br>
+结构型CA问题在多组件的learning machine中比较常见，我们需要知道哪些组件需要修改，以及修改后能够对最终结果有多大的改善。而时间型CA问题中，我们需要
+知道在某一时刻采取的多个action中，哪些action主要决定了最终的输出。</p>
+
+
+
+
+<p>当我们使用Error-Correction来训练一个多层的前向反馈神经网络时，就会出现CA问题。很显然，最终输出与隐层和输出层的神经元都是相关的，而权值的修正
+是通过当前输出自适应目标输出来实现的。</p>
+
+
+
+
+<p>PS：这一节看的云里雾里的，似懂非懂，感觉有点脱离NN的样子，但这ms是一个general的问题，所以其中的一些术语也是general的，比如decision，action，credit等，
+导致理解起来比较困难，:-( </p>
+
+
+
+
+<h4>3.2 Learning with a Teacher</h4>
+
+
+<p>Learning with a Teacher也就是supervised learning(监督学习)，Error-Correction的学习方法就属于这种。在监督学习中，对于分类或识别问题，输入数据
+不仅包含输入的feature，还包含它对应的label，即它所属的类别(也就是teacher提供的answer)。Error-Correction的学习方法的目标函数就是使NN的输出与Teacher的
+answer的差异最小，即均方误差最小。经过监督学习之后，NN应该能够在不需要Teacher的情况下对新数据进行处理(分类或识别等)。</p>
+
+
+
+
+<h4>3.3 Learning without a Teacher</h4>
+
+
+<p>Learning without a Teacher包含两种学习方法：非监督学习(Unsupervised Learning)和增强学习(Reinforcement Learning)。在非监督学习中，
+没有Teacher指导学习过程，也没有可用的critic，此时NN只能尝试着学习出数据中隐含的统计规律，例如用一个适合的线性模型来区分输入数据。
+Competitive Learning和Hebbian Learning都算是非监督型学习。经过非监督学习之后，NN可以对输入数据进行特征编码。</p>
+
+
+
+
+<p>而在增强学习中，用到了critic，它将从环境中获取的原始信号转换为更高质量的启发式的增强信号。系统从延迟的reinforcement中学习，
+这意味着系统观察到的是时序的状态向量，这最终将会产生启发式的增强信号。增强学习的目标是为了最小化一个cost-to-go-function，它的
+另一个任务是discover the actions determining the best overall behavior of the system。增强学习的过程与动态规划算法非常相似。</p>
+
+
+
+
+<h2>4.Learning Tasks</h2>
+
+
+<p>前文中主要讨论了一些Learning Algorithm和Learning Paradigm，在这一节主要介绍一些Learning的Task，对于一个特定的Learning Task，需要使用对应的
+学习算法。</p>
+
+
+
+
+<h4>4.1 Pattern Association</h4>
+
+
+<p><em>Associative Memory</em>是一种像大脑一样分布式的、learns by association的memory。Association是人类记忆的主要特点，它可以分为
+<em>autoassociation</em>和<em>heteroassociation</em>。在autoassociation中，NN需要通过不断的将patterns(vectors)呈现给NN来保存一个pattern集合，最后
+NN会呈现原始pattern的部分描述或包含噪声的version，而我们的任务就是要恢复这个特定的pattern。而在heteroassociation中，任意一个输入的pattern集与
+另外人一个输出的pattern集是成对的。Autoassociation使用非监督的学习方法，而heteroassociation使用监督学习的方法。</br>
+PS:这一段表示看不太懂，有些概念无法理解！</p>
+
+
+
+
+<h4>4.2 Pattern Recognition</h4>
+
+
+<p>模式识别如语音识别、人脸识别、物体识别等，在模式识别中，NN首先通过学习训练出网络的链接权重，然后对测试数据进行分类。一般输入数据为高维的
+特征向量(feature vector)，经过训练后，数据的决策空间根据特征的pattern被分割成了若干区域。在模式识别中NN起到两种角色：一方面在非监督NN中进行特征
+提取，另一方面在随后的监督学习中用于分类决策。在多层前向反馈网络中，隐层就可以看做是特征提取(往往是对特征进行了降维，即输入的维数大于隐层的
+神经元个数)的角色。</p>
+
+
+
+
+<h4>4.3 Function Approximation</h4>
+
+
+<p>设有一个非线性的输入输出映射$d = f(x)$，其中$x$为输入，$d$为输出，而映射函数$f(.)$是未知的，但我们知道的是一系列带label的样本</br>
+<center>$\mathscr{F} = $ { $(x_{1},d_{1}),(x_{2},d_{2}),...,(x_{N},d_{N})$ }.</center></br>
+那么NN的目标就是找到一个映射$F(.)$最大可能的接近$f(.)$。如果有足够的训练样本和free parameters，那个这个目标是可以实现的。</p>
+
+
+
+
+<h4>4.4 Control</h4>
+
+
+<p>NN也可以用于控制系统，例如用在误差反馈控制系统中。</p>
+
+
+
+
+<h4>4.5 Filtering</h4>
+
+
+<p>一个Filter可以从包含噪声的观察样本中获取一些有趣的性质，它可以用于Filtering、Smoothing以及Prediction等，例如它可以解决cocktail party problem(鸡尾
+酒会问题)，这是一个blind signal separation的问题，这可以通过independent的假设来解决。</p>
+
+
+
+
+<h2>5. Adaptation</h2>
+
+
+<p>在一个稳定的环境中，一个NN经过学习之后，就可以保持weight不变了，并将之应用在新数据上。但在实际应用中，环境是会随着时间而改变的，这就需要我们不断
+更新我们的NN模型，也就是要根据环境变化(输入数据的变化)来改变weight，这个过程称为Adaptation。在Adaptation中，线性的adaptation方法是最简单的，然而更多的
+可能是使用非线性的filter。在实际中，我们也可以在适当的时机重新训练NN。</p>
+
+
+
+
+<h2>推荐资料</h2>
+
+
+<p>Machine Learning Lecture by Andrew Ng, Stanford University</br>
+Lecture VIII: Neural Network - Representation</br>
+Lecture IX: Neural Network - Learning</br>
+Video courses on Coursera: https://class.coursera.org/ml-2012-002/lecture/index</br>
+Lecture homepage in Standford: http://cs229.stanford.edu/</p>
+
+
+
+
+<h2>参考文献</h2>
+
+
+<p>[1] Simon Haykin, “Neural Networks: a Comprehensive Foundation”, 2009 (3rd edition)</br>
+[2]<a href="http://www.cis.hut.fi/Opinnot/T-61.3030/schedule2007.shtml">T-61.3030 PRINCIPLES OF NEURAL COMPUTING (5 CP)</a></br>
+</p>
+
+
+
+]]></content>
+  </entry>
+  
+</feed>

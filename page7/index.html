@@ -1,0 +1,899 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/page7">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/03/20/basics-of-neural-networks/">神经网络简介</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-03-20T23:21:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/03/20/basics-of-neural-networks/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Deep Learning的本质是多层的神经网络，因此在深入学习Deep Learning之前，有必要了解一些神经网络的基本知识。
+本文首先对神经网络的发展历史进行简要的介绍，然后给出神经元模型的形式化描述，接着是神经网络模型的定义、特性，
+最后是一些最新的进展等。关于神经网络的分类、学习方法、应用场景等将在后续文章中介绍。</p>
+
+
+
+
+<h2>1.发展简史</h2>
+
+
+<p>1943年，心理学家W.S.McCulloch和数理逻辑学家W.Pitts建立了神经网络和数学模型，称为MP模型。他们通过MP模型提出
+了神经元的形式化数学描述和网络结构方法，证明了单个神经元能执行逻辑功能，从而开创了人工神经网络研究的时代。</br>
+1945年，Von Neumann在成功的试制了存储程序式电子计算机后，他也对人脑的结构与存储式计算机进行的根本区别的比较，还提出了以简单神经元构成的自再生自动机网络结构。</br>
+1949年，心理学家D.O.Heb提出了突触联系强度可变的设想，并据此提出神经元的学习准则——Hebb规则，为神经网络的学习算法奠定了基础。</br>
+1958年，F.Rosenblatt提出了感知模型，该模型是由阈值神经元组成的，它试图模拟动物和人的感知和学习能力。</br>
+1962年Widrow提出了自适应线性元件，这是一种连续的取值的线性网络，主要用于自适应信号处理和自适应控制。</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/03/20/basics-of-neural-networks/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/03/16/introduction-to-deep-learning/">深度学习简介</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-03-16T21:36:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/03/16/introduction-to-deep-learning/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>0.概述</h2>
+
+<p>
+以下是Wiki上对深度学习的下的定义：</br>
+Deep learning refers to a sub-field of machine learning that is based on learning several levels of representations, 
+corresponding to a hierarchy of features or factors or concepts, where higher-level concepts are defined from lower-level ones, 
+and the same lower-level concepts can help to define many higher-level concepts.
+</p>
+
+
+<p>
+深度学习就是学习多个级别的表示和抽象，帮助理解数据，如图像、声音和文本。深度学习的概念源于人工神经网络的研究，
+含多隐层的多层感知器就是一种深度学习结构。那些涉及从输入产生输出的计算,我们可以用流程图来表示，
+流程图的一个特殊的概念就是它的深度: 从输入到输出的路径的最长长度。传统的前馈神经网络可以理解为
+深度等于层数(隐层数+1)的网络。深度学习通过组合低层特征形成更加抽象的高层表示（属性类别或特征），
+以发现数据的分布式特征表示。
+</p>
+
+
+<h2>1.深度学习产生的背景</h2>
+
+<h3>1.1深度不够的缺陷</h3>
+
+<p>
+在很多情况下，深度为2就已足以在给定精度范围内表示任何函数了，例如逻辑门、正常
+神经元、sigmoid-神经元、SVM中的RBF(Radial Basis Function)等，但这样也有一个代价：
+那就是图中需要的节点数会很多，这也就意味着当我们学习目标函数时，需要更多的计算
+单元和更多的参数。理论结果显示，对于某一类函数，需要的参数的个数与输入的大小是
+成指数关系的，逻辑门、正常神经元、RBF单元就属于这类。后来Hastad发现，当深度为d时，
+这类函数可以用O(n)个节点（输入为n个）的神经网络有效表示，但当深度被限制为d-1时，
+则需要有O(n2)个节点来表示。
+</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/03/16/introduction-to-deep-learning/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/04/2013-first-snow/">2013年第一场雪</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-01-04T21:13:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/01/04/2013-first-snow/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>元旦刚过就下了新年的第一场雪，这场雪下得还确实有点大，从昨天下午开始，今天下了一天了，现在积雪都有四、五寸厚了吧！
+在南方持续这么长时间下这么大的雪很少见了，所以大家都很兴奋。下午上完了两节课后，大概3点的样子，我们实验室的六、七号人就
+准备去爬宝石山，瞻保俶塔，观断桥残雪美景。</p>
+
+
+
+
+<p>出发了，在校门口拍了几张照。
+下面这张是正大门的全景：</br>
+<img src="/images/2013/IMAG2013010401.jpg"></p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/01/04/2013-first-snow/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/02/ai-top-conferences/">AI 顶级会议列表</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-01-02T19:17:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/01/02/ai-top-conferences/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>注: 本文为小百合BBS的daniel所写，稍有删改。</p>
+
+
+<p>tier-1的列得较全, tier-2的不太全, tier-3的很不全.同分的按字母序排列. 不很严谨地说, tier-1是可以令人羡慕的, tier-2是可以令人
+尊敬的,由于AI的相关会议非常多, 所以能列进tier-3的也是不错的。</p>
+
+
+
+
+<h3>The First Class</h3>
+
+
+<p>今天先谈谈AI里面tier-1的conferences, 其实基本上就是AI里面大家比较公认的top conference. 下面同分的按字母序排列.</p>
+
+
+
+
+<p>IJCAI (1+): AI最好的综合性会议, 1969年开始, 每两年开一次, 奇数年开. 因为AI实在太大, 所以虽然每届基本上能录100多篇（现在已经
+到200多篇了），但分到每个领域就没几篇 了，象machine learning、computer vision这么大的领域每次大概也就10篇左右, 所以难度很大. 
+不过从录用率上来看倒不太低,基本上20%左右, 因为内行人都会掂掂分量, 没希望的就别浪费reviewer的时间了. 最近中国大陆投往国际会议
+的文章象潮水一样, 而且因为国内很少有能自己把关的研究组, 所以很多会议都在complain说中国的低质量文章严重妨碍了PC的工作效
+率（囧o(╯□╰)o）. 在这种情况下, 估计这几年国际会议的录用率都会降下去. 另外, 以前的IJCAI是没有poster的, 03年开始, 为了减少
+被误杀的好人, 增加了2页纸的poster.值得一提的是, IJCAI是由貌似一个公司的"IJCAI Inc."主办的(当然实际上并不是公司, 实际上是
+个基金会), 每次会议上要发几个奖, 其中最重要的两个是IJCAI Research Excellence Award 和 Computer& Thoughts Award, 前者是终身
+成就奖, 每次一个人, 基本上是AI的最高奖(有趣的是, 以AI为主业拿图灵奖的6位中, 有2位还没得到这个奖), 后者是奖给35岁以下的青年
+科学家,每次一个人. 这两个奖的获奖演说是每次IJCAI的一个重头戏.另外, IJCAI 的 PC member相当于其他会议的area chair, 权力很大, 
+因为是由PC member去找 reviewer 来审, 而不象一般会议的PC member其实就是 reviewer. 为了制约这种权力, IJCAI的审稿程序是每篇
+文章分配2位PC member, primary PC member去找3位reviewer, second PC member 找一位. （PS：一个非常好的消息是IJCAI-2013要来
+中国Beijing了，非常感谢王飞跃老师等的辛勤的申办！但愿能够亲临现场！）。IJCAI-2013的Important dates：</br>
+ Abstract submission: January 26, 2013 (11:59PM, UTC-12).</br>
+ Paper submission: January 31, 2013 (11:59PM, UTC- 12).</br>
+ Author feedback: March 4-6, 2013 (11:59PM, UTC-12).</br>
+ Notification of acceptance/rejection: April 2, 2013.</br>
+ Camera-ready copy due: Apr 23, 2013.</br>
+ Technical sessions: August 3-9, 2013.</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/01/02/ai-top-conferences/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2012/12/21/human-audio-system-neural-parts/">人的听觉系统生理结构（2）——中枢部分</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-12-21T21:55:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2012/12/21/human-audio-system-neural-parts/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>0.概述</h2>
+
+
+<p>大脑中与听觉相关的部分称为听觉中枢，它纵跨脑干、中脑、丘脑的大脑皮层，是感觉系统中最长的中枢通路之一。自下向上，
+主要环节包括：蜗神经核、上橄榄核、外侧丘系核、下丘核、丘脑的内侧膝状体、大脑皮层颞叶的听觉皮层等，图1所示为听觉中枢
+的传导通路。由中枢系统的多层传导过程，可以很自然的联想到近两年很热门的Deep Learning的机器学习方法。
+<center><img src="/images/2012/IMAG2012122106.jpg"></center>
+<center>图 1 听觉中枢传导通路</center>
+</p>
+
+
+
+
+<h2>1蜗神经核</h2>
+
+
+<p>听神经纤维全部终止于蜗神经核，每条神经纤维可分为三个分支，分别支配耳蜗核的三个亚核，即背核、后腹核与前腹核。用微电极记录
+单细胞电活动的方法证实，每个亚核都有各自的声音频率代表区（或称音调定位组合），高频分布在各亚核的背侧，即耳蜗底部投射在各亚核
+的背上部；低频区分布在各亚核的腹侧，即耳蜗顶部投射在各亚核的腹下区。前腹侧核中的神经元主要是类本原神经元，它能够保存听觉神经
+纤维中的时间-位置编码；后腹侧核中主要是建立和振荡反应类型的神经元，它们能够保存听觉神经纤维中的发放率-位置编码；背侧核中主要
+是休止和累积反应类型的神经元，它们表现为非单调的发放率-强度关系。</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/12/21/human-audio-system-neural-parts/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2012/12/21/human-audio-system-out-part/">人的听觉系统生理结构（1）——外周部分</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-12-21T21:43:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2012/12/21/human-audio-system-out-part/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>概述</h2>
+
+
+<p>人的听觉系统是一个十分巧妙的音频信号处理器，它具有良好的抗噪声识别能力，它对声音信号的处理能力就来源于其巧妙的生理结构。</p>
+
+
+
+
+<p>听觉系统可分为两大部分，即耳朵和听觉中枢。其中耳朵又分为外耳、中耳、内耳、听神经，听觉中枢则纵跨脑干、中脑、丘脑的大脑皮层，
+是感觉系统中最长的中枢通路之一。</br>
+<center><img src="/images/2012/IMAG2012122101.jpg"></center>
+<center>图 1 双耳听觉系统</center>
+</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/12/21/human-audio-system-out-part/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2012/11/24/several-plantforms-on-audio-and-speech-signal-processing/">几个常见的语音交互平台的简介和比较</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-11-24T18:54:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2012/11/24/several-plantforms-on-audio-and-speech-signal-processing/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>1.概述</h2>
+
+
+<p>最近做了两个与语音识别相关的项目，两个项目的主要任务虽然都是语音识别，或者更确切的说是关键字识别，但开发的平台不同，
+一个是windows下的，另一个是android平台的，于是也就选用了不同的语音识别平台，前者选的是微软的Speech API开发的，后者则选用
+的是CMU的pocketsphinx，本文主要将一些常见的语音交互平台进行简单的介绍和对比。</p>
+
+
+
+
+<p>这里所说的语音交互包含语音识别（Speech Recognition，SR，也称为自动语音识别，Automatic Speech Recognition，ASR）和语音
+合成（Speech Synthesis，SS，也称为Text-To-Speech，简记为TTS）两种技术，另外还会提到声纹识别（Voice Print Recognition，
+简记为VPR）技术。</p>
+
+
+
+
+<p>语音识别技术是将计算机接收、识别和理解语音信号转变为相应的文本文件或者命令的技术。它是一门涉及到语音语言学、信号处理、
+模式识别、概率论和信息论、发声机理和听觉机理、人工智能的交叉学科。在语音识别系统的帮助下，即使用户不懂电脑或者无法使用
+电脑，都可以通过语音识别系统对电脑进行操作。</p>
+
+
+
+
+<p>语音合成，又称文语转换（Text to Speech）技术，能将任意文字信息实时转化为标准流畅的语音朗读出来，相当于给机器装上了人工
+嘴巴。它涉及声学、语言学、数字信号处理、计算机科学等多个学科技术，是中文信息处理领域的一项前沿技术，解决的主要问题就是如何
+将文字信息转化为可听的声音信息，也即让机器像人一样开口说话。</p>
+
+
+
+
+<p>下面按平台是否开源来介绍几种常见的语音交互平台，关于语音识别和语音合成技术的相关原理请参见我接下来的其他文章。</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/11/24/several-plantforms-on-audio-and-speech-signal-processing/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2012/11/20/why-ache-appears-two-days-after-sports/">为什么酸痛感出现在运动后的两天?</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-11-20T13:00:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2012/11/20/why-ache-appears-two-days-after-sports/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>经常打羽毛球的人可能会很少有肌肉突然剧烈酸疼的感觉，反而是那些平时不太打球，突然打那么一两次的人，常常会出现肌肉酸痛。
+肌肉酸痛往往不是锻炼后即刻出现，而是在第二或第三天出现，持续2-3天后才逐渐缓解。这都是为什么呢？如果说，肌肉酸痛是由于
+运动时乳酸积累所致，那么，应该在运动时或运动后即刻达到高峰，怎么会在第二天以后才出现呢？</p>
+
+
+
+
+<p>在运动医学上，把这种一般在24小时候才出现的肌肉酸痛称之为"延迟性肌肉酸痛症"。锻炼后24-72小时酸痛达到顶点，5-7天后的疼痛基本消失。
+除酸痛外，还有肌肉僵硬，轻者仅有压疼，重者肌肉肿胀，妨碍活动。任何骨骼肌在激烈运动后均可发生延迟性肌肉酸痛，尤其长距离跑后更易
+出现。长跑者可出现髋部、大腿部和小腿部前侧伸肌和后侧屈肌的疼痛，在肌肉远端和肌腱连接处症状更显。在炎热夏天进行极量运动后，除
+肌肉疼痛外，还可出现脱水、低钙、低蛋白等症状。</p>
+
+
+
+
+<p>赛跑是一种反常的运动，就是说肌肉在试图收缩的时候其实是被迫拉长。拉长或不寻常的运动经常会导致肌肉在数小时后甚至数天后出现疼痛，
+而且一碰就痛还变硬。这种现象被称为迟发性肌肉酸痛，发生非常普遍。肌肉肿胀和僵硬的感觉通常出现在运动后大约24小时，在大约2天时达到
+高峰，然后逐渐消退，因为肌肉酸痛是延迟一段时间才发作的，所以不能把它归为是过度运动的结果。事实上，真正的原因是肌肉纤维膜和蛋白
+丝体出现小的撕裂，造成局部的肌肉损伤。</p>
+
+
+
+
+<p>所以，迟发性肌肉酸痛是肌肉产生太多撕裂伤的结果。当我们运动时，为了加快速度，我们需要不断让肌肉接受挑战，希望它们达到我们想要的速度。
+这种渐进的超负荷会导致肌肉纤维的撕裂。在这个过程中，我们会在一天后出现中度的酸痛感。</p>
+
+
+
+
+<p>另外，运动后肌肉血流增加也会导致组织肿胀，这样的肿胀会增加对周围的组织结构的压迫。肌肉中的神经一感觉到压迫，就把疼痛信号传递到大脑，
+这样，你就会在运动完后的第二天早晨感觉到疼痛。</p>
+
+
+
+
+<p>运动过后肌肉纤维在消耗能量后需要补充蛋白质，特别是平时不运动的突然运动后都会出现肌肉酸痛。一定要是酸痛，有酸涨感的，如是疼痛，
+针刺感的是受伤产生的，要休息一旦时间才能好，严重的要去医院。</p>
+
+
+
+
+<p>两个办法缓解：1、休息，酸痛会在一周内缓解并消失。2、继续保持运动，但运动量不要大，一般腿酸就慢跑，每次跑到酸痛感渐渐减弱到很小
+时停止。坚持2-4天就好了。</p>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2012/10/22/BCI-based-animal-robot-summarize/">基于BCI的动物机器人研究分析与展望</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-10-22T23:09:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2012/10/22/BCI-based-animal-robot-summarize/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>摘  要</h3>
+
+
+<p>动物机器人已经成为机器人技术领域的重要研究方向之一，动物运动制导是当今神经、信息和机器人等科学交叉研究的一个热点。
+本文结合基于BCI的大鼠动物机器人的实例来介绍有关动物机器人的研究进展、研究方法，并对其发展前景进行展望。</p>
+
+
+
+
+<h3>关键字</h3>
+
+
+<p>脑机接口；动物机器人；大鼠</p>
+
+
+
+
+<h3>0 前言</h3>
+
+
+<p>在科技日益发达的现代信息社会，我们对机器人已经不再陌生，比如：科幻片中的高级智能化的机器人、自动化生产线上的工业
+机器人、大型展馆里的导航服务机器人、太空中火星上的“勇气号”探险机器人等等。然而，它们的任何一个动作都是由电脑程序来
+完成的，而且所有动作都是程序固定的，不能够灵活，而且一旦能量耗尽将会滞留原地，进退维谷，可谓“出师未捷身先死”，在很多
+方面都不如动物灵活、敏捷，而且所消耗的能量也不能靠自身解决。</p>
+
+
+
+
+<p>回眸历史，人类利用动物来替代自己进行艰苦的工作，甚至人力所不能及的工作，己经有近万年了。在这近万年的历史里，产生了战马、
+耕牛、狩猎犬和信鸽等执行特殊任务的动物。但这些动物所执行的任务较为单一，智力含量较为低下，若是动物能够完全受控于人类，
+将是非常完美的设想。</p>
+
+
+
+
+<p>基于BCI (Brain-Computer Interface，脑-机接口)的动物机器人既很好地解决了微型机器人携带能量不足的问题，同时可以通过
+人工控制来执行一些特殊的、复杂的任务，还具有人类赋予的智能。</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/10/22/BCI-based-animal-robot-summarize/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2012/09/26/convex-optimization-overview/">凸优化简介</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-09-26T23:03:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2012/09/26/convex-optimization-overview/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>在machine learning 的很多问题中，我们最终往往要求解某个函数的最优值。用数学术语表示就是，
+给定一个函数 $f: R^{n} \rightarrow R$，求 $ x \in R^{n} $使得$f(x)$ 取得最小（大）值。例如least-square,
+logistic regression, linear regression, svm, etc. 这类问题统称为优化问题。</p>
+
+<h2>1.引言</h2>
+
+
+<p>在一般情况下，求解任意一个函数的全局最优值是很困难的。但是对于一种特定类型的函数——凸函数（convex function），
+我们可以很有效的求解其全局最优值。这里的“有效”是指在实际问题求解中，能在多项式复杂度的时间里求解。
+人们将这类函数的最值问题称为凸优化问题（Convex Optimal Problem）。下面我从凸集和凸函数讲起，然后
+介绍凸优化的一般描述和典型问题举例。</p>
+
+
+
+
+<h2>2.凸集及其实例</h2>
+
+
+<p><strong>凸集的定义</strong>：一个集合$C$是凸集，当且仅当对任意$x,y\in C$和$\theta \in R$且$0\leq \theta \leq 1$，都有</br>
+<center>$\theta x + (1-\theta)y \in C$.</center>
+其几何意义在于，在集合C中任取两个点，连接两点的直线段上的任一点也在集合C中。下图是凸集和非凸集的例子：</br>
+<img src="/images/201209026/IMAG20120902601.jpg">
+</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/09/26/convex-optimization-overview/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page8">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">Blog Archives</a></li>
+    
+    <li class="next"><a href="/page6">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

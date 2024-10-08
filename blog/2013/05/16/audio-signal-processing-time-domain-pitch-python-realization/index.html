@@ -1,0 +1,397 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>语音信号处理之时域分析-音高及其Python实现 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2013/05/16/audio-signal-processing-time-domain-pitch-python-realization">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">语音信号处理之时域分析-音高及其Python实现</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-05-16T23:10:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>音高（Pitch）</h2>
+
+
+<p>概念：音高（Pitch）是语音信号的一个很重要的特征，直觉上而言它表示声音频率的高低，这个频率是指基本频率（基频），也即基本周期的倒数。
+若直接观察语音的波形，只要语音信号稳定，我们可以很容易的看出基本周期的存在。例如我们取一个包含256个采样点的帧，单独绘制波形图，就可以明显的
+看到它的基本周期。如下图所示：
+<center><img src="/images/2013/IMAG2013051601.png"></center>
+其中最上面的波形为|a|的发音，中间的为上图中红色双竖线（位于语音区）所对应的帧的具体波形，而最下面的是上图中绿色双竖线（位于静音区）所
+对应的帧的具体波形。很容易看到中间的波形具有明显的周期性。
+</p>
+
+
+<!--more-->
+
+
+<p>其代码如下：
+``` py3
+import wave
+import numpy as np
+import pylab as pl
+
+# ============ test the algorithm =============
+# read wave file and get parameters.
+fw = wave.open('a.wav','rb')
+params = fw.getparams()
+print(params)
+nchannels, sampwidth, framerate, nframes = params[:4]
+strData = fw.readframes(nframes)
+waveData = np.fromstring(strData, dtype=np.int16)
+waveData = waveData*1.0/max(abs(waveData))  # normalization
+fw.close()
+
+# plot the wave
+time = np.arange(0, len(waveData)) * (1.0 / framerate)
+
+index1 = 10000.0 / framerate
+index2 = 10512.0 / framerate
+index3 = 15000.0 / framerate
+index4 = 15512.0 / framerate
+
+pl.subplot(311)
+pl.plot(time, waveData)
+pl.plot([index1,index1],[-1,1],'r')
+pl.plot([index2,index2],[-1,1],'r')
+pl.plot([index3,index3],[-1,1],'g')
+pl.plot([index4,index4],[-1,1],'g')
+pl.xlabel("time (seconds)")
+pl.ylabel("Amplitude")
+
+pl.subplot(312)
+pl.plot(np.arange(512),waveData[10000:10512],'r')
+pl.plot([59,59],[-1,1],'b')
+pl.plot([169,169],[-1,1],'b')
+print(1/( (169-59)*1.0/framerate ))
+pl.xlabel("index in 1 frame")
+pl.ylabel("Amplitude")
+
+pl.subplot(313)
+pl.plot(np.arange(512),waveData[15000:15512],'g')
+pl.xlabel("index in 1 frame")
+pl.ylabel("Amplitude")
+pl.show()
+```
+</p>
+
+
+
+
+<p>根据参考[1]，可以通过观察一帧的波形图来计算基音频率（感觉这种方法有点奇葩，不过很直观。例如这里的基频为：1/( (169-59)*1.0/framerate )=145.45Hz），
+然后还可以计算半音（semitone，可以参见[2]），进而得到pitch与semitone的关系。[1]中还提到了钢琴的半音差，DS表示完全看不懂啊，有木有！！！</p>
+
+
+
+
+<p>参考[2]中还简单介绍了如何改变音高、扩展音域，以及如何改变乐器的振动的弦的音高（通过改变弦长、张力、密度等），感兴趣的可以看看。</p>
+
+
+
+
+<p>另外，由于生理结构的差异，男女性的音高范围不尽相同，一般而言：</br>
+·男性的音高范围是35~72半音，对应的频率范围是62~523Hz；</br>
+·女性的音高范围是45~83半音，对应的频率范围是110~1000Hz。</br>
+然而，我们分辨男女的声音并不是只根据音高，还要根据音色（也即共振峰，下一篇文章中将详细介绍）。
+</p>
+
+
+
+
+<p>关于音高的计算，目前有很多种算法，具体将会在后续文章中详细介绍。</p>
+
+
+
+
+<h2>参考（References）</h2>
+
+
+<p>
+[1]Pitch (音高): http://neural.cs.nthu.edu.tw/jang/books/audiosignalprocessing/basicFeaturePitch.asp</br>
+[2]Wiki： http://zh.wikipedia.org/wiki/音高
+</p>
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2013/05/16/audio-signal-processing-time-domain-pitch-python-realization/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2013-05-16T23:10:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/python/'>Python</a>, <a class='tag' href='/blog/tags/speech/'>Speech</a>, <a class='tag' href='/blog/tags/xin-hao-chu-li/'>信号处理</a>, <a class='tag' href='/blog/tags/yin-gao/'>音高</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2013/05/15/audio-signal-processing-time-domain-ZeroCR-python-realization/" title="Previous Post:
+        语音信号处理之时域分析-过零率及其Python实现">&laquo; 语音信号处理之时域分析-过零率及其Python实现</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2013/05/18/audio-signal-processing-time-domain-timbre-python-realization/"
+        title="Next Post: 语音信号处理之时域分析-音色及其Python实现">语音信号处理之时域分析-音色及其Python实现
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2013/05/16/audio-signal-processing-time-domain-pitch-python-realization/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2013/05/16/audio-signal-processing-time-domain-pitch-python-realization/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

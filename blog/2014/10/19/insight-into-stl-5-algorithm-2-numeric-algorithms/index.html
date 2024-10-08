@@ -1,0 +1,451 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>深入理解STL源码(5.2) 算法之数值算法 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2014/10/19/insight-into-stl-5-algorithm-2-numeric-algorithms">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">深入理解STL源码(5.2) 算法之数值算法</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-10-19T20:28:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>本文主要介绍STL中的数值算法，主要涉及到的源码文件有 <code>stl_numberic.h</code>、<code>numeric</code>、<code>stl_relops.h</code> 等。</p>
+
+<p>STL 数值算法主要包含以下几个算法（来自<a href="http://www.cplusplus.com/reference/numeric/">C++文档</a>）：</p>
+
+<ul>
+<li>accumulate: Accumulate values in range</li>
+<li>adjacent_difference: Compute adjacent difference of range</li>
+<li>inner_product: Compute cumulative inner product of range</li>
+<li>partial_sum: Compute partial sums of range</li>
+<li>iota: Store increasing sequence</li>
+<li>power: power(x,n) 1 multiply by x n times (not in C++ standard)</li>
+</ul>
+
+
+<p>下面一一介绍每个算法的实现。</p>
+
+<h3>1. accumulate</h3>
+
+<p>该算法计算 init 和区间 [first, last) 内所有元素的总和。注意，必须提供 init 的初始值，这样即使 first=last 区间为空，仍能得到一个明确定义的值。当 init=0 时，即为计算 [first, last) 区间内所有元素的总和。具体实现有两个版本，如下：</p>
+
+<pre><code class="cpp">template &lt;class _InputIterator, class _Tp&gt;
+_Tp accumulate(_InputIterator __first, _InputIterator __last, _Tp __init){
+  __STL_REQUIRES(_InputIterator, _InputIterator); // concept check
+  for ( ; __first != __last; ++__first)
+    __init = __init + *__first; // 求和
+  return __init;
+}
+template &lt;class _InputIterator, class _Tp, class _BinaryOperation&gt;
+_Tp accumulate(_InputIterator __first, _InputIterator __last, _Tp __init, _BinaryOperation __binary_op){
+  __STL_REQUIRES(_InputIterator, _InputIterator); // concept check
+  for ( ; __first != __last; ++__first)
+    __init = __binary_op(__init, *__first); // 指定二元操作
+  return __init;
+}
+</code></pre>
+
+
+
+<!-- more -->
+
+
+<p>第二个版本通过仿函数参数 <em>binary_op 指定操作类型，可以实现其他方式的累计，例如累乘等（令init=1，</em>binary_op=multiply）。</p>
+
+<h3>2. adjacent_difference</h3>
+
+<p>该算法用来计算区间 [first, last) 中相邻元素的差（或其他指定运算，结果[i]=当前元素[i]的值-前驱元素[i-1]的值），该算法也有两个版本，一个是指定运算为差，另一个传入仿函数(参数 _binary_op)指定具体运算，这里贴出第二个版本：</p>
+
+<pre><code class="cpp">template &lt;class _InputIterator, class _OutputIterator, class _Tp, class _BinaryOperation&gt;
+_OutputIterator
+__adjacent_difference(_InputIterator __first, _InputIterator __last, 
+                      _OutputIterator __result, _Tp*, _BinaryOperation __binary_op) {
+  _Tp __value = *__first;
+  while (++__first != __last) { // 先 ++ ，再比较
+    _Tp __tmp = *__first; // 取第i+1个元素的值
+    *++__result = __binary_op(__tmp, __value);
+    __value = __tmp; // 保存第i个元素的值
+  }
+  return ++__result;
+}
+template &lt;class _InputIterator, class _OutputIterator, class _BinaryOperation&gt;
+_OutputIterator adjacent_difference(_InputIterator __first, _InputIterator __last,
+                    _OutputIterator __result, _BinaryOperation __binary_op) {
+  if (__first == __last) return __result; // 区间为空，直接返回
+  *__result = *__first; // 第一个元素没有前驱，直接将当前值赋给结果
+  return __adjacent_difference(__first, __last, __result,
+                               __VALUE_TYPE(__first), __binary_op);
+}
+</code></pre>
+
+<h3>3. inner_product</h3>
+
+<p>该算法实现区间 [first1, last1) 和区间 [first2, first2+(last1-first1) ) 的一般内积（generalized inner product），公式为$init = init+(<em>i) * (</em>(first2+(i-first1)))$同样需要提供 init 的值（理由同accumulate）。另外还有一个版本，提供两个仿函数，分别指定上面公式中的加法和乘法。第一个版本的代码如下：
+<code>cpp
+template &lt;class _InputIterator1, class _InputIterator2, class _Tp&gt;
+_Tp inner_product(_InputIterator1 __first1, _InputIterator1 __last1,
+                  _InputIterator2 __first2, _Tp __init) {
+  for ( ; __first1 != __last1; ++__first1, ++__first2)
+    __init = __init + (*__first1 * *__first2);
+  return __init;
+}
+</code>
+可以看到，这里其实没有判断第二个区间是否越界，所以在调用时需要我们自己注意，但一般来说计算内积的两个区间都是相同长度的。</p>
+
+<h3>4. partial_sum</h3>
+
+<p>该算法用来计算局部总和，将 <code>*first</code> 赋值给 <code>*result</code>，将 <code>*frist+*(first+1)</code> 赋值给 <code>*(result+1)</code>，依次类推，即有 <code>result[i]=sum(*first..*(first+i))</code>，这是默认的操作为加法的版本，还有一个版本可以通过仿函数指定操作，以下是默认版本：
+<code>cpp
+template &lt;class _InputIterator, class _OutputIterator, class _Tp&gt;
+_OutputIterator __partial_sum(_InputIterator __first, _InputIterator __last,
+              _OutputIterator __result, _Tp*) {
+  _Tp __value = *__first;
+  while (++__first != __last) {
+    __value = __value + *__first;
+    *++__result = __value; // result 先++，再提领、赋值
+  }
+  return ++__result;
+}
+template &lt;class _InputIterator, class _OutputIterator&gt;
+_OutputIterator partial_sum(_InputIterator __first, _InputIterator __last,
+            _OutputIterator __result){
+  if (__first == __last) return __result;
+  *__result = *__first; // 第一项直接赋值
+  return __partial_sum(__first, __last, __result, __VALUE_TYPE(__first));
+}
+</code></p>
+
+<h3>5. itoa</h3>
+
+<p>该算法不是C++/STL标准，主要作用是将区间 [first, last) 的值赋值为 value,value+1,value+2,... 如下：
+<code>cpp
+template &lt;class _ForwardIter, class _Tp&gt;
+void iota(_ForwardIter __first, _ForwardIter __last, _Tp __value){
+  while (__first != __last)
+    *__first++ = __value++;
+}
+</code></p>
+
+<h3>6. power</h3>
+
+<p>该算法也不是C++/STL标准，作用在于实现 x 的 n 次方的计算，通过将n分解为2的幂来计算。还有一个版本是用户可以指定运算，而不一定是乘法。默认版本如下：
+<code>cpp
+template &lt;class _Tp, class _Integer, class _MonoidOperation&gt;
+_Tp __power(_Tp __x, _Integer __n, _MonoidOperation __opr){ // func1：幂方的具体实现
+  if (__n == 0)
+    return identity_element(__opr);
+  else {
+    while ((__n &amp; 1) == 0) { // 二进制末尾为0
+      __n &gt;&gt;= 1; // n/2
+      __x = __opr(__x, __x); // 乘方
+    }
+    _Tp __result = __x;
+    __n &gt;&gt;= 1;
+    while (__n != 0) {
+      __x = __opr(__x, __x); // 乘方
+      if ((__n &amp; 1) != 0) // 二进制末尾为1
+        __result = __opr(__result, __x); // 乘入结果
+      __n &gt;&gt;= 1;
+    }
+    return __result;
+  }
+}
+template &lt;class _Tp, class _Integer&gt;
+inline _Tp __power(_Tp __x, _Integer __n){ // func2
+  return __power(__x, __n, multiplies&lt;_Tp&gt;()); // 调用func3
+}
+template &lt;class _Tp, class _Integer, class _MonoidOperation&gt;
+inline _Tp power(_Tp __x, _Integer __n, _MonoidOperation __opr){ // func3
+  return __power(__x, __n, __opr); // 调用func1
+}
+template &lt;class _Tp, class _Integer&gt;
+inline _Tp power(_Tp __x, _Integer __n){
+  return __power(__x, __n); // 调用func2
+}
+</code>
+饶了几道弯，主要看 func1实现即可。</p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2014/10/19/insight-into-stl-5-algorithm-2-numeric-algorithms/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2014-10-19T20:28:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/c-plus-plus/'>C++</a>, <a class='tag' href='/blog/tags/stl/'>STL</a>, <a class='tag' href='/blog/tags/suan-fa/'>算法</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2014/10/12/insight-into-stl-5-algorithm-1-overview/" title="Previous Post:
+        深入理解STL源码(5.1) 算法">&laquo; 深入理解STL源码(5.1) 算法</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2014/10/25/insight-into-stl-5-algorithm-3-base-algorithms-algobase/"
+        title="Next Post: 深入理解STL源码(5.3) 算法之基本算法algobase">深入理解STL源码(5.3) 算法之基本算法algobase
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2014/10/19/insight-into-stl-5-algorithm-2-numeric-algorithms/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2014/10/19/insight-into-stl-5-algorithm-2-numeric-algorithms/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

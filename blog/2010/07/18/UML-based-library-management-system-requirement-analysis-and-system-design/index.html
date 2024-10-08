@@ -1,0 +1,472 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>基于UML的图书管理系统的需求分析 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2010/07/18/UML-based-library-management-system-requirement-analysis-and-system-design">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">基于UML的图书管理系统的需求分析</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-07-18T10:06:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>一个图书馆的图书资料库在正常运转中总是面对大量的读者信息、书籍信息以及两者相互作用产生的借书信息、还书信息。
+图书馆作为一个信息资源的集散地，图书和用户借阅资料繁多，包含着很多的信息数据。图书管理系统的开发和应用主要通过
+两个步骤来实现：首先是基于系统功能的需求分析，其次是系统模型的设计和实现。
+</p>
+
+
+
+
+<h2>1.需求分析</h2>
+
+
+<p>需求分析是软件工程过程的一个重要阶段,其中一个主要任务是确定系统的功能需求,采用面向对象方法,基于UML的可视化
+系统需求分析,因为有用户的积极参与,既可以加快设计者对于问题的理解,又能够在系统描述方面减少语义差异,保证分析的
+正确性。需求分析的目标就是建立需求模型,即从功能需求出发建立用例模型, UML的用例视图从用户的需求中提取,以盒图的
+方式描述待开发的系统的功能需求。每个用例都指定了客户的需求即他们需要系统干什么。用例图为设计活动不仅记录需求
+而且还提供了一种挖掘的信息, 它记录了需求到设计结果之间的映射关系,能够确保设计结果具有明确的根据或者说具有可
+维护性,基于UML的软件开发过程是以用例驱动的。</p>
+
+
+
+
+<p>首先我们进行角色识别，角色识别的任务是找出所有可能与系统发生交互行为的外部实体、对象、系统。它们的行为不受系统控制，
+但是可以提供输入给系统。对于一所大学的图书管理系统，基本的功能是完成图书的借阅和相关信息的管理，服务的对象有本科生，
+研究生，教师，及其他学校的学生，还有社会人员，这些人可归结为一类即读者。而为帮助读者顺利完成借还书的可以是工作人员，
+可以是自动借还书机，他们可以归结为一类即图书管理人员。因此对于一个图书管理系统主要有两类角色，读者、图书管理员。</p>
+
+
+<!--more-->
+
+
+
+
+<p>其次，在主要角色的基础上，可以识别出与角色相应的用例，从而得到系统的用例模型。与读者相关的过程包括：借书、还书、
+预定、图书信息检索、借阅查询(如查询本人借书记录、还书期限、是否超期)、个人相关信息查询及修改(如学号、姓名、性别、
+年级、专业、家庭住址、联系电话、出生日期、民族、政治面貌、身份证号等)。与图书管理员相关的过程包括：办理借书、办理
+还书、解除预定、图书订购、读者信息管理（增加/删除读者、修改读者权限及密码、借阅超期罚款）、图书信息管理（增加/删除
+数目、图书类别等相关信息的修改、流通情况）。系统管理（系统的登陆、退出、日志维护、系统更新）。以上分析中，与读者，
+图书管理员相关的过程构成了本系统的基本用例。</p>
+
+
+
+
+<h2>2.系统的整体结构</h2>
+
+
+<p>综上所述一个图书管理系统的整体结构可以分为三大模块：图书管理模块、读者管理模块、系统管理模块。</p>
+
+
+
+
+<p>（1）图书管理模块包括与图书相关的一些过程，主要有图书的借出、图书的归还、预定、图书信息检索、图书订购、图书相关信息管理。</p>
+
+
+
+
+<p>（2）读者管理模块主要包括与读者有联系相关的过程，主要有增加/删除读者、修改读者权限及密码、借阅信息查询、
+个人信息查询及修该、借阅超期和丢失罚款。</p>
+
+
+
+
+<p>（3）系统管理模块包括系统的登陆、退出、系统维护、系统更新。</p>
+
+
+
+
+<p>综上我们画出系统的整体结构，如图一所示：</br>
+<center><img src="/images/2010/IMAG2010071801.jpg"></center>
+<center>图一 图书管理系统的整体结构</center>
+</p>
+
+
+
+
+<h2>3.系统的整体结构</h2>
+
+
+<p>从以上分析中我们不难得出系统的基本用例图，如图二所示：</br>
+<center><img src="/images/2010/IMAG2010071802.jpg"></center>
+<center>图二 系统的基本用例图</center>
+</p>
+
+
+
+
+<p>图书管理和图书管理是图书管理系统的重要组成部分，为此我们按照前文所述将图书管理模块和读者模块以及系统管理模块详细
+精化得出如下的用例图，如图三、图四、图五所示：</br>
+<center><img src="/images/2010/IMAG2010071803.jpg"></center>
+<center>图三 图书管理模块的用例图</center>
+<center><img src="/images/2010/IMAG2010071804.jpg"></center>
+<center>图四 读者管理用例图</center>
+<center><img src="/images/2010/IMAG2010071805.jpg"></center>
+<center>图五 系统管理模块的用例图</center>
+</p>
+
+
+
+
+<h2>4.图书管理系统的行为图</h2>
+
+
+<p>我们再进行动态建模分析。对于图书管理系统借书还书是两个重要的过程，我们先来分析一下借书、还书的一般过程，并由借书的
+一般过程画出其顺序图、协作图以及活动图。</p>
+
+
+
+
+<p>（1）借书的过程：读者刷卡进入图书馆，或者先查询图书及个人借阅信息，或者直接去挑选图书，选择好图书后进入借书程序，管理员
+先检查读者的借书证件，查验能否借阅，比如：证件是否无效或书籍是否已经借满等，即检验其借书的合法性和有效性，如果是非法用户
+或借书数量范围外，则该读者不能借阅图书。如果满足借阅要求，则再获取所借书的标题以进行库内搜索，获取书目查询此书的数量，
+看是否还有此书，如果没有则阻止其他借书者可能进行的预订活动，将此书借出，根据书号将此书的借阅标志位取反以表示此书已借出，
+并将此书的书目减1。并为此读者记录借阅日期，以及归还日期，在归还日期内未能归还和续借的，并为其记录超借天数及罚款数额。</p>
+
+
+
+
+<p>（2）还书过程：在返还图书的过程中，管理员首先获取读者的借阅信息和被归还的书籍的信息，如书标题信息，数量等，并一一审核
+每本书的归还日期是否超过应归还日期。在完成阶段，将此书的书号登记并设计标志位为已归还，以便读者网上预订和继续借阅，同时
+将此类图书的数量加1，如果读者超期或丢失所借书籍，则要进行赔偿处理。</p>
+
+
+
+
+<p>所以我们不难画出借书一般过程的顺序图，如图六所示：</br>
+<center><img src="/images/2010/IMAG2010071806.jpg"></center>
+<center>图六 借书一般过程的顺序图</center>
+</p>
+
+
+
+
+<p>由顺序图可得到协作图，如图七所示。仔细分析借书过程的细节，可以画出如图八所示的活动图，它表示了复杂算法的过程，尤其是
+过程中的判断、并发和同步。</br>
+<center><img src="/images/2010/IMAG2010071807.jpg"></center>
+<center>图七 借书一般过程的协作图</center>
+<center><img src="/images/2010/IMAG2010071808.jpg"></center>
+<center>图七 借书一般过程的活动图</center>
+</p>
+
+
+
+
+<p>以上我们用多种语言机制分析了读者的主要相关事件流，下面我们绘制图书管理员使用系统的状态图分析图书管理员的主要事件流。
+从以上分析可知，图书管理员相关的过程包括：办理借书、办理还书、解除预定、图书订购、读者信息管理（增加/删除读者、修改
+读者权限及密码、借阅超期罚款）、图书信息管理（增加/删除数目、图书类别等相关信息的修改、流通情况）。由此我们可绘制如
+图九所示的图书管理员使用系统的状态图：</br>
+<center><img src="/images/2010/IMAG2010071809.jpg"></center>
+<center>图九 图书管理员使用系统的状态图</center>
+</p>
+
+
+
+
+<h2>5 图书管理系统的静态图</h2>
+
+
+<p>定义并描述了各个类后，我们可以根据实际情况引入包来管理类，本图书馆管理系统可以划分为四个包：用户管理：对系统用户
+进行管理，为用户提供信息服务接口，便于对系统进行操作。借阅管理包括借书处理，还书处理和罚款处理等。读者管理包括对读者
+图书等信息进行维护，主要有读者信息的增删，对图书更新资料进行维护。系统服务：包括系统登录检查，安全维护等。系统的包图
+如图十所示：</br>
+<center><img src="/images/2010/IMAG2010071810.jpg"></center>
+<center>图十 系统包图</center>
+</p>
+
+
+
+
+<h2>6 图书管理系统的实现</h2>
+
+
+<p>经过系统分析和设计后，就可以根据设计模型在具体的环境中实现系统，生成系统的源代码、可执行程序和相应的软件文档，建立
+一个可执行系统。进而需要对系统进行测试和排错，保证系统符合预定的要求，获得一个无错的系统实现。测试结果将确认所完成的
+系统可以真正使用。</p>
+
+
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2010/07/18/UML-based-library-management-system-requirement-analysis-and-system-design/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2010-07-18T10:06:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/engineering/'>Engineering</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/mis/'>MIS</a>, <a class='tag' href='/blog/tags/uml/'>UML</a>, <a class='tag' href='/blog/tags/xu-qiu-fen-xi/'>需求分析</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2010/04/10/10-stories-in-management/" title="Previous Post:
+        管理的十个寓言故事">&laquo; 管理的十个寓言故事</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2010/07/19/ucenter-sync-login-mechanism/"
+        title="Next Post: UCenter同步登陆机制">UCenter同步登陆机制
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2010/07/18/UML-based-library-management-system-requirement-analysis-and-system-design/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2010/07/18/UML-based-library-management-system-requirement-analysis-and-system-design/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

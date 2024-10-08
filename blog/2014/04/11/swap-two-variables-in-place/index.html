@@ -1,0 +1,414 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>原地交换两个变量的值 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2014/04/11/swap-two-variables-in-place">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">原地交换两个变量的值</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-04-11T22:27:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>引子</h2>
+
+<p>在码代码的过程中，不经意间就会遇到需要交换两个变量的情况，一般情况下都是通过新定义一个同类型的变量来中转，但自己也知道可以不用定义新变量直接原地交换，但具体如何原地交换以及其中可能隐藏的bug却了解得不是很清楚，于是乎google了一下，发现这里面还真是有很多学问呢，这里整理和总结一下。</p>
+
+<p>原地交换两个变量，最主要有加减法和异或法。</p>
+
+<p>本文完整代码链接：<a href="../upload/code/20140411.cpp">20140411.cpp</a></p>
+
+<h2>加减法</h2>
+
+<p>加减法最简单、最好理解了，设待交换的两个变量分别为 a 和 b ，首先将两者的和赋给 a ；然后将 a 与 b的差赋给 b ，这样 b 就是 a 原来的值了；最后再将 a 与 b 的差赋给 a ，这样 a 就是 b 原来的值了。具体代码如下：</p>
+
+<pre><code class="cpp">inline template &lt;class T&gt;
+void xswap(T &amp;a,T &amp;b){
+    a=a+b;
+    //printf("a=%u\n",a);
+    b=a-b;
+    a=a-b;
+}
+</code></pre>
+
+
+
+<!-- more -->
+
+
+<p>当然也可以先减后加：</p>
+
+<pre><code class="cpp">inline template &lt;class T&gt;
+void xswap2(T &amp;a,T &amp;b){
+    a=a-b;
+    //printf("a=%u\n",a);
+    b=a+b;
+    a=b-a;
+}
+</code></pre>
+
+<p>这里实现的原理与先加后减类似。粗一看，这样实现两个变量的原地交换很简单有效。但是，这其中有一个很隐秘的bug，就是溢出的问题，在先加后减的实现中，如果 a 与 b 的和大于该类型的能表示的最大值，会发生神马捏？我写了一个 main 函数来简单的测试了一下：</p>
+
+<pre><code class="cpp">int main()
+{
+    unsigned char a=255,b=1;
+    printf("a=%u,b=%u\n",a,b);
+    xswap(a,b);
+    printf("a=%u,b=%u\n",a,b);
+    return 0;
+}
+</code></pre>
+
+<p>将上面的 xswap 函数中的注释取消，编译运行后（使用Code::Blocks 13.12 MinGW g++编译），得到如下输出：</p>
+
+<pre><code>a=255,b=1
+a=0
+a=1,b=255
+</code></pre>
+
+<p>可以看到其中第2行输出的 a 的值为 0，产生了上溢（如果 a , b 同为负，可能产生下溢）。虽然最后交换的结果还是对的，但溢出的部分可能对内存中其他变量产生不可预测的后果。因此，不建议这么实现原地交换两个变量，如果实在需要用这种方法，一定要在进行加或减之前，判断时候回产生溢出。</p>
+
+<h2>异或法</h2>
+
+<p>异或法的基本原理类似，但还利用了异或的如下两个特性： a ^ 0 = a, a ^ a = 0. 用异或来实现两个变量的交换如下：</p>
+
+<pre><code class="cpp">template &lt;class T&gt;
+inline void xswap3(T &amp;a,T &amp;b){
+    a=a^b;
+    b=a^b;
+    a=b^a;
+}
+</code></pre>
+
+<p>由于异或是按位运算的，所以不存在溢出问题。因此，如果一定要原地实现两个变量的交换的话，建议用异或的方法。</p>
+
+<h2>原地交换多个变量</h2>
+
+<p>实际上，我们还可以利用上面的思想，将两个变量扩展到多个变量的原地交换，例如三个变量的交换：</p>
+
+<pre><code class="cpp">template &lt;class T&gt;
+inline void swap3(T &amp;a,T &amp;b,T &amp;c){
+    a=a^b;
+    b=a^b;
+    a=b^a;
+    b=b^c;
+    c=b^c;
+    b=b^c;
+}
+</code></pre>
+
+<p>即先交换 a 和 b，再交换 b (=a) 和 c。另外，上面的式子可以简化和压缩到一个式子，具体的技巧读者可以自行google，这里不提倡这么做。</p>
+
+<h2>STL是如何实现swap的</h2>
+
+<p>最后，我们来看看STL标准库是如何实现swap的（这里的实现版本是 move.h 文件中的一个，在 STL 中还有针对 vector, string, tree, map, multimap, deque 的 swap 函数）。</p>
+
+<pre><code class="cpp">/**
+*  @brief Swaps two values.
+*  @ingroup mutating_algorithms
+*  @param  __a  A thing of arbitrary type.
+*  @param  __b  Another thing of arbitrary type.
+*  @return   Nothing.
+*/
+template&lt;typename _Tp&gt;
+inline void
+swap(_Tp&amp; __a, _Tp&amp; __b)
+{
+  // concept requirements
+  __glibcxx_function_requires(_SGIAssignableConcept&lt;_Tp&gt;)
+
+  _Tp __tmp = _GLIBCXX_MOVE(__a);
+  __a = _GLIBCXX_MOVE(__b);
+  __b = _GLIBCXX_MOVE(__tmp);
+}
+</code></pre>
+
+<p>可以看到，这里新声明了一个变量 __tmp 来中转。至于为什么没有原地进行交换，一个可能的解释是：对于 inline 函数来说，函数调用的代码会直接被改函数体替换，再经过编译优化，最后可能只需要借助一个寄存器变量就可以实现两个变量的交换了，这是非常快的，与通过按位的异或运算的实现，在性能上区别不是太大。</p>
+
+<h2>update</h2>
+
+<p>关于溢出的更深入的讨论，可以看看陈浩的最新博文 <a href="http://coolshell.cn/articles/11466.html">C语言的整型溢出问题</a> . 这里面有提到溢出的几个危害，还有关于 C 语言标准、编译器对溢出是如何处理和对待的，以及如何写代码实现预先判断溢出。</p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2014/04/11/swap-two-variables-in-place/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2014-04-11T22:27:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/c-plus-plus/'>C++</a>, <a class='tag' href='/blog/tags/cyu-yan/'>C语言</a>, <a class='tag' href='/blog/tags/swap/'>swap</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2014/03/16/go-concurrent-programming-first-try/" title="Previous Post:
+        Go并发编程初探">&laquo; Go并发编程初探</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/"
+        title="Next Post: 全排列及某排列的后继的求解及其STL实现的分析">全排列及某排列的后继的求解及其STL实现的分析
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2014/04/11/swap-two-variables-in-place/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2014/04/11/swap-two-variables-in-place/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

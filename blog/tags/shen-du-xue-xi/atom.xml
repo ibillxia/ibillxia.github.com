@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 深度学习 | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/shen-du-xue-xi/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[VALSE2013]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/04/22/VALSE2013/"/>
+    <updated>2013-04-22T22:28:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/04/22/VALSE2013</id>
+    <content type="html"><![CDATA[<h3>学术研讨</h3>
+
+
+<p>VALSE是Vision And Learning SEminar的缩写，它主要目的是为计算机视觉、图像处理、模式识别与机器学习研究领域内的中国青年学者（以70后研发
+人员为主）提供一个深层次学术交流的舞台。虽然参与会议和做报告的人主要是做视觉的，但很多问题是机器学习和模式识别当中的一般性问题，所以我这
+个搞语音的也去打酱油了^_^。</p>
+
+
+
+
+<p>今年的VALSE在南京东南大学召开，参加会议的人数超出预期，会场爆满，仅学校的老师和公司的研究人员就占了会场大半，学生沦落到只能座最后两排，
+或者座分会场（这个太不科学了-_-!）。会程安排也很紧凑，中午几乎没有休息时间，吃饭都很赶，而下午也很晚（6点半左右）才结束。这次会议有好几个
+perfect的报告，但也有些不太感兴趣的，有的甚至感觉很2。除了一些报告，还有两个主题讨论会，印象中主要包括三个论题：学术界与工业界的Gap及衔接
+问题，深度学习是否是计算机视觉的终极解决方案，计算机视觉要不要从生物视觉机理中受启发等。</p>
+
+
+
+
+<p>闲话少说，言归正传，数萝卜下窖的讲讲这两天的经历吧。
+第一天上午，第一个做报告的是MSRA的张磊，主要讲了计算机视觉的一些基本问题，从AI的历史将起，提到了Turing Test，是人工智能
+的Benchmark。而CV的一个基本问题是Object Recognition，人们的研究经历了从之前的Model Based到如今的Data Driven及Big Data的过程，各种模型和方法可谓
+层出不穷，然而对于真正解决问题、真正达到人类一般的视觉智能，还相差甚远。接着他讲了关于在路灯下找钥匙的故事（详询http://tongyanyan.blog.edu.cn/2006/427512.html），
+听了这个故事后，感觉那个找钥匙的人很滑稽可笑，然而再想想我们自己正在做的研究，是不是在某种程度上和故事中的这个人一样呢。通过这个故事，他引出自己
+的观点：要想解决Object Recognition这个问题或者说要解决CV的问题，就需要More Effective Representation & Match。接下来讲在Representation方面一些研究
+人员提出的一些人工设计的Feature，而在Match方面则从Point、Line、Plane、Volume（点线面体）进行了详尽的讲述。最后还提了一下Deep Neural Network在CV中的
+应用，可以discover hidden patterns。虽然对CV中的很多概念和模型方法不太了解，但感觉还是挺有收获的。</p>
+
+
+
+
+<p>上午的后两个报告都是讲Sparse的，虽然之前看过关于Sparse Coding的东西，但当他们在上面讲的，主要偏重与Sparse这个问题的优化求解方法及其变形，
+涉及到很多数学公式和推导，感觉很枯燥，加之晚睡早起，有点犯困，所以基本没有听进去。贾佳亚的报告还似懂非懂，而陈欢欢的Sparse Bayesian Learning
+表示完全没听懂。个人感觉Sparse还是很重要的，所以在弄完Deep Learning这个专题后，我想有必要对这两个报告及其相关论文再做深入的学习和研究。</p>
+
+
+<!--more-->
+
+
+<p>中午3个东南大学的同学请我们实验室的在他们学校食堂吃饭，虽然不太记得他们名字了，真心感谢他们！</p>
+
+
+
+
+<p>下午第一个报告是高新波的IQA&VALSE，主要讲了图像质量评价的一些东西，虽然也提到了一些生物视觉方面的东西，感觉很没趣，基本没怎么听，打了个盹。
+第二个报告是俞洪波的关于生物视觉方面的东西，很感兴趣，他从深层复杂网络结构、神经元、突触、离子通道、蛋白等多个层面上讲了视觉系统的信息处理流程，
+后面还提到了视觉功能柱，指出了视觉神经元具有很强的选择性，不同部位的神经元对不同方向、距离的视觉信息具有选择性的激活增强，最后还讲了一些模拟
+视觉系统的计算模型，并描述了一些实验，虽然对报告题目中的Self Organization Model到底是什么还不是很清楚，但对生物视觉系统有了更进一步的了解，
+而且知道了他们是怎么获取神经元激活区域的。</p>
+
+
+
+
+<p>下午的第2个Session的第一个报告是颜水成的Fashion Recommendation，包括Hair Style，Makeup，Clothing，Shoes等的Recommendation，不太感冒，只是对他重复提到
+的关于华人做研究的一个问题深表同感，他说华人做研究其实很不错的，能在很多TOP会议期刊发Paper甚至Best Paper，但原创性的问题却很少，我们都在提高别人的Citation，
+所以华人还需要在发现问题方面多下功夫，而不是仅仅在解决问题方面。后面两个报告一个是王亦洲的General Purpose Vision，表示没听懂。最后一个报告是王晓刚的Crowd 
+Video Surveillance，主要是讲在Video中识别人并跟踪人的移动，或者统计视场中人的数量之类的，只是感性的了解了一下，印象里报告中好像没有提到什么具体的CV技术，
+只是举了一个人体位置跟踪的例子，还有一个用在足球视屏中运动员跟踪的例子。</p>
+
+
+
+
+<p>第二天上午第一个Session是两个报告，一个是陈小武的Image/Video/3D Scene Understanding and Editing，主要分以下四个方面：Illumination Learning and Synthesis，
+Labeling and Lavering and Editing，Estimating 3D Model from a single Image，Video Event Representation and Inference，总体感觉讲的内容涉及到很多东西，甚至他的
+学生不仅懂CV，还要懂美术、剪纸等，而且他们每年都会发CVPR、ICCV、ECCV之类的，感觉还挺NB的。另外一个报告是非常期待的于凯的关于深度学习和大数据的报告，但听了之后，
+感觉有些Depressed，因为他的报告中没有涉及Deep Learning的一些细节的东西，诸如RBM的原理及其训练等，基本上只是泛泛而谈，之前对Deep Learning做了深入的调研和学习，
+自我感觉Deep Learning也没什么神秘的，虽然对Gibbs采样和CD算法的理论还没有完全理解清楚，但我觉得Deep Learning更多的是一种思想方法，在Deep Architecture中，Knowledge
+通过一层一层抽象和提取后，对于Classification、Clustering等任务具有更有效Representation，而且在Training Error非常小的情况下，还是可以再Testing中获得理想的Error Ratio，
+相比Shallow Architecture，不存在模型Over Fitting的问题。另外，有人提到Deep Architecture中Layer数目的确定的问题，于凯的回答是，在Neural Networks中加一层后，进行Deep 
+Learning的过程，如果相对于没加该层得到的Test Error更小，并且是非常有效的性能提升，那么就加进这一层。然后同样的，再加一层，再进行Deep Learning，以此类推。</p>
+
+
+
+
+<p>上午的后一个Session是关于CV在Industry中的Application，先是来在Industry中的一些研究开发人员对他们目前的工作做一些简短的介绍，感觉某些公司有严重的广告嫌疑，很是讨厌。
+然后是讨论阶段，各自就CV在学术界和工业界之间的Gap发表意见，总结起来主要有以下观点：一方面学术界与工业界的Gap是必要的，学术必须要超前，这样工业界才可能将其成熟的应用；
+另一方面，学术界与工业界的Gap可以通过在工业界设置研究院（比如MSRA、百度最近在硅谷设置深度学习研究院之类），这样可以加快学术成果应用于工业界的进程，学术最终的目的就是
+在工业界中发挥巨大作用，服务广大民众，给社会带来价值。</p>
+
+
+
+
+<p>上午的Panel严重超时了，直到快1点了才结束，去餐馆吃饭，我们跟老板说我们下午要考试，让快点上菜，结果上菜速度果然飞快，而我们吃得也很快，基本上一盘菜一会儿就吃光，
+真是高效啊，哈哈！</p>
+
+
+
+
+<p>下午首先是一个Panel，讨论（更确切的说是辩论）了两个主题，一个是关于计算机视觉是否要借鉴吸收生物神经视觉的结果，另一个是Deep Learning是否是CV的终极解决方案，这两个辩论
+都非常精彩，笑点不断。Panel开始之前，首先是两位报告者发言，首先上台的是 @老师木（袁进辉），他自我介绍了一番，然后讲了讲生物视觉与计算机视觉的紧密联系，认为计算机视觉要想
+取得重大突破，就必须借鉴生物视觉的研究的发现。另外一位是李学龙老师，很有个性，只写了一张PPT，但发言时却如滔滔江水绵绵不绝，可以听得出，他对生物视觉也非常了解，也认为计算机
+视觉必须借鉴生物视觉的一些研究成果。后面的讨论非常精彩，将学术娱乐化了。这两个论题本身就很具争议性，正反两方各执其词，要辩论出个是非来，还真需要真才实学。</p>
+
+
+
+
+<p>Panel完之后是两个报告，一个是吴建鑫的Approximating Additive Kernel for Large Scale Vision Tasks，没怎么听懂。另一个是张敏灵的Multi-label Learning，感觉很没趣，主要是
+觉得这并不是一个新问题，但在图像标注方面确实是一个很重要的问题。</p>
+
+
+
+
+<p>最后，还可以从一些微博内容中获取更多关于VALSE2013的信息，可以搜索主题\#VALSE\# 或\#VALSE2013\#，或者关注 @潘布衣（会议Chair潘刚）、@张磊MSRA、@余凯_西二旗民工、
+@老师木等等。。。</p>
+
+
+
+
+<h3>游玩休闲</h3>
+
+
+<p>我们周五下午6点多到，下雨了。坐地铁然后走到旅馆，吃晚饭就8点了，但还好雨也听了，我们就去附近的夫子庙、秦淮河逛了逛。
+<center><img src="/images/2013/IMAG2013042201.jpg"></center>
+第二天晚上去阅江楼逛了逛，到哪儿才发现晚上关门，坑爹啊！不过在外面远眺夜晚的阅江楼也不错，然后走了一个把小时到南京长江大桥。
+<center><img src="/images/2013/IMAG2013042202.jpg"></center>
+第三天晚上就待在住处。因为订的第四天下午6点多的票，所以白天就可以尽情的去玩玩了。第一站来到了中山园陵
+<center><img src="/images/2013/IMAG2013042203.jpg"></center>
+只可惜周一不开放，被挡在“天下为公”的门外。原打算接下来要去的雨花台、大屠杀纪念馆也不开放，坑爹啊！
+<center><img src="/images/2013/IMAG2013042204.jpg"></center>
+木办法，就在里面找了一个开放的十朝历史博物馆去了
+<center><img src="/images/2013/IMAG2013042205.jpg"></center>
+然后去总统府了，就在外面看了看
+<center><img src="/images/2013/IMAG2013042206.jpg"></center>
+再然后去玄武门，一到哪儿就又下雨了
+<center><img src="/images/2013/IMAG2013042207.jpg"></center>
+进里面看了看玄武湖，然后就直接回旅馆了
+<center><img src="/images/2013/IMAG2013042208.jpg"></center>
+</p>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[深度学习及其在语音方面的应用]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/04/17/Deep-Learning-and-its-application-in-audio-and-speech-processing/"/>
+    <updated>2013-04-17T22:43:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/04/17/Deep-Learning-and-its-application-in-audio-and-speech-processing</id>
+    <content type="html"><![CDATA[<p>以下是今天在组会上讲的内容，与大家分享一下。有些地方我也没有完全理解，欢迎大家一起来讨论。</p>
+
+
+<p><center>
+<embed width="780"
+    height="574"
+    name="plugin"
+    src="http://ibillxia.github.io/upload/Deep Learning - Bill Xia.pdf"
+    type="application/pdf"
+/>
+</center></p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[深度学习简介]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/03/16/introduction-to-deep-learning/"/>
+    <updated>2013-03-16T21:36:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/03/16/introduction-to-deep-learning</id>
+    <content type="html"><![CDATA[<h2>0.概述</h2>
+
+<p>
+以下是Wiki上对深度学习的下的定义：</br>
+Deep learning refers to a sub-field of machine learning that is based on learning several levels of representations, 
+corresponding to a hierarchy of features or factors or concepts, where higher-level concepts are defined from lower-level ones, 
+and the same lower-level concepts can help to define many higher-level concepts.
+</p>
+
+
+<p>
+深度学习就是学习多个级别的表示和抽象，帮助理解数据，如图像、声音和文本。深度学习的概念源于人工神经网络的研究，
+含多隐层的多层感知器就是一种深度学习结构。那些涉及从输入产生输出的计算,我们可以用流程图来表示，
+流程图的一个特殊的概念就是它的深度: 从输入到输出的路径的最长长度。传统的前馈神经网络可以理解为
+深度等于层数(隐层数+1)的网络。深度学习通过组合低层特征形成更加抽象的高层表示（属性类别或特征），
+以发现数据的分布式特征表示。
+</p>
+
+
+<h2>1.深度学习产生的背景</h2>
+
+<h3>1.1深度不够的缺陷</h3>
+
+<p>
+在很多情况下，深度为2就已足以在给定精度范围内表示任何函数了，例如逻辑门、正常
+神经元、sigmoid-神经元、SVM中的RBF(Radial Basis Function)等，但这样也有一个代价：
+那就是图中需要的节点数会很多，这也就意味着当我们学习目标函数时，需要更多的计算
+单元和更多的参数。理论结果显示，对于某一类函数，需要的参数的个数与输入的大小是
+成指数关系的，逻辑门、正常神经元、RBF单元就属于这类。后来Hastad发现，当深度为d时，
+这类函数可以用O(n)个节点（输入为n个）的神经网络有效表示，但当深度被限制为d-1时，
+则需要有O(n2)个节点来表示。
+</p>
+
+
+
+
+<!-- more -->
+
+
+<p>
+我们可以讲深层结构看做是因子分解。大多数随机选择的函数，无论是用深层的结构还是用浅层结构，
+都是无法有效的表示的。但很多可以用深层结构有效表示的却无法用浅层的来有效表示（参见推荐
+阅读[5]中的polynomials example）。这种深层表示的现象表明，对于一些需要表示的函数，
+其中存在一些结构化的特性。如果其中没有结构化的东西，那么它将无法很好的泛化。
+</p>
+
+
+<h3>1.2大脑具有深层的结构</h3>
+
+<p>
+例如，被深入研究的视觉皮层（如下图（a）所示）包含一系列的区域，每个区域都有输入，
+信号流从一个区域到下一个区域（也有跳过连接或在某种程度上的并行路径，所以情况更复杂）。
+在这种功能层次结构中，每个层次上的输入代表了不同层次的抽象特征，越上层的特征，
+又越底层的信息表征，抽象性越高，如下图（c）所示。</br>
+<center><img src="/images/2013/IMAG2013031601.png"></center>
+</p>
+
+
+<p>
+值得注意的是，大脑中的表示是介于密集分布和纯局部之间，也就意味着它们是稀疏的：大脑中大约1%的神经元是同时活动的。
+</p>
+
+
+<h3>1.3认知过程是深层次的</h3>
+
+<p>
+• 人们是使用层次化的方式来组织它们的想法和观念的；</br>
+• 人们首先是学习简单的概念，然后将它们组合起来以表示更加抽象的概念；</br>
+• 工程师们习惯于将解决问题的方案分解为多个层次的抽象和处理过程。
+</p>
+
+
+<p>如果能够像人一样学习到这些概念，那将会是非常棒的。知识工程（Knowledge Engineering）在这方面是失败的，
+但语言表达概念的内省的方法也表明了稀疏表示：对于一个特定的输入（就像一幅视觉的图像），
+仅仅只有一小部分的单词或概念是相关的。
+</p></p>
+
+<h2>2.深度学习的巨大突破</h2>
+
+<h3>2.1学术上的突破</h3>
+
+<p>
+在2006年以前，尝试训练一个深层的、监督的前馈神经网络往往会比浅层的（1~2个隐层）网络产生更糟糕的结果（无论是训练误差，还是测试误差）。
+但在2006年，以Hinton为首的研究人员在深度置信网络（Deep Belief Networks，DBNs）方面的划时代性的工作，将此终结。其代表性的论文是：</br>
+• Hinton, G. E., Osindero, S. and Teh, Y., <a href="http://www.cs.toronto.edu/~hinton/absps/fastnc.pdf" target="_blank">A fast learning algorithm for deep belief nets</a>. Neural Computation. 18:1527-1554, 2006</br>
+• Yoshua Bengio, Pascal Lamblin, Dan Popovici and Hugo Larochelle, <a href="http://www.iro.umontreal.ca/~lisa/publications2/index.php/publications/show/190" target="_blank">Greedy Layer-Wise Training of Deep Networks</a>, in J. Platt et al. (Eds), Advances in Neural Information Processing Systems 19 (NIPS 2006), pp. 153-160, MIT Press, 2007</br>
+• Marc’Aurelio Ranzato, Christopher Poultney, Sumit Chopra and Yann LeCun. <a href="http://yann.lecun.com/exdb/publis/pdf/ranzato-06.pdf" target="_blank">Efficient Learning of Sparse Representations with an Energy-Based Model</a>, in J. Platt et al. (Eds), Advances in Neural Information Processing Systems (NIPS 2006), MIT Press, 2007
+</p>
+
+
+<p>
+在这些论文中提出了以下几个非常关键的原则：</br>
+• 非监督学习被用来（预）训练各个层；</br>
+• 非监督学习在之前学习到的层次之上，一次只学习一个层次，每个层次学习到的结果将作为下一个层次的输入；</br>
+• 除了一些专门用于预测的层次外，用监督学习来调整层与层之间的权重。</br>
+这些DBNs用RBMs（Restricted Boltzmann Machines）来作为每个层的非监督学习，
+Bengio的paper研究并比较了RBMs和auto-encoders（通过瓶颈内部层的表示来预测它的输入的神经网络）。
+Ranzato的paper将稀疏的auto-encoder（与sparse coding相似）用在传统的神经网络结构中。
+关于auto-encoders和传统的神经网络结构将在后续的文章中讲解。
+</p>
+
+
+<h3>2.2学术中的研究和应用</h3>
+
+<h4>(1)计算机视觉</h4>
+
+<p>
+·ImageNet Classification with Deep Convolutional Neural Networks, Alex Krizhevsky, Ilya Sutskever, Geoffrey E Hinton, NIPS 2012.
+</br>
+·Learning Hierarchical Features for Scene Labeling, Clement Farabet, Camille Couprie, Laurent Najman and Yann LeCun, 
+IEEE Transactions on Pattern Analysis and Machine Intelligence, 2013.
+</br>
+·Learning Convolutional Feature Hierachies for Visual Recognition, Koray Kavukcuoglu, Pierre Sermanet, Y-Lan Boureau, 
+Karol Gregor, Micha&euml;l Mathieu and Yann LeCun, Advances in Neural Information Processing Systems (NIPS 2010), 23, 2010.
+</br>……</p>
+
+
+<h4>(2)语音识别</h4>
+
+<p>
+微软研究人员通过与hintion合作，首先将RBM和DBN引入到语音识别声学模型训练中，并且在大词汇量语音识别系统中获得巨大成功，使得语音识别的错误率相对减低30%。
+但是，DNN还没有有效的并行快速算法，目前，很多研究机构都是在利用大规模数据语料通过GPU平台提高DNN声学模型的训练效率。
+</br>
+在国际上，IBM、google等公司都快速进行了DNN语音识别的研究，并且速度飞快。
+</br>
+国内方面，科大讯飞、百度、中科院自动化所等公司或研究单位，也在进行深度学习在语音识别上的研究。
+</p>
+
+
+<h4>(3)自然语言处理等其他领域</h4>
+
+<p>
+很多机构在开展研究，但目前深度学习在自然语言处理方面还没有产生系统性的突破。
+</p>
+
+
+<h3>2.3工程中的应用</h3>
+
+<p>
+• 微软：2009年，首先将深度学习应用到语音识别；如今，已将深度学习融入到实际的产品当中，如Xbox。
+</br>
+• 谷歌：“Google Brain”项目，用1.6万台机器，从1000万张图像中识别出猫，这是完全的非监督学习
+（We never told it during the training, 'This is a cat,' ... It basically invented the concept of a cat.）。
+</br>
+• 百度：2012年夏开始从事深度学习方面的工作，在语音识别和图像识别中取得了巨大成功，
+目前也已初步融入到百度的产品当中，如百度语音助手、百度寻人等产品。
+</p>
+
+
+<h2>3构建深度学习的方法</h2>
+
+<p>
+深度学习的概念和思想很简单，然而如果构建一个合理的深度网络拓扑结构，如何学习网络中的信号传递权值，
+都是非常困难的问题。下面介绍几种非常perfect的方法。
+</p>
+
+
+<h3>3.1 Autoencoder[4]</h3>
+
+<p>
+最简单的一种方法是利用人工神经网络的特点，人工神经网络（ANN）本身就是具有层次结构的系统，
+如果给定一个神经网络，我们假设其输出与输入是相同的，然后训练调整其参数，得到每一层中的权重，
+自然地，我们就得到了输入I的几种不同表示（每一层代表一种表示），这些表示就是特征，在研究中可以发现，
+如果在原有的特征中加入这些自动学习得到的特征可以大大提高精确度，
+甚至在分类问题中比目前最好的分类算法效果还要好！这种方法称为AutoEncoder，如下图所示。</br>
+<center><img src="/images/2013/IMAG2013031602.png"></center>
+</p>
+
+
+<p>
+当然，我们还可以继续加上一些约束条件得到新的Deep Learning方法，例如在AutoEncoder的基础上
+加上L1的Regularity限制（L1主要是约束每一层中的节点中大部分都要为0，只有少数不为0，
+这就是Sparse名字的来源），我们就可以得到Sparse AutoEncoder方法。
+</p>
+
+
+<h3>3.2 Sparse Coding[5]</h3>
+
+<p>
+Sparse Coding是一种利用非监督的方法来学习表示数据的过完备基的方法，它的目的就是为了找到一组基向量$\phi _{i}$，
+进而将输入向量$\mathbf{x}$表示为这组基向量的线性组合:</br>
+<center>$\mathbf{x} = \sum_{i=1}^{k}a _{i} \phi _{i}$.</center>
+</p>
+
+
+<p>
+主成分分析（Principal Component Analysis，PCA）是一种有效的学习一组完备的基向量的方法，
+而Sparse Coding则希望学习一组过完备的基向量。这样做的好处在于，过完备的基向量能够更好
+的捕获到输入数据当中的结构和模式。然而，使用过完备的基向量带来的一个问题是，
+该组基向量表示输入向量的结果不唯一，也就是说系数$a _{i}$是不唯一的。因此，在Sparse Coding当中，
+我们引入一些额外的准则，即稀疏性（sparsity），来解决这个问题。具体而言，这里的稀疏性是指，
+系数$a _{i}$中大多数都为零或接近为零，从优化问题的角度来讲，就是要使得系数中尽可能少的系数是
+尽可能的比零大，这样就可以得到输入的唯一标示。
+</p>
+
+
+<h3>3.3 Restricted Boltzmann Machine（RBM）</h3>
+
+<p>
+Boltzmann Machine其实是一种无向图，里面的节点是互相连接的，但不一定是全连接，也即不是每个节点都两两相连，
+连接着的两个节点之间就有一个权值。为理解方便就假设节点只能取值为0或者1，有些节点值是已知的，有些是未知的，
+把已知的节点集合记为V，未知的节点集合记为H，这样就把所有节点分成两个集合，其实集合V就可以认为是visible层，
+集合H就可以认为是hidden层。如果hidden层中的节点都不互相连接，visible层中的节点也都不互相连接，那么就成为了RBM模型。
+</p>
+
+
+<p>
+在神经网络中，两层神经网络(即一个hidden层和一个output层，visible层不算在内)的建模能力是很强的，
+但要求hidden层的节点数够多，但节点数太多就会导致计算量的复杂，矩阵的维护会相当大。
+一个很好想到的方法就是将层数加大，通过层数的增多来缓解单层中节点数过多的负担，
+比如设置两个hidden层，每层100个节点，就相当于单个hidden层100×100个节点的建模能力，
+同理三个hidden层，每层分别是100、200、300个节点，就相当于单层的100×200×300个节点的建模能力。
+然而这样做的问题在于，当层数大于2时，经典的训练方法效果会较差，因为参数的局部极小值太多，
+容易收敛到一个不好的极值。Hinton把RBM(Restricted Boltzmann Machine)层叠在一起，训练出权值，
+然后把这个权值当成是下一个RBM层的输入作为权值的初始值，利用传统的梯度下降法去训练网络，
+得到了更好的结果，也即在每个RBM层通过筛选得到较好的参数初始值，使得最后的结果更好。
+</p>
+
+
+<h2>4.小结</h2>
+
+<p>
+当前多数分类、回归等学习方法为浅层结构算法，其局限性在于有限样本和计算单元情况下对复杂函数的表示能力有限，
+针对复杂分类问题其泛化能力受到一定制约。深度学习可通过学习一种深层非线性网络结构，实现复杂函数逼近，
+表征输入数据分布式表示，并展现了强大的从少数样本集中学习数据集本质特征的能力。
+</p>
+
+
+<p>
+虽然距离深度学习的突破已经有六年多了，但它仍处于发展初期，大量工作还需要研究。
+模型方面是否有其他更为有效且有理论依据的深度模型学习算法，探索新的特征提取模型是值得深入研究的内容。
+此外有效的可并行训练算法也是值得研究的一个方向。当前基于最小批处理的随机梯度优化算法很难在多计算机中
+进行并行训练。通常办法是利用图形处理单元加速学习过程，然而单个机器GPU对大规模数据识别或相似任务数据集
+并不适用。在深度学习应用拓展方面， 如何充分合理地利用深度学习在增强传统学习算法的
+性能仍是目前各领域的研究重点。
+</p>
+
+
+<h2>参考文献</h2>
+
+<p>
+[1]<a href="http://www.iro.umontreal.ca/~pift6266/H10/notes/deepintro.html#introduction-to-deep-learning-algorithms" target="_blank">Introduction to Deep Learning Algorithms.</a></br>
+[2]<a href="http://bigeye.au.tsinghua.edu.cn/MLA12/program_files/MLA2012_%E4%BD%99%E5%87%AF.pdf" target="_blank">A tutorial on deep learning</a>，
+<a href="http://www.infoq.com/cn/presentations/deep-learning-and-application-to-multimedia#" target="_blank">Video</a>.</br>
+[3]<a href="http://wenku.baidu.com/view/6dcd1e3b5727a5e9856a6180.html " target="_blank">A Brief Introduction to Deep Learning</a></br>
+[4]<a href="http://deeplearning.stanford.edu/wiki/index.php/Autoencoders_and_Sparsity" target="_blank">Autoencoders and Sparsity</a></br>
+[5]<a href="http://deeplearning.stanford.edu/wiki/index.php/Sparse_Coding" target="_blank">Sparse Coding</a></br>
+[6]<a href="http://blog.sina.com.cn/s/blog_70a384770101f58p.html" target="_blank">关于深度学习(deep learning)</a></br>
+[7] 百度百科-<a href="http://baike.baidu.com/view/9964678.htm" target="_blank">深度学习</a></br>
+[8] 孙志军等，深度学习研究综述.</p>
+
+
+<h2>推荐阅读</h2>
+
+<p>
+[1] Chris Bishop, “<a href="http://research.microsoft.com/en-us/um/people/cmbishop/prml/" target="_blank">Pattern Recognition and Machine Learning</a>”, 2007</br>
+[2] Simon Haykin, “<a href="http://www.amazon.com/Neural-Networks-A-Comprehensive-Foundation/dp/B000O8QMAU" target="_blank">Neural Networks: a Comprehensive Foundation</a>”, 2009 (3rd edition)</br>
+[3] Richard O. Duda, Peter E. Hart and David G. Stork, “<a href="http://www.rii.ricoh.com/~stork/DHS.html" target="_blank">Pattern Classification</a>”, 2001 (2nd edition)</br>
+[4]Deep Learning Tutorial：<a href="http://deeplearning.net/tutorial/ " target="_blank">http://deeplearning.net/tutorial/</a></br>
+[5]Yoshua Bengio, <a href="http://www.iro.umontreal.ca/~lisa/publications2/index.php/publications/show/239" target="_blank">Learning Deep Architectures for AI</a>, Foundations & Trends in ML, 2(1), 2009</br>
+[6] Unsupervised Feature Learning and Deep Learning：<a href="http://deeplearning.stanford.edu/wiki/index.php/UFLDL_Tutorial" target="_blank">UFLDL Tutorial</a></br>
+[7] <a href="http://deeplearning.net/" target="_blank">http://deeplearning.net/</a></br>
+[8] 深度学习相关软件包（Matlab）: <a href="https://github.com/rasmusbergpalm/DeepLearnToolbox" target="_blank">https://github.com/rasmusbergpalm/DeepLearnToolbox</a>
+</p>
+
+]]></content>
+  </entry>
+  
+</feed>

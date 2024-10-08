@@ -1,0 +1,452 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>深入理解STL源码(3.2) 序列式容器之list - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">深入理解STL源码(3.2) 序列式容器之list</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-07-06T22:03:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>本文涉及到 SGI STL 源码的文件有<code>list</code>、<code>stl_list.h</code>、<code>list.h</code> 等几个文件。</p>
+
+<h2>1. list 和 slist</h2>
+
+<p>STL中也实现了链表这种数据结构，list是STL标准的双向链表，而slit是SGI的单链表。相比于vector的连续线性空间而言，list即有有点也有缺点：优点是空间分配更灵活，对任何位置的插入删除操作都是常数时间；缺点是排序不方便。list和vector是比较常用的线性容器，那么什么时候用哪一种容器呢，需要视元素的多少、元素构造的复杂度（是否为POD数据）以及元素存取行为的特性而定。限于篇幅，本文主要介绍list的内容，关于单链表slist可以参见源码和侯捷的书。</p>
+
+<h2>2. list 的数据结构</h2>
+
+<p>在数据结构中，我们知道链表的节点node和链表list本身是不同的数据结构，以下分别是node和list的数据结构：<br/>
+<code>cpp
+struct _List_node_base {
+  _List_node_base* _M_next;
+  _List_node_base* _M_prev;
+};
+template &lt;class _Tp&gt;
+struct _List_node : public _List_node_base {  // node 的定义
+  _Tp _M_data;
+};
+template &lt;class _Tp, class _Alloc&gt;
+class _List_base {
+protected:
+  _List_node&lt;_Tp&gt;* _M_node; // 只要一个指针就可以表示整个双向链表
+};
+template &lt;class _Tp, class _Alloc = __STL_DEFAULT_ALLOCATOR(_Tp) &gt;
+class list : protected _List_base&lt;_Tp, _Alloc&gt; {
+public:
+  typedef _List_node&lt;_Tp&gt; _Node;
+};
+</code></p>
+
+<!-- more -->
+
+
+<p>在list中的 <code>_M_node</code> 其实指向一个空白节点，该空白节点的 <code>_M_data</code> 成员是没有被初始化的，实际上该节点是链表的尾部，后面将list的迭代器还会提到这样做的好处。</p>
+
+<h2>3. list 的配置器</h2>
+
+<p>list缺省使用 alloc （即 <code>__STL_DEFAULT_ALLOCATOR</code>） 作为空间配置器，并据此定义了另外一个 <code>list_node_allocator</code> ，并定义了<code>_M_get_node</code>和<code>_M_put_node</code>  两个函数，分别用于分配和释放空间，为的是更方便的以节点大小为配置单位。除此之外，还定义了两个<code>_M_create_node</code> 函数，在分配空间的同时调用元素的构建函数对其进行初始化：<br/>
+<code>cpp
+template &lt;class _Tp, class _Alloc&gt;
+class _List_base {
+protected:
+  typedef simple_alloc&lt;_List_node&lt;_Tp&gt;, _Alloc&gt; _Alloc_type; // 专属配置器，每次配置一个节点
+  _List_node&lt;_Tp&gt;* _M_get_node() { return _Alloc_type::allocate(1); } // 分配一个节点
+  void _M_put_node(_List_node&lt;_Tp&gt;* __p) { _Alloc_type::deallocate(__p, 1); }  // 释放一个节点
+};
+template &lt;class _Tp, class _Alloc = __STL_DEFAULT_ALLOCATOR(_Tp) &gt; // 缺省使用 __STL_DEFAULT_ALLOCATOR 配置器
+class list : protected _List_base&lt;_Tp, _Alloc&gt; {
+protected:
+  _Node* _M_create_node(const _Tp&amp; __x){ // 分配空间并初始化
+    _Node* __p = _M_get_node();
+    __STL_TRY {  _Construct(&amp;__p-&gt;_M_data, __x);  }
+    __STL_UNWIND(_M_put_node(__p));
+    return __p;
+  }
+  _Node* _M_create_node(){
+    _Node* __p = _M_get_node();
+    __STL_TRY {  _Construct(&amp;__p-&gt;_M_data);  }
+    __STL_UNWIND(_M_put_node(__p));
+    return __p;
+  }
+};
+</code>
+在list的构造和析构函数、插入、删除等操作中设计到空间的配置。由于list不涉及同时分配多个连续元素的空间，因此用不到SGI的第二层配置器。</p>
+
+<h2>4. list 的迭代器</h2>
+
+<p>由于list的节点在内存中不一定连续存储，其迭代器不能像vector那样使用普通指针了，由于list是双向的链表，迭代器必须具备前移、后移的能力，所以它的迭代器是BidirectionalIterators，即双向的可增可减的，以下是list的迭代器的设计：<br/>
+<code>cpp
+struct _List_iterator_base {
+  typedef bidirectional_iterator_tag iterator_category;
+  _List_node_base* _M_node;
+  _List_iterator_base(_List_node_base* __x) : _M_node(__x) {}
+  _List_iterator_base() {}
+  void _M_incr() { _M_node = _M_node-&gt;_M_next; }
+  void _M_decr() { _M_node = _M_node-&gt;_M_prev; }
+};
+template&lt;class _Tp, class _Ref, class _Ptr&gt;
+struct _List_iterator : public _List_iterator_base {
+  _Self&amp; operator++() { this-&gt;_M_incr(); return *this; }
+  _Self operator++(int) { _Self __tmp = *this; this-&gt;_M_incr(); return __tmp; }
+  _Self&amp; operator--() { this-&gt;_M_decr(); return *this; }
+  _Self operator--(int) { _Self __tmp = *this; this-&gt;_M_decr(); return __tmp; }
+};
+</code>
+list有一个重要性质，插入操作（insert）和接合操作（splice）都不会造成原有list迭代器失效，而list的删除操作（erase）也只对“指向被删除元素”的那个迭代器失效，其他迭代器不受任何影响。</p>
+
+<h2>5. list 的常用操作</h2>
+
+<p>list的常用操作有很多，例如最基本的<code>push_front</code>、<code>push_back</code>、<code>pop_front</code>、<code>pop_back</code> 等，这里主要介绍一下<code>clear</code>、<code>remove</code>、<code>unique</code>、<code>transfer</code> 这几个。<br/>
+<strong>（1）clear</strong><br/>
+clear 函数的作用是清楚整个list的所有节点。<br/>
+<code>cpp
+void clear() { _Base::clear(); }
+void _List_base&lt;_Tp,_Alloc&gt;::clear() {
+  _List_node&lt;_Tp&gt;* __cur = (_List_node&lt;_Tp&gt;*) _M_node-&gt;_M_next;
+  while (__cur != _M_node) {
+    _List_node&lt;_Tp&gt;* __tmp = __cur;
+    __cur = (_List_node&lt;_Tp&gt;*) __cur-&gt;_M_next; // 后移
+    _Destroy(&amp;__tmp-&gt;_M_data); // 析构当前节点的对象
+    _M_put_node(__tmp); // 释放当前节点的空间
+  }
+  _M_node-&gt;_M_next = _M_node; // 置为空list
+  _M_node-&gt;_M_prev = _M_node;
+}
+</code>
+<strong>（2）remove</strong><br/>
+remove 函数的作用是将数值为value的所有元素移除。<br/>
+<code>cpp
+void list&lt;_Tp, _Alloc&gt;::remove(const _Tp&amp; __value) {
+  iterator __first = begin();
+  iterator __last = end();
+  while (__first != __last) { // 遍历list
+    iterator __next = __first;
+    ++__next;
+    if (*__first == __value) erase(__first); // 值与 value 相等就移除
+    __first = __next;
+  }
+}
+</code>
+<strong>（3）unique</strong><br/>
+unique函数的作用是移除相同的<strong>连续</strong>元素，只有“连续而且相同”的元素，才回被移除到只剩一个。<br/>
+<code>cpp
+void list&lt;_Tp, _Alloc&gt;::unique() {
+  iterator __first = begin();
+  iterator __last = end();
+  if (__first == __last) return;
+  iterator __next = __first;
+  while (++__next != __last) {
+    if (*__first == *__next) // 连续连个节点的值相同
+      erase(__next);
+    else
+      __first = __next;
+    __next = __first;
+  }
+}
+</code>
+<strong>（4）transfer</strong><br/>
+transfer的作用是将 [first, last) 内的所有元素移动到 position 之前。它是一个私有函数，它为其他常用操作如 splice、sort、merge 等的实现提供了便利。<br/>
+<code>cpp
+protected:
+  void transfer(iterator __position, iterator __first, iterator __last) {
+    if (__position != __last) {
+      // Remove [first, last) from its old position.
+      __last._M_node-&gt;_M_prev-&gt;_M_next     = __position._M_node;
+      __first._M_node-&gt;_M_prev-&gt;_M_next    = __last._M_node;
+      __position._M_node-&gt;_M_prev-&gt;_M_next = __first._M_node;
+      // Splice [first, last) into its new position.
+      _List_node_base* __tmp      = __position._M_node-&gt;_M_prev;
+      __position._M_node-&gt;_M_prev = __last._M_node-&gt;_M_prev;
+      __last._M_node-&gt;_M_prev     = __first._M_node-&gt;_M_prev;
+      __first._M_node-&gt;_M_prev    = __tmp;
+    }
+  }
+</code>
+关于list的内容就介绍到这里了。</p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2014-07-06T22:03:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/c-plus-plus/'>C++</a>, <a class='tag' href='/blog/tags/stl/'>STL</a>, <a class='tag' href='/blog/tags/list/'>list</a>, <a class='tag' href='/blog/tags/rong-qi/'>容器</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2014/06/29/stl-source-insight-3-sequential-containers-1-vector/" title="Previous Post:
+        深入理解STL源码(3.1) 序列式容器之vector">&laquo; 深入理解STL源码(3.1) 序列式容器之vector</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2014/07/13/stl-source-insight-3-sequential-containers-3-deque-and-stack-queue/"
+        title="Next Post: 深入理解STL源码(3.3) 序列式容器之deque和stack、queue">深入理解STL源码(3.3) 序列式容器之deque和stack、queue
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

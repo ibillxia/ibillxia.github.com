@@ -1,0 +1,700 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 算法 | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/suan-fa/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[深入理解STL源码(5.4) 算法之复杂算法algorithm]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms/"/>
+    <updated>2014-11-01T10:33:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms</id>
+    <content type="html"><![CDATA[<p>本文主要介绍STL中的稍微复杂的算法，主要涉及到的源码文件有 <code>stl_algo.h</code> 等。</p>
+
+<p>在文件 <code>stl_algo.h</code> 中有很多常用的算法，包括查找、计数、旋转、删除、排序、合并、集合的交并等运算、求极值、排列组合等等，本文将按源码中各算法的实现顺序来介绍其具体实现细节。由于本文涉及到的算法和相关代码太多，在文中就尽量不贴出代码了，详细的代码及相关注释请参见 <a href="http://ibillxia.github.io/upload/code/stl_algo.h">stl_algo.h</a>。</p>
+
+<p><strong>1. 求三个数的中值 median</strong><br/>
+该算法比较简单，几个if-else语句就解决了。该函数只提供内部算法使用，并不对外提供接口，也不是STL标准中的算法，限于篇幅这里就不贴代码了。另外，该算法有两个版本，一个是使用默认的大小比较，另一个是可以指定比较函数。</p>
+
+<p><strong>2. for_each</strong><br/>
+也很简单，就是对区间 [first, last) 中的每一个元素执行一个给定函数的运算，就一行语句：</p>
+
+<pre><code class="cpp">for ( ; __first != __last; ++__first) __f(*__first);
+</code></pre>
+
+<p>其中 <code>__f</code> 为用户传入的一个指定的仿函数。该算法的返回值仍为传入的仿函数 <code>__f</code> 。</p>
+
+<!--more-->
+
+
+<p><strong>3. 查找 find</strong><br/>
+函数 <code>find</code> 查找特定值的元素，函数 <code>find_if</code> 查找经过用户的指定函数 func（STL中的pred函数） 运算后结果为 true 的元素。主要代码也只有一行：</p>
+
+<pre><code class="cpp">while (__first != __last &amp;&amp; !(*__first == __val)) ++__first;
+</code></pre>
+
+<p>另外，关于find，考虑偏特化特性，还有在迭代器为随机存取迭代器时，每次循环进行4次判断和自增，这是所谓的 <a href="http://en.wikipedia.org/wiki/Loop_unrolling">loop unrolling</a>，在StackOverflow 上也有相关解释 <a href="http://stackoverflow.com/questions/24295972/">questions-24295972</a>。如果学过体系结构，应该也会提及循环展开的加速方法。</p>
+
+<p>还有一个称为 <code>adjacent_find</code> 的查找算法，它查找序列区间中连续相等的两个元素的位置，返回其中第一个元素的迭代器。这个算法就没有做过多的优化和加速考虑了。</p>
+
+<p>初次之外，在algo文件的最后部分，还有 <code>find_first_of</code>、<code>find_end</code>、`` 的算法，后面会按顺序介绍到。</p>
+
+<p><strong>4. 计数 count</strong><br/>
+该算法查找序列中值与给定值相等的元素的个数，即进行计数，返回为void，计数结果通过传入的引用参数 <code>_Size&amp; __n</code> 来返回给用户，主要代码如下：</p>
+
+<pre><code class="cpp">for ( ; __first != __last; ++__first)
+    if (*__first == __value) ++__n;
+</code></pre>
+
+<p>以上这个是非STL标准的，另外还有一个版本返回值为迭代器的 <code>difference_type</code> 的偏特化版本，这个才是STL标准。</p>
+
+<p><strong>5. 搜索search</strong><br/>
+该算法实现的功能是在区间 [first1, last1) 中搜索是否存在与区间 [first2, last2) 中元素都对应相等的子序列，存在则返回区间1中与区间2匹配的起始位置，否则返回last1。基本思路也很简单，详见源码中我的注释。还有一个版本，可以指定判断条件，而不一定是对应相等这个条件。</p>
+
+<p>另外，还有一个 <code>search_n</code> 的算法与之相似，只是这个算法搜索区间中是否存在长度为count且值均为val的子序列，存在则返回该子序列的起始位置，否则返回last。同样，它也有一个可以指定判断条件的重载版本。</p>
+
+<p><strong>6. 区间置换 swap_ranges</strong><br/>
+交换两个长度相等的区间：</p>
+
+<pre><code class="cpp">for ( ; __first1 != __last1; ++__first1, ++__first2)
+    iter_swap(__first1, __first2); // 迭代器的交换，使用iter_swap
+</code></pre>
+
+<p><strong>7. 区间变换运算 transform</strong><br/>
+对区间的每个元素进行opr运算，结果放在result中，仅这一点与 <code>for_each</code> 不同：</p>
+
+<pre><code class="cpp">for ( ; __first != __last; ++__first, ++__result)
+    *__result = __opr(*__first);
+</code></pre>
+
+<p>还有一个版本是两个等长序列的运算，结果放在result中：</p>
+
+<pre><code class="cpp">for ( ; __first1 != __last1; ++__first1, ++__first2, ++__result)
+    *__result = __binary_op(*__first1, *__first2);
+</code></pre>
+
+<p>注意该算法不需要传入第二个区间的last迭代器。</p>
+
+<p><strong>8. 替换 replace</strong><br/>
+将序列中所有值为oldval的元素值都改为newval：</p>
+
+<pre><code class="cpp">for ( ; __first != __last; ++__first)
+   if (*__first == __old_value) *__first = __new_value;
+</code></pre>
+
+<p>另外还有三个版本的替换： <code>replace_if</code>，判断条件可以自己指定，而不一定是相等；<code>replace_copy</code>，将修改后的结果存到一个新的序列中；<code>replace_copy_if</code> 是前两者的合体。</p>
+
+<p><strong>9.生成 generate</strong><br/>
+将序列中的元素的值按给定函数赋值：</p>
+
+<pre><code class="cpp">for ( ; __first != __last; ++__first) *__first = __gen();
+</code></pre>
+
+<p>还有一个 <code>generate_n</code> 将序列中的前n个元素的值按给定函数赋值。</p>
+
+<p><strong>10.移除 remove</strong><br/>
+移除序列中值为val的元素，与 replace 算法类似，有4个版本，其中 <code>remove</code> 和 <code>remove_if</code> 分别通过 <code>remove_copy</code>、<code>remove_copy_if</code> 实现，只需将后者中的result参数设为该序列的起点first。</p>
+
+<pre><code class="cpp">__first = find(__first, __last, __value);
+_ForwardIter __i = __first;
+return __first == __last ? __first 
+                   : remove_copy(++__i, __last, __first, __value);
+</code></pre>
+
+<p><strong>11.unique和unique_copy</strong><br/>
+将区间的元素的值唯一化，即去掉相邻的重复的项。由于判断时是针对相邻的元素，所以一般需要结合sort使用，如果序列无序需要先对序列排序再进行唯一化。<code>unique</code> 的实现是调用 <code>unique_copy</code> 来实现的，只是将参数中result仍设为输入序列的first。</p>
+
+<p>这个算法实现的过程中，有很多函数的调用，其中还有个问题没有解决（见代码中注释关于func4什么时候调用func3，func8什么时候调用func7的问题）。</p>
+
+<p><strong>12.反转 reverse</strong><br/>
+将区间中元素进行反转，一下是迭代器为随机存取迭代器时的实现：</p>
+
+<pre><code class="cpp">while (__first &lt; __last) iter_swap(__first++, --__last);
+</code></pre>
+
+<p>还有迭代器为双向迭代器的版本和非质变算法版本 <code>reverse_copy</code>。</p>
+
+<p><strong>13.旋转 rotate</strong><br/>
+该算法将区间 [first, last) 内的数据以 middle 为分界前后对调，即将[first,middle)+[middle,last) 变为 [middle,last)+[first,middle)。具体实施过程分为两步：首先将middle之后的元素全部调到middle之前，然后对middle之后的元素进行调整，使之按在middle之前时的顺序排列。具体步骤见源码注释，可以结合实例进行理解。该算法的时间复杂度为 $O(n)$，总体上只对序列进行了一次遍历。</p>
+
+<p>另外，除了迭代器为前向迭代器的版本之外，还有迭代器为双向迭代器、随机访问迭代器的版本，分别对算法进行了特化和优化，详见源码注释。其中迭代器为随机访问迭代器时，算法稍微复杂些，但可以通过实例来简化理解。关于旋转算法的几种实现及其效率，可以参见这个 【<a href="http://www.cs.bell-labs.com/cm/cs/pearls/s02b.pdf">Vector Rotation</a>】，其中三种算法分别对应于STL中的随机迭代器版、前向迭代器版、双向迭代器版。虽然三种算法的复杂度均为线性的，但对于大量数据的旋转，还是会存在一些明显的效率区别的。</p>
+
+<p><strong>14.随机相关算法 random</strong><br/>
+<code>random_shuffle</code> 算法将序列随机重排，具体实现是对序列中每个位置的元素与序列中一个随机的元素进行对调：</p>
+
+<pre><code class="cpp">for (_RandomAccessIter __i = __first + 1; __i != __last; ++__i)
+    iter_swap(__i, __first + __random_number((__i - __first) + 1));
+</code></pre>
+
+<p>除了这个版本采用STL的random函数生成随机数的版本外，还有一个版本可以自己指定随机数生成函数。</p>
+
+<p><code>random_sample_n</code> 和 <code>random_sample</code> 都是从序列中随机选取n个样本，不同的是输入参数的形式、返回序列的有序性等，均非STL标准。</p>
+
+<p><strong>15.分割 partition</strong><br/>
+该算法的功能是将序列按条件分割成两个子序列（实际还是一个序列，只是按分割点分成了满足条件的部分和不满足条件的部分），返回分割点的位置。有迭代器为前向迭代器、双向迭代器的版本，保证稳定性的版本 <code>stable_partition</code>。</p>
+
+<p><strong>16. 排序 sort</strong><br/>
+排序算法是STL中最重要也最复杂的算法，总代码量大概是600行（实际上还不止，因为还有调用其他函数，如partition、merge等），占整个文件的1/5。该算法接受两个随机存取迭代器参数，将区间内的元素以渐增的顺序排列，重载版本则允许用户指定一个仿函数作为排序标准。STL的所有关系型容器都拥有自动排序功能（因为底层是RB-tree，属于有序搜索树），不需要用到这个sort算法，而序列式容器中的stack、queue和priority-queue都有特定的出入限制，不允许排序，剩下vector、deque和list、slist，前两者的迭代器都是随机存取迭代器，可以使用sort算法，而list是双向迭代器，slist是前向迭代器，都不适合使用sort算法，如果要对list或slist排序，需要使用list或slist自己实现的sort函数。</p>
+
+<p><code>insert_sort</code> 插入排序：在序列长度较小时（STL中设置的是长度小于16时），使用线性（而不是二分）插入排序。</p>
+
+<p><code>sort</code> 排序：在序列较长时，将序列分割为一个个小的区间，使得区间与区间之间整体上有序，然后使用线性插入排序对整体进行排序。（这与我们通常所理解的快速排序还是有很大区别的，最后整体上进行直接插入排序，实际效果与对每个子区间分别进行插入排序的效果是一样的，效率依然是非常高的）</p>
+
+<p><code>stable_sort</code> 稳定排序：实际上为归并排序，或称为merge sort，时间复杂度仍为 $O(nlogn)$。当子区间长度小于15时，让然是直接用插入排序；当子能够申请到O(n)的buffer时，借助buffer进行merge sort，否则使用inplace merge进行stable sort。而关于两种（with buffer和inplace的）merge的算法的内容，在后文中介绍。</p>
+
+<p><code>partial_sort</code> 部分排序：使用堆进行排序，功能是将序列 <code>[first, last)</code> 中的较小的 middle-first 个元素排序并放在区间 <code>[first, middle)</code> 中，而其余的 last-middle 个元素仍然是无序的。整个算法分为两个大的步骤，首先是将middle前的元素构建一个max-heap，将middle及之后的元素中比max-heap堆顶小的元素与堆顶对调并调整堆，从而得到middle前的元素都比middle后的元素小；然后使用heap sort对middle之前的元素进行排序。</p>
+
+<p><strong>17. 第n大的数 nth_element</strong><br/>
+该算法的功能是求一个序列中排行第n大的元素，具体实现时是使用 partition 将搜索范围逐步缩小，直到不足3个元素的区间后，进行insert-sort，最后第n大的元素就位于序列的第n个位置（该算法的迭代器也要求是随机存取的迭代器）。</p>
+
+<p><strong>18. 二分查找 binary_search</strong><br/>
+该系列算法的前提条件是序列已经<strong>有序</strong>，迭代器至少是ForwardIterators。</p>
+
+<p><code>lower_bound</code> ：二分查找 val，存在则返回指向该元素的迭代器，否则返回最小的不小于 val 的元素的迭代器，即在不破坏次序的情况下val可插入的第一个位置。</p>
+
+<p><code>upper_bound</code> ： 二分查找 val，存在则返回该元素的下一个元素的迭代器，否则返回最小的不小于 val的元素的迭代器，及在不破坏次序的前提下，val可插入的最后一个位置。</p>
+
+<p><code>equal_range</code> ：二分查找 val，返回值为 val 的区间 <code>[i,j)</code>，其中 i 是 <code>lower_bound</code>，而 j 是 <code>upper_bound</code>。</p>
+
+<p><code>binary_search</code> ：二分查找，找到返回true，否则返回false。实际上使用的是 <code>lower_bound</code> 来实现的。</p>
+
+<p><strong>19. 合并 merge</strong><br/>
+<code>merge</code> ：两个<strong>有序</strong>序列合并为一个有序序列，输入为5个参数，分别为两个序列的首尾迭代器、结果的首迭代器，算法返回结果序列的尾迭代器。基本思路是同时访问两个序列，取较小者放入结果序列并后移，最后必然是一个序列结束而另一个序列还有剩余元素，只需要将剩余部分copy的结果序列的尾部即可。</p>
+
+<p><code>inplace_merge</code>：原地将一个序列的两个有序子序列合并，实际上并不一定是原地进行，当可以申请到 O(n)的内存时借助buffer来进行merge，否则进行原地合并。原地合并的基本思路如下：先比较两个有序子序列的长度，将其中较长的序列分成两等分，取该序列的中间元素 <code>first_cut</code> 作为基准，然后得到第二个子序列以该基准分割的位置 <code>second_cut</code>，再然后进行原地旋转，将两个cut之间大于基准的数据旋转到两个cut之间小于基准的数据的后面，这样两个序列就被分成了两对有序子序列，最后分别将小于和大于基准的每对有序子序列进行merge。</p>
+
+<p><strong>20. 集合算法 set</strong><br/>
+由于集合的低层容器是红黑树，因此集合中的元素是有序的，这样在遍历两个集合时，复杂度不是O(mn)，而是O(m+n)。</p>
+
+<p><code>includes</code>：判断集合1是否包含集合2. 基本思想是，遍历两个集合，依次判断集合2中的元素是否均在集合1中出现了。</p>
+
+<p><code>set_union</code>：求两个集合的并集，如果两个集合中出现了相同的元素，则只算一次。</p>
+
+<p><code>set_intersection</code>：求两个集合的交集，即只保留两个集合中都存在的元素。</p>
+
+<p><code>set_difference</code>：两个集合的差集，即集合1中存在而集合2中不存在的元素。</p>
+
+<p><code>set_symmetric_difference</code>：两个集合的对称差，即集合1中存在而2中不存在的元素或集合2中存在而集合1中不存在的元素。</p>
+
+<p><strong>21. 求极值 max/min element</strong><br/>
+遍历整个区间，找到其中最大/小的元素的值，返回的是指向最大/小值的迭代器。</p>
+
+<p><strong>22. 排列的后继和前驱 next/pre permutation</strong><br/>
+关于该算法在之前的一篇文章中有详细介绍，请参见 <a href="http://ibillxia.github.io/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/">全排列及某排列的后继的求解及其STL实现的分析</a> .</p>
+
+<p><strong>23. 找第一次出现的位置 find first of</strong><br/>
+在第一个序列中依次查找第二个序列中某个元素第一次出现的位置，使用一个双重循环，外循环遍历第一个序列，内循环遍历第二个序列，只要找到一个就立即返回在序列1中的位置，没有找到则返回序列1的尾迭代器。</p>
+
+<p><strong>24. 查找序列中的子序列 find end</strong><br/>
+在序列1中查找是否存在序列2这样的子序列，返回最后一次查找结果。还有一个版本是针对双向迭代器的类偏特化版本。</p>
+
+<p><strong>25. 判断序列是否为堆 is heap</strong><br/>
+判断一个序列是否为堆，即不断地判断父节点是否大于其孩子节点，如果不大于则返回false，否则返回true。</p>
+
+<p><strong>26. 判断序列是否有序 is sorted</strong><br/>
+判断一个序列是否有序，只需要遍历序列并判断相邻的两个元素的大小关系是否一致即可。</p>
+
+<p>Well Done！终于看完了这些算法了！其中旋转、排序、查找、合并算法是稍微复杂的，且做了一些优化，是需要仔细阅读和体会的。
+2014.11.09 更新。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[深入理解STL源码(5.3) 算法之基本算法algobase]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/10/25/insight-into-stl-5-algorithm-3-base-algorithms-algobase/"/>
+    <updated>2014-10-25T21:13:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/10/25/insight-into-stl-5-algorithm-3-base-algorithms-algobase</id>
+    <content type="html"><![CDATA[<p>本文主要介绍STL中的基本算法，主要涉及到的源码文件有 <code>stl_algobase.h</code> 等。</p>
+
+<p>在 <code>stl_algobase.h</code> 中定义的算法都比较简单基础，主要涉及区间相等判断、区间填充、求极值、交换、拷贝、字典序比较等算法，而其他诸如查找、计数、排序、旋转等算法则在文件 <code>stl_algo.h</code> 中实现。在algobase基本算法中，除了字典序比较、复制/拷贝算法外，其他都比较简单，这里先依次介绍这些简单的算法，然后再介绍字典序比较和拷贝算法。</p>
+
+<h2>1. 交换、填充等简单算法</h2>
+
+<p>由于这里很多算法比较简单（基本都在10行以内，甚至很多就一行代码），就不一一粘贴代码了。</p>
+
+<p><strong>iter_swap</strong> ：将两个 ForwardIterators 所指的对象对调，通过申请一个临时变量、三次赋值，就完成了。</p>
+
+<p><strong>min/max</strong> ：求两个数中的小、大者，还有一个版本可以指定的比较方法（仿函数）。</p>
+
+<p><strong>fill</strong> ：将 <code>[first, last)</code> 内的所有元素改填为新值 value。</p>
+
+<p><strong>fill_n</strong> ：将 <code>[first, last)</code> 内的前n个元素改填为新值 value，返回迭代器指向被填入的最后一个元素的下一位置。</p>
+
+<p><strong>mismatch</strong> ：用来平行比较两个序列，指出两者之间的第一个不匹配点，返回一对迭代器（Iterators Pair），分别指向两序列中的不匹配点。</p>
+
+<p><strong>equal</strong> ：判断两个序列在 <code>[first, last)</code> 区间内相等，如果第二个序列元素较多，将不予考虑，只有两个序列在各自区间内对应相等才返回true，否则返回false。</p>
+
+<!-- more -->
+
+
+<h2>2. 字典序比较</h2>
+
+<p><code>lexicographical_compare</code> 以“字典序排列方式”对两个序列 <code>[first, last)</code> 和 <code>[first2, last2)</code> 进行比较。比较操作针对两个序列中的对应位置上的元素进行，直到某一对不相等或同时到达尾部或仁义序列到达尾部。该算法其实并不复杂，但有一点值得注意，那就当且仅当第一个序列字典序小于第二个序列时才返回true，以下是各种情况下的返回值：</p>
+
+<ul>
+<li>发现不相等，如果<strong>第一序列元素较小，返回true</strong>，否则返回false；</li>
+<li>到达last1而尚未到达last2，返回true；</li>
+<li>到达last2而尚未到达last1，返回false；</li>
+<li>同时到达last1和last2，返回false。</li>
+</ul>
+
+
+<p>源码如下：
+<code>cpp
+template &lt;class _InputIter1, class _InputIter2&gt;
+bool lexicographical_compare(_InputIter1 __first1, _InputIter1 __last1, _InputIter2 __first2, _InputIter2 __last2) {
+  for ( ; __first1 != __last1 &amp;&amp; __first2 != __last2; ++__first1, ++__first2) {
+    if (*__first1 &lt; *__first2)
+      return true;
+    if (*__first2 &lt; *__first1)
+      return false;
+  }
+  return __first1 == __last1 &amp;&amp; __first2 != __last2;
+}
+</code></p>
+
+<p>除了这个默认的版本外，还有一个版本提供比较方法（仿函数）的参数。另外，对于纯字符串的比较，SGI STL还做了进一步优化，使用原生指针和C标准函数 <code>memcmp()</code> 进行比较，如下：</p>
+
+<pre><code class="cpp">inline bool 
+lexicographical_compare(const unsigned char* __first1, const unsigned char* __last1,
+                        const unsigned char* __first2,const unsigned char* __last2) {
+  const size_t __len1 = __last1 - __first1;
+  const size_t __len2 = __last2 - __first2;
+  const int __result = memcmp(__first1, __first2, min(__len1, __len2));
+  return __result != 0 ? __result &lt; 0 : __len1 &lt; __len2;
+}
+</code></pre>
+
+<h2>3. 复制/拷贝算法</h2>
+
+<p>在很多应用程序中，复制copy是一个很常见的操作，特别是在赋值的时候。对于稍微复杂的对象，在不同的语言中赋值时会有一些差别，有的编程语言赋值仅仅是对等号右边的对象的一个引用，而并没有正真的产生一个新的对象，更不用说对象中可能包含的对象成员，例如Python当中的赋值、浅拷贝copy和深拷贝deepcopy等。</p>
+
+<p>而STL 中的copy，除了简单的单一对象的拷贝之外，还有序列区间的拷贝等，这里就涉及到空间分配和时间效率问题。在C++中，复制操作主要是运用assignment operator（复制运算符） 或 copy constructor（拷贝构造函数），在STL的copy算法中使用的是前者，而对于某些具有trivial assignment operator的数据，则可以使用内存直接复制行为（例如C标准库函数memmove、memcpy等），就能极大的节省时间。SGI STL用尽各种办法，包括函数重载、型别特性、偏特化（partial specialization）等技巧（关于偏特化请参见 <a href="http://www.jellythink.com/archives/410">C++模板特化与偏特化</a>），无所不用其极地加强效率。</p>
+
+<p>除了上面提到的元素型别、偏特化等问题，还有元素复制顺序的问题。copy 算法是将原始区间 <code>[first, last)</code> 内的元素复制到目标区间 <code>[result, result+last-first)</code> 区间内，复制时既可以从 first 开始往 last 复制，但也可以从 last-1开始向 first 复制，后者在 STL 另取名为 copy_backward_。从后往前复制的好处在于，不用担心目标区间与原始区间有重叠，因为如果有重叠区域，那么简单的 copy 时，对于原始数据而言 <code>[result, last)</code> 区间的数据在被复制前被修改了，从而得不到预期的结果。当然，有一种情况使用 copy 不用担心这个问题，那就是对于迭代器为原生指针，使用 memmove （而不是 memcpy，关于二者的区别参见 <a href="http://stackoverflow.com/questions/4415910/memcpy-vs-memmove">memcpy() vs memmove()</a>）进行复制，此时 memmove 会先将整个区间复制下来，没有被覆盖的危险。</p>
+
+<p>在介绍 copy 算法的源码具体实现前，根据源码及其注释再做一个简单的小结：copy 算法中的一些辅助函数有两个目的，其一是对于简单的数据类型尽量使用 memmove，其二是对于具有 RandomAccessIterators 的对象使用一个计数器来进行循环；除此之外，SGI STL针对编译器是否具有函数模板偏特化、类模板偏特化等进行了适配。下面是 copy 的源码，其中添加了比较详细具体的注释：</p>
+
+<pre><code class="cpp">// 首先是几个与偏特化无关的公用的3个函数
+template &lt;class _InputIter, class _OutputIter, class _Distance&gt;
+inline _OutputIter 
+__copy(_InputIter __first, _InputIter __last,
+       _OutputIter __result,input_iterator_tag, _Distance*){
+  for ( ; __first != __last; ++__result, ++__first) // 使用迭代器遍历和复制
+    *__result = *__first;
+  return __result;
+}
+template &lt;class _RandomAccessIter, class _OutputIter, class _Distance&gt;
+inline _OutputIter
+__copy(_RandomAccessIter __first, _RandomAccessIter __last,
+       _OutputIter __result, random_access_iterator_tag, _Distance*){
+  for (_Distance __n = __last - __first; __n &gt; 0; --__n) { //对于随机访问迭代器，使用一个计数器n
+    *__result = *__first;
+    ++__first;
+    ++__result;
+  }
+  return __result;
+}
+template &lt;class _Tp&gt;
+inline _Tp*
+__copy_trivial(const _Tp* __first, const _Tp* __last, _Tp* __result) {
+  memmove(__result, __first, sizeof(_Tp) * (__last - __first)); // 直接使用 memmove
+  return __result + (__last - __first);
+}
+//============== __STL_FUNCTION_TMPL_PARTIAL_ORDER 对于具有函数模板偏特性的编译器
+#if defined(__STL_FUNCTION_TMPL_PARTIAL_ORDER)
+template &lt;class _InputIter, class _OutputIter&gt;
+inline _OutputIter 
+__copy_aux2(_InputIter __first, _InputIter __last, _OutputIter __result, __false_type) { // false_type 的重载版
+  return __copy(__first, __last, __result, __ITERATOR_CATEGORY(__first), __DISTANCE_TYPE(__first));
+}
+template &lt;class _InputIter, class _OutputIter&gt;
+inline _OutputIter 
+__copy_aux2(_InputIter __first, _InputIter __last, _OutputIter __result, __true_type) { // true_type 的重载版
+  return __copy(__first, __last, __result, __ITERATOR_CATEGORY(__first), __DISTANCE_TYPE(__first));
+}
+#ifndef __USLC__
+template &lt;class _Tp&gt;
+inline _Tp* 
+__copy_aux2(_Tp* __first, _Tp* __last, _Tp* __result, __true_type) { // 原生指针的重载版
+  return __copy_trivial(__first, __last, __result);
+}
+#endif /* __USLC__ */
+template &lt;class _Tp&gt;
+inline _Tp* 
+__copy_aux2(const _Tp* __first, const _Tp* __last, _Tp* __result, __true_type) { // 常量指针的重载版
+  return __copy_trivial(__first, __last, __result);
+}
+template &lt;class _InputIter, class _OutputIter, class _Tp&gt;
+inline _OutputIter 
+__copy_aux(_InputIter __first, _InputIter __last, _OutputIter __result, _Tp*) {
+  typedef typename __type_traits&lt;_Tp&gt;::has_trivial_assignment_operator _Trivial;
+  return __copy_aux2(__first, __last, __result, _Trivial());
+}
+template &lt;class _InputIter, class _OutputIter&gt;
+inline _OutputIter 
+copy(_InputIter __first, _InputIter __last, _OutputIter __result) { //最终的对外接口
+  return __copy_aux(__first, __last, __result, __VALUE_TYPE(__first));
+}
+//============== __STL_CLASS_PARTIAL_SPECIALIZATION 对于具有类模板偏特性的编译器
+#elif defined(__STL_CLASS_PARTIAL_SPECIALIZATION)
+template &lt;class _InputIter, class _OutputIter, class _BoolType&gt;
+struct __copy_dispatch { // 类1，泛化版
+  static _OutputIter copy(_InputIter __first, _InputIter __last, _OutputIter __result) {
+    typedef typename iterator_traits&lt;_InputIter&gt;::iterator_category _Category;
+    typedef typename iterator_traits&lt;_InputIter&gt;::difference_type _Distance;
+    return __copy(__first, __last, __result, _Category(), (_Distance*) 0);
+  }
+};
+template &lt;class _Tp&gt;
+struct __copy_dispatch&lt;_Tp*, _Tp*, __true_type&gt;{ // 类2，特化版
+  static _Tp* copy(const _Tp* __first, const _Tp* __last, _Tp* __result) {
+    return __copy_trivial(__first, __last, __result);
+  }
+};
+template &lt;class _Tp&gt;
+struct __copy_dispatch&lt;const _Tp*, _Tp*, __true_type&gt;{ // 类3，特化版
+  static _Tp* copy(const _Tp* __first, const _Tp* __last, _Tp* __result) {
+    return __copy_trivial(__first, __last, __result);
+  }
+};
+template &lt;class _InputIter, class _OutputIter&gt;
+inline _OutputIter 
+copy(_InputIter __first, _InputIter __last, _OutputIter __result) { // 对外接口
+  typedef typename iterator_traits&lt;_InputIter&gt;::value_type _Tp;
+  typedef typename __type_traits&lt;_Tp&gt;::has_trivial_assignment_operator _Trivial;
+  return __copy_dispatch&lt;_InputIter, _OutputIter, _Trivial&gt;
+    ::copy(__first, __last, __result);
+}
+//============== 其他，完全不具有偏特化特性的情况
+#else /* __STL_CLASS_PARTIAL_SPECIALIZATION */
+template &lt;class _InputIter, class _OutputIter&gt;
+inline _OutputIter 
+copy(_InputIter __first, _InputIter __last, _OutputIter __result){ // 对外接口，泛化版
+  return __copy(__first, __last, __result, __ITERATOR_CATEGORY(__first), __DISTANCE_TYPE(__first));
+}
+
+#define __SGI_STL_DECLARE_COPY_TRIVIAL(_Tp)                                \
+  inline _Tp* copy(const _Tp* __first, const _Tp* __last, _Tp* __result) { \ // 对外接口，特化版
+    memmove(__result, __first, sizeof(_Tp) * (__last - __first));          \
+    return __result + (__last - __first);                                  \
+  }
+
+__SGI_STL_DECLARE_COPY_TRIVIAL(char)
+__SGI_STL_DECLARE_COPY_TRIVIAL(signed char)
+__SGI_STL_DECLARE_COPY_TRIVIAL(unsigned char)
+__SGI_STL_DECLARE_COPY_TRIVIAL(short)
+__SGI_STL_DECLARE_COPY_TRIVIAL(unsigned short)
+__SGI_STL_DECLARE_COPY_TRIVIAL(int)
+__SGI_STL_DECLARE_COPY_TRIVIAL(unsigned int)
+__SGI_STL_DECLARE_COPY_TRIVIAL(long)
+__SGI_STL_DECLARE_COPY_TRIVIAL(unsigned long)
+#ifdef __STL_HAS_WCHAR_T
+__SGI_STL_DECLARE_COPY_TRIVIAL(wchar_t)
+#endif
+#ifdef _STL_LONG_LONG
+__SGI_STL_DECLARE_COPY_TRIVIAL(long long)
+__SGI_STL_DECLARE_COPY_TRIVIAL(unsigned long long)
+#endif
+__SGI_STL_DECLARE_COPY_TRIVIAL(float)
+__SGI_STL_DECLARE_COPY_TRIVIAL(double)
+__SGI_STL_DECLARE_COPY_TRIVIAL(long double)
+#undef __SGI_STL_DECLARE_COPY_TRIVIAL
+#endif /* __STL_CLASS_PARTIAL_SPECIALIZATION */
+</code></pre>
+
+<p>以上是 copy 的完整代码，关于复制还有两个接口，一个是 <code>copy_n</code>，另一个是 <code>copy_backward</code>，前者复制区间 <code>[first, last)</code> 中前 n 个元素，后者从last-1 往 first 复制，这里就不详细展开了。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[深入理解STL源码(5.2) 算法之数值算法]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/10/19/insight-into-stl-5-algorithm-2-numeric-algorithms/"/>
+    <updated>2014-10-19T20:28:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/10/19/insight-into-stl-5-algorithm-2-numeric-algorithms</id>
+    <content type="html"><![CDATA[<p>本文主要介绍STL中的数值算法，主要涉及到的源码文件有 <code>stl_numberic.h</code>、<code>numeric</code>、<code>stl_relops.h</code> 等。</p>
+
+<p>STL 数值算法主要包含以下几个算法（来自<a href="http://www.cplusplus.com/reference/numeric/">C++文档</a>）：</p>
+
+<ul>
+<li>accumulate: Accumulate values in range</li>
+<li>adjacent_difference: Compute adjacent difference of range</li>
+<li>inner_product: Compute cumulative inner product of range</li>
+<li>partial_sum: Compute partial sums of range</li>
+<li>iota: Store increasing sequence</li>
+<li>power: power(x,n) 1 multiply by x n times (not in C++ standard)</li>
+</ul>
+
+
+<p>下面一一介绍每个算法的实现。</p>
+
+<h3>1. accumulate</h3>
+
+<p>该算法计算 init 和区间 [first, last) 内所有元素的总和。注意，必须提供 init 的初始值，这样即使 first=last 区间为空，仍能得到一个明确定义的值。当 init=0 时，即为计算 [first, last) 区间内所有元素的总和。具体实现有两个版本，如下：</p>
+
+<pre><code class="cpp">template &lt;class _InputIterator, class _Tp&gt;
+_Tp accumulate(_InputIterator __first, _InputIterator __last, _Tp __init){
+  __STL_REQUIRES(_InputIterator, _InputIterator); // concept check
+  for ( ; __first != __last; ++__first)
+    __init = __init + *__first; // 求和
+  return __init;
+}
+template &lt;class _InputIterator, class _Tp, class _BinaryOperation&gt;
+_Tp accumulate(_InputIterator __first, _InputIterator __last, _Tp __init, _BinaryOperation __binary_op){
+  __STL_REQUIRES(_InputIterator, _InputIterator); // concept check
+  for ( ; __first != __last; ++__first)
+    __init = __binary_op(__init, *__first); // 指定二元操作
+  return __init;
+}
+</code></pre>
+
+
+
+<!-- more -->
+
+
+<p>第二个版本通过仿函数参数 <em>binary_op 指定操作类型，可以实现其他方式的累计，例如累乘等（令init=1，</em>binary_op=multiply）。</p>
+
+<h3>2. adjacent_difference</h3>
+
+<p>该算法用来计算区间 [first, last) 中相邻元素的差（或其他指定运算，结果[i]=当前元素[i]的值-前驱元素[i-1]的值），该算法也有两个版本，一个是指定运算为差，另一个传入仿函数(参数 _binary_op)指定具体运算，这里贴出第二个版本：</p>
+
+<pre><code class="cpp">template &lt;class _InputIterator, class _OutputIterator, class _Tp, class _BinaryOperation&gt;
+_OutputIterator
+__adjacent_difference(_InputIterator __first, _InputIterator __last, 
+                      _OutputIterator __result, _Tp*, _BinaryOperation __binary_op) {
+  _Tp __value = *__first;
+  while (++__first != __last) { // 先 ++ ，再比较
+    _Tp __tmp = *__first; // 取第i+1个元素的值
+    *++__result = __binary_op(__tmp, __value);
+    __value = __tmp; // 保存第i个元素的值
+  }
+  return ++__result;
+}
+template &lt;class _InputIterator, class _OutputIterator, class _BinaryOperation&gt;
+_OutputIterator adjacent_difference(_InputIterator __first, _InputIterator __last,
+                    _OutputIterator __result, _BinaryOperation __binary_op) {
+  if (__first == __last) return __result; // 区间为空，直接返回
+  *__result = *__first; // 第一个元素没有前驱，直接将当前值赋给结果
+  return __adjacent_difference(__first, __last, __result,
+                               __VALUE_TYPE(__first), __binary_op);
+}
+</code></pre>
+
+<h3>3. inner_product</h3>
+
+<p>该算法实现区间 [first1, last1) 和区间 [first2, first2+(last1-first1) ) 的一般内积（generalized inner product），公式为$init = init+(<em>i) * (</em>(first2+(i-first1)))$同样需要提供 init 的值（理由同accumulate）。另外还有一个版本，提供两个仿函数，分别指定上面公式中的加法和乘法。第一个版本的代码如下：
+<code>cpp
+template &lt;class _InputIterator1, class _InputIterator2, class _Tp&gt;
+_Tp inner_product(_InputIterator1 __first1, _InputIterator1 __last1,
+                  _InputIterator2 __first2, _Tp __init) {
+  for ( ; __first1 != __last1; ++__first1, ++__first2)
+    __init = __init + (*__first1 * *__first2);
+  return __init;
+}
+</code>
+可以看到，这里其实没有判断第二个区间是否越界，所以在调用时需要我们自己注意，但一般来说计算内积的两个区间都是相同长度的。</p>
+
+<h3>4. partial_sum</h3>
+
+<p>该算法用来计算局部总和，将 <code>*first</code> 赋值给 <code>*result</code>，将 <code>*frist+*(first+1)</code> 赋值给 <code>*(result+1)</code>，依次类推，即有 <code>result[i]=sum(*first..*(first+i))</code>，这是默认的操作为加法的版本，还有一个版本可以通过仿函数指定操作，以下是默认版本：
+<code>cpp
+template &lt;class _InputIterator, class _OutputIterator, class _Tp&gt;
+_OutputIterator __partial_sum(_InputIterator __first, _InputIterator __last,
+              _OutputIterator __result, _Tp*) {
+  _Tp __value = *__first;
+  while (++__first != __last) {
+    __value = __value + *__first;
+    *++__result = __value; // result 先++，再提领、赋值
+  }
+  return ++__result;
+}
+template &lt;class _InputIterator, class _OutputIterator&gt;
+_OutputIterator partial_sum(_InputIterator __first, _InputIterator __last,
+            _OutputIterator __result){
+  if (__first == __last) return __result;
+  *__result = *__first; // 第一项直接赋值
+  return __partial_sum(__first, __last, __result, __VALUE_TYPE(__first));
+}
+</code></p>
+
+<h3>5. itoa</h3>
+
+<p>该算法不是C++/STL标准，主要作用是将区间 [first, last) 的值赋值为 value,value+1,value+2,... 如下：
+<code>cpp
+template &lt;class _ForwardIter, class _Tp&gt;
+void iota(_ForwardIter __first, _ForwardIter __last, _Tp __value){
+  while (__first != __last)
+    *__first++ = __value++;
+}
+</code></p>
+
+<h3>6. power</h3>
+
+<p>该算法也不是C++/STL标准，作用在于实现 x 的 n 次方的计算，通过将n分解为2的幂来计算。还有一个版本是用户可以指定运算，而不一定是乘法。默认版本如下：
+<code>cpp
+template &lt;class _Tp, class _Integer, class _MonoidOperation&gt;
+_Tp __power(_Tp __x, _Integer __n, _MonoidOperation __opr){ // func1：幂方的具体实现
+  if (__n == 0)
+    return identity_element(__opr);
+  else {
+    while ((__n &amp; 1) == 0) { // 二进制末尾为0
+      __n &gt;&gt;= 1; // n/2
+      __x = __opr(__x, __x); // 乘方
+    }
+    _Tp __result = __x;
+    __n &gt;&gt;= 1;
+    while (__n != 0) {
+      __x = __opr(__x, __x); // 乘方
+      if ((__n &amp; 1) != 0) // 二进制末尾为1
+        __result = __opr(__result, __x); // 乘入结果
+      __n &gt;&gt;= 1;
+    }
+    return __result;
+  }
+}
+template &lt;class _Tp, class _Integer&gt;
+inline _Tp __power(_Tp __x, _Integer __n){ // func2
+  return __power(__x, __n, multiplies&lt;_Tp&gt;()); // 调用func3
+}
+template &lt;class _Tp, class _Integer, class _MonoidOperation&gt;
+inline _Tp power(_Tp __x, _Integer __n, _MonoidOperation __opr){ // func3
+  return __power(__x, __n, __opr); // 调用func1
+}
+template &lt;class _Tp, class _Integer&gt;
+inline _Tp power(_Tp __x, _Integer __n){
+  return __power(__x, __n); // 调用func2
+}
+</code>
+饶了几道弯，主要看 func1实现即可。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[深入理解STL源码(5.1) 算法]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/10/12/insight-into-stl-5-algorithm-1-overview/"/>
+    <updated>2014-10-12T21:30:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/10/12/insight-into-stl-5-algorithm-1-overview</id>
+    <content type="html"><![CDATA[<h2>1. 算法概述</h2>
+
+<p>算法（Algorithm）是一个计算的具体步骤，常用于计算、数据处理和自动推理。Donald Knuth 在他的著作 The Art of Computer Programming 里对算法的特征归纳（来自wiki）：</p>
+
+<ul>
+<li>输入：一个算法必须有零个或以上输入量。</li>
+<li>输出：一个算法应有一个或以上输出量，输出量是算法计算的结果。</li>
+<li>明确性：算法的描述必须无歧义，以保证算法的实际执行结果是精确地符合要求或期望，通常要求实际运行结果是确定的。</li>
+<li>有限性：依据图灵的定义，一个算法是能够被任何图灵完备系统模拟的一串运算，而图灵机只有有限个状态、有限个输入符号和有限个转移函数（指令）。而一些定义更规定算法必须在有限个步骤内完成任务。</li>
+<li>有效性：又称可行性。能够实现，算法中描述的操作都是可以通过已经实现的基本运算执行有限次来实现。</li>
+</ul>
+
+
+<p>算法的核心是创建问题抽象的模型和明确求解目标，常见的算法有分治法、贪婪算法、动态规划、平摊分析等。再好的编程技巧，也无法让一个笨拙的算法起死回生，选择了错误的算法，便注定了失败的命运。</p>
+
+<p>算法的<strong>时间复杂度</strong>是指算法需要消耗的时间资源。一般来说，计算机算法是问题规模 $n$ 的函数 $f(n)$ ，算法的时间复杂度也因此记做：</p>
+
+<center> $T(n) = O(f(n))$ </center>
+
+
+<p>
+算法执行时间的增长率与$f(n)$的增长率正相关，称作渐近时间复杂度（Asymptotic Time Complexity），简称时间复杂度。
+常见的时间复杂度有：常数阶 $O(1)$ ,对数阶 $O({log}_ {2}n)$ ,线性阶 $O(n)$ , 线性对数阶 $O(n{log}_ {2} n)$ ,平方阶 $O(n<sup>2</sup> )$ ，立方阶 $O(n<sup>3</sup> )$ ，...， k次方阶 $O( n<sup>k</sup> )$ ,指数阶 $O( 2<sup>n</sup> )$ 。随着问题规模 $n$ 的不断增大，上述时间复杂度不断增大，算法的执行效率越低。</p>
+
+<p>算法的<strong>空间复杂度</strong>是指算法需要消耗的空间资源。其计算和表示方法与时间复杂度类似，一般都用复杂度的渐近性来表示。同时间复杂度相比，空间复杂度的分析要简单得多。</p>
+
+<!-- more -->
+
+
+<h2>2. STL 算法概览</h2>
+
+<p>很多算法能用来解决特定问题（如排序、查找、复制、比较、组合等），并获得数学上的性能分析与证明，这样的算法非常具有复用性，STL 的算法组件就总结了70+ 个极具复用价值的算法，包括排序（sorting）、查找（searching）、排列组合（permutation）等，以及用于数据移动、复制、删除、比较、组合、运算等算法。</p>
+
+<p>某些特定的算法与特定的数据结构相关，例如二叉查找树和红黑树便是为了解决查找问题而发展出来的特殊数据结构，hashtable 拥有快速查找能力，又例如 max-heap 可以协助完成 heap sort，几乎可以说，特定的数据结构是为了实现某种特定的算法。这类与特定数据结构相关的算法，在前几篇介绍容器的文章中都有提到，而接下来几篇文章所要介绍的算法则是无特殊条件限制的空间中的某一段元素区间的算法，即泛型算法。</p>
+
+<h4>2.1 STL 算法的一般形式</h4>
+
+<p>所有泛型算法的前两个参数都是一对迭代器（iterators），通常称为 first 和 last，用以标识算法的操作区间，STL 习惯采用前闭后开区间表示法，写成 <code>[first, last)</code> ，当 <code>frist==last</code> 时，表示的是空区间。这个 <code>[first, last)</code> 的必要条件是，必须能够进过 increment （累加）操作的反复运用，从 first 到 last，编译器本身无法强求这一点，如果这个条件不成立，会导致无法预料的结果。</p>
+
+<p>前面讲<a href="http://ibillxia.github.io/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/">迭代器</a>时我们知道，STL有5类迭代器，他们是input、output、forward、bidirectional、random_access。_每个 STL 算法的声明，都表现出它所需要的最低程度的迭代器类型，例如 <code>find()</code> 需要一个 inputIterators 是最低要求，但也可以接受更高类型的，如 forwardIterators、bidirectionalIterators、randomAccessIterators，但如果传给它一个outputIterators，则会导致错误。将无效的迭代器传给某个算法，虽然是一种错误，却不能保证在编译时期就被捕捉出来，因为所谓的迭代器型别并不是真实的型别，他们只是 function template 的一种型别参数（type parameters）。</p>
+
+<p>许多 STL 算法都有很多个版本，除了默认的只包含迭代器参数的实现之外，还有一个可以传入仿函数（functor）参数的版本，例如 <code>unique()</code> 缺省情况下使用 <code>equality</code> 操作符来比较两个相邻的元素，但如果这些元素的型别并未提供 <code>equality</code> 操作符，或如果用户希望定义自己的 <code>equality</code> 操作符，便可以传一个仿函数给另一个版本的 <code>unique()</code> ，有些算法干脆将这样的两个版本分为两个不同名的实体，如 <code>find_if()</code>、<code>replace_if()</code> 等。</p>
+
+<h4>2.2 质变算法与非质变算法</h4>
+
+<p>所谓<strong>质变算法</strong>（mutating algorithms），是指算法运算过程中，会更改区间<code>[first, last)</code>内（迭代器所指）的元素内容，诸如复制（copy）、互换（swap）、替换（replace）、填充（fill）、删除（remove）、排列组合（permutation）、分割（partition）、随机重排（random shuffling）等，都属于此类。通常质变算法提供两个版本，一个是就地（in-place）进行，另一个是copy（另地进行）版本，将操作对象复制一份副本，然后在副本上进行修改并返回该副本。copy版一般以 <code>_copy</code> 作为函数名后缀，例如 <code>replace_copy()</code> 等。但并不是所有的质变算法都提供copy版，例如 sort 就没有。如果我们一定要使用 copy 版，需要我们自己先 copy 一份副本，然后再将副本传给相应的算法。</p>
+
+<p>所谓<strong>非质变算法</strong>（nonmutating algorithms），是指算法运算过程中不会更改区间<code>[first, last)</code>内的元素内容，诸如查找（find）、匹配（search）、计数（count）、巡访（for_each）_、比较（equal，mismatch）、寻找极值（max、min）等。</p>
+
+<h4>2.3 STL 算法的分类</h4>
+
+<p>STL 算法的实现主要在 <code>stl_algobase.h</code>、<code>stl_algo.h</code>、<code>stl_numeric.h</code> 这3个文件中，其中 <code>stl_numeric.h</code> 主要是数值（numeric）算法，包括 <code>adjecent_difference()</code>、<code>accumulate()</code>、<code>inner_product()</code>、<code>partial_sum()</code> 等，相关接口封装在 <code>&lt;numeric&gt;</code> 中。而其他算法如复制、填充、交换、求极值、排列、排序、分割等等算法则在剩下的那两个文件中，相关接口则封装在 <code>&lt;algorithm&gt;</code> 中。C++ 的 <a href="http://www.cplusplus.com/reference/algorithm/">官方文档</a> 将 STL 算法分为以下几类：</p>
+
+<ul>
+<li>Non-modifying sequence operations  非质变操作，查找、计数等</li>
+<li>Modifying sequence operations  质变操作，复制、交换、替换、填充、删除、逆转、旋转等</li>
+<li>Partitions 分割</li>
+<li>Sorting 排序</li>
+<li>Binary search (operating on partitioned/sorted ranges) 二分查找</li>
+<li>Merge (operating on sorted ranges) 合并</li>
+<li>Heap、Min/max、Other 堆算法、极值、其他等</li>
+</ul>
+
+
+<p>后续文章将分别介绍这些算法的具体实现。</p>
+
+<h2>3. 算法的泛化</h2>
+
+<p>上文提到过，很多算法是与底层的数据结构相关的，如何将算法独立于其所处理的数据结构之外，使它能够处理任何数据结构，或者在未知的数据结构（也许是 array，也许是vector，也许是list，也许是deque）上正确地实现操作，并不那么简单。其关键在于，需要把操作对象的型别加以抽象化，把操作对象的标示法和区间目标的移动行为抽象化。如此，整个算法也就在一个抽象层面了，这个过程称为算法的泛型化（generalized），简称泛化。</p>
+
+<p>下面以查找算法的泛化过程为例详细介绍算法泛化的奇妙。对于查找算法，我们首先想到的是在一个整型数组中查找指定元素，一个基本的实现如下：</p>
+
+<pre><code class="cpp">int* find(int* arrayHead, int arraySize, int value){
+    for(int i=0; i &lt; arraySize; i++){
+        if(arrayHead[i] == value) break;
+    }
+    return &amp;(arrayHead[i]);
+}
+</code></pre>
+
+<p>该函数在数组中查找指定值的元素，返回找到的第一个符合条件的元素的地址，如果没有找到就返回最后一个元素的下一个位置（称为end）。当没有找到时，这里为什么要返回地址值（end）而不返回null呢？这是为了方便调用后续的泛型算法，但实际上该算法本身还是与容器相关的，而且暴露了很多容器的实现细节（如arraySize等）。为了让该算法适用于所有类型的容器，其操作应该更抽象化，可以让 find 接受两个指针作为参数，标识出一个操作区间，如下：</p>
+
+<pre><code class="cpp">int* find(int* begin, int* end, int value){
+    while(begin != end &amp;&amp; *begin != value) ++begin;
+    return begin;
+}
+</code></pre>
+
+<p>该函数在区间 <code>[begin, end)</code> 内查找 value，并返回一个指针。这样做之后，已经隐藏了容器内部特性了，但不足的是，要求元素的数据类型为整型，我们可以通过模板参数来解决这个问题：</p>
+
+<pre><code class="cpp">template&lt;typename T&gt;
+T* find(T* begin, T* end, const T&amp; value){
+    // 用到了operator !=,*,++
+    while(begin != end &amp;&amp; *begin != value) ++begin;
+    return begin; // 会引发copy行为
+}
+</code></pre>
+
+<p>除了参数模板化之外，值得注意的是其中待查找的对象是以常引用的方式传递，这样对于大对象非常有利。于是，现在的find函数几乎适用于任何容器——只要该容器允许指针，而指针又都支持inequality（判断不相等）操作符、dereference（取值）操作符、（prefix）increment（前置式递增）操作符、copy（复制）行为这四种操作。</p>
+
+<p>但这个版本还不够泛化，因为参数被限制为指针，而那些支持以上四种操作、行为很像指针的某些对象就无法使用 find 了。在STL中有迭代器，它是一种行为类似指针的对象，是一种smart pointers，使用迭代器实现 find 如下：</p>
+
+<pre><code class="cpp">template&lt;class Iterator, class T&gt;
+Iterator find(Iterator begin, Iterator end, const T&amp; value){
+    while(begin != end &amp;&amp; *begin != value) ++begin;
+    return begin;
+}
+</code></pre>
+
+<p>这便是一个完全泛化的find 函数，它与STL中的find函数几乎一模一样（不同之处可自行查看STL源码）。了解和理解了STL算法的泛化过程，就很容易看懂STL中很多其他的算法了。</p>
+]]></content>
+  </entry>
+  
+</feed>

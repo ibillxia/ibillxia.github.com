@@ -1,0 +1,544 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>深入理解STL源码(4.1) 关联式容器之红黑树 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">深入理解STL源码(4.1) 关联式容器之红黑树</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-08-03T21:30:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>本文涉及到 SGI STL 源码的文件主要是 <code>stl_tree.h</code> 这个文件。</p>
+
+<h2>0. 关联式容器</h2>
+
+<p>之前几篇文章详细介绍了SGI STL中序列式容器的实现，并提到过STL中还有一类关联式的容器。标准的STL管理师容器分为 set（集合）和map（映射表）两大类，以及这两大类的衍生体multiset（多键集合）和multimap（多键映射表），这些容器的底层机制均以RB-Tree（红黑树）完成。RB-Tree是一种非常高效的数据结构，它本质上是一种平衡的二叉搜索树，因而其查找的平均时间复杂度为元素总个数的对数（即logN）。在STL中RB-Tree是一个独立的容器，但并没有对用户的公开接口，仅提供给STL的set和map使用。<br/>
+SGI STL在标准STL之外，还提供了一类关联式容器——hash table（哈希表），以及以此为低层机制的hash set（散列集合）、hash map（散列映射表）、hash multiset（散列多键集合）和hash multimap（散列多键映射表）。相比于RB-Tree，hash table的时间效率更高，插入、删除、查找的时间复杂度均为常数时间，但需要比元素总个数多得多的空间。<br/>
+本文接下来主要介绍树及RB-Tree相关的内容，后续文章将具体介绍SGI STL中set、map、hash table的实现。</p>
+
+<h2>1. 树与二叉搜索树</h2>
+
+<p>树是一种非常常见而且实用的数据结构，几乎所有的操作系统都将文件存放在树状结构里，几乎所有编译器需要实现一个表达式树（expression tree），文件压缩所用的哈夫曼算法也需要用到树状结构，数据库所使用的B-tree则是一种相当复杂的树状结构。<br/>
+关于树的一些基本概念相信大家都比较熟悉，这里就不赘述了，如果需要可以google或看wikipedia，这里重点重温一下数据结构里的二叉搜索树、平衡二叉搜索树、AVL树。<br/>
+<strong>二叉搜索树</strong>：任何节点的键值大于其<strong>左子树</strong>中<strong>每一个</strong>节点的键值，并小于其<strong>右子树</strong>中的<strong>每一个</strong>节点的键值。根据二叉搜索树的定义可知，按照中序遍历该树可以得到一个有序的序列。平均情况下，二叉搜索树可以提供对数时间的插入和访问。其插入和查找的算法也很简单，每次与根节点的键值进行比较，小于根节点的键值则往根节点的左子树插入或查找，大于则往右子树插入或查找，无论是递归实现还是非递归实现都很简单。<br/>
+<strong>平衡二叉搜索树</strong>：上面提到二叉搜索数的<strong>平均</strong>性能为对数时间，这是因为二叉搜索树的深度与数据插入的顺序有关，如果插入的数据本身就比较有序，那么就会产生一个深度过大的树，甚至会退化为一个链表的结构，这中情况下，其查找的效率就是线性时间了。平衡二叉搜索树就是为了解决这个问题而产生的，“平衡”的意义是，没有任何一个节点过深。不同的平衡条件造就出不同的效率表现，以及不同的实现复杂度，如 <a href="http://en.wikipedia.org/wiki/AVL_tree">AVL-Tree</a>、<a href="http://en.wikipedia.org/wiki/Red%E2%80%93black_tree">RB-Tree</a>、<a href="http://en.wikipedia.org/wiki/AA_tree">AA-Tree</a> _等。他们都比简单的二叉搜索树要复杂，特别是插入和删除操作，但他们可以避免高度不平衡的情况，因而查找时间较快。</p>
+
+<!-- more -->
+
+
+<p><strong>AVL树</strong>：AVL-tree（Adelson-Velskii-Landis tree）是一个加上了“额外平衡条件”的二叉搜索树，是一种高度平衡的二叉搜索树，它的这个额外的条件为：任何节点的左右子树高度相差最多1。该条件能够保证整棵树的高度为logN，但其插入和删除的操作也相对比较复杂，因为这些操作可能导致树的失衡，需要调整（或旋转）树的结构，使其保持平衡。插入时出现失衡的情况有如下四种（其中X为最小失衡子树的根节点）：</p>
+
+<blockquote><ol>
+<li>插入点位于X的左子节点的左子树——左左；</li>
+<li>插入点位于X的左子节点的右子树——左右；</li>
+<li>插入点位于X的右子节点的左子树——右左；</li>
+<li>插入点位于X的右子节点的右子树——右右。</li>
+</ol>
+</blockquote>
+
+<p>情况1和4对称，称为外侧插入，可以采用单旋转操作调整恢复平衡；2和3对称，称为内侧插入，可以采用双旋转操作调整恢复平衡：先经过一次旋转变成左左或右右，然后再经过一次旋转恢复平衡。1和2的实例如下图：<br/>
+<img src="/images/2014/IMAG2014080301.jpg"><br/>
+图中从中间到最右情况1的恢复平衡的旋转方法，只是其中节点3为新插入的元素；而最左到最右是情况2的恢复平衡的旋转方法，其中节点4为新插入的元素。情况3和4分别与2和1对称，其调整方法也很类似，就不赘述了。<br/>
+RB-tree是另一种被广泛使用的平衡二叉搜索树，也是SGI STL唯一实现的一种搜索树，作为关联式容器的底层容器。RB-tree的平衡条件不同于AVL-tree，但同样运用了单旋转和双旋转的恢复平衡的机制，下面我们详细介绍RB-tree的实现。</p>
+
+<h2>2. RB-tree的定义及数据结构</h2>
+
+<p>所谓RB-tree，不仅仅是一个二叉搜索树，而且必须满足以下规则：</p>
+
+<blockquote><ol>
+<li>每个节点不是红色就是黑色；</li>
+<li>根节点为黑色；</li>
+<li>每个叶子节点（NIL）为黑色；</li>
+<li>如果节点为红，其左右子节点必为黑；</li>
+<li>对每个节点，从该节点到其子孙中的叶子节点的所有路径上所包含的黑节点数目相同。</li>
+</ol>
+</blockquote>
+
+<p>上面的这些约束保证了这个树大致上是平衡的，这也决定了红黑树的插入、删除、查询等操作是比较快速的。 根据规则5，新增节点必须为红色；根据规则4，新增节点之父节点必须为黑色。当新增节点根据二叉搜索树的规则到达其插入点时，却未能符合上述条件时，就必须调整颜色并旋转树形。下图是一个典型的RB-tree（来自wiki）：<br/>
+<img src="/images/2014/IMAG2014080302.png"><br/>
+SGI STL中RB-tree的数据结构比较简单，其中每个节点的数据结构如下：
+``` cpp
+typedef bool <em>Rb_tree_Color_type;
+const </em>Rb_tree_Color_type <em>S_rb_tree_red = false;
+const </em>Rb_tree_Color_type <em>S_rb_tree_black = true;
+//======================================
+struct </em>Rb_tree_node_base { // 节点的定义
+  typedef <em>Rb_tree_Color_type </em>Color_type;
+  typedef <em>Rb_tree_node_base* </em>Base_ptr;
+  <em>Color_type </em>M_color; // 节点颜色，实际为一个bool型变量
+  <em>Base_ptr </em>M_parent; // 指向父节点，方便遍历
+  <em>Base_ptr </em>M_left;
+  <em>Base_ptr </em>M_right;</p>
+
+<p>  static <em>Base_ptr </em>S_minimum(<em>Base_ptr <strong>x) {
+    while (</strong>x-></em>M_left != 0) <strong>x = </strong>x-><em>M_left;
+    return __x;
+  }
+  static </em>Base_ptr <em>S_maximum(</em>Base_ptr <strong>x) {
+    while (</strong>x-><em>M_right != 0) <strong>x = </strong>x-></em>M_right;
+    return <strong>x;
+  }
+};
+//======================================
+template <class _Value> struct <em>Rb_tree_node : public </em>Rb_tree_node_base { // 节点的定义
+  typedef <em>Rb_tree_node&lt;</em>Value><em> <em>Link_type;
+  </em>Value <em>M_value_field;
+};
+<code>
+其中每个节点主要包含一个标志颜色的bool变量 `_M_color`，3个节点指针 `_M_parent` , `_M_left` , `_M_right`，2个成员函数 `_S_minimum` 和 `_S_maximum` （分别求取最小（最左）、最大（最右）节点）。  
+而RB-tree的定义如下：  
+</code> cpp
+template <class _Tp, class _Alloc> struct </em>Rb_tree_base { // RB-tree的定义
+  typedef <em>Alloc allocator_type;
+  allocator_type get_allocator() const { return allocator_type(); }
+  </em>Rb_tree_base(const allocator_type&amp;)  : <em>M_header(0) { </em>M_header = <em>M_get_node(); } // 构造函数
+  ~</em>Rb_tree_base() { <em>M_put_node(</em>M_header); } // 析构函数
+protected:
+  <em>Rb_tree_node&lt;</em>Tp></em> <em>M_header; // 根节点
+  typedef simple_alloc&lt;</em>Rb_tree_node&lt;<em>Tp>, </em>Alloc> <em>Alloc_type; // 空间配置器
+  </em>Rb_tree_node&lt;<em>Tp>* </em>M_get_node()  { return <em>Alloc_type::allocate(1); } // 分配一个节点的空间
+  void </em>M_put_node(<em>Rb_tree_node&lt;</em>Tp>* </strong>p) { <em>Alloc_type::deallocate(<strong>p, 1); } // 释放</strong>p节点的空间
+};
+//======================================
+template <class _Key, class _Value, class _KeyOfValue, class _Compare,
+          class _Alloc = __STL_DEFAULT_ALLOCATOR(_Value) >
+class </em>Rb_tree : protected <em>Rb_tree_base&lt;</em>Value, <em>Alloc> {
+  typedef </em>Rb_tree_base&lt;<em>Value, </em>Alloc> <em>Base;
+// ...
+};
+<code>``
+可以看到RB-tree的空间配置器是</code>simple_alloc<code>配置器，按</code></em>Rb_tree_node` 节点大小分配空间，每次分配或释放一个节点的空间。</p>
+
+<h2>3. RB-tree的迭代器</h2>
+
+<p>要将RB-tree实现为一个泛型容器并用作set、map的低层容器，迭代器的设计是一个关键。RB-tree的迭代器是一个双向迭代器，但不具备随机访问能力，其引用（dereference）和访问（access）操作与list十分类似，较为特殊的是自增（operator++）和自减（operator--）操作，这里的自增/自减操作是指将迭代器移动到RB-tree按键值大小排序后当前节点的下一个/上一个节点，也即按中序遍历RB-tree时当前节点的下一个/上一个节点。RB-tree的迭代器的定义如下： <br/>
+<code>cpp
+struct _Rb_tree_base_iterator {
+  typedef _Rb_tree_node_base::_Base_ptr _Base_ptr;
+  typedef bidirectional_iterator_tag iterator_category;
+  void _M_increment()  { }
+  void _M_decrement()  { }
+};
+template &lt;class _Value, class _Ref, class _Ptr&gt;
+struct _Rb_tree_iterator : public _Rb_tree_base_iterator {
+  _Self&amp; operator++() { _M_increment(); return *this; }
+  _Self&amp; operator--() { _M_decrement(); return *this; }
+};
+</code>
+可以看到RB-tree的自增和自减操作是使用基迭代器的increment和decrement来实现的，这里仅分析自增操作的实现（自减操作类似的）。RB-tree的自增操作实际上是寻找中序遍历下当前节点的后一个节点，其代码如下：<br/>
+<code>cpp
+  void _M_increment()  { // 自增操作，中序遍历的下一个节点
+    if (_M_node-&gt;_M_right != 0) { // 当前节点有右子树
+      _M_node = _M_node-&gt;_M_right;
+      while (_M_node-&gt;_M_left != 0) // 右子树的最左节点即为所求
+        _M_node = _M_node-&gt;_M_left;
+    } else { // 当前节点没有右子树，找父节点且父节点的右子树不包含当前节点的祖先节点
+      _Base_ptr __y = _M_node-&gt;_M_parent;
+      while (_M_node == __y-&gt;_M_right) { // 当前节点在父节点的右子树中就继续往父节点的父节点找
+        _M_node = __y;
+        __y = __y-&gt;_M_parent;
+      }
+      if (_M_node-&gt;_M_right != __y)
+        _M_node = __y;
+    }
+  }
+</code><br/>
+下面几节主要介绍一下RB-tree的基本操作。</p>
+
+<h2>4. RB-tree的插入操作</h2>
+
+<h4>4.1 基本插入操作</h4>
+
+<p>RB-tree提供两种插入操作，<code>insert_unique()</code> 和 <code>insert_equal()</code>，顾名思义，前者表示被插入的节点的键值在树中是唯一的（如果已经存在，就不需要插入了），后者表示可以存在键值相同的节点。这两个函数都有多个版本，下面以后者的最简单版本（单一参数：被插入的节点的键值）为实例进行介绍。下面是 <code>insert_equal</code> 的实现：
+<code>cpp
+_Rb_tree&lt;_Key,_Value,_KeyOfValue,_Compare,_Alloc&gt; ::insert_equal(const _Value&amp; __v) {
+  _Link_type __y = _M_header;
+  _Link_type __x = _M_root(); // 从根节点开始
+  while (__x != 0) { // 往下寻找插入点
+    __y = __x;
+    // 比较，当前节点的键值比插入值大往左子树找，否则往右子树找
+    __x = _M_key_compare(_KeyOfValue()(__v), _S_key(__x)) ? _S_left(__x) : _S_right(__x);
+  }
+  return _M_insert(__x, __y, __v); // 真正的插入操作，x为新插入节点，y为x的父节点，v为新值
+}
+//真正的插入操作，主要是对RB-tree及新节点的成员变量的设置
+_Rb_tree&lt;_Key,_Value,_KeyOfValue,_Compare,_Alloc&gt; ::_M_insert(_Base_ptr __x_, _Base_ptr __y_, const _Value&amp; __v) {
+  _Link_type __x = (_Link_type) __x_;
+  _Link_type __y = (_Link_type) __y_;
+  _Link_type __z;
+  if (__y == _M_header || __x != 0 || _M_key_compare(_KeyOfValue()(__v), _S_key(__y))) {
+    __z = _M_create_node(__v); // 创建新节点
+    _S_left(__y) = __z;     // makes _M_leftmost() = __z, when __y == _M_header
+    if (__y == _M_header) { // y为header
+      _M_root() = __z;
+      _M_rightmost() = __z;
+    } else if (__y == _M_leftmost()) // y为最左节点
+      _M_leftmost() = __z;  // maintain _M_leftmost() pointing to min node
+  } else {
+    __z = _M_create_node(__v); // 创建新节点。???为什么不放到if-else上面???
+    _S_right(__y) = __z; // 新节点为y的右孩子
+    if (__y == _M_rightmost()) // y为最右节点
+      _M_rightmost() = __z; // maintain _M_rightmost() pointing to max node
+  }
+  _S_parent(__z) = __y; // 设定新节点的父节点
+  _S_left(__z) = 0;
+  _S_right(__z) = 0;
+  _Rb_tree_rebalance(__z, _M_header-&gt;_M_parent); // 调整RB-tree使之恢复平衡
+  ++_M_node_count;
+  return iterator(__z); // 返回指向新节点的迭代器
+}
+</code>
+至此新节点插入完成。然而，由于新节点的插入，可能会引起RB-tree的性质4,5的破坏，需要对RB-tree进行旋转并对相关节点重新着色，这都是在 <code>_Rb_tree_rebalance</code> 这个函数中实现的，下面就主要介绍RB-tree是如何恢复平衡。</p>
+
+<h4>4.2 调整RB-tree使之恢复平衡</h4>
+
+<p>RB-tree的调整与AVL-tree类似但更复杂，因为不仅仅需要旋转，还需要考虑节点的颜色是否符合要求。破坏RB-tree性质4的可能起因是插入了一个红色节点、将一个黑色节点变为红色或者是旋转，而破坏性质5的可能原因是插入一个黑色的节点、节点颜色的改变（红变黑或黑变红）或者是旋转。<br/>
+在讨论 RB-tree 插入操作之前必须明白一点，那就是新插入的节点的颜色必为红色（调整前），因为插入黑点会增加某条路径上黑结点的数目，从而导致整棵树黑高度的不平衡。但如果新结点的父结点为红色时（如下图所示），将会违反红黑树的性质：一条路径上不能出现父子同为红色结点。这时就需要通过一系列操作来使红黑树保持平衡。为了清楚地表示插入操作以下在结点中使用“N”字表示一个新插入的结点，使用“P”字表示新插入点的父结点，使用“U”字表示“P”结点的兄弟结点，使用“G”字表示“P”结点的父结点。插入操作分为以下几种情况：<br/>
+<strong>1）、树为空</strong><br/>
+此时，新插入节点为根节点，上面说过新插入节点均为红色，这不符合RB-tree的性质2，只需要将新节点重新改为黑色即可。<br/>
+<strong>2）、黑父</strong><br/>
+如果新节点的父结点为黑色结点，那么插入一个红点将不会影响红黑树的平衡，此时插入操作完成。红黑树比AVL树优秀的地方之一在于黑父的情况比较常见，从而使红黑树需要旋转的几率相对AVL树来说会少一些。<br/>
+<strong>3）、红父</strong><br/>
+这种情况就比较复杂。由于父节点为红，所以祖父节点必为黑色。由于新节点和父节点均为红，所以需要重新着色或进行旋转，此时就需要考虑叔父节点的颜色，进而可能需要考虑祖父、祖先节点的颜色。
+<strong>3.1）、叔父为红</strong>
+只要将父和叔结点变为黑色，将祖父结点变为红色即可，如下图所示：<br/>
+<img src="/images/2014/IMAG2014080303.png"><br/>
+但由于祖父结点的父结点有可能为红色，从而违反红黑树性质。此时必须将祖父结点作为新的判定点<strong>继续向上</strong>（迭代）进行平衡操作。<br/>
+<strong>3.2）、叔父为黑</strong><br/>
+当叔父结点为黑色时，需要进行旋转，有4中情况（类似AVL），以下图示了所有的旋转可能：<br/>
+<img src="/images/2014/IMAG2014080304.png"><br/>
+可以观察到，当旋转完成后，新的旋转根全部为黑色，此时不需要再向上回溯进行平衡操作，插入操作完成。篇幅原因，相关代码这里就不粘贴出来了，要注意的一点就是case1和case2的变色方案是一样的，虽然从上图中看一个是P由红变黑，一个是N由红变黑，但实际上在case2中，经过一次旋转后，迭代器所指向的节点已经发生改变，这样刚好使得这两个case的变色方案相同，均为P由红变黑而G由黑变红。case3与case4的变色方案也是类似的。</p>
+
+<h2>5. RB-tree的删除操作</h2>
+
+<p>相比于插入操作，RB-tree的删除操作更加复杂。在侯捷的书上并没有讲删除操作，而在算法导论上是有专门的一节内容的，wiki上也有详细的讲述。限于篇幅，这里指讲解一个大概的思路，更详细的介绍请参见wiki或算法导论。RB-tree删除操作的基本思路是这样的，首先按照一般的二叉搜索树进行节点的删除，然后对RB-tree相关节点进行变色或旋转。<br/>
+一般的二叉搜索树删除节点的基本思路是：首先找到待删除节点位置，设为D。如果D同时有左右子树，那么用D的后继（右孩子的最左子节点，该后继最多有一个子节点——右孩子）替代D（<strong>注意</strong>：这里的替代是只key的替代，color不变，仍为D的color），从而将删除位置转移到该后继节点（成为新的D，为叶子节点或只有右孩子）。于是，我们只需要讨论删除只有一个儿子的节点的情况(如果它两个儿子都为空，即均为叶子，我们任意将其中一个看作它的儿子)，设这个儿子节点为N，这仍然需要分三种情况：<br/>
+<strong>1）D为红</strong><br/>
+这种情况比较简单。由于D为红色，所以它的父亲和儿子一定是黑色的，我们可以简单的用它的黑色儿子替换它，并不会破坏性质3和性质4。通过被删除节点的所有路径只是少了一个红色节点，这样可以继续保证性质5。<br/>
+  <strong>2）D为黑且N为红</strong><br/>
+如果只是去除这个黑色节点，用它的红色儿子顶替上来的话，会破坏性质5，可能会破坏性质4，但是如果我们重绘它的儿子为黑色，则曾经通过它的所有路径将通过它的黑色儿子，这样可以继续保持性质5，同时也满足性质4。<br/>
+<strong>3）D为黑且N为黑</strong><br/>
+这是一种复杂的情况。我们首先把要删除的节点D替换为它的（右）儿子N，在新树中（D被N覆盖），设N的父节点为P，兄弟为S，SL为S的左儿子，SR为S的右儿子。此时，以N为根节点的子树的黑高度减少了一，与S为根节点的子树的黑高度不一致，破坏了性质5。为了恢复，可以分为如下情形：<br/>
+<strong>3.1）N为根节点</strong><br/>
+已经满足所有性质，不需要调整。<br/>
+<strong>3.2） N是它父亲P的左儿子</strong><br/>
+<strong>case1、S为红色</strong>：将P改为红色，S改为黑色，以P为中心左旋，旋转后<strong>SL为新的S</strong>，SL和SR是新的S的左右孩子，此时case1就转化为了case2或case3或case4；<br/>
+注：case2~4中S均为黑色（否则是case1）。<br/>
+<strong>case2、SL、SR同为黑色</strong>：将S改为红色，这样黑高度失衡的节点变为P，转到3.1）重新开始判断和调整；<br/>
+<strong>case3、SR为黑</strong>：此时SL为红（否则是case2）。将S改为红色，SL改为黑色，然后以S为中心右旋，旋转后SL为新的S，而原S成为SR且为红色，这就将case3变成了case4；<br/>
+<strong>case4、SR为红</strong>：以P为中心左旋，然后交换P和S的颜色，最后将SR改为黑色，即可完成调整。可以看到调整过程与SL的颜色无关。<br/>
+<strong>3.3）N是它父亲P的右儿子</strong><br/>
+与3.2）类似，这里就不详细展开了。</p>
+
+<h2>6. RB-tree的查询操作</h2>
+
+<p>RB-tree是一个二叉搜索树，元素的查询是其拿手项目，非常简单，以下是RB-tree提供的查询操作：
+``` cpp
+template <class _Key, class _Value, class _KeyOfValue, class _Compare, class _Alloc>
+typename <em>Rb_tree&lt;</em>Key,<em>Value,</em>KeyOfValue,<em>Compare,</em>Alloc>::iterator
+<em>Rb_tree&lt;</em>Key,<em>Value,</em>KeyOfValue,<em>Compare,</em>Alloc>::find(const <em>Key&amp; __k) {
+  </em>Link_type <strong>y = _M_header;      // Last node which is not less than </strong>k.
+  <em>Link_type __x = </em>M_root();      // Current node.</p>
+
+<p>  while (<strong>x != 0) // x为NIL时推出循环
+    if (!<em>M_key_compare(</em>S_key(</strong>x), <strong>k))
+      </strong>y = <strong>x, </strong>x = <em>S_left(<strong>x); // 往左子树找（赋值运算优先于逗号运算，y是x的父节点）
+    else
+      </strong>x = </em>S_right(__x); // 往右子树找</p>
+
+<p>  iterator <strong>j = iterator(</strong>y); <br/>
+  return (<strong>j == end() || _M_key_compare(</strong>k, <em>S_key(__j.</em>M_node))) ?
+     end() : __j; // 没找到返回end()，否则返回相应节点的指针（迭代器）
+}
+```</p>
+
+<h2>小结</h2>
+
+<p>关于RB-tree基本就介绍到这里了，主要是RB-tree的定义、数据结构、插入删除和查找等基本操作，其中最主要也最困难的就是插入和删除操作中恢复平衡的方法。另外，还介绍了二叉搜索树的基本概念和高度平衡的AVL树，可以看到，AVL树保持平衡的方法非常简单易懂，而RB-tree由于引入了节点的颜色属性，使得理解起来相对比较困难，那么问题就来了，为什么不用AVL-tree而用RB-tree作为set和map的低层容器呢？<br/>
+这个问题要问STL的实现者了，其实AVL-tree和RB-tree的平均性能在 <a href="http://en.wikipedia.org/wiki/AVL_tree">AVL-tree的wiki</a> _上是有严格的数学公式的，AVL的平均高度为 $1.44logN$ ，而RB-tree的平均高度为 $2logN$ ，这些数据的来历也有相关的论文，感兴趣的可以更深入的看看。</p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2014-08-03T21:30:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/c-plus-plus/'>C++</a>, <a class='tag' href='/blog/tags/stl/'>STL</a>, <a class='tag' href='/blog/tags/rong-qi/'>容器</a>, <a class='tag' href='/blog/tags/hong-hei-shu/'>红黑树</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2014/07/27/stl-source-insight-3-sequential-containers-4-heap-and-priority-queue/" title="Previous Post:
+        深入理解STL源码(3.4) 序列式容器之heap和priority queue">&laquo; 深入理解STL源码(3.4) 序列式容器之heap和priority queue</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2014/08/17/insight-into-stl-4-associative-containers-2-set-and-multiset/"
+        title="Next Post: 深入理解STL源码(4.2) 关联式容器之set和multiset">深入理解STL源码(4.2) 关联式容器之set和multiset
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

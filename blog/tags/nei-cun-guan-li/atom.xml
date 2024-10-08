@@ -1,0 +1,594 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 内存管理 | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/nei-cun-guan-li/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[深入理解STL源码(1) 空间配置器(allocator)]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/"/>
+    <updated>2014-06-13T22:04:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator</id>
+    <content type="html"><![CDATA[<p>在STL中，Memory Allocator 处于最底层的位置，为一切的 Container 提供存储服务，是一切其他组件的基石。对于一般使用 STL 的用户而言，Allocator 是不可见的，如果需要对 STL 进行扩展，如编写自定义的容器，就需要调用 Allocator 的内存分配函数进行空间配置。本文涉及到的 SGI STL 源代码文件有 <code>alloc.h</code>, <code>stl_config.h</code>, <code>stl_alloc.h</code>, <code>stl_threads.h</code> 这4个。</p>
+
+<p>在C++中，一个对象的内存配置和释放一般都包含两个步骤，对于内存的配置，首先是调用operator new来配置内存，然后调用对象的类的构造函数进行初始化；而对于内存释放，首先是调用析构函数，然后调用 operator delete进行释放。 如以下代码：
+<code>cpp
+class Foo { ... };
+Foo* pf = new Foo;
+...
+delete pf;
+</code>
+Allocator 的作用相当于operator new 和operator delete的功能，只是它考虑得更加细致周全。SGI STL 中考虑到了内存分配失败的异常处理，内置轻量级内存池（主要用于处理小块内存的分配，应对内存碎片问题）实现， 多线程中的内存分配处理（主要是针对内存池的互斥访问）等，本文就主要分析 SGI STL 中在这三个方面是如何处理的。在介绍着三个方面之前，我们先来看看 Allocator的标准接口。</p>
+
+<!-- more -->
+
+
+<h2>1. Allocator 的标准接口</h2>
+
+<p>在 SGI STL 中，Allocator的实现主要在文件<code>alloc.h</code> 和 <code>stl_alloc.h</code> 文件中。根据 STL 规范，Allocator 需提供如下的一些接口（见 <code>stl_alloc.h</code> 文件的第588行开始的class template allocator）：<br/>
+<code>cpp
+// 标识数据类型的成员变量，关于中间的6个变量的涵义见后续文章（关于Traits编程技巧）
+typedef alloc _Alloc;
+typedef size_t     size_type;
+typedef ptrdiff_t  difference_type;
+typedef _Tp*       pointer;
+typedef const _Tp* const_pointer;
+typedef _Tp&amp;       reference;
+typedef const _Tp&amp; const_reference;
+typedef _Tp        value_type;
+template &lt;class _Tp1&gt; struct rebind {
+    typedef allocator&lt;_Tp1&gt; other;
+}; // 一个嵌套的class template，仅包含一个成员变量 other
+// 成员函数
+allocator() __STL_NOTHROW {}  // 默认构造函数，其中__STL_NOTHROW 在 stl_config.h中定义，要么为空，要么为 throw()
+allocator(const allocator&amp;) __STL_NOTHROW {}  // 拷贝构造函数
+template &lt;class _Tp1&gt; allocator(const allocator&lt;_Tp1&gt;&amp;) __STL_NOTHROW {} // 泛化的拷贝构造函数
+~allocator() __STL_NOTHROW {} // 析构函数
+pointer address(reference __x) const { return &amp;__x; } // 返回对象的地址
+const_pointer address(const_reference __x) const { return &amp;__x; }  // 返回const对象的地址
+_Tp* allocate(size_type __n, const void* = 0) {
+    return __n != 0 ? static_cast&lt;_Tp*&gt;(_Alloc::allocate(__n * sizeof(_Tp))) : 0;
+    // 配置空间，如果申请的空间块数不为0，那么调用 _Alloc 也即 alloc 的 allocate 函数来分配内存，
+} //这里的 alloc 在 SGI STL 中默认使用的是__default_alloc_template&lt;__NODE_ALLOCATOR_THREADS, 0&gt;这个实现（见第402行）
+void deallocate(pointer __p, size_type __n) { _Alloc::deallocate(__p, __n * sizeof(_Tp)); } // 释放空间
+size_type max_size() const __STL_NOTHROW  // max_size() 函数，返回可成功配置的最大值
+    { return size_t(-1) / sizeof(_Tp); }  //这里没看懂，这里的size_t(-1)是什么意思？
+void construct(pointer __p, const _Tp&amp; __val) { new(__p) _Tp(__val); } // 调用 new 来给新变量分配空间并赋值
+void destroy(pointer __p) { __p-&gt;~_Tp(); } // 调用 _Tp 的析构函数来释放空间
+</code>
+在SGI STL中设计了如下几个空间分配的 class template：<br/>
+<code>cpp
+template &lt;int __inst&gt; class __malloc_alloc_template // Malloc-based allocator.  Typically slower than default alloc
+typedef __malloc_alloc_template&lt;0&gt; malloc_alloc
+template&lt;class _Tp, class _Alloc&gt; class simple_alloc
+template &lt;class _Alloc&gt; class debug_alloc
+template &lt;bool threads, int inst&gt; class __default_alloc_template // Default node allocator.
+typedef __default_alloc_template&lt;__NODE_ALLOCATOR_THREADS, 0&gt; alloc
+typedef __default_alloc_template&lt;false, 0&gt; single_client_alloc
+template &lt;class _Tp&gt;class allocator
+template&lt;&gt;class allocator&lt;void&gt;
+template &lt;class _Tp, class _Alloc&gt;struct __allocator
+template &lt;class _Alloc&gt;class __allocator&lt;void, _Alloc&gt;
+</code>
+其中<code>simple_alloc</code> , <code>debug_alloc</code> , <code>allocator</code> 和 <code>__allocator</code>  的实现都比较简单，都是对其他适配器的一个简单封装（因为实际上还是调用其他配置器的方法，如 <code>_Alloc::allocate</code> ）。而真正内容比较充实的是 <code>__malloc_alloc_template</code> 和 <code>__default_alloc_template</code> 这两个配置器，这两个配置器就是 SGI STL 配置器的精华所在。其中 <code>__malloc_alloc_template</code> 是SGI STL 的第一层配置器，只是对系统的 <code>malloc</code> , <code>realloc</code> 函数的一个简单封装，并考虑到了分配失败后的异常处理。而 <code>__default_alloc_template</code> 是SGI STL 的第二层配置器，在第一层配置器的基础上还考虑了内存碎片的问题，通过内置一个轻量级的内存池。下文将先介绍第一级配置器的异常处理机制，然后介绍第二级配置器的内存池实现，及在多线程环境下内存池互斥访问的机制。</p>
+
+<h2>2. SGI STL 内存分配失败的异常处理</h2>
+
+<p>内存分配失败一般是由于out-of-memory(oom)，SGI STL 本身并不会去处理oom问题，而只是提供一个 private 的函数指针成员和一个 public 的设置该函数指针的方法，让用户来自定义异常处理逻辑：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="k">private</span><span class="o">:&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">ifndef</span><span class="w"> </span><span class="n">__STL_STATIC_TEMPLATE_MEMBER_BUG</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">__malloc_alloc_oom_handler</span><span class="p">)();</span><span class="w">  </span><span class="c1">// 函数指针&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">endif</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">public</span><span class="o">:</span>
+</span><span class='line'><span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="w"> </span><span class="n">__set_malloc_handler</span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">f</span><span class="p">)()))()</span><span class="w"> </span><span class="c1">// 设置函数指针的public方法</span>
+</span><span class='line'><span class="w">  </span><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">old</span><span class="p">)()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">malloc_alloc_oom_handler</span><span class="p">;</span>
+</span><span class='line'><span class="w">    </span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">malloc_alloc_oom_handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">f</span><span class="p">;</span>
+</span><span class='line'><span class="w">    </span><span class="k">return</span><span class="p">(</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">old</span><span class="p">);</span>
+</span><span class='line'><span class="w">  </span><span class="p">}</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span>
+</span><span class='line'><span class="n">如果用户没有调用该方法来设置异常处理函数</span><span class="err">，</span><span class="n">那么就不做任何异常处理</span><span class="err">，</span><span class="n">仅仅是想标准错误流输出一句out</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">memory并退出程序</span><span class="err">（</span><span class="n">对于使用new和C</span><span class="o">++</span><span class="n">特性的情况而言</span><span class="err">，</span><span class="n">则是抛出一个</span><span class="err">`</span><span class="n">std</span><span class="o">::</span><span class="n">bad_alloc</span><span class="p">()</span><span class="err">`</span><span class="n">异常</span><span class="err">），</span><span class="w"> </span><span class="n">因为该函数指针的缺省值为0</span><span class="err">，</span><span class="n">此时对应的异常处理是</span><span class="w"> </span><span class="err">`</span><span class="n">__THROW_BAD_ALLOC</span><span class="err">`：</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cpp</span>
+</span><span class='line'><span class="c1">// line 152 ~ 155&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">ifndef</span><span class="w"> </span><span class="n">__STL_STATIC_TEMPLATE_MEMBER_BUG</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="kt">int</span><span class="w"> </span><span class="n">__inst</span><span class="o">&gt;</span>
+</span><span class='line'><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">malloc_alloc_template</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">inst</span><span class="o">&gt;::</span><span class="n">__malloc_alloc_oom_handler</span><span class="p">)()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">endif</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c1">// in &lt;em&gt;S_oom_malloc and &lt;/em&gt;S_oom_realloc</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">my_malloc_handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">malloc_alloc_oom_handler</span><span class="p">;</span>
+</span><span class='line'><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">my_malloc_handler</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">THROW_BAD_ALLOC</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span class='line'><span class="c1">// in preprocess, line 41 ~ 50&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">ifndef</span><span class="w"> </span><span class="n">__THROW_BAD_ALLOC</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="k">if</span><span class="w"> </span><span class="n">defined</span><span class="p">(</span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">STL_NO_BAD_ALLOC</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">defined</span><span class="p">(</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">STL_USE_EXCEPTIONS</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span><span class="w"> </span><span class="o">&lt;</span><span class="n">stdio</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span><span class="w"> </span><span class="o">&lt;</span><span class="n">stdlib</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">define</span><span class="w"> </span><span class="n">__THROW_BAD_ALLOC</span><span class="w"> </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;out of memory</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span><span class="w"> </span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="k">else</span><span class="w"> </span><span class="o">/&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Standard</span><span class="w"> </span><span class="n">conforming</span><span class="w"> </span><span class="n">out</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">memory</span><span class="w"> </span><span class="n">handling</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;/&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span><span class="w"> </span><span class="o">&lt;</span><span class="k">new</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">define</span><span class="w"> </span><span class="n">__THROW_BAD_ALLOC</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">bad_alloc</span><span class="p">()</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">endif</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">endif</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">SGI</span><span class="w"> </span><span class="n">STL</span><span class="w"> </span><span class="n">内存配置失败的异常处理机制就是这样子了</span><span class="err">，</span><span class="n">提供一个默认的处理方法</span><span class="err">，</span><span class="n">也留有一个用户自定义处理异常的接口</span><span class="err">。</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">## 3. SGI STL 内置轻量级内存池的实现</span>
+</span><span class='line'><span class="n">第一级配置器</span><span class="w"> </span><span class="err">`</span><span class="n">__malloc_alloc_template</span><span class="err">`</span><span class="w"> </span><span class="n">仅仅只是对</span><span class="w"> </span><span class="err">`</span><span class="n">malloc</span><span class="err">`</span><span class="w"> </span><span class="n">的一层封装</span><span class="err">，</span><span class="n">没有考虑可能出现的内存碎片化问题</span><span class="err">。</span><span class="n">内存碎片化问题在大量申请小块内存是可能非常严重</span><span class="err">，</span><span class="n">最终导致碎片化的空闲内存无法充分利用</span><span class="err">。</span><span class="n">SGI</span><span class="w"> </span><span class="n">于是在第二级配置器</span><span class="w"> </span><span class="err">`</span><span class="n">__default_alloc_template</span><span class="err">`</span><span class="w"> </span><span class="n">中</span><span class="w"> </span><span class="n">内置了一个轻量级的内存池</span><span class="err">。</span><span class="w"> </span><span class="n">对于小内存块的申请</span><span class="err">，</span><span class="n">从内置的内存池中分配</span><span class="err">。</span><span class="n">然后维护一些空闲内存块的链表</span><span class="err">（</span><span class="n">简记为空闲链表</span><span class="err">，</span><span class="n">free</span><span class="w"> </span><span class="n">list</span><span class="err">），</span><span class="n">小块内存使用完后都回收到空闲链表中</span><span class="err">，</span><span class="n">这样如果新来一个小内存块申请</span><span class="err">，</span><span class="n">如果对应的空闲链表不为空</span><span class="err">，</span><span class="n">就可以从空闲链表中分配空间给用户</span><span class="err">。</span><span class="n">具体而言SGI默认最大的小块内存大小为128bytes</span><span class="err">，</span><span class="n">并设置了128</span><span class="o">/</span><span class="mi">8</span><span class="o">=</span><span class="mi">16</span><span class="w"> </span><span class="n">个free</span><span class="w"> </span><span class="n">list</span><span class="err">，</span><span class="n">每个list</span><span class="w"> </span><span class="n">分别维护大小为</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="mi">24</span><span class="p">,</span><span class="w"> </span><span class="p">...,</span><span class="w"> </span><span class="mi">128</span><span class="n">bytes</span><span class="w"> </span><span class="n">的空间内存块</span><span class="err">（</span><span class="n">均为8的整数倍</span><span class="err">），</span><span class="n">如果用户申请的空间大小不足8的倍数</span><span class="err">，</span><span class="n">则向上取整</span><span class="err">。</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">SGI</span><span class="w"> </span><span class="n">STL内置内存池的实现请看</span><span class="w"> </span><span class="err">`</span><span class="n">__default_alloc_template</span><span class="err">`</span><span class="w"> </span><span class="n">中被定义为</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="n">的这些成员变量和方法</span><span class="err">（</span><span class="n">去掉了部分预处理代码和互斥处理的代码</span><span class="err">）：</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">private</span><span class="o">:&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="w"> </span><span class="p">(</span><span class="n">defined</span><span class="p">(</span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">SUNPRO_CC</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">defined</span><span class="p">(</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">GNUC__</span><span class="p">))</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">enum</span><span class="w"> </span><span class="p">{</span><span class="n">_ALIGN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">8</span><span class="p">};</span><span class="w"> </span><span class="c1">// 对齐大小</span>
+</span><span class='line'><span class="k">enum</span><span class="w"> </span><span class="p">{</span><span class="n">_MAX_BYTES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">128</span><span class="p">};</span><span class="w"> </span><span class="c1">// 最大有内置内存池来分配的内存大小</span>
+</span><span class='line'><span class="k">enum</span><span class="w"> </span><span class="p">{</span><span class="n">_NFREELISTS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">16</span><span class="p">};</span><span class="w"> </span><span class="c1">// _MAX_BYTES/_ALIGN  // 空闲链表个数</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">endif</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">size_t</span><span class="w">  </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">S_round_up</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">bytes</span><span class="p">)</span><span class="w"> </span><span class="c1">// 不是8的倍数，向上取整</span>
+</span><span class='line'><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(((</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">bytes</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">ALIGN</span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="w"> </span><span class="o">~</span><span class="p">((</span><span class="kt">size_t</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">ALIGN</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">));</span><span class="w"> </span><span class="p">}</span>
+</span><span class='line'><span class="nl">__PRIVATE</span><span class="p">:</span>
+</span><span class='line'><span class="w">  </span><span class="k">union</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Obj</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// 空闲链表的每个node的定义</span>
+</span><span class='line'><span class="w">        </span><span class="k">union</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Obj</span><span class="o">*</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">M_free_list_link</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="kt">char</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">M_client_data</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span><span class="w">   </span><span class="p">};</span>
+</span><span class='line'><span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Obj</span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">STL_VOLATILE</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">S_free_list</span><span class="p">[];</span><span class="w"> </span><span class="c1">// 空闲链表数组</span>
+</span><span class='line'><span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">S_freelist_index</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">bytes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// &lt;strong&gt;bytes 对应的free list的index</span>
+</span><span class='line'><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">(((</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">bytes</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="p">)</span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">ALIGN</span><span class="mi">-1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="kt">size_t</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">ALIGN</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'><span class="w">  </span><span class="p">}</span>
+</span><span class='line'><span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">S_refill</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">__n</span><span class="p">);</span><span class="w"> </span><span class="c1">// 从内存池中申请空间并构建free list，然后从free list中分配空间给用户</span>
+</span><span class='line'><span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">S_chunk_alloc</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">nobjs</span><span class="p">);</span><span class="w"> </span><span class="c1">// 从内存池中分配空间</span>
+</span><span class='line'><span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">char</span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_S_start_free</span><span class="p">;</span><span class="w">  </span><span class="c1">// 内存池空闲部分的起始地址</span>
+</span><span class='line'><span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">char</span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">S_end_free</span><span class="p">;</span><span class="w"> </span><span class="c1">// 内存池结束地址</span>
+</span><span class='line'><span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">S_heap_size</span><span class="p">;</span><span class="w"> </span><span class="c1">// 内存池堆大小，主要用于配置内存池的大小</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="err">``</span>
+</span><span class='line'><span class="n">其中</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">S_refill</span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">和</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">S_chunk_alloc</span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">这两个函数是该内存池机制的核心</span><span class="err">。</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">_default_alloc_template</span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">对外提供的</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">的接口有</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="n">allocate</span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="p">,</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="n">deallocate</span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">和</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="n">reallocate</span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">这三个</span><span class="err">，</span><span class="n">其中涉及内存分配的</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="n">allocate</span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">和</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="n">reallocate</span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">的逻辑思路是</span><span class="err">，</span><span class="n">首先看申请的size</span><span class="err">（</span><span class="n">已round</span><span class="w"> </span><span class="n">up</span><span class="err">）</span><span class="n">对应的free</span><span class="w"> </span><span class="n">list是否为空</span><span class="err">，</span><span class="n">如果为空</span><span class="err">，</span><span class="n">则调用</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">S_refill</span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">来分配</span><span class="err">，</span><span class="n">否则直接从对应的free</span><span class="w"> </span><span class="n">list中分配</span><span class="err">。</span><span class="n">而</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="n">deallocate</span><span class="err">`</span><span class="w"> </span><span class="n">的逻辑是直接将空间插入到相应free</span><span class="w"> </span><span class="n">list的最前面</span><span class="err">。</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">函数</span><span class="w"> </span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">_S_refill</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="w"> </span><span class="n">的逻辑是</span><span class="err">，</span><span class="n">先调用</span><span class="w"> </span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">_S_chunk_alloc</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="w"> </span><span class="n">从内存池中分配20块小内存</span><span class="err">（</span><span class="n">而不是用户申请的1块</span><span class="err">），</span><span class="n">将这20块中的第一块返回给用户</span><span class="err">，</span><span class="n">而将剩下的19块依次链接</span><span class="err">，</span><span class="n">构建一个free</span><span class="w"> </span><span class="n">list</span><span class="err">。</span><span class="n">这样下次再申请同样大小的内存就不用再从内存池中取了</span><span class="err">。</span><span class="n">有了</span><span class="w"> </span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">_S_refill</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="w"> </span><span class="err">，</span><span class="n">用户申请空间时</span><span class="err">，</span><span class="n">就不是直接从内存池中取了</span><span class="err">，</span><span class="n">而是从</span><span class="w"> </span><span class="n">free</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="n">中取</span><span class="err">。</span><span class="n">因此</span><span class="w"> </span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">allocate</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="w"> </span><span class="n">和</span><span class="w"> </span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">reallocate</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="w"> </span><span class="n">在相应的free</span><span class="w"> </span><span class="n">list为空时都只需直接调用</span><span class="w"> </span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">_S_refill</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="w"> </span><span class="n">就行了</span><span class="err">。</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">这里默认是依次申请20块</span><span class="err">，</span><span class="n">但如果内存池空间不足以分配20块时</span><span class="err">，</span><span class="n">会尽量分配足够多的块</span><span class="err">，</span><span class="n">这些处理都在</span><span class="w"> </span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">_S_chunk_alloc</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="w"> </span><span class="n">函数中</span><span class="err">。</span><span class="n">该函数的处理逻辑如下</span><span class="err">（</span><span class="n">源代码这里就不贴了</span><span class="err">）：</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">blockquote</span><span class="o">&gt;&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="n">能够分配20块</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">blockquote</span><span class="o">&gt;&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">从内存池分配20块出来</span><span class="err">，</span><span class="n">改变</span><span class="w"> </span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">_S_start_free</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="w"> </span><span class="n">的值</span><span class="err">，</span><span class="n">返回分配出来的内存的起始地址</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;&lt;/</span><span class="n">blockquote</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="n">不足以分配20块</span><span class="err">，</span><span class="n">但至少能分配一块</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">blockquote</span><span class="o">&gt;&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">分配经量多的块数</span><span class="err">，</span><span class="n">改变</span><span class="w"> </span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">_S_start_free</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="w"> </span><span class="n">的值</span><span class="err">，</span><span class="n">返回分配出来的内存的起始地址</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;&lt;/</span><span class="n">blockquote</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="n">一块也分配不了</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">blockquote</span><span class="o">&gt;&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">首先计算新内存池大小</span><span class="w"> </span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kt">size_t</span><span class="w"> </span><span class="n">__bytes_to_get</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">__total_bytes</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">_S_round_up</span><span class="p">(</span><span class="n">_S_heap_size</span><span class="w"> </span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="n">将现在内存池中剩余空间插入到适当的free</span><span class="w"> </span><span class="n">list中</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="n">调用</span><span class="w"> </span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">malloc</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="w"> </span><span class="n">来获取一大片空间作为新的内存池</span><span class="err">：</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="o">--</span><span class="w"> </span><span class="n">如果分配成功</span><span class="err">，</span><span class="n">则调整</span><span class="w"> </span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">_S_end_free</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="w"> </span><span class="n">和</span><span class="w"> </span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">_S_heap_size</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="w"> </span><span class="n">的值</span><span class="err">，</span><span class="n">并重新调用自身</span><span class="err">，</span><span class="n">从新的内存池中给用户分配空间</span><span class="err">；</span>
+</span><span class='line'><span class="o">--</span><span class="w"> </span><span class="n">否则</span><span class="err">，</span><span class="n">分配失败</span><span class="err">，</span><span class="n">考虑从比当前申请的空间大的free</span><span class="w"> </span><span class="n">list中分配空间</span><span class="err">，</span><span class="n">如果无法找不到这样的非空free</span><span class="w"> </span><span class="n">list</span><span class="err">，</span><span class="n">则调用第一级配置器的allocate</span><span class="err">，</span><span class="n">看oom机制能否解决问题</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;&lt;/</span><span class="n">blockquote</span><span class="o">&gt;&lt;/</span><span class="n">blockquote</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">SGI</span><span class="w"> </span><span class="n">STL的轻量级内存池的实现就是酱紫了</span><span class="err">，</span><span class="n">其实并不复杂</span><span class="err">。</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h2</span><span class="o">&gt;</span><span class="mf">4.</span><span class="w"> </span><span class="n">SGI</span><span class="w"> </span><span class="n">STL</span><span class="w"> </span><span class="n">内存池在多线程下的互斥访问</span><span class="o">&lt;/</span><span class="n">h2</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">最后</span><span class="err">，</span><span class="n">我们来看看SGI</span><span class="w"> </span><span class="n">STL中如何处理多线程下对内存池互斥访问的</span><span class="err">（</span><span class="n">实际上是对相应的free</span><span class="w"> </span><span class="n">list进行互斥访问</span><span class="err">，</span><span class="n">这里访问是只需要对free</span><span class="w"> </span><span class="n">list进行修改的访问操作</span><span class="err">）。</span><span class="n">在SGI的第二级配置器中与内存池互斥访问相关的就是</span><span class="w"> </span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">_Lock</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="w"> </span><span class="n">这个类了</span><span class="err">，</span><span class="n">它仅仅只包含一个构造函数和一个析构函数</span><span class="err">，</span><span class="n">但这两个函数足够了</span><span class="err">。</span><span class="n">在构造函数中对内存池加锁</span><span class="err">，</span><span class="n">在析构函数中对内存池解锁</span><span class="err">：</span>
+</span></code></pre></td></tr></table></div></figure> cpp
+//// in __default_alloc_template</p>
+
+<h1>ifdef __STL_THREADS</h1>
+
+<pre><code>static _STL_mutex_lock _S_node_allocator_lock; // 互斥锁变量
+</code></pre>
+
+<h1>endif</h1>
+
+<p>class <em>Lock {
+    public:
+        </em>Lock() { <strong>NODE_ALLOCATOR_LOCK; }
+        ~_Lock() { </strong>NODE_ALLOCATOR_UNLOCK; }
+};
+//// in preprocess</p>
+
+<h1>ifdef __STL_THREADS</h1>
+
+<h1>include <stl_threads.h> // stl 的线程，只是对linux或windows线程的一个封装</h1>
+
+<h1>define __NODE_ALLOCATOR_THREADS true</h1>
+
+<h1>ifdef __STL_SGI_THREADS</h1>
+
+<h1>define <strong>NODE_ALLOCATOR_LOCK if (threads &amp;&amp; </strong>us_rsthread_malloc) \</h1>
+
+<pre><code>            { _S_node_allocator_lock._M_acquire_lock(); }  // 获取锁
+</code></pre>
+
+<h1>define <strong>NODE_ALLOCATOR_UNLOCK if (threads &amp;&amp; </strong>us_rsthread_malloc) \</h1>
+
+<pre><code>            { _S_node_allocator_lock._M_release_lock(); }  // 释放锁
+</code></pre>
+
+<h1>else /<em> !__STL_SGI_THREADS </em>/</h1>
+
+<h1>define __NODE_ALLOCATOR_LOCK \</h1>
+
+<pre><code>    { if (threads) _S_node_allocator_lock._M_acquire_lock(); }
+</code></pre>
+
+<h1>define __NODE_ALLOCATOR_UNLOCK \</h1>
+
+<pre><code>    { if (threads) _S_node_allocator_lock._M_release_lock(); }
+</code></pre>
+
+<h1>endif</h1>
+
+<h1>else /<em> !__STL_THREADS </em>/</h1>
+
+<h1>define __NODE_ALLOCATOR_LOCK</h1>
+
+<h1>define __NODE_ALLOCATOR_UNLOCK</h1>
+
+<h1>define __NODE_ALLOCATOR_THREADS false</h1>
+
+<h1>endif</h1>
+
+<p>```</p>
+
+<p>由于在 <code>__default_alloc_template</code> 的对外接口中，只有 <code>allocate</code> 和 <code>deallocate</code> 中直接涉及到对free list进行修改的操作，所以在这两个函数中，在对free list进行修改之前，都要实例化一个 <code>_Lock</code> 的对象 <code>__lock_instance</code> ，此时调用构造函数进行加锁，当函数结束时，的对象 <code>__lock_instance</code> 自动析构，释放锁。这样，在多线程下，可以保证free list的一致性。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[C++ 应用程序性能优化之 new/delete 操作符]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/05/11/cpp-program-optimization-new-delete-operator/"/>
+    <updated>2014-05-11T20:33:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/05/11/cpp-program-optimization-new-delete-operator</id>
+    <content type="html"><![CDATA[<h2>1.概述</h2>
+
+<p>C++ 程序的存储空间可以分为静态/全局存储区、栈区和堆区。下图展示了一个典型的Linux C/C++ 程序内存空间布局：</p>
+
+<center><img src="/images/2014/IMAG2014051101.png"></center>
+
+
+<p>其中，每一部分的具体涵义如下：<br/>
+- <strong>代码段（.text）</strong>：这里存放的是CPU要执行的指令。代码段是可共享的，相同的代码在内存中只会有一个拷贝，同时这个段是<strong>只读</strong>的，防止程序由于错误而修改自身的指令。<br/>
+- <strong>初始化数据段（.data）</strong>：这里存放的是程序中需要明确赋初始值的变量，例如位于所有函数之外的全局变量：<code>int val=100;</code> 。 需要强调的是，以上两段都是位于程序的可执行文件中，内核在调用 exec 函数启动该程序时从源程序文件中读入。<br/>
+- <strong>未初始化数据段（.bss）</strong>：位于这一段中的数据，内核在执行该程序前，将其初始化为0或者null。例如出现在任何函数之外的全局变量：<code>int sum;</code><br/>
+- <strong>堆（Heap）</strong>：这个段用于在程序中进行动态内存申请，例如经常用到的 malloc，new 系列函数就是从这个段中申请内存。<br/>
+- <strong>栈（Stack）</strong>：函数中的局部变量以及在函数调用过程中产生的临时变量都保存在此段中。<br/>
+静态/全局存储区和栈区一般在程序编译阶段决定；而堆区则随着程序的运行而动态变化，每一次程序运行都会有不同的行为，因此动态内存管理对于一个程序在运行过程中占用的内存大小及程序运行性能有非常重要的影响。 本文主要探讨在C++中如何管理动态内存，以及如何使用 C++ 的语言特性来提高动态内存的管理效率，减少错误的发生。</p>
+
+<!-- more -->
+
+
+<h2>2. new/delete 操作符</h2>
+
+<h4>2.1 C++内置new/delete的原型</h4>
+
+<p>一般来说 C++ 的运行库提供了默认的全局 <code>new/new[]</code> 和 <code>delete/delete[]</code> 的实现，程序也可以用自定义的实现来取代运行库的实现。 下面是 C++ 标准中定义的 <code>new/new[]</code> 和 <code>delete/delete[]</code> 的声明（位于 <code>include/c++/new</code> 文件中）：</p>
+
+<pre><code class="cpp">namespace std {
+  class bad_alloc : public exception {
+    public:
+      bad_alloc() throw() { }
+      virtual ~bad_alloc() throw();
+      virtual const char* what() const throw();
+  };
+  struct nothrow_t { };
+  extern const nothrow_t nothrow;
+  typedef void (*new_handler)();
+  new_handler set_new_handler(new_handler) throw();
+} // namespace std
+
+void* operator new(std::size_t) throw (std::bad_alloc);  // (1)
+void* operator new[](std::size_t) throw (std::bad_alloc);
+void operator delete(void*) throw();
+void operator delete[](void*) throw();
+void* operator new(std::size_t, const std::nothrow_t&amp;) throw();  // (2)
+void* operator new[](std::size_t, const std::nothrow_t&amp;) throw();
+void operator delete(void*, const std::nothrow_t&amp;) throw();
+void operator delete[](void*, const std::nothrow_t&amp;) throw();
+// Default placement versions of operator new.
+inline void* operator new(std::size_t, void* __p) throw() { return __p; }  // (3)
+inline void* operator new[](std::size_t, void* __p) throw() { return __p; }
+// Default placement versions of operator delete.
+inline void  operator delete  (void*, void*) throw() { }
+inline void  operator delete[](void*, void*) throw() { }
+</code></pre>
+
+<p>其中最后的 <code>inline</code> 函数是 <code>placement</code> 版本的 new/delete 操作，其特点在于分配的内存块的起始地址由用户给定（通过参数 <code>void* __p</code>）。 而前面两种 <code>new/delete</code> （(1)和(2)处）是系统决定待分配内存块的起始地址，区别在于：第一个在分配失败是会抛出 <code>bad_alloc</code> 异常（这是C++标准要求的）；而第二个则不抛出异常，返回0。 很多应用程序都没有处理内存分配的失败情况，但相对于一个需要长期稳定运行的系统来说，这种处理是必不可少的。 应用程序可以通过捕获 <code>bad_alloc</code> 异常或者检查返回值来检查内存分配是否成功，而更好的方法是使用C++中的 <code>new_handler()</code> 函数。 C++规定 <code>new_handler</code> 要执行如下操作中的一种：</p>
+
+<ul>
+<li>使 <code>new</code> 有更多的内存可用，然后返回</li>
+<li>抛出一个 <code>bad_alloc</code> 或其派生类的异常</li>
+<li>调用 <code>abort()</code> 或者 <code>exit()</code> 退出</li>
+</ul>
+
+
+<h4>2.2 使用 <code>new_handler</code> 自定义异常处理</h4>
+
+<p>下面看一个例子，看看如何使用 <code>new_handler</code> 处理内存分配失败的情况：</p>
+
+<pre><code class="cpp">#include&lt;new&gt;
+#include&lt;cstdio&gt;
+#include&lt;Windows.h&gt;
+using namespace std;
+char *gPool = NULL;
+void my_new_handler();
+
+int main(){
+    set_new_handler(my_new_handler);
+    gPool = new char[512*1024*1024];
+    if(gPool!=NULL){
+        printf("Preserve 512MB memory at %x.\n",gPool);
+    }
+    char *p = NULL;
+    for(int i=0;i&lt;4;i++){
+        p = new char[512*1024*1024];
+        printf("%d * 512M, p = %x\n",i+1,p);
+        Sleep(5000); // 休眠5s
+    }
+    printf("Done.\n");
+    return 0;
+}
+
+void my_new_handler(){
+    if(gPool!=NULL){
+        printf("try to get more memory...\n");
+        delete[] gPool; // 释放512MB内存空间
+        gPool = NULL;
+        return;
+    }else{
+        printf("I can not help...\n");
+        throw bad_alloc();  // 分配失败，抛出异常
+    }
+    return;
+}
+</code></pre>
+
+<p>在 Windows 上编译并运行（使用Code::Blocks 13.12 IDE），得到如下输出：</p>
+
+<pre><code>Preserve 512MB memory at 7e0020.
+1 * 512M, p = 207f0020
+2 * 512M, p = 40800020
+try to get more memory...
+3 * 512M, p = 7e0020
+I can not help...
+terminate called after throwing an instance of 'std::bad_alloc'
+  what():  std::bad_alloc
+
+This application has requested the Runtime to terminate it in an unusual way.
+Please contact the application's support team for more information.
+</code></pre>
+
+<p>在 Windows 的 win32 程序中，一个进程可以访问的内存空间是 4GB，但可以用来动态分配的最大内存是 2GB，因而上面的程序执行到第3次（为神马不是第4次？）动态内存分配时由于内存不够，调用了 <code>my_new_handler</code> 获得了内存（可以看到第3次分配的内存的地址和Preserve的内存地址是一样的），而当执行第4次内存分配时，<code>gPool</code> 已被分配，于是 <code>my_new_handler</code> 中抛出了 <code>bad_alloc</code> 异常，导致程序退出。 另外，在程序实际运行过程当中，会发现任务管理器中内存占用不会往上飙，这可能是因为操作系统的动态内存管理策略在作怪，不会说你一申请就立马全部给你，只是建立了一个映射表，只有当你真正用的时候才会给你。</p>
+
+<h4>2.3 使用 placement new</h4>
+
+<p>在 C++ 内置 <code>new/delete</code> 中最后的一种是 placement 形式的 <code>new/delete</code> ，即分配的内存地址有用户给定。下面是一个最简单的实例：</p>
+
+<pre><code class="cpp">#include &lt;cstdio&gt;
+#include &lt;new&gt;
+using namespace std;
+
+int main()
+{
+    char buffer[100];
+    char *p = new(buffer) char[20]; // call placement new
+    printf("Address of buffer: %x, and p: %x.\n",buffer,p);
+    return 0;
+}
+// output: Address of buffer: 28feb8, and p: 28feb8.
+</code></pre>
+
+<p>可以看到 <code>buffer</code> 和 <code>p</code> 的地址是一样的。在大型应用程序中，我们可以充分利用 <code>placement new</code> 的特性，实现自己管理（分配、释放等）本应用的内存空间，基本思路就是： 首先申请一大片内存，然后对每个小的动态内存分配都使用 <code>placement new</code> 的方式进行申请。</p>
+
+<h4>2.4 重载 placement new</h4>
+
+<p>在 <code>new</code> 操作符中，除了可以使用自定义申请的内存的大小及位置，我们还可以通过重载系统的 <code>new/delete</code> 操作符来加入其它一些附加参数，但仍称之为 <code>placement new</code> 。例如：</p>
+
+<pre><code class="cpp">#include&lt;cstdio&gt;
+#include&lt;new&gt;
+using namespace std;
+#define DEBUG
+#ifdef DEBUG
+// 自定义 new 操作符
+void *operator new[](unsigned int n, const char* file, int line){
+    printf("Alloc size: %d at file %s, in line %d\n",n,file,line);
+    return ::operator new(n);
+}
+// 自定义 delete 操作符
+// void operator delete(void *p,const char *file, int line){
+void operator delete[](void *p,const char *file, int line){
+    printf("delete at file %s, in line %d\n",file,line);
+    ::operator delete(p);
+    return;
+}
+// 宏定义，必须放在重载函数之后
+#define new new(__FILE__, __LINE__)
+#define delete delete(__FILE__, __LINE__)
+#endif
+int main(){
+    char *p = new char[10];
+    //delete p;  // delete 的重载还有问题 "error: type 'int' argument given to 'delete', expected pointer"
+    delete[] p;  // 直接报语法错误，"error: expected primary-expression before ']' token"
+    return 0;
+}
+// output: Alloc size: 10 at file D:\Programs\test\main.cpp, in line 22
+</code></pre>
+
+<p>这在 <code>DEBUG</code> 模式下非常好使。</p>
+
+<p>更新：关于 <code>placement new</code> 的 demo 改为如下代码后就没问题了：</p>
+
+<pre><code class="cpp">#include&lt;cstdio&gt;
+#include&lt;new&gt;
+using namespace std;
+#define DEBUG
+#ifdef DEBUG
+// 自定义 new 操作符
+void *operator new[](unsigned int n, const char* file, int line){
+    printf("Alloc size: %d at file %s, in line %d\n",n,file,line);
+    return ::operator new(n);
+}
+// 自定义 delete 操作符
+void operator delete(void *p,char *file, int line){
+    printf("Delete at file %s, in line %d\n",file,line);
+    ::operator delete(p);
+    return;
+}
+// 宏定义，必须放在重载函数之后
+#define new new(__FILE__, __LINE__)
+#define delete(ptr) delete(ptr,__FILE__, __LINE__)
+#endif
+int main(){
+    char *p = new char[10];
+    operator delete(p);
+    return 0;
+}
+</code></pre>
+
+<p>但是还是不知道之前的代码为什么会出现这个错误，已在 <a href="http://stackoverflow.com/questions/23614215/destructor-error-in-c-type-int-argument-given-to-delete-expected-pointer">StackOverFlow上提问</a>，希望能得到满意的答案。</p>
+]]></content>
+  </entry>
+  
+</feed>

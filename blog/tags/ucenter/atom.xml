@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: UCenter | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/ucenter/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[UCenter同步登陆机制]]></title>
+    <link href="http://ibillxia.github.io/blog/2010/07/19/ucenter-sync-login-mechanism/"/>
+    <updated>2010-07-19T14:34:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2010/07/19/ucenter-sync-login-mechanism</id>
+    <content type="html"><![CDATA[<h2>UC同步登陆机制</h2>
+
+
+<p>以用户登录为例介绍UC的同步机制，其它注销，改密码，消息，头像，好友均类同。UC同步登陆的过程如下：</p>
+
+
+
+
+<p>1.从用户xxx在某一应用程序的`login.php`，输入用户名，密码讲起。</br>
+先用`uc_user_login`函数到`uc server`验证此用户和密码，如正确，则写入session,写入cookies，并更新应用程序会员表中的登录ip，
+登录时间。用户感觉不到这个过程。</p>
+
+
+
+
+<p>2.然后通过`uc_user_synlogin`通知uc server 用户xxx登录成功,这个过程可能使用ajax，用户感觉不到通知过程。</p>
+
+
+
+
+<p>3.uc server收到这个消息后，马上命令手下，把xxx登录的消息，像令牌环一样，发给所有愿意接收（后台中那个是否开启同步登录）
+这个消息的其它应用程序。其实就是带参数访问一下各应用程序的uc.php,用户感觉不到这个过程。</p>
+
+
+
+
+<p>4.各应用程序靠api下的uc.php来接收uc server发来的消息，并对uc server言听计从，让干什么就干什么。现在，收到让xxx用户
+在你的程序中登录的命令，马上执行。</br>
+并写本应用程序的session，并且使用p3p, 写入相同域或不同域的cookies.   用户感觉不到这个过程。</p>
+
+
+
+
+<p>5.最后所有和uc整合的程序，xxx均登录成功。用户从www.test.com/bbs登录后， 跳到www.test.com/news同样显示登录。
+因为bbs 和news系统在后台均已登录。</p>
+
+
+
+
+<p>6.应用程序与uc server的会话结束。</p>
+
+]]></content>
+  </entry>
+  
+</feed>

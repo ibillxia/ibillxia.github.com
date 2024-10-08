@@ -1,0 +1,463 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>神经网络模型分类 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2013/03/24/classes-of-neural-networks">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">神经网络模型分类</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-03-24T23:07:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>本文主要介绍一下几种不同类型的神经网络模型，主要有前馈神经网络，反馈神经网络，自组织神经网络，随机神经网络</p>
+
+
+
+
+<h2>1.前馈神经网络</h2>
+
+
+<h4>1)自适应线性神经网络(Adaline)</h4>
+
+
+<p>自适应线性神经网络（Adaptive Linear，简称Adaline) 是由威德罗（Widrow）和霍夫（Hoff）首先提出的。它与感知器的主要不同之处在于
+其神经元有一个线性激活函数，这允许输出可以是任意值，而不仅仅只是像感知器中那样只能取0或1。它采用的是W—H学习法则，也称最小均方差(LMS)
+规则对权值进行训练。自适应线性元件的主要用途是线性逼近一个函数式而进行模式联想。</p>
+
+
+
+
+<h4>2)单层感知器</h4>
+
+
+<p>单层感知器（Perceptron）是由美国计算机科学家罗森布拉特（F.Roseblatt）于1957年提出的。它是一个具有单层神经元的网络，由线性阈值
+逻辑单元所组成。它的输入可以是非离散量，而且可以通过学习而得到，这使单层感知器在神经网络研究中有着重要的意义和地位：它提出了自组织、
+自学习的思想，对能够解决的问题，有一个收敛的算法，并从数学上给出了严格的证明。</p>
+
+
+<!-- more -->
+
+
+
+
+<h4>3)多层感知器</h4>
+
+
+<p>单层感知器由于只有一个神经元，功能单一，只能完成线性决策或实现“与”、“或”、“非”等单一逻辑函数。多层感知器（Multilayer Perceptron）
+是在单层感知器的基础上发展起来的，它是一种在输入层与输出层之间含有一层或多层隐含结点的具有正向传播机制的神经网络模型。多层感知器克服了
+单层感知器的许多局限，它的性能主要来源于它的每层结点的非线性特性（节点输出函数的非线性特性）。如果每个结点是线性的，那么多层感知器的
+功能就和单层感知器一样。</p>
+
+
+
+
+<p>在人工神经网络中，应用最普遍的是多层前馈网络模型。在1986年，Rumelhant和McClelland提出了多层前馈网络的误差反向传播（Error Back Propagation）
+学习算法，简称BP算法，这是一种多层网络的逆推学习算法。由此采用BP算法的多层前馈网络也广泛被称为BP网络。</p>
+
+
+
+
+<h2>2.反馈神经网络</h2>
+
+
+<p>反馈神经网络模型可用一完备的无向图表示。从系统的观点看，反馈神经网络模型是一反馈动力学系统，它具有极复杂的动力学特性。在反馈神经网络模型中，
+我们关心的是其稳定性，稳定性是神经网络相联存储性质的体现，可以说稳定就意味着完成回忆。从计算的角度讲，反馈神经网络模型具有比前馈神经网络模型
+更强的计算能力，它包括Hopfield神经网络、海明神经网络和双向联想存储器。</p>
+
+
+
+
+<h4>1)Hopfield神经网络</h4>
+
+
+<p>1982年，美国神经网络学者霍普菲尔德（J.J.Hopfield）提出了反馈型的全连接神经网络，是一种对记忆功能的较好模拟。Hopfield神经网络的结构特点是：
+每一个神经元的输出信号通过其它神经元后，反馈到自己的输入端。这种反馈方式有利于通过联想记忆实现最优化，经过分析比较与判断确定最优解决问题的方法。
+网络状态的演变是一种非线性动力学系统的行为描述过程，作为一种非线性动力学系统，系统从初始化出发后，系统状态经过演变可能发生如下结果： </br>
+a) 渐进稳定形成稳定点，又称为吸引子。</br>
+b) 极限环状态。</br>
+c) 混沌状态。</br>
+d) 发散状态。</br>
+发散状态是不希望看到的。对于人工神经网络而言，由于选取网络的变换函数为一个有界函数，因此系统状态不会演变成发散。</p>
+
+
+
+
+<h4>2)海明神经网络(Hamming)</h4>
+
+
+<p>海明（Hamming）网络由匹配子网和竞争子网组成。匹配子网在学习阶段将若干类别的样本记忆存储在网络的连接权值中；在工作阶段（回忆阶段），
+该子网计算输入模式和各个样本模式的匹配程度，并将结果送入竞争子网中，由竞争子网选择出匹配子网中最大的输出。从而，实现了对离散输入模式
+进行在海明距离最小意义下的识别和分类。</p>
+
+
+
+
+<h4>3)双向联想存储器(BAM)</h4>
+
+
+<p>双向联想存储器（BAM）是由日本的Kosko提出的一种神经网络模型，它是ART网络模型的一种简化形式， 是一种异联想存储器。它能存储成对的
+模式$(A1，B1)， (A2 ,B2), ⋯,( AN, BN)$。Ai和Bi是不同向量空间中的向量。如果模式A输入到BAM，输出是模式B，且若A与iA最为接近，B就是在BAM所
+存储的向量iB。 BAM网络模型中的神经元为非线性单元，每个神经元的作用相当于一个非线性函数，这个函数一般取为S型函数：$y = \frac{1}{1+exp^{-x}}$.
+</p>
+
+
+
+
+<h2>3.自组织神经网络</h2>
+
+
+<h4>1)自适应谐振理论(ART)</h4>
+
+
+<p><p>自适应谐振理论（adaptive resonance theory，简称ART）的目的是为人类的心理和认知活动建立一个统一的数学理论。1976年，美国学者Carpenter
+和Grossberg提出了ART神经网络模型。它是利用生物神经细胞的自兴奋与侧抑制的原理来指导学习，让输入模式通过网络的双向连接权的作用来进行比较
+与识别，最后使网络对输入模式产生所谓的谐振，因此来完成对输入模式的记忆，并以同样的方式实现网络的回想。当网络已经存储了一定的内容之后，
+则可用它来进行识别。在识别过程中，如果输入是已记忆的或与已记忆的模式十分相似，则网络会把它回想出来。如果是没有记忆的新模式，则在不影响
+原有记忆的前提下，把它记忆下来，并用一个没用过的输出层神经元作为这一新模式的分类标志。<p></p>
+
+<p>ART网络主要有三种形式：ART1是处理双极型或二进制数据，即观察向量的每个分量是二值的，只能取0或1；ART2是用于处理连续型模拟信号，
+即观察向量的每个分量可取任意实数值，也可用于二进制输入；ART3是分级搜索模型，它兼容前两种结构的功能并将两层神经元网络扩大为任意
+多层神经元网络，并在神经元的运行模型中纳入人类神经元生物电—化学反应机制，因而具备了相当强的功能和扩展能力。</p>
+
+
+<h4>2)自组织映射神经网络模型(SOM)</h4>
+
+
+<p>在人的感觉通道上一个很重要的组织原理是神经元有序地排列着，并且往往可以反映出所感觉到外界刺激的某些物理特性。如在听觉通道的每一个层次上，
+其神经元与神经纤维在结构上的排列与外界刺激的频率关系十分密切，对于某个频率，相应的神经元具有最大的响应，这种听觉通道上的有序排列一直延续到
+听觉皮层，尽管许多低层次上的组织是预先排好的，但高层次上的神经组织则是通过学习自组织而形成的。由此生物背景，提出了自组织映射神经网络模型（SOM）。</p>
+
+
+<h4>3)对流神经网络模型(CPN)</h4>
+
+
+<p>CPN是由SOM模型和Grossberg外星网络组合而形成的一种神经网络模型。是由美国Hecht-Nielsen和Robert-Nielsen于1987年首先提出来的。一般认为，
+这种由两种或多种网络组合而成的新型网络往往具有比原网络模型更强的能力，它能够克服单个网络的缺陷，而且学习时间较短。</p>
+
+
+<h2>4.随机神经网络</h2>
+
+
+<h4>1) 模拟退火算法</h4>
+
+
+<p>在物理学中，对固体物质进行退火处理时，通常先将它加温溶化，使其中的粒子可自由地运动，然后随着物质温度的下降，粒子也形成了低能态的晶格。
+若在凝结点附近的温度下降速度足够慢，则固体物质一定会形成最低能量的基态。对于组合优化问题来说，它也有类似的过程，也就是说物理中固体物质的
+退火过程与组合优化问题具有相似性。组合优化问题也是在解空间寻求花费函数最小（或最大）的解。</p>
+
+
+<h4>2) Boltzmann机</h4>
+
+
+<p>Boltzmann机是由Hinton和Sejnowski提出来的一种统计神经网络模型，是在Hopfield网络基础之上引入了随机性机制而形成的。与Hopfield神经网络不同
+的是Boltzmann机具有学习能力，即其权值通过学习来调整，而不是预先设置。Boltzmann机是一种约束满足神经网络模型。</p>
+
+
+<p>基于模拟退火算法的波尔兹曼机训练的基本思想为：当神经网络中某个与温度对应的参数发生变化时，神经网络的兴奋模式也会如同物理上的热运动那
+样发生变化：当温度逐渐下降时，由决定函数判断神经元是否处于兴奋状态。在从高温到低温的退火(annealing)中，能量并不会停留在局部极小值上，
+而以最大的概率到达全局最小值。</p>
+
+
+<h3>推荐资料</h3>
+
+
+<p>Machine Learning Lecture by Andrew Ng, Stanford University</br>
+Lecture VIII: Neural Network - Representation</br>
+Lecture IX: Neural Network - Learning</br>
+Video courses on Coursera: https://class.coursera.org/ml-2012-002/lecture/index</br>
+Lecture homepage in Standford: http://cs229.stanford.edu/</p>
+
+
+<h3>参考文献</h3>
+
+
+<p>[1] Simon Haykin, “Neural Networks: a Comprehensive Foundation”, 2009 (3rd edition)</br>
+[2]T-61.3030 <a href="http://www.cis.hut.fi/Opinnot/T-61.3030/schedule2007.shtml">PRINCIPLES OF NEURAL COMPUTING</a> (5 CP)</br>
+[3]人工神经网络综述：<a href="http://ishare.iask.sina.com.cn/f/36537774.html">http://ishare.iask.sina.com.cn/f/36537774.html</a></br>
+</p>
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2013/03/24/classes-of-neural-networks/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2013-03-24T23:07:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/prml/'>PRML</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/gan-zhi-ji/'>感知机</a>, <a class='tag' href='/blog/tags/shen-jing-wang-luo/'>神经网络</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2013/03/20/basics-of-neural-networks/" title="Previous Post:
+        神经网络简介">&laquo; 神经网络简介</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2013/03/27/learning-process-of-neural-networks/"
+        title="Next Post: 神经网络的学习方法概述">神经网络的学习方法概述
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2013/03/24/classes-of-neural-networks/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2013/03/24/classes-of-neural-networks/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

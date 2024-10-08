@@ -1,0 +1,790 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Math | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/categories/math/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[为什么要进行傅立叶变换]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/04/04/why-do-Fourier-transformation/"/>
+    <updated>2013-04-04T10:42:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/04/04/why-do-Fourier-transformation</id>
+    <content type="html"><![CDATA[<h2>一、傅立叶变换的由来</h2>
+
+
+<p>关于傅立叶变换，无论是书本还是在网上可以很容易找到关于傅立叶变换的描述，但是大都是些故弄玄虚的文章，太过抽象，
+尽是一些让人看了就望而生畏的公式的罗列，让人很难能够从感性上得到理解，最近，我偶尔从网上看到一个关于数字信号处理
+的电子书籍，是一个叫Steven W. Smith, Ph.D.外国人写的，写得非常浅显，里面有七章由浅入深地专门讲述关于离散信号的傅
+立叶变换，虽然是英文文档，我还是硬着头皮看完了有关傅立叶变换的有关内容，看了有茅塞顿开的感觉，在此把我从中得到的
+理解拿出来跟大家分享，希望很多被傅立叶变换迷惑的朋友能够得到一点启发，这电子书籍是免费的，有兴趣的朋友也可以从网
+上下载下来看一下，URL地址是：http://www.dspguide.com/pdfbook.htm </p>
+
+
+
+
+<p>要理解傅立叶变换，确实需要一定的耐心，别一下子想着傅立叶变换是怎么变换的，当然，也需要一定的高等数学基础，最基本
+的是级数变换，其中傅立叶级数变换是傅立叶变换的基础公式。</p>
+
+
+
+
+<h2>二、傅立叶变换的提出</h2>
+
+
+<p>让我们先看看为什么会有傅立叶变换？傅立叶是一位法国数学家和物理学家的名字，英语原名是Jean Baptiste Joseph Fourier(1768-1830), 
+Fourier对热传递很感兴趣，于1807年在法国科学学会上发表了一篇论文，运用正弦曲线来描述温度分布，论文里有个在当时具有争议性的决断：
+任何连续周期信号可以由一组适当的正弦曲线组合而成。当时审查这个论文的人，其中有两位是历史上著名的数学家拉格朗日(Joseph Louis 
+Lagrange, 1736-1813)和拉普拉斯(Pierre Simon de Laplace, 1749-1827)，当拉普拉斯和其它审查者投票通过并要发表这个论文时，拉格朗日
+坚决反对，在近50年的时间里，拉格朗日坚持认为傅立叶的方法无法表示带有棱角的信号，如在方波中出现非连续变化斜率。法国科学学会屈服
+于拉格朗日的威望，拒绝了傅立叶的工作，幸运的是，傅立叶还有其它事情可忙，他参加了政治运动，随拿破仑远征埃及，法国大革命后因会被
+推上断头台而一直在逃避。直到拉格朗日死后15年这个论文才被发表出来。</p>
+
+
+
+
+<!--more-->
+
+
+
+
+<p>谁是对的呢？拉格朗日是对的：正弦曲线无法组合成一个带有棱角的信号。但是，我们可以用正弦曲线来非常逼近地表示它，逼近到两种表示方法
+不存在能量差别，基于此，傅立叶是对的。</p>
+
+
+
+
+<p><b>为什么我们要用正弦曲线来代替原来的曲线呢？</b>如我们也还可以用方波或三角波来代替呀，分解信号的方法是无穷的，但<b>分解信号的目的是为了
+更加简单地处理原来的信号。用正余弦来表示原信号会更加简单，因为正余弦拥有原信号所不具有的性质：正弦曲线保真度。</b>一个正弦曲线信号
+输入后，输出的仍是正弦曲线，只有幅度和相位可能发生变化，但是频率和波的形状仍是一样的。且只有正弦曲线才拥有这样的性质，正因如此
+我们才不用方波或三角波来表示。</p>
+
+
+
+
+<h2>三、傅立叶变换分类</h2>
+
+
+<p>根据原信号的不同类型，我们可以把傅立叶变换分为四种类别：</br>
+1 非周期性连续信号 傅立叶变换（Fourier Transform）</br>
+2 周期性连续信号 傅立叶级数(Fourier Series)</br>
+3 非周期性离散信号 离散时域傅立叶变换（Discrete Time Fourier Transform）</br>
+4 周期性离散信号 离散傅立叶变换(Discrete Fourier Transform)
+</p>
+
+
+
+
+<p>下图是四种原信号图例：
+<center><img src="/images/2013/IMAG2013040401.jpg"></center>
+</p>
+
+
+
+
+<p>这四种傅立叶变换都是针对正无穷大和负无穷大的信号，即信号的的长度是无穷大的，我们知道这对于计算机处理来说是不可能的，那么有没有
+针对长度有限的傅立叶变换呢？没有。因为正余弦波被定义成从负无穷小到正无穷大，我们无法把一个长度无限的信号组合成长度有限的信号。面对
+这种困难，方法是把长度有限的信号表示成长度无限的信号，可以把信号无限地从左右进行延伸，延伸的部分用零来表示，这样，这个信号就可以被
+看成是非周期性离解信号，我们就可以用到离散时域傅立叶变换的方法。还有，也可以把信号用复制的方法进行延伸，这样信号就变成了周期性离解
+信号，这时我们就可以用离散傅立叶变换方法进行变换。这里我们要学的是离散信号，对于连续信号我们不作讨论，因为计算机只能处理离散的数值
+信号，我们的最终目的是运用计算机来处理信号的。</p>
+
+
+
+
+<p>但是对于非周期性的信号，我们需要用无穷多不同频率的正弦曲线来表示，这对于计算机来说是不可能实现的。所以对于离散信号的变换只有离散傅立叶
+变换（DFT）才能被适用，<b>对于计算机来说只有离散的和有限长度的数据才能被处理，对于其它的变换类型只有在数学演算中才能用到</b>，在计算机面前我们
+只能用DFT方法，后面我们要理解的也正是DFT方法。这里要理解的是我们使用周期性的信号目的是为了能够用数学方法来解决问题，至于考虑周期性信号
+是从哪里得到或怎样得到是无意义的。</p>
+
+
+
+
+<p>每种傅立叶变换都分成实数和复数两种方法，对于实数方法是最好理解的，但是复数方法就相对复杂许多了，需要懂得有关复数的理论知识，不过，如果
+理解了实数离散傅立叶变换(real DFT)，再去理解复数傅立叶就更容易了，所以我们先把复数的傅立叶放到一边去，先来理解实数傅立叶变换，在后面
+我们会先讲讲关于复数的基本理论，然后在理解了实数傅立叶变换的基础上再来理解复数傅立叶变换。</p>
+
+
+
+
+<p>还有，这里我们所要说的变换(transform)虽然是数学意义上的变换，但跟函数变换是不同的，函数变换是符合一一映射准则的，对于离散数字信号处理（DSP），
+有许多的变换：傅立叶变换、拉普拉斯变换、Z变换、希尔伯特变换、离散余弦变换等，这些都扩展了函数变换的定义，允许输入和输出有多种的值，简单地
+说变换就是把一堆的数据变成另一堆的数据的方法。</p>
+
+
+
+
+<h2>四、傅立叶变换的物理意义</h2>
+
+
+<p>傅立叶变换是数字信号处理领域一种很重要的算法。要知道傅立叶变换算法的意义，首先要了解傅立叶原理的意义。<b>傅立叶原理表明：任何连续测量的时序或信号，
+都可以表示为不同频率的正弦波信号的无限叠加。</b>而根据该原理创立的傅立叶变换算法利用直接测量到的原始信号，以累加方式来计算该信号中不同正弦波信号的频率、
+振幅和相位。</p>
+
+
+
+
+<p>和傅立叶变换算法对应的是反傅立叶变换算法。该反变换从本质上说也是一种累加处理，这样就可以将单独改变的正弦波信号转换成一个信号。因此，可以说，
+傅立叶变换将原来难以处理的时域信号转换成了易于分析的频域信号（信号的频谱），可以利用一些工具对这些频域信号进行处理、加工。最后还可以利用傅立叶
+反变换将这些频域信号转换成时域信号。</p>
+
+
+
+
+<p>从现代数学的眼光来看，傅里叶变换是一种特殊的积分变换。它能将满足一定条件的某个函数表示成正弦基函数的线性组合或者积分。在不同的研究领域，傅里叶
+变换具有多种不同的变体形式，如连续傅里叶变换和离散傅里叶变换。</p>
+
+
+
+
+<p>在数学领域，尽管最初傅立叶分析是作为热过程的解析分析的工具，但是其思想方法仍然具有典型的还原论和分析主义的特征。"任意"的函数通过一定的分解，
+都能够表示为正弦函数的线性组合的形式，而正弦函数在物理上是被充分研究而相对简单的函数类：</br>
+1. 傅立叶变换是线性算子,若赋予适当的范数,它还是酉算子;</br>
+2. 傅立叶变换的逆变换容易求出,而且形式与正变换非常类似;</br>
+3. 正弦基函数是微分运算的本征函数,从而使得线性微分方程的求解可以转化为常系数的代数方程的求解.在线性时不变杂的卷积运算为简单的乘积运算,从而提供了
+计算卷积的一种简单手段;</br>
+4. 离散形式的傅立叶的物理系统内,频率是个不变的性质,从而系统对于复杂激励的响应可以通过组合其对不同频率正弦信号的响应来获取;</br>
+5. 著名的卷积定理指出:傅里叶变换可以化复杂的卷积运算为简单的乘积运算，从而利用数字计算机快速的算出(其算法称为快速傅立叶变换算法(FFT))。</p>
+
+
+
+
+<p>正是由于上述的良好性质,傅里叶变换在物理学、数论、组合数学、信号处理、概率、统计、密码学、声学、光学等领域都有着广泛的应用。</p>
+
+
+
+
+<h2>五、图像傅立叶变换的物理意义</h2>
+
+
+<p>图像的频率是表征图像中灰度变化剧烈程度的指标，是灰度在平面空间上的梯度。如：大面积的沙漠在图像中是一片灰度变化缓慢的区域，对应的频率值很低；
+而对于地表属性变换剧烈的边缘区域在图像中是一片灰度变化剧烈的区域，对应的频率值较高。傅立叶变换在实际中有非常明显的物理意义，设f是一个能量有限的
+模拟信号，则其傅立叶变换就表示f的谱。从纯粹的数学意义上看，傅立叶变换是将一个函数转换为一系列周期函数来处理的。从物理效果看，傅立叶变换是将图像
+从空间域转换到频率域，其逆变换是将图像从频率域转换到空间域。换句话说，傅立叶变换的物理意义是将图像的灰度分布函数变换为图像的频率分布函数，傅立叶
+逆变换是将图像的频率分布函数变换为灰度分布函数。</p>
+
+
+
+
+<p>傅立叶变换以前，图像（未压缩的位图）是由对在连续空间（现实空间）上的采样得到一系列点的集合，我们习惯用一个二维矩阵表示空间上各点，则图像可由z=f(x,y)
+来表示。由于空间是三维的，图像是二维的，因此空间中物体在另一个维度上的关系就由梯度来表示，这样我们可以通过观察图像得知物体在三维空间中的对应关系。为什么
+要提梯度？因为实际上对图像进行二维傅立叶变换得到频谱图，就是图像梯度的分布图，当然频谱图上的各点与图像上各点并不存在一一对应的关系，即使在不移频的情况
+下也是没有。傅立叶频谱图上我们看到的明暗不一的亮点，实际上图像上某一点与邻域点差异的强弱，即梯度的大小，也即该点的频率的大小（可以这么理解，图像中的低
+频部分指低梯度的点，高频部分相反）。一般来讲，梯度大则该点的亮度强，否则该点亮度弱。这样通过观察傅立叶变换后的频谱图，也叫功率图，我们首先就可以看出，
+图像的能量分布，如果频谱图中暗的点数更多，那么实际图像是比较柔和的（因为各点与邻域差异都不大，梯度相对较小），反之，如果频谱图中亮的点数多，那么实际图
+像一定是尖锐的，边界分明且边界两边像素差异较大的。对频谱移频到原点以后，可以看出图像的频率分布是以原点为圆心，对称分布的。将频谱移频到圆心除了可以清晰
+地看出图像频率分布以外，还有一个好处，它可以分离出有周期性规律的干扰信号，比如正弦干扰，一副带有正弦干扰，移频到原点的频谱图上可以看出除了中心以外还存
+在以某一点为中心，对称分布的亮点集合，这个集合就是干扰噪音产生的，这时可以很直观的通过在该位置放置带阻滤波器消除干扰。</p>
+
+
+
+
+<p>另外我还想说明以下几点： </br>
+1、图像经过二维傅立叶变换后，其变换系数矩阵表明：若变换矩阵Fn原点设在中心，其频谱能量集中分布在变换系数短阵的中心附近(图中阴影区)。若所用的二维傅立叶
+变换矩阵Fn的原点设在左上角，那么图像信号能量将集中在系数矩阵的四个角上。这是由二维傅立叶变换本身性质决定的。同时也表明一股图像能量集中低频区域。 </br>
+2 、变换之后的图像在原点平移之前四角是低频，最亮，平移之后中间部分是低频，最亮，亮度大说明低频的能量大（幅角比较大）。</p>
+
+
+
+
+<h2>六、一个关于实数离散傅立叶变换(Real DFT)的例子</h2>
+
+
+<p>先来看一个变换实例，一个原始信号的长度是16，于是可以把这个信号分解9个余弦波和9个正弦波（一个长度为N的信号可以分解成N/2+1个正余弦信号，这是为什么呢？
+结合下面的18个正余弦图,我想从计算机处理精度上就不难理解，一个长度为N的信号，最多只能有N/2+1个不同频率，再多的频率就超过了计算机所能所处理的精度范围），
+如下图，9个正弦信号：
+<center><img src="/images/2013/IMAG2013040402.jpg"></center>
+9个余弦信号：
+<center><img src="/images/2013/IMAG2013040403.jpg"></center>
+</p>
+
+
+
+
+<p>把以上所有信号相加即可得到原始信号，至于是怎么分别变换出9种不同频率信号的，我们先不急，先看看对于以上的变换结果，在程序中又是该怎么表示的，我们可以看看
+下面这个示例图：
+<center><img src="/images/2013/IMAG2013040404.jpg"></center>
+</p>
+
+
+
+
+<p>上图中左边表示时域中的信号，右边是频域信号表示方法，从左向右表示正向转换(Forward DFT)，从右向左表示逆向转换(Inverse DFT)，用小写x[]表示信号在每个时间点上
+的幅度值数组, 用大写X[]表示每种频率的副度值数组, 因为有N/2+1种频率，所以该数组长度为N/2+1，X[]数组又分两种，一种是表示余弦波的不同频率幅度值：Re X[]，另
+一种是表示正弦波的不同频率幅度值：Im X[]，Re是实数(Real)的意思，Im是虚数(Imagine)的意思，采用复数的表示方法把正余弦波组合起来进行表示，但这里我们不考虑复
+数的其它作用，只记住是一种组合方法而已，目的是为了便于表达（在后面我们会知道，复数形式的傅立叶变换长度是N，而不是N/2+1）。</p>
+
+
+
+
+<h2>七、用Matlab实现快速傅立叶变换</h2>
+
+
+<p>FFT是离散傅立叶变换的快速算法，可以将一个信号变换到频域。有些信号在时域上是很难看出什么特征的，但是如果变换到频域之后，就很容易看出特征了。这就是很多
+信号分析采用FFT变换的原因。另外，FFT可以将一个信号的频谱提取出来，这在频谱分析方面也是经常用的。 </p>
+
+
+
+
+<p>虽然很多人都知道FFT是什么，可以用来做什么，怎么去做，但是却不知道FFT之后的结果是什意思、如何决定要使用多少点来做FFT。 </p>
+
+
+
+
+<p>现在就根据实际经验来说说FFT结果的具体物理意义。一个模拟信号，经过ADC采样之后，就变成了数字信号。采样定理告诉我们，采样频率要大于信号频率的两倍，这些我就不在此啰嗦了。 </p>
+
+
+
+
+<p>采样得到的数字信号，就可以做FFT变换了。N个采样点，经过FFT之后，就可以得到N个点的FFT结果。为了方便进行FFT运算，通常N取2的整数次方。 </p>
+
+
+
+
+<p>假设采样频率为Fs，信号频率F，采样点数为N。那么FFT之后结果就是一个为N点的复数。每一个点就对应着一个频率点。这个点的模值，就是该频率值下的幅度特性。
+具体跟原始信号的幅度有什么关系呢？假设原始信号的峰值为A，那么FFT的结果的每个点（除了第一个点直流分量之外）的模值就是A的N/2倍。而第一个点就是直流分量，
+它的模值就是直流分量的N倍。而每个点的相位呢，就是在该频率下的信号的相位。第一个点表示直流分量（即0Hz），而最后一个点N的再下一个点（实际上这个点是不存在的，
+这里是假设的第N+1个点，也可以看做是将第一个点分做两半分，另一半移到最后）则表示采样频率Fs，这中间被N-1个点平均分成N等份，每个点的频率依次增加。例如某点n所
+表示的频率为：Fn=(n-1)*Fs/N。由上面的公式可以看出，Fn所能分辨到频率为为Fs/N，如果采样频率Fs为1024Hz，采样点数为1024点，则可以分辨到1Hz。1024Hz的采样率采样
+1024点，刚好是1秒，也就是说，采样1秒时间的信号并做FFT，则结果可以分析到1Hz，如果采样2秒时间的信号并做FFT，则结果可以分析到0.5Hz。如果要提高频率分辨力，则必
+须增加采样点数，也即采样时间。频率分辨率和采样时间是倒数关系。 </p>
+
+
+
+
+<p>假设FFT之后某点n用复数a+bi表示，那么这个复数的模就是$An=\sqrt{a^{2}+b^{2}}$，相位就是$Pn=atan2(b,a)$。根据以上的结果，就可以计算出n点（n≠1，且n<=N/2）
+对应的信号的表达式为：$An/(N/2)*cos(2* \pi *Fn*t+Pn)$，即$2*An/N*cos(2* \pi *Fn*t+Pn)$。对于n=1点的信号，是直流分量，幅度即为A1/N。由于FFT结果的对称性，
+通常我们只使用前半部分的结果，即小于采样频率一半的结果。 </p>
+
+
+
+
+<p>下面以一个实际的信号来做说明。假设我们有一个信号，它含有2V的直流分量，频率为50Hz、相位为-30度、幅度为3V的交流信号，以及一个频率为75Hz、相位为90度、幅度
+为1.5V的交流信号。用数学表达式就是如下：$S=2+3*cos(2*\pi*50*t-\pi*30/180)+1.5*cos(2*\pi*75*t+\pi*90/180)$。式中cos参数为弧度，所以-30度和90度要分别换算成弧度。
+我们以256Hz的采样率对这个信号进行采样，总共采样256点。按照我们上面的分析，Fn=(n-1)*Fs/N，我们可以知道，每两个点之间的间距就是1Hz，第n个点的频率就是n-1。
+我们的信号有3个频率：0Hz、50Hz、75Hz，应该分别在第1个点、第51个点、第76个点上出现峰值，其它各点应该接近0。实际情况如何呢？我们来看看FFT的结果的模值如图
+所示。
+<center><img src="/images/2013/IMAG2013040405.jpg"></center>
+</p>
+
+
+
+
+<p>从图中我们可以看到，在第1点、第51点、和第76点附近有比较大的值。我们分别将这三个点附近的数据拿上来细看： </br>
+1点： 512+0i </br>
+2点： -2.6195E-14 - 1.4162E-13i </br>
+3点： -2.8586E-14 - 1.1898E-13i </br>
+50点：-6.2076E-13 - 2.1713E-12i </br>
+51点：332.55 - 192i </br>
+52点：-1.6707E-12 - 1.5241E-12i </br>
+75点：-2.2199E-13 -1.0076E-12i </br>
+76点：3.4315E-12 + 192i </br>
+77点：-3.0263E-14 +7.5609E-13i </br>
+很明显，1点、51点、76点的值都比较大，它附近的点值都很小，可以认为是0，即在那些频率点上的信号幅度为0。接着，我们来计算各点的幅度值。分别计算这三个点的模值，结果如下： </br>
+1点： 512 </br>
+51点：384 </br>
+76点：192 </br>
+按照公式，可以计算出直流分量为：$512/N=512/256=2$；50Hz信号的幅度为：$384/(N/2)=384/(256/2)=3$；75Hz信号的幅度为$192/(N/2)=192/(256/2)=1.5$。可见，从频谱分析出来的幅度是正确的。</p>
+
+
+
+
+<p>然后再来计算相位信息。直流信号没有相位可言，不用管它。先计算50Hz信号的相位，$atan2(-192, 332.55)=-0.5236$,结果是弧度，换算为角度就是$180*(-0.5236)/pi=-30.0001$。
+再计算75Hz信号的相位，$atan2(192, 3.4315E-12)=1.5708$弧度，换算成角度就是$180*1.5708/pi=90.0002$。可见，相位也是对的。根据FFT结果以及上面的分析计算，我们就可以写出
+信号的表达式了，它就是我们开始提供的信号。
+<center><img src="/images/2013/IMAG2013040406.jpg"></center>
+</p>
+
+
+
+
+<p><b>总结：假设采样频率为Fs，采样点数为N，做FFT之后，某一点n（n从1开始）表示的频率为：$Fn=(n-1)*Fs/N$；该点的模值除以N/2就是对应该频率下的信号的幅度（对于直流信号是除以N）；
+该点的相位即是对应该频率下的信号的相位。相位的计算可用函数atan2(b,a)计算。atan2(b,a)是求坐标为(a,b)点的角度值，范围从-pi到pi。要精确到xHz，则需要采样长度为1/x秒的信号，
+并做FFT。要提高频率分辨率，就需要增加采样点数</b>，这在一些实际的应用中是不现实的，需要在较短的时间内完成分析。解决这个问题的方法有频率细分法，比较简单的方法是采样比较短
+时间的信号，然后在后面补充一定数量的0，使其长度达到需要的点数，再做FFT，这在一定程度上能够提高频率分辨力。具体的频率细分法可参考相关文献。</p>
+
+
+
+
+<h2>八、 让傅立叶变换从理性蜕变到感性，从抽象升华到具体</h2>
+
+
+<p>（应不少网友反应说以上7部分还是不够浅显而另加的一部分，希望对大家有所启发）</p>
+
+
+
+
+<p>1、我们都知道，LTI系统对谐波函数的响应也是相同频率的谐波函数，只是幅度和相位可能不同罢了，因此我们用谐波函数来表示信号正是为了导出频域的概念。
+那你就会问<b>为什么我们要在频域来分析信号，它比时域分析究竟好在哪里呢？</b>这个问题非常好，我来回答你，第一，在频域观察和分析信号有助于揭示系统的本质属性，
+更重要的是对于某些系统可以极大地简化其设计和分析过程。这一点想必大家都知道，我不再啰嗦！第二，从数学上来看，系统从时域到频域的转换就意味着系统的微分
+或差分方程将转变为代数方程，而系统的分析也将采用描述系统的复系数代数方程而不是微分或差分方程。既然如此，那么请问？童鞋，你是喜欢跟微分差分方程玩儿呢
+还是喜欢跟代数方程玩儿呢？假若你说你更喜欢跟微分差分方程玩儿。那我也无话可说啦！</p>
+
+
+
+
+<p>可能你还是觉得以上所述只是一个很理性的认识，那么接下来，满足你的感性需求。其实，在生活中，我们无时无刻不在进行着傅立叶变换。（什么？我没有听错吧？！）
+对的，请相信你的耳朵，你完全没有听错。我们来看人类听觉系统的处理过程：当我们听到一个声音，大脑的实际反应是什么？事实上耳朵感觉到一个时变的空气压力，
+这种变化也许是一个类似于口哨声的单音。当我们听到一个口哨声时，我们所关心的并不是气压随时间的振动（它非常非常快！），而是声音的三个特征：基音、声强以及
+音长。基音可以理解为频率的同义词，声强不是别的，它就是幅度。我们的耳朵—大脑系统能有效地将信号表示成三个简单的特征参数：基音、声强以及音长，并不理会气压
+的快速变化过程（一个重复的变化过程）。这样耳朵—大脑系统就提取了信号的本质信息。傅立叶变换的分析过程与此类似，只不过我们从数学意义把它更加精确化和专业话罢了。</p>
+
+
+
+
+<p>2、不要把傅立叶变换想得那么高深莫测，其实它就是对傅立叶级数的一种拓展。我们知道，傅立叶级数能描述无限时间的周期信号。那么，傅立叶级数能不能描述某些特殊的
+无限时间的非周期信号呢？答案是，不能。但我们经常要分析处理这样的信号啊！于是傅立叶变换这个家伙现身啦！傅立叶变换就是为了使傅立叶级数能够描述所有（没错！
+就是所有！）周期和非周期的无限时间信号而导出的，因而傅立叶变换是对傅立叶级数的一种拓展。</p>
+
+
+
+
+<p>可能你还是觉得以上所述只是一个很抽象的认识，那么接下来，满足你的具体需求。我们先不管是怎么进行拓展的。我们先关注另外两个概念：周期信号和非周期信号。
+他们的显著区别就在于：周期信号每隔一个有限的时间即基波周期To重复一次。它自始至终都将以这个基波周期To重复。而非周期信号则没有一个确定的或固定的周期，
+可能在一段时间内他将重复某一段波形很多次，但不会在整个无限长时间范围都如此。我们找到一个周期信号的傅立叶级数，然后让这个信号的基波周期趋于无限，就
+完成了从傅立叶级数到傅立叶变换的演变过程。因为当周期信号的基波周期趋于无限时，它的波形在有限长时间内都不会重复，这时它就不具有周期性啦！也就是说，
+说一个信号具有无限长的周期和说它是一个非周期信号实际上是一回事！</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[凸优化简介]]></title>
+    <link href="http://ibillxia.github.io/blog/2012/09/26/convex-optimization-overview/"/>
+    <updated>2012-09-26T23:03:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2012/09/26/convex-optimization-overview</id>
+    <content type="html"><![CDATA[<p>在machine learning 的很多问题中，我们最终往往要求解某个函数的最优值。用数学术语表示就是，
+给定一个函数 $f: R^{n} \rightarrow R$，求 $ x \in R^{n} $使得$f(x)$ 取得最小（大）值。例如least-square,
+logistic regression, linear regression, svm, etc. 这类问题统称为优化问题。</p>
+
+<h2>1.引言</h2>
+
+
+<p>在一般情况下，求解任意一个函数的全局最优值是很困难的。但是对于一种特定类型的函数——凸函数（convex function），
+我们可以很有效的求解其全局最优值。这里的“有效”是指在实际问题求解中，能在多项式复杂度的时间里求解。
+人们将这类函数的最值问题称为凸优化问题（Convex Optimal Problem）。下面我从凸集和凸函数讲起，然后
+介绍凸优化的一般描述和典型问题举例。</p>
+
+
+
+
+<h2>2.凸集及其实例</h2>
+
+
+<p><strong>凸集的定义</strong>：一个集合$C$是凸集，当且仅当对任意$x,y\in C$和$\theta \in R$且$0\leq \theta \leq 1$，都有</br>
+<center>$\theta x + (1-\theta)y \in C$.</center>
+其几何意义在于，在集合C中任取两个点，连接两点的直线段上的任一点也在集合C中。下图是凸集和非凸集的例子：</br>
+<img src="/images/201209026/IMAG20120902601.jpg">
+</p>
+
+
+
+
+<!-- more -->
+
+
+<p><strong>凸集的实例</strong>：
+以下列举几个简单的凸集实例</br>
+（1）所有Rn。很显然，对任意给定的$x,y\in R^{n}$ 都有 $\theta x + (1-\theta)y \in R^{n}$。
+（2）非负卦限，R^{n}_{+}。很显然也符合定义。</br>
+（3）单位球。设$\parallel . \parallel$为$R^{n}$上的模（例如欧几里得空间的模为$\parallel x\parallel = sqrt(sum(x_{i}^{2}))$.）,
+那么集合${x|\parallel x\parallel \leq 1}$是一个凸集。
+</p>
+
+
+
+
+<h2>3.凸函数及判定和Jensen不等式</h2>
+
+
+<p>凸优化中的一个核心概念就是凸函数。</br>
+<strong>凸函数定义</strong>：一个函数$f: R^{n} → R$是凸函数当且仅当其定义域（设为$D(f)$）是凸集，
+且对任意的$x,y\in D(f)$和$\theta \in R$且$0\leq \theta \leq 1$，都有</br>
+<center>$f(\theta x + (1-\theta)y \leq \theta f(x) + (1-\theta) f(y))$.</center>
+设$f(x)$为一元函数，那么上式的几何意义在于，曲线上任意两点处的割线在函数曲线的上方，如下图所示：</br>
+<img src="/images/2012/IMAG20120902602.jpg">
+</p>
+
+
+
+
+<p>常见的凸函数有指数函数（$f(x) = a^{x}，a>1$）、负对数函数（$f(x)=-log_{a}x，a>1，x>0$）、开口向上的二次函数等。</p>
+
+
+
+
+<p><strong>凸函数第一判定定理</strong>：设函数$f: R^{n} → R$是一阶可导的，那么$f$是凸函数当且仅当对任意的$x,y \in D(f)$都有：
+<center>$f(y) \geq f(x) + f'(x)(y-x)$</center>
+其中$f(x) + f'(x)(y-x)$称为$f(x)$在$x$处的一阶近似。</p>
+
+
+
+
+<p><strong>凸函数第二判定定理</strong>：设函数$f: R^{n} → R$是二阶可导的，那么$f$是凸函数当且仅当对任意的$x\in D(f)$都有：</p>
+
+
+<center>$f''(x)  \succeq 0$.</center>
+
+
+<p>其中，当$f''(x)$是矩阵时，符号‘$ \succeq $’表示半正定，而非一个个的不等式（在一维的情况下，相当于'$\geq$'；
+在二维情况下，不是表示对所有的$i$和$j$都有$X_{ij} \geq 0$，而是表示$X$为半正定矩阵）。
+</p></p>
+
+<p><strong>Jensen不等式</strong>：我们先看凸函数的定义中的不等式:</br>
+<center>$f(\theta x+(1-\theta y)) \leq \theta f(x) + (1-\theta)f(y), for 0\leq \theta \leq 1$.</center>
+类似的可以将其推广到多个点的情况：</br>
+<center>$f(\sum_{i=1}^{k}\theta_{i}x_{i}) \leq \sum_{i=1}{k}\theta_{i}f(x_{i}), for \sum_{i=1}^{k}\theta_{i} = 1, \theta_{i} \geq 0 \forall i$.</center>
+因为上式中的和为1，可以将其看作为是概率密度，则上式又可写为：</br>
+<center>$f(E[x]) \leq E[f(x)]$.</center>
+这个不等式称为Jensen不等式。
+</p>
+
+
+
+
+<h2>4.凸优化问题举例</h2>
+
+
+<p>有了凸集和凸函数的定义，现在我们重点讨论凸优化问题的求解方法。凸优化的一般描述为：</br>
+<center>$minimize f(x)$,</center>
+<center>$subject to x \in C$.</center>
+其中$f(x)$为凸函数，$C$是一个凸集，这是不带约束条件的情况下的凸优化问题。对于带约束条件的问题而言，其一般描述为：</br>
+<center>$minimize f(x)$,</center>
+<center>$subject to g_{i}(x) \leq 0, i=1,2,...,m; h_{j}(x) = 0, j=1,2,...,p$.</center>
+其中$f(x)$为凸函数，$g_{i}(x)$对所有的$i$均为凸函数，$h_{j}(x)$均为仿射函数。注意$g_{i}(x)$不等式中不等号的方向。
+</p>
+
+
+
+
+<p>凸问题中的全局优化：首先要分清楚什么是局部最优，什么是全局最优。局部最优是指在该最优值附近的点对应的函数值
+都比该最优值大，而全局最优是指对可行域里所有点，其函数值都比该最优值大。对于凸优化问题，它具有一个很重要的特性，
+那就是所有的局部最优值都是全局最优的（关于其证明这里就不讲了，感兴趣的可以自行查查资料或后文中的参考文献）。</p>
+
+
+
+
+<h4>几类特殊的凸优化问题：</h4>
+
+
+<p>（1）线性规划（Linear Programing, LP）: 目标函数和约束条件函数都是线性函数的情况，一般形式如下：</br>
+<center>$minimize c^{T}x +d$,</center>
+<center>$subject to Gx \preceq h; Ax = b$.</center>
+</p>
+
+
+
+
+<p>（2）二次规划（Quadratic Programing, QP）: 目标函数为二次函数，约束条件为线性函数，一般形式为：</br>
+<center>$minimize 1/2 x^{T}Px + c^{T}x +d$,</center>
+<center>$subject to Gx \preceq h; Ax = b$.</center>
+LP可以看做是QP的特例，QP包含LP。
+</p>
+
+
+
+
+<p>（3）二次约束的二次规划（Quadratically Constrained Quadratic Programming, QCQP）: 目标函数和约束条件均为
+二次函数的情况，一般形式为：</br>
+<center>$minimize 1/2 x^{T}Px + c^{T}x +d$,</center>
+<center>$subject to 1/2 x^{T}Qx + r^{T}x + s \preceq h, i=1,2,...,m; Ax = b$.</center>
+QP可以看做是QCQP的特例，QCQP包含QP。
+</p>
+
+
+
+
+<p>半正定规划（Semideﬁnite Programming，SDP）: 其一般形式为：</br>
+<center>$minimize tr(CX)$,</center>
+<center>$subject to tr(A_{i}X) = b_{i},i=1,2,...,p; 0 \preceq X$.</center>
+其中对称矩阵$X\inS^{n}$为决策变量，矩阵$C$，$A_{i}$均为对称矩阵，条件$0 \preceq X$的作用为约束$X$为半正定的。
+QCQP可以看做是SDP的特例，SDP包含QCQP。SDP在machine learning中有非常广泛的应用。
+</p>
+
+
+
+
+<h2>5.凸优化应用举例</h2>
+
+
+<p>下面我们来看几个实例。</br>
+（1）支持向量机（Support Vector Machines，SVM）：凸优化在machine learning中的一个典型的应用就是基于支持向量机分类器，
+它可以用如下优化问题表示：</br>
+<center>$minimize 1/2 \parallel x \parallel ^{2} + C \xi _{i}$,</center>
+<center>$subject to y^{(i)}(w^{T}x^{(i)}+b) \geq 1 - \xi _{i}, \xi_{i} \geq 0, i = 1,2,...,m$.</center>
+其中决策变量$w\in R^{n}, \xi \in R^{n}, b \in R$. $C\in R, x(i), y(i), i=1,2, ... , m$由
+具体问题定义。可以看出，这是一个典型的QP问题。
+</p>
+
+
+
+
+<p>（2）带约束的least squares问题：其一般描述为</br>
+<center>$minimize 1/2\parallel Ax-b \parallel ^{2} $,</center>
+<center>$subject to l \preceq x \preceq u$.</center>
+这也是一个很典型的QP问题。
+</p>
+
+
+
+
+<p>（3）Maximum Likelihood for Logistic Regression：该问题的目标函数为:</br>
+<center>$l (\theta) = \sum_{i=1}^{n}[y^{(i)}ln g(\theta^{T}x^{(i)}) + (1-y^{(i)})ln(1-g(\theta^{T}x^{(i)}))]$</center>
+其中$g(z)$为Sigmoid函数，关于Logistic Regression请参见Andrew Ng的Machine Learning的第6讲。
+</p>
+
+
+
+
+<h2>6.凸优化问题求解简介</h2>
+
+
+<p>上文中提到了几类特殊的凸优化问题，并举了几个应用实例，但并没有给出解法。对于凸优化问题，目前没有一个通用的解析式的
+解决方案，但是我们仍然可以用非解析的方法来有效的求解很多问题。内点法（后续文章中会详细介绍）被证明是很好的解决方案，
+特别具有实用性，在某些问题中，能够在多项式时间复杂度下，将解精确到指定精度。</p>
+
+
+
+
+<p>我们将会看到，经过10到100次的迭代，内点法可以解决一般的凸优化问题，其中每次迭代的时间复杂度为</br>
+<center>$max{n^{3},n^{2}m,F}$.</center>
+其中$F$为计算目标函数和约束条件函数的一阶、二阶导数的总时间代价。如同用解析法求解线性规划问题，内点法也是非常可靠的，
+在一般的PC机上，它可以在几十秒的时间内求解含有上百个变量、上千个约束条件的凸优化问题。对于一些特殊的结构（如稀疏的），
+内点法可以求解包含上千个变量和约束条件的凸优化问题。
+</p>
+
+
+
+
+<p>对于一般的凸优化问题的求解，还没有像求解最小二乘和线性规划那么成熟的技术，基于内点法的一般凸优化问题求解依然是
+当前的一个研究热点。虽然目前还没有公认的最好的解决方案，但我们有理由相信，在不久的将来，内点法求解一般的凸优化问题
+是一项技术。事实上，对于一些特定的凸优化问题，如二次锥规划和几何规划问题（后续文章将会介绍），内点法在向一项技术迈进。</p>
+
+
+
+
+<h2>参考文献</h2>
+
+
+<p>
+[1]Book: Stephen Boyd and Lieven Vandenberghe. Convex Optimization. Cambridge University Press, 2004</br>
+[2]Slide: Zico Kolter (updated by Honglak Lee). Convex Optimization Overview. October 17, 2008</br>
+[3]Standford Convex Optimization Course I：http://www.stanford.edu/class/ee364a/lectures.html
+</p>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[The Log Sum Inequality]]></title>
+    <link href="http://ibillxia.github.io/blog/2012/08/14/the-log-sum-inequanlity/"/>
+    <updated>2012-08-14T21:42:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2012/08/14/the-log-sum-inequanlity</id>
+    <content type="html"><![CDATA[<p>In  mathematics, the log sum inequality is very useful for proving several theorems in information theory.</p>
+
+
+
+
+<h2>1.Statements</h2>
+
+
+<p>Suppose ai and bi are nonnegative numbers. The log sum inequality states that</br>
+<center>$\sum_{i=1}^{n}a_{i}log \frac{a_{i}}{b_{i}} \seq a log \frac{a}{b}$,</center>
+where $a=\sum a_{i}$ and $b=\sum b_{i}$. The equality established if and only if $a_{i}/b{i}$ are equal for all $i$.
+</p>
+
+
+
+
+<h2>2.Proof</h2>
+
+
+<h3>(1)Convex functioin</h3>
+
+
+<p>In mathematics, a real-valued function F(x) defined on an interval is called convex (or convex downward or concave 
+upward) if the graph of the function lies below the line segment joining any two points of the graph. Equivalently, a 
+function is convex if its epigraph (the set of points on or above the graph of the function) is a convex set.</p>
+
+
+
+
+<!-- more -->
+
+
+<p>The mathematical expressions are as follows,</br>
+A real valued function $f: X → R$ defined on a convex set $X$ in a vector space is called convex if, for any two points 
+$x_{1}$ and $x_{2}$ in $X$ and any $t \in [0,1]$,</br>
+<center>$f(tx_{1}+(1-t)x_{2}) \leq tf(x_{1}) + (1-t)f(x_{2})$.</center>
+The function is called strictly convex if remove the equal in the expression.</p>
+
+
+
+
+<p>Examples of convex functions are the quadratic function $F(x)=x_{2}$ and the exponential function $F(x)=e^{x}$ for 
+any real number $x$. For more examples and properties of this type of function, please refer to them on Wikipedia.</p>
+
+
+
+
+<h3>(2)Jensen's inequality</h3>
+
+
+<p>Jensen's inequality generalizes the statement that the secant line of a convex function lies above the graph of 
+the function. There are also converses of the Jensen's inequality, which estimate the upper bound of the integral 
+of the convex function.</p>
+
+
+
+
+<p><p>In the context of probability theory, it is generally stated in the following form: if $X$ is a random variable <br/>
+and $\phi$ is a convex function, then</br>
+<center>$\phi(E[X]) \leq E[\phi(X)]$.</center>
+For a real convex function $\phi$ , numbers $x1, x2, ..., xn$ in its domain, and positive
+weights $ai$, Jensen's inequality can be stated as:</br>
+<center>$\phi(\frac{\sum a<em>{i} x</em>{i}}{\sum a<em>{j}}) \leq \frac{a</em>{i}\phi (x<em>{i})}{\sum a</em>{j}}$.</center></p>
+
+<h3>(3)The Log Sum Inequality</h3>
+
+
+<p>Notice that after setting $f(x) = xlog x$ we have</br>
+<center>$\begin{align}
+\sum<em>{i=1}^{n}a</em>{i}llog\frac{a<em>{i}}{b</em>{i}} =&amp; \sum<em>{i=1}^{n}b</em>{i}f(\frac{a<em>{i}}{b</em>{i}}) = b\sum<em>{i=1}^{n}\frac{b</em>{i}}{b}f(\frac{a<em>{i}}{b</em>{i}}) \
+\geq &amp; bf(\sum<em>{i=1}^{n}\frac{b</em>{i}}{b}\frac{a<em>{i}}{b</em>{i}}) = bf(\frac{1}{b}\sum<em>{i=1}^{n}a</em>{i}) = bf(\frac{a}{b})\
+= &amp; alog \frac{a}{b}
+\end{align}$.</center></p>
+
+<p>where the inequality follows from Jensen's inequality since  $\frac{b<em>{i}}{b} \geq 0, \sum </em>{i} \frac{b_{i}}{b} = 1$,
+and $f$ is convex.</p>
+
+<h2>3.Application</h2>
+
+
+<p>The log sum inequality can be used to prove several inequalities in information theory such as Gibbs' inequality or 
+the convexity of Kullback-Leibler divergence.</p>
+
+
+<p>For example to prove Gibbs' inequality it is enough to substitute $p_{i}$s for $a_{i}$s, and $q_{i}$s for $b_{i}$s to get</br>
+<center>$D_{KL}(P\parallel Q) \equiv \sum_{i=1}^{n}p_{i}log_{2}\frac{p_{i}}{q_{i}} \geq 1log\frac{1}{1} = 0$.</center>
+</p>
+
+
+<h2>References</h2>
+
+
+<p>[1]Convex function, http://en.wikipedia.org/wiki/Convex_function</br>
+[2]Jensen's inequality, http://en.wikipedia.org/wiki/Jensen%27s_inequality</br>
+[3]The Log Sum Inequality, http://en.wikipedia.org/wiki/Log_sum_inequality
+</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[协方差矩阵和相关系数矩阵]]></title>
+    <link href="http://ibillxia.github.io/blog/2012/07/17/covariance-matrix-and-correlation-matrix/"/>
+    <updated>2012-07-17T12:35:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2012/07/17/covariance-matrix-and-correlation-matrix</id>
+    <content type="html"><![CDATA[<h2>1.概述</h2>
+
+
+<p>首先从随机变量的方差的性质讲起。</br>
+设$X$，$Y$是两个随机变量，$E(X)$，$E(Y)$，$D(X)$，$D(Y)$分别为各自的期望和方差，则有:</br>
+<center>$D(X+Y)=D(X)+D(Y)+2E{(X-E(X))(Y-E(Y))} $.   (1)</center></br>
+特别的，当$X$，$Y$相互独立时，有:</br>
+<center>$D(X+Y)=D(X)+D(Y) $.    (2)</center></br>
+对比（1）式和（2）式知，$X$，$Y$相互独立时还应该有:</br>
+<center>$E{(X-E(X))(Y-E(Y))} =0 $.      (3)</center></br>
+这意味着当$E{(X-E(X))(Y-E(Y))}\neq 0$时，X与Y不相互独立，而是存在一定关系的。</p>
+
+
+
+
+<h2>2.相关系数和协方差</h2>
+
+
+<p>
+我们把$E{(X-E(X))(Y-E(Y))}$拿出来，单独定义一个概念，即协方差，记为$Cov(X,Y)$，即：
+<center>$Cov(X,Y)=E{(X-E(X))(Y-E(Y))} $.     (4)</center></br>
+而</br>
+<center>$\rho _{XY} = \frac{Cov(X,Y)}{\sqrt{DX}\sqrt{DY}}$.     (5)</center></br>
+称为随机变量$X$，$Y$的<strong>相关系数</strong>。</br>
+将$Cov(X,Y)$的定义式展开，易得：
+<center>$Cov(X,Y)=E(XY)-E(X)E(Y)$.      (6)</center></br>
+我们常常用这一式子计算<strong>协方差</strong>。
+</p>
+
+
+
+
+<!-- more -->
+
+
+<p>协方差的性质：</br>
+i) $Cov(aX,bY)=abCov(X,Y)$，a，b是常数；</br>
+ii) $Cov(X1+X2，Y)=Cov(X1,Y)+Cov(X2,Y)$.</p>
+
+
+
+
+<p>相关系数的性质：</br>
+i) $\mid \rho _{XY} \mid \leq 1$；</br>
+ii) $\mid \rho _{XY} \mid=1$的充要条件是，存在常数a，b使得$P{Y=a+bX}=1$。</p>
+
+
+
+
+<h2>3.协方差矩阵和相关系数矩阵</h2>
+
+
+<p>上面的定义都是针对二维随机变量的，那么对于n维随机变量，相应的有协方差矩阵和相关系数矩阵的定义。</p>
+
+
+
+
+<p>设n维随机变量$(X1,X2,…,Xn)$的二阶混合中心距</br>
+<center>$c _{ij} = Cov(X_{i},X_{j})=E{[X_{i}-E(X_{i})][X_{j}-E(X_{j})]},i,j=1,2,…,n$.      (7)</center></br>
+都存在，则称矩阵</br>
+<center>$C=[c_{ij}]$.</center>
+为该$n$维随机变量的协方差矩阵。相应的有相关系数矩阵的定义$\sum=[\rho _{ij}]$。
+</p>
+
+
+
+
+<p>设有m个样本，则可构成m×n的样本矩阵X，对X进行标准化变换后得到矩阵Z，那么由相关系数矩阵的定义有</br>
+<center>$\sum = Z^{T}*Z$</center></br>
+其中$Z^{T}$为$Z$的转置。
+</p>
+
+
+
+
+<h2>4.协方差矩阵和相关系数矩阵的关系</h2>
+
+
+<p>由二者的定义公式可知，经<strong>标准化</strong>的样本数据的协方差矩阵就是原始样本数据的相关矩阵。
+<strong>这里所说的标准化指正态化</strong>，即将原始数据处理成均值为0，方差为1的标准数据。</p>
+
+
+
+
+<h2>参考文献</h2>
+
+
+<p>《概率论与数理统计》浙大第4版</p>
+
+]]></content>
+  </entry>
+  
+</feed>

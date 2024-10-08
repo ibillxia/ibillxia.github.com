@@ -1,0 +1,390 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>语音信号处理之时域分析-音色及其Python实现 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2013/05/18/audio-signal-processing-time-domain-timbre-python-realization">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">语音信号处理之时域分析-音色及其Python实现</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-05-18T21:57:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>音色（Timbre）</h2>
+
+
+<p>音色是一个很模糊的概念，它泛指语音的内容，例如“天书”这两个字的发音，虽然都是一声（即他们的音高应该是相同或接近的），
+但由于音色不同，我们可以分辨这两个音。直觉而言，音色的不同，意味着基本波形的不同，因此我们可以用基本周期的波形来代表音色。
+</p>
+
+
+
+
+<p>若要从基本周期的波形来直接分析音色是一件很困难的事情。通常我们的做法是将每一个帧进行频谱分析（Spectral Analysis），算出一个
+帧如何分解为不同频率的分量，然后才能进行对比或分析。在频谱分析中，最常用的方法就是快速傅里叶变换（Fast Fourier Transform，FFT），
+这是一个相当常用的方法，可以讲在时域（Time Domain）的信号转换成频域（Frequency Domain）的信号，并进而知道每个频率的信号强度。</p>
+
+
+
+
+<p>语谱图（Spectrogram）就是语音频谱图，一般是通过处理接收的时域信号得到频谱图，因此只要有足够时间长度的时域信号就可以(时间长度
+为保证频率分辨率)。专业点讲，语谱图就是频谱分析视图，如果针对语音数据的话，叫语谱图。语谱图的横坐标是时间，纵坐标是频率，坐标点
+值为语音数据能量，因而语谱图很好的表达了语音的音色随时间变化的趋势。有些经验丰富的人能够通过看语谱图而知道对应的语音信号的内容，
+这种技术成为Spectrogram Reading。</p>
+
+
+
+
+<!--more-->
+
+
+
+
+<h2>Python绘制语谱图</h2>
+
+
+<p>如果是用Matlab，绘制语谱图并不难，网上资料也一堆一堆的。但是，如果要想用Python来绘制呢？网上相关资料很少很少，万幸中找到了参考[4]，
+但是，[4]中提供的程序是不能运行的，还需要安装几个库，特别是Audiolab这个，折腾了我好半天，最终安装了，但运行时发现这个audiolab根本无法
+import进来，因为ms与numpy的版本有冲突，出现了什么“numpy.dtype does not appear to be the correct type object”，弄了好半天也没有解决，
+后来才发现其实不需要audiolab也可以的，因为其实audiolab只是读取不同格式（扩展名）的语音文件的一个lib而已，并不涉及到绘制语谱图的东西。</p>
+
+
+
+
+<p>
+闲话少说了，上代码吧，其实看看这代码也挺简单的，就调一个matplotlib.pyplot.specgram()就可以了。
+``` py3
+import wave
+import numpy as np
+import matplotlib.pyplot as plt
+
+fw = wave.open('aeiou.wav','r')
+soundInfo = fw.readframes(-1)
+soundInfo = np.fromstring(soundInfo,np.int16)
+f = fw.getframerate()
+fw.close()
+
+plt.subplot(211)
+plt.plot(soundInfo)
+plt.ylabel('Amplitude')
+plt.title('Wave from and spectrogram of aeiou.wav')
+
+plt.subplot(212)
+plt.specgram(soundInfo,Fs = f, scale_by_freq = True, sides = 'default')
+plt.ylabel('Frequency')
+plt.xlabel('time(seconds)')
+plt.show()
+```
+</p>
+
+
+
+
+<p>程序运行的效果如下图：
+<center><img src="/images/2013/IMAG2013051801.png"></center>
+虽然程序简单，但还有一些小bug，比如subplot(212)的xlabel和ylabel无法显示，这个问题暂时还没有解决。（更新：这个问题已解决，把mpp.show()放到
+最后一行就可以了，顺便图也更新了）</p>
+
+
+
+
+<p>另外，就是关于这个语谱图具体是如何绘制的，这一点涉及到FFT和短时能量的计算，短时能量在<a href="">前文中</a>
+已经讲过了，这里不再赘述。关于FFT将在后续文章中讨论。</p>
+
+
+
+
+<h2>参考（References）</h2>
+
+
+<p>
+[1]Timbre (音色): http://neural.cs.nthu.edu.tw/jang/books/audiosignalprocessing/basicFeatureTimber.asp?title=5-5</br>
+[2]Wiki - 音色: http://zh.wikipedia.org/wiki/音色</br>
+[3]语谱图： http://blog.csdn.net/wuxiaoer717/article/details/6941339</br>
+[4]How to plot spectrogram with Python：http://jaganadhg.freeflux.net/blog/archive/2009/07/23/how-to-plot-spectrogram-with-python.html
+</p>
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2013/05/18/audio-signal-processing-time-domain-timbre-python-realization/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2013-05-18T21:57:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/python/'>Python</a>, <a class='tag' href='/blog/tags/speech/'>Speech</a>, <a class='tag' href='/blog/tags/xin-hao-chu-li/'>信号处理</a>, <a class='tag' href='/blog/tags/yin-se/'>音色</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2013/05/16/audio-signal-processing-time-domain-pitch-python-realization/" title="Previous Post:
+        语音信号处理之时域分析-音高及其Python实现">&laquo; 语音信号处理之时域分析-音高及其Python实现</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2013/05/22/audio-signal-processing-time-domain-Voice-Activity-Detection/"
+        title="Next Post: 语音信号处理之时域分析-端点检测及Python实现">语音信号处理之时域分析-端点检测及Python实现
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2013/05/18/audio-signal-processing-time-domain-timbre-python-realization/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2013/05/18/audio-signal-processing-time-domain-timbre-python-realization/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

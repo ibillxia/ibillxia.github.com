@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: swap | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/swap/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[原地交换两个变量的值]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/04/11/swap-two-variables-in-place/"/>
+    <updated>2014-04-11T22:27:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/04/11/swap-two-variables-in-place</id>
+    <content type="html"><![CDATA[<h2>引子</h2>
+
+<p>在码代码的过程中，不经意间就会遇到需要交换两个变量的情况，一般情况下都是通过新定义一个同类型的变量来中转，但自己也知道可以不用定义新变量直接原地交换，但具体如何原地交换以及其中可能隐藏的bug却了解得不是很清楚，于是乎google了一下，发现这里面还真是有很多学问呢，这里整理和总结一下。</p>
+
+<p>原地交换两个变量，最主要有加减法和异或法。</p>
+
+<p>本文完整代码链接：<a href="../upload/code/20140411.cpp">20140411.cpp</a></p>
+
+<h2>加减法</h2>
+
+<p>加减法最简单、最好理解了，设待交换的两个变量分别为 a 和 b ，首先将两者的和赋给 a ；然后将 a 与 b的差赋给 b ，这样 b 就是 a 原来的值了；最后再将 a 与 b 的差赋给 a ，这样 a 就是 b 原来的值了。具体代码如下：</p>
+
+<pre><code class="cpp">inline template &lt;class T&gt;
+void xswap(T &amp;a,T &amp;b){
+    a=a+b;
+    //printf("a=%u\n",a);
+    b=a-b;
+    a=a-b;
+}
+</code></pre>
+
+
+
+<!-- more -->
+
+
+<p>当然也可以先减后加：</p>
+
+<pre><code class="cpp">inline template &lt;class T&gt;
+void xswap2(T &amp;a,T &amp;b){
+    a=a-b;
+    //printf("a=%u\n",a);
+    b=a+b;
+    a=b-a;
+}
+</code></pre>
+
+<p>这里实现的原理与先加后减类似。粗一看，这样实现两个变量的原地交换很简单有效。但是，这其中有一个很隐秘的bug，就是溢出的问题，在先加后减的实现中，如果 a 与 b 的和大于该类型的能表示的最大值，会发生神马捏？我写了一个 main 函数来简单的测试了一下：</p>
+
+<pre><code class="cpp">int main()
+{
+    unsigned char a=255,b=1;
+    printf("a=%u,b=%u\n",a,b);
+    xswap(a,b);
+    printf("a=%u,b=%u\n",a,b);
+    return 0;
+}
+</code></pre>
+
+<p>将上面的 xswap 函数中的注释取消，编译运行后（使用Code::Blocks 13.12 MinGW g++编译），得到如下输出：</p>
+
+<pre><code>a=255,b=1
+a=0
+a=1,b=255
+</code></pre>
+
+<p>可以看到其中第2行输出的 a 的值为 0，产生了上溢（如果 a , b 同为负，可能产生下溢）。虽然最后交换的结果还是对的，但溢出的部分可能对内存中其他变量产生不可预测的后果。因此，不建议这么实现原地交换两个变量，如果实在需要用这种方法，一定要在进行加或减之前，判断时候回产生溢出。</p>
+
+<h2>异或法</h2>
+
+<p>异或法的基本原理类似，但还利用了异或的如下两个特性： a ^ 0 = a, a ^ a = 0. 用异或来实现两个变量的交换如下：</p>
+
+<pre><code class="cpp">template &lt;class T&gt;
+inline void xswap3(T &amp;a,T &amp;b){
+    a=a^b;
+    b=a^b;
+    a=b^a;
+}
+</code></pre>
+
+<p>由于异或是按位运算的，所以不存在溢出问题。因此，如果一定要原地实现两个变量的交换的话，建议用异或的方法。</p>
+
+<h2>原地交换多个变量</h2>
+
+<p>实际上，我们还可以利用上面的思想，将两个变量扩展到多个变量的原地交换，例如三个变量的交换：</p>
+
+<pre><code class="cpp">template &lt;class T&gt;
+inline void swap3(T &amp;a,T &amp;b,T &amp;c){
+    a=a^b;
+    b=a^b;
+    a=b^a;
+    b=b^c;
+    c=b^c;
+    b=b^c;
+}
+</code></pre>
+
+<p>即先交换 a 和 b，再交换 b (=a) 和 c。另外，上面的式子可以简化和压缩到一个式子，具体的技巧读者可以自行google，这里不提倡这么做。</p>
+
+<h2>STL是如何实现swap的</h2>
+
+<p>最后，我们来看看STL标准库是如何实现swap的（这里的实现版本是 move.h 文件中的一个，在 STL 中还有针对 vector, string, tree, map, multimap, deque 的 swap 函数）。</p>
+
+<pre><code class="cpp">/**
+*  @brief Swaps two values.
+*  @ingroup mutating_algorithms
+*  @param  __a  A thing of arbitrary type.
+*  @param  __b  Another thing of arbitrary type.
+*  @return   Nothing.
+*/
+template&lt;typename _Tp&gt;
+inline void
+swap(_Tp&amp; __a, _Tp&amp; __b)
+{
+  // concept requirements
+  __glibcxx_function_requires(_SGIAssignableConcept&lt;_Tp&gt;)
+
+  _Tp __tmp = _GLIBCXX_MOVE(__a);
+  __a = _GLIBCXX_MOVE(__b);
+  __b = _GLIBCXX_MOVE(__tmp);
+}
+</code></pre>
+
+<p>可以看到，这里新声明了一个变量 __tmp 来中转。至于为什么没有原地进行交换，一个可能的解释是：对于 inline 函数来说，函数调用的代码会直接被改函数体替换，再经过编译优化，最后可能只需要借助一个寄存器变量就可以实现两个变量的交换了，这是非常快的，与通过按位的异或运算的实现，在性能上区别不是太大。</p>
+
+<h2>update</h2>
+
+<p>关于溢出的更深入的讨论，可以看看陈浩的最新博文 <a href="http://coolshell.cn/articles/11466.html">C语言的整型溢出问题</a> . 这里面有提到溢出的几个危害，还有关于 C 语言标准、编译器对溢出是如何处理和对待的，以及如何写代码实现预先判断溢出。</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,393 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>The Log Sum Inequality - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2012/08/14/the-log-sum-inequanlity">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">The Log Sum Inequality</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-08-14T21:42:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>In  mathematics, the log sum inequality is very useful for proving several theorems in information theory.</p>
+
+
+
+
+<h2>1.Statements</h2>
+
+
+<p>Suppose ai and bi are nonnegative numbers. The log sum inequality states that</br>
+<center>$\sum_{i=1}^{n}a_{i}log \frac{a_{i}}{b_{i}} \seq a log \frac{a}{b}$,</center>
+where $a=\sum a_{i}$ and $b=\sum b_{i}$. The equality established if and only if $a_{i}/b{i}$ are equal for all $i$.
+</p>
+
+
+
+
+<h2>2.Proof</h2>
+
+
+<h3>(1)Convex functioin</h3>
+
+
+<p>In mathematics, a real-valued function F(x) defined on an interval is called convex (or convex downward or concave 
+upward) if the graph of the function lies below the line segment joining any two points of the graph. Equivalently, a 
+function is convex if its epigraph (the set of points on or above the graph of the function) is a convex set.</p>
+
+
+
+
+<!-- more -->
+
+
+<p>The mathematical expressions are as follows,</br>
+A real valued function $f: X → R$ defined on a convex set $X$ in a vector space is called convex if, for any two points 
+$x_{1}$ and $x_{2}$ in $X$ and any $t \in [0,1]$,</br>
+<center>$f(tx_{1}+(1-t)x_{2}) \leq tf(x_{1}) + (1-t)f(x_{2})$.</center>
+The function is called strictly convex if remove the equal in the expression.</p>
+
+
+
+
+<p>Examples of convex functions are the quadratic function $F(x)=x_{2}$ and the exponential function $F(x)=e^{x}$ for 
+any real number $x$. For more examples and properties of this type of function, please refer to them on Wikipedia.</p>
+
+
+
+
+<h3>(2)Jensen's inequality</h3>
+
+
+<p>Jensen's inequality generalizes the statement that the secant line of a convex function lies above the graph of 
+the function. There are also converses of the Jensen's inequality, which estimate the upper bound of the integral 
+of the convex function.</p>
+
+
+
+
+<p><p>In the context of probability theory, it is generally stated in the following form: if $X$ is a random variable <br/>
+and $\phi$ is a convex function, then</br>
+<center>$\phi(E[X]) \leq E[\phi(X)]$.</center>
+For a real convex function $\phi$ , numbers $x1, x2, ..., xn$ in its domain, and positive
+weights $ai$, Jensen's inequality can be stated as:</br>
+<center>$\phi(\frac{\sum a<em>{i} x</em>{i}}{\sum a<em>{j}}) \leq \frac{a</em>{i}\phi (x<em>{i})}{\sum a</em>{j}}$.</center></p>
+
+<h3>(3)The Log Sum Inequality</h3>
+
+
+<p>Notice that after setting $f(x) = xlog x$ we have</br>
+<center>$\begin{align}
+\sum<em>{i=1}^{n}a</em>{i}llog\frac{a<em>{i}}{b</em>{i}} =&amp; \sum<em>{i=1}^{n}b</em>{i}f(\frac{a<em>{i}}{b</em>{i}}) = b\sum<em>{i=1}^{n}\frac{b</em>{i}}{b}f(\frac{a<em>{i}}{b</em>{i}}) \
+\geq &amp; bf(\sum<em>{i=1}^{n}\frac{b</em>{i}}{b}\frac{a<em>{i}}{b</em>{i}}) = bf(\frac{1}{b}\sum<em>{i=1}^{n}a</em>{i}) = bf(\frac{a}{b})\
+= &amp; alog \frac{a}{b}
+\end{align}$.</center></p>
+
+<p>where the inequality follows from Jensen's inequality since  $\frac{b<em>{i}}{b} \geq 0, \sum </em>{i} \frac{b_{i}}{b} = 1$,
+and $f$ is convex.</p>
+
+<h2>3.Application</h2>
+
+
+<p>The log sum inequality can be used to prove several inequalities in information theory such as Gibbs' inequality or 
+the convexity of Kullback-Leibler divergence.</p>
+
+
+<p>For example to prove Gibbs' inequality it is enough to substitute $p_{i}$s for $a_{i}$s, and $q_{i}$s for $b_{i}$s to get</br>
+<center>$D_{KL}(P\parallel Q) \equiv \sum_{i=1}^{n}p_{i}log_{2}\frac{p_{i}}{q_{i}} \geq 1log\frac{1}{1} = 0$.</center>
+</p>
+
+
+<h2>References</h2>
+
+
+<p>[1]Convex function, http://en.wikipedia.org/wiki/Convex_function</br>
+[2]Jensen's inequality, http://en.wikipedia.org/wiki/Jensen%27s_inequality</br>
+[3]The Log Sum Inequality, http://en.wikipedia.org/wiki/Log_sum_inequality
+</p>
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2012/08/14/the-log-sum-inequanlity/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2012-08-14T21:42:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/math/'>Math</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/jenseninequality/'>JensenInequality</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2012/08/13/GMM-SVM-NAP-Method-in-Speaker-Recognition/" title="Previous Post:
+        GMM-SVM-NAP Method in Speaker Recognition">&laquo; GMM-SVM-NAP Method in Speaker Recognition</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2012/09/23/EFI-and-operating-system/"
+        title="Next Post: EFI和操作系统">EFI和操作系统
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2012/08/14/the-log-sum-inequanlity/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2012/08/14/the-log-sum-inequanlity/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

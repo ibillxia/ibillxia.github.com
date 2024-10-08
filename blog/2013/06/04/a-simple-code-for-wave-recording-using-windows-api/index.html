@@ -1,0 +1,516 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>用Windows API实现一个简单的录音程序 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">用Windows API实现一个简单的录音程序</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-06-04T23:59:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>本文介绍如何使用Windows API来录制语音信号兵保存到wave文件中，主要用到三个结构体和几个wave开头的API函数（在Winmm.lib文件中）。其中三个结构体是WAVEFORMATEX、WAVEHDR、MMTIME，其详细定义都在MMSystem.h中定义，
+可以转到定义看其详细内容及每一项的英文注释。用到的API函数的详细用法可以参见MSDN： http://msdn.microsoft.com/en-us/library/windows/desktop/dd743847(v=vs.85).aspx
+详细的使用过程请看下文的源代码，这是一个Win32 Application，需要手动添加Winmm.lib的依赖。</p>
+
+
+
+
+<!--more-->
+
+
+
+
+<p>实例程序</p>
+
+
+<pre><code class="c">// ******************* FileName: WinMain.cpp *****************************
+// 该源程序需要加入到 VC6 的 Win32 Application 的 empty Project 中
+// 对于工程的 Link 选项，至少要包含以下库: msvcrt.lib Winmm.lib
+
+#include &lt;stdio.h&gt;
+#include &lt;atlstr.h&gt;
+#include &lt;windows.h&gt;
+#include &lt;Mmsystem.h&gt;
+
+#pragma comment(lib,"Winmm.lib")
+
+char lpTemp[256];
+
+DWORD FCC(LPSTR lpStr)
+{
+    DWORD Number = lpStr[0] + lpStr[1] *0x100 + lpStr[2] *0x10000 + lpStr[3] *0x1000000 ;
+    return Number;
+}
+
+int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow )
+{
+    DWORD datasize = 48000;
+
+    // 设置录音采样参数
+    WAVEFORMATEX waveformat;
+    waveformat.wFormatTag=WAVE_FORMAT_PCM; // 指定录音格式
+    waveformat.nChannels=1;
+    waveformat.nSamplesPerSec=8000;
+    waveformat.nBlockAlign=1;
+    waveformat.wBitsPerSample=8;
+    waveformat.cbSize=0;
+    waveformat.nAvgBytesPerSec=waveformat.nChannels*waveformat.nSamplesPerSec*waveformat.wBitsPerSample/8;
+
+    sprintf(lpTemp,"WAVEFORMATEX size = %lu", sizeof(WAVEFORMATEX));
+    MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
+
+    HWAVEIN m_hWaveIn;
+    if ( !waveInGetNumDevs() )
+    {
+        MessageBox(NULL,CString("没有可以使用的 WaveIn 通道"),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    // 打开录音设备
+    int res = waveInOpen(&amp;m_hWaveIn,WAVE_MAPPER, &amp;waveformat, (DWORD)NULL,0L,CALLBACK_WINDOW); 
+    if ( res != MMSYSERR_NOERROR )
+    {
+       sprintf(lpTemp, "打开 waveIn 通道失败，Error_Code = 0x%x", res );
+       MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
+       return 0;
+    }
+
+    WAVEHDR m_pWaveHdr;
+    m_pWaveHdr.lpData = (char *)GlobalLock( GlobalAlloc(GMEM_MOVEABLE|GMEM_SHARE, datasize) );
+    memset(m_pWaveHdr.lpData, 0, datasize );
+    m_pWaveHdr.dwBufferLength = datasize;
+    m_pWaveHdr.dwBytesRecorded = 0;
+    m_pWaveHdr.dwUser = 0;
+    m_pWaveHdr.dwFlags = 0;
+    m_pWaveHdr.dwLoops = 0;
+    sprintf( lpTemp, "WAVEHDR size = %lu", sizeof(WAVEHDR) );
+    MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
+
+    // 准备内存块录音
+    int resPrepare = waveInPrepareHeader( m_hWaveIn, &amp;m_pWaveHdr, sizeof(WAVEHDR) ); 
+    if ( resPrepare != MMSYSERR_NOERROR) 
+    {
+        sprintf(lpTemp, "不能开辟录音头文件，Error_Code = 0x%03X", resPrepare );
+        MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    resPrepare = waveInAddBuffer( m_hWaveIn, &amp;m_pWaveHdr, sizeof(WAVEHDR) );
+    if ( resPrepare != MMSYSERR_NOERROR) 
+    {
+        sprintf(lpTemp, "不能开辟录音用缓冲，Error_Code = 0x%03X", resPrepare );
+        MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    if (! waveInStart(m_hWaveIn) ) 
+    {
+        MessageBox(NULL,CString("开始录音"),CString("提示"),MB_OK);
+    }
+    else 
+    {
+        MessageBox(NULL,CString("开始录音失败"),CString("提示"),MB_OK);
+        return 0;
+    }
+    Sleep(30000);
+
+    MMTIME mmt;
+    mmt.wType = TIME_BYTES;
+    sprintf( lpTemp, "sizeof(MMTIME) = %d, sizeof(UINT) = %d", sizeof(MMTIME), sizeof(UINT) );
+    MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
+
+    if (! waveInGetPosition(m_hWaveIn, &amp;mmt, sizeof(MMTIME)) )
+    {
+        MessageBox(NULL,CString("取得现在音频位置"),CString("提示"),MB_OK);
+    }
+    else 
+    {
+        MessageBox(NULL,CString("不能取得音频长度"),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    if (mmt.wType != TIME_BYTES) 
+    {
+        MessageBox(NULL,CString("指定的 TIME_BYTES 格式音频长度不支持"),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    if (! waveInStop(m_hWaveIn) ) 
+    {
+        MessageBox(NULL,CString("停止录音"),CString("提示"),MB_OK);
+    }
+    else  
+    {
+        MessageBox(NULL,CString("停止录音失败"),CString("提示"),MB_OK);
+    }
+
+    if ( waveInReset(m_hWaveIn) ) 
+    {
+        MessageBox(NULL,CString("重置内存区失败"),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    m_pWaveHdr.dwBytesRecorded = mmt.u.cb;
+    DWORD NumToWrite=0;
+    DWORD dwNumber = 0;
+    HANDLE FileHandle = CreateFile( CString("myTest.wav"), GENERIC_WRITE, 
+        FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+    // memset(m_pWaveHdr.lpData, 0, datasize);
+    dwNumber = FCC("RIFF");
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    dwNumber = m_pWaveHdr.dwBytesRecorded + 18 + 20;
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    dwNumber = FCC("WAVE");
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    dwNumber = FCC("fmt ");
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    dwNumber = 18L;
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    WriteFile(FileHandle, &amp;waveformat, sizeof(WAVEFORMATEX), &amp;NumToWrite, NULL);
+    dwNumber = FCC("data");
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    dwNumber = m_pWaveHdr.dwBytesRecorded;
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    WriteFile(FileHandle, m_pWaveHdr.lpData, m_pWaveHdr.dwBytesRecorded, &amp;NumToWrite, NULL);
+    SetEndOfFile(FileHandle);
+    CloseHandle( FileHandle );  
+    FileHandle = INVALID_HANDLE_VALUE; // 收尾关闭句柄
+    MessageBox(NULL,CString("应该已生成 myTest.wav 文件"),CString("提示"),MB_OK);
+
+    if ( waveInUnprepareHeader(m_hWaveIn, &amp;m_pWaveHdr, sizeof(WAVEHDR)) ) 
+    {
+        MessageBox(NULL,CString("Un_Prepare Header 失败"),CString("提示"),MB_OK);
+    }
+    else 
+    {
+        MessageBox(NULL,CString("Un_Prepare Header 成功"),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    if ( GlobalFree(GlobalHandle( m_pWaveHdr.lpData )) ) 
+    {
+        MessageBox(NULL,CString("Global Free 失败"),CString("提示"),MB_OK);
+    }
+    else 
+    {
+        MessageBox(NULL,CString("Global Free 成功"),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    if (res == MMSYSERR_NOERROR ) // 关闭录音设备
+    {
+        if (waveInClose(m_hWaveIn)==MMSYSERR_NOERROR)
+        {
+            MessageBox(NULL,CString("正常关闭录音设备"),CString("提示"),MB_OK);
+        }
+        else
+        {
+            MessageBox(NULL,CString("非正常关闭录音设备"),CString("提示"),MB_OK);
+            return 0;
+        }
+    }
+
+    return 0;
+}
+// ******************* End of File ************************
+</code></pre>
+
+
+
+<p>这里提供的代码有点杂乱，现已整理成一个小的接口，并提供了一个简单的示例，放在GitHub上：https://github.com/ibillxia/Demo/tree/master/DemoSpeechRecord</p>
+
+
+
+
+<p>参考：</br>
+[1]MSDN: http://msdn.microsoft.com/en-us/library/windows/desktop/dd743586(v=vs.85).aspx</br>
+[2]基于API的录音机程序: http://www.vckbase.com/index.php/wv/664
+</p>
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2013-06-04T23:59:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a>, <a class='category' href='/blog/categories/program/'>Program</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/speech/'>Speech</a>, <a class='tag' href='/blog/tags/wave/'>wave</a>, <a class='tag' href='/blog/tags/xin-hao-chu-li/'>信号处理</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2013/05/29/audio-signal-processing-time-domain-pitch-tracking-and-python-realization/" title="Previous Post:
+        语音信号处理之时域分析-音高追踪及其Python实现">&laquo; 语音信号处理之时域分析-音高追踪及其Python实现</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2013/06/28/swimming-tutorial-with-gif-images/"
+        title="Next Post: 蛙泳、自由泳、仰泳、蝶泳图解动画教你游泳">蛙泳、自由泳、仰泳、蝶泳图解动画教你游泳
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

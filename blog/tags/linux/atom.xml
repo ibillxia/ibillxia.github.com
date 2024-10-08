@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: Linux | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/linux/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Linux的OSS和ALSA声音系统简介及其比较]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/09/08/brief-introduction-of-alsa-and-oss-and-its-comparision/"/>
+    <updated>2013-09-08T19:46:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/09/08/brief-introduction-of-alsa-and-oss-and-its-comparision</id>
+    <content type="html"><![CDATA[<h2>概述</h2>
+
+
+<p>昨天想在Ubuntu上用一下HTK工具包来绘制语音信号的频谱图和提取MFCC的结果，但由于前段时间把Ubuntu升级到13.04，系统的声卡驱动
+是ALSA（Advanced Linux Sound Architecture，高级Linux声音体系），而不是HTK中所使用的OSS（Open Sound System，开放声音系统）。
+网上查阅了大半天，按照 http://forum.ubuntu.org.cn/viewtopic.php?t=316792 中提供的方法用OSS4来替换ALSA，结果OSS4没替换成功，
+而原来的ALSA也不好使了，真坑爹啊！到现在还没办法完全复原，现在只能通过alsamixer来设置音量了，系统的音量设置根本无法用，而且
+声音设置中的输入设备和输出设备都是空的。（现在将系统升级到13.10版，系统的音量设置可以用了，哈哈）捣鼓了半天也没还原回来唉，
+整个人都快崩溃了，都是由于对Linux不熟悉才被虐至如此地步，得恶补啊！！！下面本文就主要介绍一下OSS和ALSA，并将二者进行比较。</p>
+
+
+
+
+<p>在介绍OSS和ALSA之前，先介绍一下音频设备的一些基础知识。</br>
+数字音频设备，有时也称codec，PCM，DSP，ADC/DAC设备，用来播放或录制数字化的声音。它的指标主要有：采样速率（电话为8K，DVD为96K）、
+channel数目（单声道，立体声）、采样分辨率（8-bit，16-bit）等。</br>
+mixer（混频器）：用来控制多个输入、输出的音量，也控制输入（microphone，line-in，CD）之间的切换。</br>
+synthesizer（合成器）：通过一些预先定义好的波形来合成声音，有时用在游戏中声音效果的产生。</br>
+MIDI接口：MIDI接口是为了连接舞台上的synthesizer、键盘、道具、灯光控制器的一种串行接口。</p>
+
+
+
+
+<!--more-->
+
+
+
+
+<h2>OSS开放声音系统简介</h2>
+
+
+<p>Open Sound System是一个类Unix和POSIX兼容系统上一个可选的声音架构。OSSv3是Linux下原始的声音系统并集成在内核里，但是OSSv4
+在2002年OSS成为商业软件时它地位被ALSA所取代。OSSv4在2007年又成为了开源软件，4Front Technologies以GPL协议发布了它的源码。</p>
+
+
+
+
+<p>OSS（Open Sound System）是unix平台上一个统一的音频接口。以前，每个Unix厂商都会提供一个自己专有的API，用来处理音频。这就
+意味着为一种Unix平台编写的音频处理应用程序，在移植到另外一种Unix平台上时，必须要重写。不仅如此，在一种平台上具备的功能，
+可能在另外一个平台上无法实现。但是，OSS出现以后情况就大不一样了，只要音频处理应用程序按照OSS的API来编写，那么在移植到另外
+一个平台时，只需要重新编译即可。因此，OSS提供了源代码级的可移植性。</p>
+
+
+
+
+<p>同时，很多的Unix工作站中，只能提供录音与放音的功能。有了OSS后，给这些工作站带来了MIDI功能，加上音频流、语音识别/生成、
+计算机电话（CT）、JAVA以及其它的多媒体技术，在Unix工作站中，同样可以享受到同Windows、Macintosh环境一样的音频世界。另外，
+OSS还提供了与视频和动画播放同步的音频能力，这对在Unix中实现动画、游戏提供了帮助。</p>
+
+
+
+
+<p>在Unix系统中，所有的设备都被统一成文件，通过对文件的访问方式（首先open，然后read/write，同时可以使用ioctl读取/设置参数，
+最后close）来访问设备.在OSS中，主要有以下的几种设备文件：</br>
+/dev/mixer：访问声卡中内置的mixer，调整音量大小，选择音源。</br>
+/dev/sndstat：测试声卡，执行cat /dev/sndstat会显示声卡驱动的信息。</br>
+/dev/dsp、/dev/dspW、/dev/audio：读这个设备就相当于录音，写这个设备就相当于放音。/dev/dsp与/dev/audio之间的区别在于采样的编码
+不同，/dev/audio使用μ律编码，/dev/dsp使用8-bit（无符号）线性编码，/dev/dspW使用16-bit（有符号）线形编码。/dev/audio主要是为了
+与SunOS兼容，所以尽量不要使用。</br>
+/dev/sequencer：访问声卡内置的，或者连接在MIDI接口的synthesizer。</p>
+
+
+
+
+<p>OSS为音频编程提供三种设备，分别是/dev/dsp，/dev/dspW和/dev/audio，用户可以直接使用Unix的命令来放音和录音，命令cat /dev/dsp >xyz
+可用来录音，录音的结果放在xyz文件中；命令cat xyz >/dev/dsp播放声音文件xyz。如果通过编程的方式来使用这些设备，那么Unix平台通过
+文件系统提供了统一的访问接口。程序员可以通过文件的操作函数直接控制这些设备，这些操作函数包括：open、close、read、write、ioctl等。</p>
+
+
+
+
+<h2>ALSA高级Linux声音系统简介</h2>
+
+
+<p>高级Linux声音体系（英语：Advanced Linux Sound Architecture，缩写为ALSA）是Linux内核中，为声卡提供的驱动组件，以替代原先的
+OSS（开放声音系统）。一部分的目的是支持声卡的自动配置，以及完美的处理系统中的多个声音设备，这些目的大多都已达到。另一个声音
+框架JACK使用ALSA提供低延迟的专业级音频编辑和混音能力。</p>
+
+
+
+
+<p>这个项目开始于为1998年Gravis Ultrasound所开发的驱动，它一直作为一个单独的软件包开发，直到2002年他被引进入Linux内核的开发
+版本(2.5.4-2.5.5)。从2.6版本开始ALSA成为Linux内核中默认的标准音频驱动程序集，OSS则被标记为废弃。</p>
+
+
+
+
+<p>ALSA由许多声卡的声卡驱动程序组成，同时它也提供一个称为libasound的API库。应用程序开发者应该使用libasound而不是内核中的ALSA接口。
+因为libasound提供最高级并且编程方便的编程接口。并且提供一个设备逻辑命名功能，这样开发者甚至不需要知道类似设备文件这样的低层接口。
+相反，OSS/Free驱动是在内核系统调用级上编程，它要求开发者提供设备文件名并且利用ioctrl来实现相应的功能。为了向后兼容，ALSA提供内核
+模块来模拟OSS，这样之前的许多在OSS基础上开发的应用程序不需要任何改动就可以在ALSA上运行。另外，libaoss库也可以模拟OSS，而它不需要
+内核模块。另外，ALSA还包含插件功能，使用插件可以扩展新的声卡驱动，包括完全用软件实现的虚拟声卡。ALSA提供一系列基于命令行的工具集，
+比如混音器(mixer)，音频文件播放器(aplay)，以及控制特定声卡特定属性的工具。</p>
+
+
+
+
+<p>ALSA API主要分为以下几种接口：</br>
+控制接口：提供灵活的方式管理注册的声卡和对存在的声卡进行查询。</br>
+PCM接口：提供管理数字音频的捕捉和回放。</br>
+原始MIDI接口: 支持 MIDI (Musical Instrument Digital Interface)，一种标准电子音乐指令集。这些API提供访问声卡上的MIDI总线。
+这些原始借口直接工作在 The MIDI事件上，程序员只需要管理协议和时间。</br>
+记时接口: 为支持声音的同步事件提供访问声卡上的定时器。</br>
+音序器接口：一个比原始MIDI接口高级的MIDI编程和声音同步高层接口。它可以处理很多的MIDI协议和定时器。</br>
+混音器接口：控制发送信号和控制声音大小的声卡上的设备。</p>
+
+
+
+
+<p>API库使用逻辑设备名而不是设备文件。设备名字可以是真实的硬件名字也可以是插件名字。硬件名字使用hw:i,j这样的格式。其中i是卡号，
+j是这块声卡上的设备号。第一个声音设备是hw:0,0.这个别名默认引用第一块声音设备并且在本文示例中一真会被用到。插件使用另外的唯一名字。
+比如plughw:,表示一个插件，这个插件不提供对硬件设备的访问，而是提供像采样率转换这样的软件特性，硬件本身并不支持这样的特性。</p>
+
+
+
+
+<h2>OSS与ALSA的优缺点比较</h2>
+
+
+<p>ALSA是一个完全开放源代码的音频驱动程序集，除了像OSS那样提供了一组内核驱动程序模块之外，ALSA还专门为简化应用程序的编写提供了
+相应的函数库，与OSS提供的基于ioctl的原始编程接口相比，ALSA函数库使用起来要更加方便一些。利用该函数库，开发人员可以方便快捷的
+开发出自己的应用程序，细节则留给函数库内部处理。当然ALSA也提供了类似于OSS的系统接口，不过ALSA的开发者建议应用程序开发者使用
+音频函数库而不是驱动程序的API。Ubuntu默认使用ALSA作为底层声音驱动，程序则与PulseAudio交互，这是一个很不错的方案。</p>
+
+
+
+
+<p>下面来比较一下OSS和ALSA的优缺点：</br>
+<strong>(1)OSS的优点（对用户来说）</strong></br>
+在内核空间（kernel space）里面包含了一个透明软件混音器(vmix)。这样多个程序就可以同时使用声音设备而且没有任何问题。</br>
+这个混音器可以让你单独调节各个程序的音量。</br>
+对某些老声卡有着更好的支持比如创新（Creative）的X-Fi。</br>
+声音程序的初始反应时间一般更好。</br>
+对使用OSS的应用程序接口（API）的程序有更好的支持，很多程序都支持OSS的API，而不需要ALSA的模拟。</br>
+
+<strong>(2)OSS的优点（对开发者来说）</strong></br>
+清晰的API文档，更易于使用。</br>
+支持用户空间的声音驱动。</br>
+可移植性强，OSS也可以在BSDs和Solaris下运行。</br>
+本身可以跨平台，可以更方便移植到新的操作系统。</br>
+
+<strong>(3)ALSA的优点</strong></br>
+ALSA对USB音频设备支持更好，而OSS的输出还在试验中，输入还未实现。</br>
+ALSA支持蓝牙声音设备。</br>
+ALSA支持AC'97和HDAudio dial-up soft-modems (比如Si3055)。</br>
+ALSA对MIDI支持得更好，但用OSS你只能通过软件合成器（如timidity和fluidsynth）来使用MIDI。</br>
+ALSA对待机支持更好，而用OSS，你需要在待机前使用soundoff来停止OSS驱动，在恢复后使用soundon来启动OSS。</br>
+OSS的jack检测目前在某些HDAudio-powered主板上不能正常工作。也就是说在某些型号的主板上，你可能需要在插入耳机的
+时候手动关闭外置扬声器。而ALSA没这个问题。
+</p>
+
+
+
+
+<h2>参考资料</h2>
+
+
+<p>[1]Archlinux上介绍OSS的Wiki：https://wiki.archlinux.org/index.php/OSS_%28%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87%29 </br>
+[2]Archlinux上介绍ALSA的Wiki：https://wiki.archlinux.org/index.php/Advanced_Linux_Sound_Architecture_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87) </br>
+[3]OSS--跨平台的音频接口简介: http://www.ibm.com/developerworks/cn/linux/l-ossapi/ </br>
+[4]Linux ALSA声卡驱动之一：ALSA架构简介: http://blog.csdn.net/droidphone/article/details/6271122 </br>
+[5]Linux ALSA声卡编程简介: http://enmind.blog.163.com/blog/static/164138001201092334620355/</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Linux与BSD之间的10个不同之处]]></title>
+    <link href="http://ibillxia.github.io/blog/2010/10/19/10-difference-between-linux-and-bsd/"/>
+    <updated>2010-10-19T22:30:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2010/10/19/10-difference-between-linux-and-bsd</id>
+    <content type="html"><![CDATA[<p>也许你经常会听到人们把Linux及BSD系统混为一谈，甚至于媒体都这么说。当然，事实上这两者确实有很多相似之处，比如它们都是基于Unix演变而来，
+而且基本上这两类系统都是由非盈利组织及团队开发，另外我更想说的是，这两个系统都有一个共同的目标–那就是创建最有用、最可靠的操作系统。 那么
+这两个系统的区别到底在哪里?国外一位名为 Jack Wallen 的科技 Blogger 发表了一篇名为 10 differences between Linux and BSD 的文章，从许可证、
+代码控制、内核 vs 操作系统、UNIX-Like、基本系统、更多来自于源代码、升级、前沿技术、硬件支持及用户群等10方面描述了 Linux 与 BSD 之间的 10 
+个不同之处。</p>
+
+
+
+
+<h3>1、许可证</h3>
+
+
+<p>正如我们所知道的，Linux 操作系统是基于 GPL 许可证授权下的。该许可证可防止开源软件被转换为封闭源代码软件及确保源代码的可用性。 GPL 许可证的
+目的就是防止二进制包成为唯一的软件发行源。</p>
+
+
+
+
+<p>而 BSD 许可证的限制则要少得多，它甚至允许二进制包成为唯一的发行源。这就是核心差异，可以这样理解：GPL 许可证让您有权拥有任何你想要使用该软件的
+方法，但你必须确保提供源代码给下一个使用它的人(包括你对它的改变部分)。而 BSD 许可证并不是要求你必须那么做。( 译者注：这里分别维基百科上对 BSD 及 GPL 
+许可证的解释)</p>
+
+
+<!--more-->
+
+
+
+
+<h3>2、代码控制</h3>
+
+
+<p>BSD 的代码不是被控制在任何一个人手里，而 Linux 的内核基本上被 Linus Torvalds ( Linux 创始人 ) 所控制，BSD 并没有单一的人来说什么可以或什么不可以进入代码。
+相反，BSD 通过一个核心小组 ” Core Team” 来管理该项目，这个核心小组比非核心小组有更多的发言权来指导 BSD 社区的发展方向，(译者注：而据我所知，FreeBSDD 核心
+小组的成员会每两年选举一次。)</p>
+
+
+
+
+<h3>3、内核 vs 操作系统</h3>
+
+
+<p>BSD 项目维护的是整个操作系统，而 Linux 则只是主要集中在单一的内核上面。这点确实是需要注意的，虽然这两个系统上都运行着许多相同的软件。</p>
+
+
+
+
+<h3>4、UNIX-Like</h3>
+
+
+<p>这里有一个关于 BSD vs Linux 的古老说法：” BSD is what you get when a bunch of UNIX hackers sit down to try to port a UNIX system to the PC. 
+Linux is what you get when a bunch of PC hackers sit down and try to write a UNIX system for the PC “，这里表达了很多。你会发现 BSD 系统更为类似
+于 UNIX ，而事实上它就是传统 UNIX 的直接衍生品。而 Linux ，则是一个松散的基于 UNIX 衍生品 ( Minix ) 而新创建的一个 OS 。</p>
+
+
+
+
+<h3>5、基本系统</h3>
+
+
+<p>这是一个关于 BSD 与 Linux 之间差异的至关重要的理念。 Linux 的”基本系统” 是并不真正存在的，许多人会说，Linux 的基本系统就是内核，但问题是如果没有
+任何可用的应用程序的话，那么这个内核是完全没有价值的。而另一方面，BSD 则有一个包括众多工具的基本系统， 甚至 libc 也是基本系统的一部分。因为这些组件
+都被作为一个基本系统，所以它们都是被一起开发和打包的，许多事实表明这样更能创建出一个更具凝聚力的整体。</p>
+
+
+
+
+<h3>6、更多来自于源代码</h3>
+
+
+<p>由于 BSD 的开发方式(使用 Ports 系统 ) 的关系，所以用户们更多的是从源代码来安装程序，而不是预先编译好的二进制包。这是一个优势还是劣势?这取决于不同的
+用户。如果你更多的想从友好或易用性方面考虑的话，看到这一点后你也许会有放弃的念头，对于新用户更是如此。但一些新的用户也有想要从源代码编译安装，这可能比较
+累人。但是，从源码安装也有一定的优势，比如(库版本控制，通过特殊的包来构建系统等等)。</p>
+
+
+
+
+<h3>7、升级</h3>
+
+
+<p>由于 BSD 的开发方式的原因(见第5项)，你可以利用一条指令就可以升级你的基本系统到最新版本 ( Freebsd 下是用 freebsd-update fetch update 命令)。或者你也
+可以下载整个源代码树，然后通过编译来升级。而在 Linux 中，你也可以通过内置的包管理系统来升级系统。前者 (BSD) 仅更新基本系统，而后者 ( Linux ) 则会升级
+整个系统。不过请记住，BSD 中升级到最新的基本系统并不意味着所有的附加软件包也将会被更新，而 Linux 升级的时候，所有的软件包都会被升级。这是否意味着 Linux 
+处理得更好吗?在我看未必。我经常会看到 Linux 在升级时出现严重错误，从而需要重新安装整个系统，但这个现象基本不太可能发生在 BSD 的升级过程中。</p>
+
+
+
+
+<h3>8、前沿技术</h3>
+
+
+<p>基本上你不太可能会看到 BSD 系统运行着任何非常前沿版本的软件。而在 Linux 这一方面，大量的发行版会分发前沿版本的软件包。如果你是一个 ” If it isn’t broken, 
+don’t fix it” 这样观点的持有者的话，你将会是 BSD 的超级粉丝。但是，如果你很新潮，想要体验一切最新的东西，那么你最好尽快迁移到 Linux 。</p>
+
+
+
+
+<h3>9、硬件支持</h3>
+
+
+<p>你会发现，通常情况下 Linux 的硬件支持要比 BSD 更早一些。但这并不是说 BSD 没有像 Linux 那样支持足够多的硬件，它只是意味着在某些情况下 Linux 会在 BSD 之前
+先支持某些硬件。因此，如果你想要最新的、最好的显卡的话，基本上不用考虑 BSD 了。如果你有一个包含了最新无线芯片的新型笔记本的话，建议你选择 Linux，运气好的话
+也许它会支持。</p>
+
+
+
+
+<h3>10、用户群</h3>
+
+
+<p>在这里我冒险概括一下计算机用户们，但我想先声明一下每一个事物都有例外。下面我要向你展示我对用户分布方面的概括。</p>
+
+
+
+
+<p>Mac –> Windows –> Linux –> BSD –> UNIX</p>
+
+
+
+
+<p>从左边到右边，分别是”使用该 OS 的人里精通电脑的用户群最少”到”使用该 OS 的人里精通电脑的用户群最多”的过渡。我们可以看到，Linux的被放置在了中间，而 BSD 则
+更接近于右边。许多人会对此有争论，也有些人可能会感觉被冒犯了。但是，个人认为这是一个对”哪些用户使用哪些系统”相当准确的概括。</p>
+
+
+
+
+<h3>其他的不同点?</h3>
+
+
+
+
+<p>这个列表并不想表明哪个系统比哪个更好。事实上，BSD 和 Linux 各有着自己的亮点。你认为怎么样?有兴趣的话也请表达出你的观点。</p>
+
+
+
+
+<p>注：本帖转自http://www.builder.com.cn/2010/0806/1839783.shtml</p>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[分析linux内核的idle的知识 ]]></title>
+    <link href="http://ibillxia.github.io/blog/2010/10/16/something-about-idle-in-linux-kernel-analysis/"/>
+    <updated>2010-10-16T14:24:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2010/10/16/something-about-idle-in-linux-kernel-analysis</id>
+    <content type="html"><![CDATA[<p>Linux系统越来越受到电脑用户的欢迎，于是很多人开始学习Linux时，学习linux，你可能会遇到linux内核问题，这里将介绍linux内核中idle知识，
+在这里拿出来和大家分享一下。</p>
+
+
+
+
+<h2>1. idle是什么</h2>
+
+
+<p>简单的说idle是一个进程，其pid号为 0。其前身是系统创建的第一个进程，也是唯一一个没有通过fork()产生的进程。在smp系统中，每个处理器单元有
+独立的一个运行队列，而每个运行队列上又有一个idle进程，即有多少处理器单元，就有多少idle进程。系统的空闲时间，其实就是指idle进程的"运行时间"。
+既然是idle是进程，那我们来看看idle是如何被创建，又具体做了哪些事情?</p>
+
+
+
+
+<!--more-->
+
+
+
+
+<h2>2. idle的创建</h2>
+
+
+<p>我们知道系统是从BIOS加电自检，载入MBR中的引导程序(LILO/GRUB),再加载linux内核开始运行的，一直到指定shell开始运行告一段落，这时用户开始操作Linux。
+而大致是在vmlinux的入口startup_32(head.S)中为pid号为0的原始进程设置了执行环境，然后原是进程开始执行start_kernel()完成Linux内核的初始化工作。包括
+初始化页表，初始化中断向量表，初始化系统时间等。继而调用 fork(),创建第一个用户进程:</p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="w">　　</span><span class="n">kernel_thread</span><span class="p">(</span><span class="n">kernel_init</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="n">CLONE_FS</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">CLONE_SIGHAND</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>这个进程就是着名的pid为1的init进程，它会继续完成剩下的初始化工作，然后execve(/sbin/init), 成为系统中的其他所有进程的祖先。关于init我们这次先不研究，
+回过头来看pid=0的进程，在创建了init进程后，pid=0的进程调用 cpu_idle()演变成了idle进程。</p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="w">　　</span><span class="n">current_thread_info</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">status</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="n">TS_POLLING</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>在 smp系统中，除了上面刚才我们讲的主处理器(执行初始化工作的处理器)上idle进程的创建，还有从处理器(被主处理器activate的处理器)上的idle进程，他们又是
+怎么创建的呢?接着看init进程，init在演变成/sbin/init之前，会执行一部分初始化工作，其中一个就是 smp_prepare_cpus()，初始化SMP处理器，在这过程中会在处理
+每个从处理器时调用</p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="w">　　</span><span class="n">task</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">copy_process</span><span class="p">(</span><span class="n">CLONE_VM</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">idle_regs</span><span class="p">(</span><span class="o">?</span><span class="n">s</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'><span class="w">　　</span><span class="n">init_idle</span><span class="p">(</span><span class="n">task</span><span class="p">,</span><span class="w"> </span><span class="n">cpu</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>即从init中复制出一个进程，并把它初始化为idle进程(pid仍然为0)。从处理器上的idle进程会进行一些Activate工作，然后执行cpu_idle()。</p>
+
+
+
+
+<p>整个过程简单的说就是，原始进程(pid=0)创建init进程(pid=1),然后演化成idle进程(pid=0)。init进程为每个从处理器(运行队列)创建出一个idle进程(pid=0)，
+然后演化成/sbin/init。</p>
+
+
+
+
+<h2>3. idle的运行时机</h2>
+
+
+<p>idle 进程优先级为MAX_PRIO，即最低优先级。早先版本中，idle是参与调度的，所以将其优先级设为最低，当没有其他进程可以运行时，才会调度执行idle。
+而目前的版本中idle并不在运行队列中参与调度，而是在运行队列结构中含idle指针，指向idle进程，在调度器发现运行队列为空的时候运行，调入运行。</p>
+
+
+
+
+<h2>4. idle的workload</h2>
+
+
+<p>从上面的分析我们可以看出，idle在系统没有其他就绪的进程可执行的时候才会被调度。不管是主处理器，还是从处理器，最后都是执行的cpu_idle()函数。
+所以我们来看看cpu_idle做了什么事情。</p>
+
+
+
+
+<p>因为idle进程中并不执行什么有意义的任务，所以通常考虑的是两点：1.节能，2.低退出延迟。</p>
+
+
+
+
+<p>其核心代码如下：</p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">cpu_idle</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">cpu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">smp_processor_id</span><span class="p">();</span>
+</span><span class='line'><span class="w">    </span><span class="n">current_thread_info</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">status</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="n">TS_POLLING</span><span class="p">;</span><span class="w">   </span><span class="o">/&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="w"> </span><span class="n">endless</span><span class="w"> </span><span class="n">idle</span><span class="w"> </span><span class="n">loop</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">no</span><span class="w"> </span><span class="n">priority</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">all</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;/</span>
+</span><span class='line'><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">        </span><span class="n">tick_nohz_stop_sched_tick</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'><span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">need_resched</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">            </span><span class="n">check_pgt_cache</span><span class="p">();</span>
+</span><span class='line'><span class="w">            </span><span class="n">rmb</span><span class="p">();</span>
+</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rcu_pending</span><span class="p">(</span><span class="n">cpu</span><span class="p">))</span><span class="w">  </span><span class="n">rcu_check_callbacks</span><span class="p">(</span><span class="n">cpu</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cpu_is_offline</span><span class="p">(</span><span class="n">cpu</span><span class="p">))</span><span class="w">  </span><span class="n">play_dead</span><span class="p">();</span>
+</span><span class='line'><span class="w">            </span><span class="n">local_irq_disable</span><span class="p">();</span>
+</span><span class='line'><span class="w">            </span><span class="n">__get_cpu_var</span><span class="p">(</span><span class="n">irq_stat</span><span class="p">).</span><span class="n">idle_timestamp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jiffies</span><span class="p">;</span><span class="w"> </span><span class="o">/&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Don</span><span class="err">&#39;</span><span class="n">t</span><span class="w"> </span><span class="n">trace</span><span class="w"> </span><span class="n">irqs</span><span class="w"> </span><span class="n">off</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">idle</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;/</span>
+</span><span class='line'><span class="w">            </span><span class="n">stop_critical_timings</span><span class="p">();</span>
+</span><span class='line'><span class="w">            </span><span class="n">pm_idle</span><span class="p">();</span>
+</span><span class='line'><span class="w">            </span><span class="n">start_critical_timings</span><span class="p">();</span>
+</span><span class='line'><span class="w">        </span><span class="p">}</span>
+</span><span class='line'><span class="w">        </span><span class="n">tick_nohz_restart_sched_tick</span><span class="p">();</span>
+</span><span class='line'><span class="w">        </span><span class="n">preempt_enable_no_resched</span><span class="p">();</span>
+</span><span class='line'><span class="w">        </span><span class="n">schedule</span><span class="p">();</span>
+</span><span class='line'><span class="w">        </span><span class="n">preempt_disable</span><span class="p">();</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>循环判断need_resched以降低退出延迟，用idle()来节能。</p>
+
+
+
+
+<p>默认的idle实现是hlt指令，hlt指令使CPU处于暂停状态，等待硬件中断发生的时候恢复，从而达到节能的目的。即从处理器C0态变到C1态(见 ACPI标准)。这
+也是早些年windows平台上各种"处理器降温"工具的主要手段。当然idle也可以是在别的ACPI或者APM模块中定义的，甚至是自定义的一个idle(比如说nop)。</p>
+
+
+
+
+<p>注：本文转自http://www.builder.com.cn/2010/1011/1908337.shtml</p>
+
+]]></content>
+  </entry>
+  
+</feed>

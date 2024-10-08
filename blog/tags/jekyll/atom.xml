@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: Jekyll | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/jekyll/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[给Octopress博客配置Twitter Bootstrap主题]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/04/28/configure-twitter-bootstrap-theme-in-octopress/"/>
+    <updated>2014-04-28T22:37:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/04/28/configure-twitter-bootstrap-theme-in-octopress</id>
+    <content type="html"><![CDATA[<p>很长一段时间以来就看到各种基于 Twitter Bootstrap 主题的博客很清爽，而且对 Tag 的归档也做得很赞，于是很想将自己的博客也换成 Bootstrap 的主题，随着看到的博客越来越多，自己的 Octopress 主题先得越来越臃肿，而 Tags 归档功能也相形见绌，更换主题的欲望越来越强烈了。于是乎，趁这个周末捣鼓了一番，最终大功告成，在这里分享一下具体过程。</p>
+
+<h2>Bootstrap 主题的安装</h2>
+
+<p>首先下载适用于 Octopress 的 <a href="https://github.com/bkutil/bootstrap-theme">Bootstrap主题</a> 并解压缩到博客的 .theme 目录，然后安装：</p>
+
+<pre><code class="sh">rake install['bootstrap']
+</code></pre>
+
+<p>安装的过程中可能会提示有 sass 或其他依赖库的语法错误神马的，这是因为 sass 的版本过低，可以通过如下命令来跟新：</p>
+
+<pre><code class="sh">bundle update sass
+</code></pre>
+
+
+
+<!-- more -->
+
+
+<p>其他库的升级类推。升级完这些依赖后，要修改你的 Octopress 博客的根目录下的 Gemfile 中的版本说明。最后再重新运行上上条的 rake install 指令。这样就完成主体的安装了，是不是很简单（实际操作中遇到问题的话，一般都是 jekyll 等各种的库的版本及相互间的依赖问题，通过 bundle update 基本上都能搞定）。安装完了之后，可以运行 rake generate 和 rake preview 来看看效果了。</p>
+
+<h2>配置 Tags 归档</h2>
+
+<p>接下来是配置类似 <a href="http://ibillxia.github.io/blog/tags/">这种显示结果</a> 的 Tags 归档页面了。</p>
+
+<p>首先，需要安装 <a href="https://github.com/plusjade/jekyll-bootstrap">jekyll-bootstrap</a> 的一些东西，请先下载并解压。主要是 <em>includes/JB/ 目录下的内容，将 JB 文件夹拷贝到 $BLOG_HOME/source/</em>includes/ 目录下，还有 jekyll-bootstrap 根目录下的 tags.html 拷贝到你想展示 Tags 的目录，并在 _config.yml 文件中配置 tag_dir 项的值为该目录，例如我这里的配置是：</p>
+
+<pre><code>tag_dir: blog/tags
+</code></pre>
+
+<p>所以我的 tags.html 文件放在了 $BLOG_HOME/source/blog/tags 目录下，并将 tags.html 重命名为 index.html。</p>
+
+<p>这些配置好了后，你就可以先运行 rake generate 和 rake preview 来看看效果。可以发现 Tags 归档页的显示还是不太友好。那么我们需要加入一些自己的 css 样式。这里我参考了 pluskid 师兄的博客的 css 代码并略有修改，在我新建的 $BLOG_HOME/source/stylesheets/style.css 文件中加入如下代码：</p>
+
+<pre><code class="css">/* tag_box */
+.tag_box {
+  list-style:none;
+  margin:0;
+  padding:2px 0 ;
+  overflow:hidden;
+}
+.tag_box li {
+  line-height:20px;
+  margin:0;
+}
+.tag_box.inline li {
+  float:left;
+  padding:2px 0 ;
+}
+.tag_box a {
+  padding: 2px;
+  margin: 2px;
+  background: #eee;
+  color:#005F6B;
+  border-radius: 3px;
+  text-decoration:none;
+}
+.tag_box a span{
+  vertical-align:super;
+  font-size:0.8em;
+}
+.tag_box a.active {
+  background:#57A957;
+  border:1px solid #4C964D;
+  color:#FFF;
+}
+/* tag_box end */
+</code></pre>
+
+<p>注意，这里由于新加了 css 文件，要让其生效，需要在 html 模板中加入引用，具体我是在 $BLOG_HOME/source/_includes/head.html 文件中加入如下代码：</p>
+
+<pre><code class="html">&lt;link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css"&gt;
+</code></pre>
+
+<p>你也可以直接在 html 模板中加入 css 代码而不用新建 css 文件并添加引用。</p>
+
+<p>至此，已经配置完成了 ^_^ 可以运行 rake generate 和 rake preview 来看看最终效果了。</p>
+
+<p>PS：本博客的主题及插件相关文件和代码可以看我的 GitHub Repo：<a href="https://github.com/ibillxia/xoctopress/tree/master">xoctopress</a>. 如有问题，可以参考这些代码。</p>
+]]></content>
+  </entry>
+  
+</feed>

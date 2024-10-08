@@ -1,0 +1,417 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>超好的HTML解析工具PHP Simple HTML DOM Parser - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">超好的HTML解析工具PHP Simple HTML DOM Parser</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-08-28T20:49:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>采用PHP5+ 开发的一个简单的 PHP HTML DOM 分析，支持 invalid HTML 并提供非常简单的方式来操作 HTML 元素。在 HMTL 页面
+上查找标签所使用的语法与 jQuery （一个轻量级，实用的 javascript 框架） 相似，从页面中抽取内容只需要一行代码。开源代码：
+<a href="http://sourceforge.net/projects/simplehtmldom/">http://sourceforge.net/projects/simplehtmldom/</a> </p>
+
+
+
+
+<p>它具有以下几个特点：</br>
+1. 只支援 PHP5 以上. </br>
+2. 可以分析不严谨 (invalid) 的 HTML. </br>
+3. 支援简单的 CSS Selector. </br>
+4. 简单的 DOM 操作. </br>
+5. 会维持 HTML 中的原始格式 .</br>
+下面是使用手册上举的几个简单的使用示例。</p>
+
+
+<!--more-->
+
+
+<p>如何读取 HTML 元素 </p>
+
+
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;? 
+</span><span class='line'>include('html_dom_parser.php');
+</span><span class='line'>$dom = file_get_dom('http://www.google.com/');
+</span><span class='line'>// 找出所有网页连结 
+</span><span class='line'>$result = $dom->find('a'); 
+</span><span class='line'>foreach($result as $v) {echo $v->href . '&lt;br>';}
+</span><span class='line'>// 找出所有网页图片 
+</span><span class='line'>$result = $dom->find('img'); 
+</span><span class='line'>foreach($result as $v) {echo $v->src . '&lt;br>';}
+</span><span class='line'>// 找出所有网页中所有 id=gbar 的 div 标签 
+</span><span class='line'>$result = $dom->find('div#gbar'); 
+</span><span class='line'>foreach($result as $v) {echo $v->innertext . '&lt;br>';}
+</span><span class='line'>// 找出所有网页中所有 calss=gb1 的 span 标签 
+</span><span class='line'>$result = $dom->find('span.gb1'); 
+</span><span class='line'>foreach($result as $v) {echo $v->outertext . '&lt;br>';}
+</span><span class='line'>// 找出所有网页中所有 align=center 的 'td 标签 
+</span><span class='line'>$result = $dom->find('td[align=center]'); 
+</span><span class='line'>foreach($result as $v) {echo $v->outertext . '&lt;br>';} 
+</span><span class='line'>?></span></code></pre></td></tr></table></div></figure></notextile></div>
+
+
+
+
+<p>如何修改 HTML 元素 </p>
+
+
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span></span><span class="o">&lt;?</span>
+</span><span class='line'><span class="k">include</span><span class="p">(</span><span class="s1">&#39;html_dom_parser.php&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$dom</span> <span class="o">=</span> <span class="nx">file_get_dom</span><span class="p">(</span><span class="s1">&#39;http://www.google.com/&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// 移除网页中所有图片 </span>
+</span><span class='line'><span class="nv">$ret</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="s1">&#39;img&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="k">foreach</span><span class="p">(</span><span class="nv">$ret</span> <span class="k">as</span> <span class="nv">$v</span><span class="p">)</span> <span class="p">{</span><span class="nv">$v</span><span class="o">-&gt;</span><span class="na">outertext</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;}</span>
+</span><span class='line'><span class="c1">// 修改网页中所有 input 标签 </span>
+</span><span class='line'><span class="nv">$ret</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="k">foreach</span><span class="p">(</span><span class="nv">$ret</span> <span class="k">as</span> <span class="nv">$v</span><span class="p">)</span> <span class="p">{</span><span class="nv">$v</span><span class="o">-&gt;</span><span class="na">outertext</span> <span class="o">=</span> <span class="s1">&#39;[INPUT]&#39;</span><span class="p">;}</span>
+</span><span class='line'><span class="c1">// 显示修改后的网页 </span>
+</span><span class='line'><span class="k">echo</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span>
+</span><span class='line'><span class="cp">?&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+
+
+
+<p>Slashdot网站内容抓取</p>
+
+
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span></span><span class="c1">// Create DOM from URL</span>
+</span><span class='line'><span class="nv">$html</span> <span class="o">=</span> <span class="nx">file_get_html</span><span class="p">(</span><span class="s1">&#39;http://slashdot.org/&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// Find all article blocks</span>
+</span><span class='line'><span class="k">foreach</span><span class="p">(</span><span class="nv">$html</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="s1">&#39;div.article&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="nv">$article</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nv">$item</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span>     <span class="o">=</span> <span class="nv">$article</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="s1">&#39;div.title&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">plaintext</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$item</span><span class="p">[</span><span class="s1">&#39;intro&#39;</span><span class="p">]</span>    <span class="o">=</span> <span class="nv">$article</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="s1">&#39;div.intro&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">plaintext</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$item</span><span class="p">[</span><span class="s1">&#39;details&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$article</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="s1">&#39;div.details&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">plaintext</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$articles</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$item</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="nb">print_r</span><span class="p">(</span><span class="nv">$articles</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2010-08-28T20:49:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/dom/'>DOM</a>, <a class='tag' href='/blog/tags/html/'>HTML</a>, <a class='tag' href='/blog/tags/php/'>PHP</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2010/08/25/php-print-in-format-very-useful-in-debuging/" title="Previous Post:
+        PHP格式化打印数组，调试有用">&laquo; PHP格式化打印数组，调试有用</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2010/08/31/the-elements-of-ip-faking/"
+        title="Next Post: 伪造IP地址的原理">伪造IP地址的原理
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

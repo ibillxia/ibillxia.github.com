@@ -1,0 +1,610 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>神经网络的学习方法概述 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2013/03/27/learning-process-of-neural-networks">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">神经网络的学习方法概述</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-03-27T23:51:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>本文主要讨论一下神经网络的一般学习方法，主要有error-correction learning，memory-based learning， Hebbian learning，competitive learning，
+Boltzmann learning等。然后介绍一些学习的方式，如监督学习、非监督学习、强化学习等。最后是一些具体的应用领域和实际问题。</p>
+
+
+
+
+<h2>1.Knowledge Representation</h2>
+
+
+<p>好的学习方法固然重要，但知识的表示，直接影响到feature的表示，也是非常重要的，因此在正式讨论学习方法之前，我们首先谈谈知识的表示。
+首先一个问题是，什么是知识？在PRML中我们有如下定义：</br>
+<blockquote><p>Knowledge refers to stored information or models used by a person or machine to interpret, predict, and appropriately respond to the outside world.</p><footer><strong>Fischler and Firschein</strong> <cite>Intelligence: The Eye，the Brain and the Computer</cite></footer></blockquote>
+</p>
+
+
+
+
+<!-- more -->
+
+
+<p>在知识的表示中需要考虑的两个核心问题是：</br>
+1). What information is actually made explicit(明确的；清楚的；直率的；详述的);</br>
+2). How the information is physically encoded for subsequent(后来的，随后的) use.</br>
+很显然，这里知识的表示是目标驱动的(goal directed)，在现实世界的智能设备中，一些好的解决问题的办法依赖于好的知识表示方法。
+</p>
+
+
+
+
+<p>一个精心设计的神经网络应该能够很恰当的表示出现实世界的知识，这是一个极大的挑战，因为知识的表示方式是多种多样的，而现实世界的知识也是丰富多彩的，
+也就意味着我们的神经网络的输入是千变万化的。一般而言，在PRML中我们将现实世界的知识分为以下两种：</br>
+1). Prior information = the known facts.</br>
+2). Observation (measurements). Usually noisy, but give examples(prototypes) for training the neural network.</br>
+其中Observation中的examples包含两种类型的，一种是labeled，另一种是unlabeled。</p>
+
+
+
+
+<p>在神经网络中，那些自由变量(包括weights和biases)是知识表示的关键。知识的表示一般应该满足一下几个规则：</br>
+<strong>Rule 1</strong>. Similar inputs from similar classes should produce similar representations inside the network, and they should be classiﬁed to the same category.</br>
+<strong>Rule 2</strong>. Items to be categorized as separate classes should be given widely diﬀerent representations in the network.</br>
+<strong>Rule 3</strong>. If a particular feature is important, there should be a large number of neurons involved in representing it in the network.</br>
+<strong>Rule 4</strong>. Prior information and invariances should be built into the design of a neural network.</p>
+
+
+
+
+<p>一方面，我们应该如何将先验知识运用到我们的神经网络(简记为NN)的设计中呢？没有通用的方法，但能产生更好结果的专用方法到是有两种：</br>
+1). Restricting the network architecture through the use of local connections known as receptive ﬁelds(接受域).</br>
+2). Constraining the choice of synaptic weights through the use of weight-sharing.</br>
+这两种方法都是通过减少需要学习的自由变量来达到目的的。当然我们也可以利用Bayes公式来将先验知识应用到我们的NN的设计中。</p>
+
+
+
+
+<p>另一方面，我们应该如何将Invariances(不变性；恒定性)融入到我们的NN的设计中呢？我们有三种思路可以考虑：</br>
+<strong>1). Invariance by Structure</strong> - Synaptic connections between the neurons are created so that transformed versions of the 
+same input are forced to produce the same output. Drawback: the number of synaptic connections tends to grow very large.</br>
+<strong>2). Invariance by Training</strong> - The network is trained using diﬀerent examples of the same object corresponding to 
+diﬀerent transformations (for example rotations). Drawbacks: computational load, generalization ability for other objects.</br>
+<strong>3). Invariant feature space</strong> - Try to extract features of the data invariant to transformations. Use these instead of the 
+original input data. Probably the most suitable technique to be used for neural classiﬁers. Requires prior knowledge on the problem.</br>
+然而，要优化一个NN的结构是非常困难的，通常需要一些先验的知识。
+</p>
+
+
+
+
+<h2>2.Basic Learning Rules</h2>
+
+
+<p>首先我们对NN的学习做如下的定义：</br>
+<blockquote><p>Learning is a process by which the free parameters of a neural network are adapted through a process of stimulation by the environment in which the network is embedded. The type of learning is determined by the manner in which the parameters changes take place.</p><footer><strong>Simon Haykin</strong> <cite>Neural Networks: A Comprehensive Foundation</cite></footer></blockquote>
+这个定义蕴含以下几个意思：</br>
+1). The neural network is <em>stimulated</em> by an envirnment.</br>
+2). The neural network <em>undergoes changes</em> in its free parameters as a result of this stimulation.</br>
+3). The neural network <em>responds in a new way</em> to the envirnment because of the changes that have 
+occurred in its internal structure.</br>
+</p>
+
+
+
+
+<h4>2.1 Error-Correction Learning</h4>
+
+
+<p>Error-Correction的学习方法的核心思想是：对于给定输入，优化权值(weights)使得输出(设为$y_{k}(n)$)与真实值(设为$d_{k}(n)$)
+的偏差最小。我们先定义一个error signal如下：</br>
+<center>$e_{k}(n) = d_{k}(n) - y_{k}(n)$.</center></br>
+那么，我们需要优化的目标函数为：</br>
+<center>$\mathscr{E}(n) = \frac{1}{2}e^{2}_{k}(n)$.</center></br>
+其中$\mathscr{E}(n)$称为error energy，也是我们要优化(最小化)的目标函数。</p>
+
+
+
+
+<p>那么如何来求解这个优化问题呢？这里我们有一个所谓的delta-rule，也称为Widrow-Hoff rule</br>
+<center>$\Delta w_{kj}(n) = \eta e_{k}(n)x_{j}(n)$.</center></br>
+这里$w_{kj}(n)$是第$k$个输出神经元的第$j$个输入的权重，$\Delta w_{kj}(n)$为第$n$步迭代过程中，权值$w_{kj}(n)$的改变量，$\eta$称为学习速率，
+是一个$(0,1]$之间的常数。关于该方法的详细内容会在后续文章中深入讨论。</p>
+
+
+
+
+<h4>2.2 Memory-Based Learning</h4>
+
+
+<p>Memory-Based Learning，顾名思义，是一种将past experiences全部保存起来的策略。假设我们的经验数据集为：</br>
+<center>{$(x_{1},d_{1}),(x_{2},d_{2}),...,(x_{N},d_{N})$}.</center></br>
+那么对于新来的测试数据$\mathbf{x} _{test}$，我们需要分析它与经验数据的关系，主要就是需要找出与它最相近的经验数据，即它的local neighborhood。
+在Memory-Based Learning方法中，主要涉及两个问题，一个是定义local neighborhood的标准，另一个是训练样本集上的学习规则。一个最简单的学习规则是
+最近邻规则(nearest-neighbor rule)。另外我们可以构造Memory-Based Classifier，如k-nearest-neighbor classifier，radial-basis function networks 
+classifier等。</p>
+
+
+
+
+<h4>2.3 Hebbian Learning</h4>
+
+
+<p>Hebb规则是最古老也是最流行的NN学习规则，现在一般都是它的扩展版的规则，其基本思想是根据联接的神经元的活化
+水平改变权，即两种神经元间联接权的变化与两神经元的活化值（激活值）相关，若突触(connection)两端的两神经元同时
+兴奋，则联接加强；若不同时兴奋，则联接减弱甚至忽略。</p>
+
+
+
+
+<p>Hebbian规则有以下几个特点：</br>
+Time-dependent: 权值修正仅发生于突触前(如输入$x_{i}$)和突触后(如输出$y_{j}$)同时存在信号的时候；</br>
+Local: 仅使用神经元能够取得的局部的信息；</br>
+Interactive: 权值修正同时依赖于突触前和突触后，信号间的交互可以是确定性的或随机的；</br>
+Conjunctional or Correlational: 突触前与突触后的信号产生时间与权值修正是密切相关的。</p>
+
+
+
+
+<p>权值修正可以分为Hebbian, anti-Hebbian, 和non-Hebbian等三种情况。Hebbian方式会增强正相关的突触前和突触后的信号，而减弱负相关的
+突触前和突触后的信号。anti-Hebbian方式则与Hebbian相反。而non-Hebbian则不使用Hebbian方式。Hebbian的权值修正方式的一般形式为：</br>
+<center>$\Delta w_{kj}(n) = F(y_{k}(n),x_{j}(n))$.</center></br>
+其中$F(y,x)$是关于突触后($y$)和突触前($x$)的函数，对于标准的Hebbian学习规则，该函数为$\eta y_{k}(n)x_{j}(n)$；而对于协方差的Hebbian学习
+规则，该函数为$\eta [x_{j}(n)-m_{x}][y_{k}(n)-m_{y}]$。</p>
+
+
+
+
+<h4>2.4 Competitive Learning</h4>
+
+
+<p>竞争型学习规则是指网络的某神经元群体中所有神经元相互竞争对外界刺激模式响应的能力，竞争取胜的神经元的联接权变化向着对这一
+刺激模式竞争更为有力的方向进行。具体而言，就是任何时候输出层的神经元有且仅有一个(即输出最大的那个神经元)是激活的，这种学习
+规则比较适合于寻找分类任务的相关feature。</p>
+
+
+
+
+<h4>2.5 Boltzmann Learning</h4>
+
+
+<p>Boltzmann的学习方法是一种随机化的学习方法，它结合随机过程、概率和能量等概念来调整网络的变量，从而使网络的能量函数最小（或最大）。
+在学习过程中，网络变量的随机变化不是完全随机的，而是据能量函数的改变有指导的进行。网络的变量可以是联接权，也可以是神经元的状
+态。能量函数可定义为问题的目标函数或者网络输出的均方差函数。 基于Boltzmann的学习方法的NN称为Boltzmann机，关于Boltzmann机的更多
+详细内容将会在后续文章中深入讨论。</p>
+
+
+
+
+<h2>3.Learning Methodologies</h2>
+
+
+<h4>3.1 Credit-Assignment Problem</h4>
+
+
+<p>Credit Assignment(CA) Problem是指，一个learning machine的输出结果应该归功于或归咎于哪些内部或中间decision。在很多情况下，输出结果是由一些列的
+actions来决定的，也就是说，中间决策过程影响需要采取的特定的action，然后这些action而不是那些decision直接影响最终的输出的。在这种情况下，我们
+可以将这个CA问题分解为两个子问题：</br>
+1). The assignment of credit for outcomes to actions. This is called the <em>Temporal Credit-Assignment problem</em> in that it involves the 
+instants of time when the actions that deserve credit were actually taken.</br>
+2). The assignment of credit for actions to internal decisions. This is called the <em>Structural Credit-Assignment problem</em> in that it involves 
+assigning credit to the <em>internal strucures</em> of actions generated by the system.</br>
+结构型CA问题在多组件的learning machine中比较常见，我们需要知道哪些组件需要修改，以及修改后能够对最终结果有多大的改善。而时间型CA问题中，我们需要
+知道在某一时刻采取的多个action中，哪些action主要决定了最终的输出。</p>
+
+
+
+
+<p>当我们使用Error-Correction来训练一个多层的前向反馈神经网络时，就会出现CA问题。很显然，最终输出与隐层和输出层的神经元都是相关的，而权值的修正
+是通过当前输出自适应目标输出来实现的。</p>
+
+
+
+
+<p>PS：这一节看的云里雾里的，似懂非懂，感觉有点脱离NN的样子，但这ms是一个general的问题，所以其中的一些术语也是general的，比如decision，action，credit等，
+导致理解起来比较困难，:-( </p>
+
+
+
+
+<h4>3.2 Learning with a Teacher</h4>
+
+
+<p>Learning with a Teacher也就是supervised learning(监督学习)，Error-Correction的学习方法就属于这种。在监督学习中，对于分类或识别问题，输入数据
+不仅包含输入的feature，还包含它对应的label，即它所属的类别(也就是teacher提供的answer)。Error-Correction的学习方法的目标函数就是使NN的输出与Teacher的
+answer的差异最小，即均方误差最小。经过监督学习之后，NN应该能够在不需要Teacher的情况下对新数据进行处理(分类或识别等)。</p>
+
+
+
+
+<h4>3.3 Learning without a Teacher</h4>
+
+
+<p>Learning without a Teacher包含两种学习方法：非监督学习(Unsupervised Learning)和增强学习(Reinforcement Learning)。在非监督学习中，
+没有Teacher指导学习过程，也没有可用的critic，此时NN只能尝试着学习出数据中隐含的统计规律，例如用一个适合的线性模型来区分输入数据。
+Competitive Learning和Hebbian Learning都算是非监督型学习。经过非监督学习之后，NN可以对输入数据进行特征编码。</p>
+
+
+
+
+<p>而在增强学习中，用到了critic，它将从环境中获取的原始信号转换为更高质量的启发式的增强信号。系统从延迟的reinforcement中学习，
+这意味着系统观察到的是时序的状态向量，这最终将会产生启发式的增强信号。增强学习的目标是为了最小化一个cost-to-go-function，它的
+另一个任务是discover the actions determining the best overall behavior of the system。增强学习的过程与动态规划算法非常相似。</p>
+
+
+
+
+<h2>4.Learning Tasks</h2>
+
+
+<p>前文中主要讨论了一些Learning Algorithm和Learning Paradigm，在这一节主要介绍一些Learning的Task，对于一个特定的Learning Task，需要使用对应的
+学习算法。</p>
+
+
+
+
+<h4>4.1 Pattern Association</h4>
+
+
+<p><em>Associative Memory</em>是一种像大脑一样分布式的、learns by association的memory。Association是人类记忆的主要特点，它可以分为
+<em>autoassociation</em>和<em>heteroassociation</em>。在autoassociation中，NN需要通过不断的将patterns(vectors)呈现给NN来保存一个pattern集合，最后
+NN会呈现原始pattern的部分描述或包含噪声的version，而我们的任务就是要恢复这个特定的pattern。而在heteroassociation中，任意一个输入的pattern集与
+另外人一个输出的pattern集是成对的。Autoassociation使用非监督的学习方法，而heteroassociation使用监督学习的方法。</br>
+PS:这一段表示看不太懂，有些概念无法理解！</p>
+
+
+
+
+<h4>4.2 Pattern Recognition</h4>
+
+
+<p>模式识别如语音识别、人脸识别、物体识别等，在模式识别中，NN首先通过学习训练出网络的链接权重，然后对测试数据进行分类。一般输入数据为高维的
+特征向量(feature vector)，经过训练后，数据的决策空间根据特征的pattern被分割成了若干区域。在模式识别中NN起到两种角色：一方面在非监督NN中进行特征
+提取，另一方面在随后的监督学习中用于分类决策。在多层前向反馈网络中，隐层就可以看做是特征提取(往往是对特征进行了降维，即输入的维数大于隐层的
+神经元个数)的角色。</p>
+
+
+
+
+<h4>4.3 Function Approximation</h4>
+
+
+<p>设有一个非线性的输入输出映射$d = f(x)$，其中$x$为输入，$d$为输出，而映射函数$f(.)$是未知的，但我们知道的是一系列带label的样本</br>
+<center>$\mathscr{F} = $ { $(x_{1},d_{1}),(x_{2},d_{2}),...,(x_{N},d_{N})$ }.</center></br>
+那么NN的目标就是找到一个映射$F(.)$最大可能的接近$f(.)$。如果有足够的训练样本和free parameters，那个这个目标是可以实现的。</p>
+
+
+
+
+<h4>4.4 Control</h4>
+
+
+<p>NN也可以用于控制系统，例如用在误差反馈控制系统中。</p>
+
+
+
+
+<h4>4.5 Filtering</h4>
+
+
+<p>一个Filter可以从包含噪声的观察样本中获取一些有趣的性质，它可以用于Filtering、Smoothing以及Prediction等，例如它可以解决cocktail party problem(鸡尾
+酒会问题)，这是一个blind signal separation的问题，这可以通过independent的假设来解决。</p>
+
+
+
+
+<h2>5. Adaptation</h2>
+
+
+<p>在一个稳定的环境中，一个NN经过学习之后，就可以保持weight不变了，并将之应用在新数据上。但在实际应用中，环境是会随着时间而改变的，这就需要我们不断
+更新我们的NN模型，也就是要根据环境变化(输入数据的变化)来改变weight，这个过程称为Adaptation。在Adaptation中，线性的adaptation方法是最简单的，然而更多的
+可能是使用非线性的filter。在实际中，我们也可以在适当的时机重新训练NN。</p>
+
+
+
+
+<h2>推荐资料</h2>
+
+
+<p>Machine Learning Lecture by Andrew Ng, Stanford University</br>
+Lecture VIII: Neural Network - Representation</br>
+Lecture IX: Neural Network - Learning</br>
+Video courses on Coursera: https://class.coursera.org/ml-2012-002/lecture/index</br>
+Lecture homepage in Standford: http://cs229.stanford.edu/</p>
+
+
+
+
+<h2>参考文献</h2>
+
+
+<p>[1] Simon Haykin, “Neural Networks: a Comprehensive Foundation”, 2009 (3rd edition)</br>
+[2]<a href="http://www.cis.hut.fi/Opinnot/T-61.3030/schedule2007.shtml">T-61.3030 PRINCIPLES OF NEURAL COMPUTING (5 CP)</a></br>
+</p>
+
+
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2013/03/27/learning-process-of-neural-networks/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2013-03-27T23:51:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/prml/'>PRML</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/shen-jing-wang-luo/'>神经网络</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2013/03/24/classes-of-neural-networks/" title="Previous Post:
+        神经网络模型分类">&laquo; 神经网络模型分类</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2013/03/30/back-propagation-neural-networks/"
+        title="Next Post: 反向传播(BP)神经网络">反向传播(BP)神经网络
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2013/03/27/learning-process-of-neural-networks/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2013/03/27/learning-process-of-neural-networks/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

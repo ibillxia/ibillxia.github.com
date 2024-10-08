@@ -1,0 +1,758 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Technics | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/categories/technics/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Koding——一个惊艳的在线编程开发平台]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/03/01/koding-an-amazing-online-development-environment/"/>
+    <updated>2014-03-01T22:43:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/03/01/koding-an-amazing-online-development-environment</id>
+    <content type="html"><![CDATA[<p>最近在v2ex上发现了一个非常酷的云编程发开平台——Koding，与大家分享一下，主要介绍一下它的基本功能和操作。</p>
+
+
+<h2>What is Koding?</h2>
+
+
+<p>Koding是一个在线的编程开发平台，致力于简化全球化的合作项目开发，并为每个人提供免费计算和开发资源。它已不仅仅是一个在线的编辑器那么简单，
+而是通过提供免费的虚拟机（vm），上面安装了ubuntu操作系统，有真实的终端，允许开发者进行go、nodejs、ruby、python、php、js、C/C++等语言的开发，
+可以安装各种工具和应用，。更主要的是，它是完全在线的，可以从世界上的任何地方访问，只需要一个浏览器。不仅如此，他还具有完美的社交功能，
+可以和团队成员在线协作。</p>
+
+
+<center><img src="/images/2014/IMAG2014030101.png"></center>
+
+
+<!--more-->
+
+
+
+
+<h2>Activity Feed</h2>
+
+
+<p>在Koding的<a href="https://koding.com/Activity">Activity面板</a>，是用户间交流的媒介，在这里可以看到一系列的状态更新、代码片段或用户动态。在这里你可以
+创建主题，参与某些主题的讨论，可以关注他人，基本的社交功能都一应俱全。</p>
+
+
+
+
+<h2>Development on Koding</h2>
+
+
+<p>这是Koding的主体部分。在这里你可以像在本地计算机进行开发一样，当然这个可以在线操作，可以实现云同步，随时随地都可以访问，有木有很高大上？
+在这里你可以导入自己的GitHub项目，在浏览器中进行项目开发，可以向GitHub push你的项目更新。这里有在线终端，有在线文本编辑器，还有内置浏览器。
+除了和在本地编程开发一样的功能以外，还可以自行配置和添加vm，设置自己的独立域名等。下面我们来看看vm的一些硬件参数，主要是cpu、内存、硬盘、网络等。</p>
+
+
+<p>硬件信息概要，要加sudo使用根权限并输入密码，不加short参数可以查看详细信息
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+<span class='line-number'>148</span>
+<span class='line-number'>149</span>
+<span class='line-number'>150</span>
+<span class='line-number'>151</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span></span>ibillxia@vm-0:~$<span class="w"> </span>sudo<span class="w"> </span>lshw<span class="w"> </span>-short
+</span><span class='line'><span class="o">[</span>sudo<span class="o">]</span><span class="w"> </span>password<span class="w"> </span><span class="k">for</span><span class="w"> </span>ibillxia:&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;H/W<span class="w"> </span>path<span class="w">    </span>Device<span class="w">   </span>Class<span class="w">      </span>Description&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;<span class="w">                 </span>system<span class="w">     </span>Computer
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;/0<span class="w">                   </span>bus<span class="w">        </span>Motherboard
+</span><span class='line'>/0/0<span class="w">                 </span>memory<span class="w">     </span>15GiB<span class="w"> </span>System<span class="w"> </span>memory
+</span><span class='line'>/0/1<span class="w">                 </span>processor<span class="w">  </span>Intel<span class="o">(</span>R<span class="o">)</span><span class="w"> </span>Xeon<span class="o">(</span>R<span class="o">)</span><span class="w"> </span>CPU<span class="w"> </span>E5-2630<span class="w"> </span><span class="m">0</span><span class="w"> </span>@<span class="w"> </span><span class="m">2</span>.30GHz
+</span><span class='line'>/0/2<span class="w">                 </span>processor<span class="w">  </span>Intel<span class="o">(</span>R<span class="o">)</span><span class="w"> </span>Xeon<span class="o">(</span>R<span class="o">)</span><span class="w"> </span>CPU<span class="w"> </span>E5-2630<span class="w"> </span><span class="m">0</span><span class="w"> </span>@<span class="w"> </span><span class="m">2</span>.30GHz
+</span><span class='line'>/0/3<span class="w">                 </span>processor<span class="w">  </span>Intel<span class="o">(</span>R<span class="o">)</span><span class="w"> </span>Xeon<span class="o">(</span>R<span class="o">)</span><span class="w"> </span>CPU<span class="w"> </span>E5-2630<span class="w"> </span><span class="m">0</span><span class="w"> </span>@<span class="w"> </span><span class="m">2</span>.30GHz
+</span><span class='line'>/0/4<span class="w">                 </span>processor<span class="w">  </span>Intel<span class="o">(</span>R<span class="o">)</span><span class="w"> </span>Xeon<span class="o">(</span>R<span class="o">)</span><span class="w"> </span>CPU<span class="w"> </span>E5-2630<span class="w"> </span><span class="m">0</span><span class="w"> </span>@<span class="w"> </span><span class="m">2</span>.30GHz
+</span><span class='line'>/0/5<span class="w">                 </span>processor<span class="w">  </span>Intel<span class="o">(</span>R<span class="o">)</span><span class="w"> </span>Xeon<span class="o">(</span>R<span class="o">)</span><span class="w"> </span>CPU<span class="w"> </span>E5-2630<span class="w"> </span><span class="m">0</span><span class="w"> </span>@<span class="w"> </span><span class="m">2</span>.30GHz
+</span><span class='line'>/0/6<span class="w">                 </span>processor<span class="w">  </span>Intel<span class="o">(</span>R<span class="o">)</span><span class="w"> </span>Xeon<span class="o">(</span>R<span class="o">)</span><span class="w"> </span>CPU<span class="w"> </span>E5-2630<span class="w"> </span><span class="m">0</span><span class="w"> </span>@<span class="w"> </span><span class="m">2</span>.30GHz
+</span><span class='line'>/0/7<span class="w">                 </span>processor<span class="w">  </span>Intel<span class="o">(</span>R<span class="o">)</span><span class="w"> </span>Xeon<span class="o">(</span>R<span class="o">)</span><span class="w"> </span>CPU<span class="w"> </span>E5-2630<span class="w"> </span><span class="m">0</span><span class="w"> </span>@<span class="w"> </span><span class="m">2</span>.30GHz
+</span><span class='line'>/0/8<span class="w">                 </span>processor<span class="w">  </span>Intel<span class="o">(</span>R<span class="o">)</span><span class="w"> </span>Xeon<span class="o">(</span>R<span class="o">)</span><span class="w"> </span>CPU<span class="w"> </span>E5-2630<span class="w"> </span><span class="m">0</span><span class="w"> </span>@<span class="w"> </span><span class="m">2</span>.30GHz
+</span><span class='line'>/0/100<span class="w">               </span>bridge<span class="w">     </span>440FX<span class="w"> </span>-<span class="w"> </span>82441FX<span class="w"> </span>PMC<span class="w"> </span><span class="o">[</span>Natoma<span class="o">]</span>
+</span><span class='line'>/0/100/1<span class="w">             </span>bridge<span class="w">     </span>82371SB<span class="w"> </span>PIIX3<span class="w"> </span>ISA<span class="w"> </span><span class="o">[</span>Natoma/Triton<span class="w"> </span>II<span class="o">]</span>
+</span><span class='line'>/0/100/1.1<span class="w">           </span>storage<span class="w">    </span>82371SB<span class="w"> </span>PIIX3<span class="w"> </span>IDE<span class="w"> </span><span class="o">[</span>Natoma/Triton<span class="w"> </span>II<span class="o">]</span>
+</span><span class='line'>/0/100/1.2<span class="w">           </span>bus<span class="w">        </span>82371SB<span class="w"> </span>PIIX3<span class="w"> </span>USB<span class="w"> </span><span class="o">[</span>Natoma/Triton<span class="w"> </span>II<span class="o">]</span>
+</span><span class='line'>/0/100/1.3<span class="w">           </span>bridge<span class="w">     </span>82371AB/EB/MB<span class="w"> </span>PIIX4<span class="w"> </span>ACPI
+</span><span class='line'>/0/100/2<span class="w">             </span>display<span class="w">    </span>GD<span class="w"> </span><span class="m">5446</span>
+</span><span class='line'>/0/100/3<span class="w">             </span>network<span class="w">    </span>Virtio<span class="w"> </span>network<span class="w"> </span>device
+</span><span class='line'>/0/100/4<span class="w">             </span>storage<span class="w">    </span>Virtio<span class="w"> </span>block<span class="w"> </span>device
+</span><span class='line'>/0/100/5<span class="w">             </span>memory<span class="w">     </span>RAM<span class="w"> </span>memory
+</span><span class='line'>/1<span class="w">          </span>eth0<span class="w">     </span>network<span class="w">    </span>Ethernet<span class="w"> </span>interface
+</span><span class='line'>/2<span class="w">          </span>gretap0<span class="w">  </span>network<span class="w">    </span>Ethernet<span class="w"> </span>interface
+</span><span class='line'>&lt;code&gt;
+</span><span class='line'>查看cpu信息，E5-2630<span class="w"> </span>8核2.30GHz，本文只摘取第1个核的信息
+</span><span class='line'>&lt;/code&gt;<span class="w"> </span>sh
+</span><span class='line'>ibillxia@vm-0:~$<span class="w"> </span>cat<span class="w"> </span>/proc/cpuinfo
+</span><span class='line'>processor<span class="w">       </span>:<span class="w"> </span><span class="m">0</span>
+</span><span class='line'>vendor_id<span class="w">       </span>:<span class="w"> </span>GenuineIntel
+</span><span class='line'>cpu<span class="w"> </span>family<span class="w">      </span>:<span class="w"> </span><span class="m">6</span>
+</span><span class='line'>model<span class="w">           </span>:<span class="w"> </span><span class="m">45</span>
+</span><span class='line'>model<span class="w"> </span>name<span class="w">      </span>:<span class="w"> </span>Intel<span class="o">(</span>R<span class="o">)</span><span class="w"> </span>Xeon<span class="o">(</span>R<span class="o">)</span><span class="w"> </span>CPU<span class="w"> </span>E5-2630<span class="w"> </span><span class="m">0</span><span class="w"> </span>@<span class="w"> </span><span class="m">2</span>.30GHz
+</span><span class='line'>stepping<span class="w">        </span>:<span class="w"> </span><span class="m">7</span>
+</span><span class='line'>microcode<span class="w">       </span>:<span class="w"> </span>0x1
+</span><span class='line'>cpu<span class="w"> </span>MHz<span class="w">         </span>:<span class="w"> </span><span class="m">2299</span>.998
+</span><span class='line'>cache<span class="w"> </span>size<span class="w">      </span>:<span class="w"> </span><span class="m">4096</span><span class="w"> </span>KB
+</span><span class='line'>physical<span class="w"> </span>id<span class="w">     </span>:<span class="w"> </span><span class="m">0</span>
+</span><span class='line'>siblings<span class="w">        </span>:<span class="w"> </span><span class="m">1</span>
+</span><span class='line'>core<span class="w"> </span>id<span class="w">         </span>:<span class="w"> </span><span class="m">0</span>
+</span><span class='line'>cpu<span class="w"> </span>cores<span class="w">       </span>:<span class="w"> </span><span class="m">1</span>
+</span><span class='line'>apicid<span class="w">          </span>:<span class="w"> </span><span class="m">0</span>
+</span><span class='line'>initial<span class="w"> </span>apicid<span class="w">  </span>:<span class="w"> </span><span class="m">0</span>
+</span><span class='line'>fpu<span class="w">             </span>:<span class="w"> </span>yes
+</span><span class='line'>fpu_exception<span class="w">   </span>:<span class="w"> </span>yes
+</span><span class='line'>cpuid<span class="w"> </span>level<span class="w">     </span>:<span class="w"> </span><span class="m">13</span>
+</span><span class='line'>wp<span class="w">              </span>:<span class="w"> </span>yes
+</span><span class='line'>flags<span class="w">           </span>:<span class="w"> </span>fpu<span class="w"> </span>vme<span class="w"> </span>de<span class="w"> </span>pse<span class="w"> </span>tsc<span class="w"> </span>msr<span class="w"> </span>pae<span class="w"> </span>mce<span class="w"> </span>cx8<span class="w"> </span>apic<span class="w"> </span>sep<span class="w"> </span>mtrr<span class="w"> </span>pge<span class="w"> </span>mca<span class="w"> </span>cmov<span class="w"> </span>pat<span class="w"> </span>pse36<span class="w"> </span>clflush<span class="w"> </span>mmx<span class="w"> </span>fxsr<span class="w"> </span>sse<span class="w"> </span>sse2<span class="w"> </span>ss<span class="w"> </span>syscall<span class="w"> </span>nx<span class="w"> </span>pdpe1gb<span class="w"> </span>rdtscp<span class="w"> </span>lm<span class="w"> </span>constant_tsc<span class="w"> </span>rep_good<span class="w"> </span>nopl<span class="w"> </span>eagerfpu<span class="w"> </span>pni<span class="w"> </span>pclmulqdq<span class="w"> </span>ssse3<span class="w"> </span>cx16<span class="w"> </span>pcid<span class="w"> </span>sse4_1<span class="w"> </span>sse4_2<span class="w"> </span>x2apic<span class="w"> </span>popcnt<span class="w"> </span>aes<span class="w"> </span>xsave<span class="w"> </span>avx<span class="w"> </span>hyperv
+</span><span class='line'>isor<span class="w"> </span>lahf_lm<span class="w"> </span>xsaveopt
+</span><span class='line'>bogomips<span class="w">        </span>:<span class="w"> </span><span class="m">4599</span>.99
+</span><span class='line'>clflush<span class="w"> </span>size<span class="w">    </span>:<span class="w"> </span><span class="m">64</span>
+</span><span class='line'>cache_alignment<span class="w"> </span>:<span class="w"> </span><span class="m">64</span>
+</span><span class='line'>address<span class="w"> </span>sizes<span class="w">   </span>:<span class="w"> </span><span class="m">40</span><span class="w"> </span>bits<span class="w"> </span>physical,<span class="w"> </span><span class="m">48</span><span class="w"> </span>bits<span class="w"> </span>virtual
+</span><span class='line'>power<span class="w"> </span>management:
+</span><span class='line'>&lt;code&gt;
+</span><span class='line'>查看内存信息，共16GB内存
+</span><span class='line'>&lt;/code&gt;<span class="w"> </span>sh
+</span><span class='line'>ibillxia@vm-0:~$<span class="w"> </span>cat<span class="w"> </span>/proc/meminfo<span class="w">                                                                                                                                                                                                                           </span>&lt;br/&gt;
+</span><span class='line'>MemTotal:<span class="w">       </span><span class="m">16433708</span><span class="w"> </span>kB
+</span><span class='line'>MemFree:<span class="w">         </span><span class="m">8506472</span><span class="w"> </span>kB
+</span><span class='line'>Buffers:<span class="w">          </span><span class="m">332884</span><span class="w"> </span>kB
+</span><span class='line'>Cached:<span class="w">          </span><span class="m">5334908</span><span class="w"> </span>kB
+</span><span class='line'>SwapCached:<span class="w">            </span><span class="m">0</span><span class="w"> </span>kB
+</span><span class='line'>Active:<span class="w">          </span><span class="m">3936496</span><span class="w"> </span>kB
+</span><span class='line'>Inactive:<span class="w">        </span><span class="m">2222980</span><span class="w"> </span>kB
+</span><span class='line'>Active<span class="o">(</span>anon<span class="o">)</span>:<span class="w">    </span><span class="m">2093920</span><span class="w"> </span>kB
+</span><span class='line'>Inactive<span class="o">(</span>anon<span class="o">)</span>:<span class="w">    </span><span class="m">10856</span><span class="w"> </span>kB
+</span><span class='line'>Active<span class="o">(</span>file<span class="o">)</span>:<span class="w">    </span><span class="m">1842576</span><span class="w"> </span>kB
+</span><span class='line'>Inactive<span class="o">(</span>file<span class="o">)</span>:<span class="w">  </span><span class="m">2212124</span><span class="w"> </span>kB
+</span><span class='line'>Unevictable:<span class="w">        </span><span class="m">5552</span><span class="w"> </span>kB
+</span><span class='line'>Mlocked:<span class="w">            </span><span class="m">5552</span><span class="w"> </span>kB
+</span><span class='line'>SwapTotal:<span class="w">             </span><span class="m">0</span><span class="w"> </span>kB
+</span><span class='line'>SwapFree:<span class="w">              </span><span class="m">0</span><span class="w"> </span>kB
+</span><span class='line'>Dirty:<span class="w">                 </span><span class="m">0</span><span class="w"> </span>kB
+</span><span class='line'>Writeback:<span class="w">             </span><span class="m">8</span><span class="w"> </span>kB
+</span><span class='line'>AnonPages:<span class="w">        </span><span class="m">482832</span><span class="w"> </span>kB
+</span><span class='line'>Mapped:<span class="w">            </span><span class="m">41668</span><span class="w"> </span>kB
+</span><span class='line'>Shmem:<span class="w">           </span><span class="m">1623556</span><span class="w"> </span>kB
+</span><span class='line'>Slab:<span class="w">            </span><span class="m">1522048</span><span class="w"> </span>kB
+</span><span class='line'>SReclaimable:<span class="w">    </span><span class="m">1225180</span><span class="w"> </span>kB
+</span><span class='line'>SUnreclaim:<span class="w">       </span><span class="m">296868</span><span class="w"> </span>kB
+</span><span class='line'>KernelStack:<span class="w">        </span><span class="m">6312</span><span class="w"> </span>kB
+</span><span class='line'>PageTables:<span class="w">        </span><span class="m">84660</span><span class="w"> </span>kB
+</span><span class='line'>NFS_Unstable:<span class="w">          </span><span class="m">0</span><span class="w"> </span>kB
+</span><span class='line'>Bounce:<span class="w">                </span><span class="m">0</span><span class="w"> </span>kB
+</span><span class='line'>WritebackTmp:<span class="w">          </span><span class="m">0</span><span class="w"> </span>kB
+</span><span class='line'>CommitLimit:<span class="w">     </span><span class="m">8216852</span><span class="w"> </span>kB
+</span><span class='line'>Committed_AS:<span class="w">    </span><span class="m">5225664</span><span class="w"> </span>kB
+</span><span class='line'>VmallocTotal:<span class="w">   </span><span class="m">34359738367</span><span class="w"> </span>kB
+</span><span class='line'>VmallocUsed:<span class="w">       </span><span class="m">45688</span><span class="w"> </span>kB
+</span><span class='line'>VmallocChunk:<span class="w">   </span><span class="m">34359561000</span><span class="w"> </span>kB
+</span><span class='line'>HardwareCorrupted:<span class="w">     </span><span class="m">0</span><span class="w"> </span>kB
+</span><span class='line'>AnonHugePages:<span class="w">     </span><span class="m">18432</span><span class="w"> </span>kB
+</span><span class='line'>HugePages_Total:<span class="w">       </span><span class="m">0</span>
+</span><span class='line'>HugePages_Free:<span class="w">        </span><span class="m">0</span>
+</span><span class='line'>HugePages_Rsvd:<span class="w">        </span><span class="m">0</span>
+</span><span class='line'>HugePages_Surp:<span class="w">        </span><span class="m">0</span>
+</span><span class='line'>Hugepagesize:<span class="w">       </span><span class="m">2048</span><span class="w"> </span>kB
+</span><span class='line'>DirectMap4k:<span class="w">      </span><span class="m">245748</span><span class="w"> </span>kB
+</span><span class='line'>DirectMap2M:<span class="w">     </span><span class="m">7094272</span><span class="w"> </span>kB
+</span><span class='line'>DirectMap1G:<span class="w">     </span><span class="m">9437184</span><span class="w"> </span>kB
+</span><span class='line'>&lt;code&gt;
+</span><span class='line'>硬盘测速，才219kB/s，不是一般的慢啊
+</span><span class='line'>&lt;/code&gt;<span class="w"> </span>sh
+</span><span class='line'>ibillxia@vm-0:~$<span class="w"> </span>dd<span class="w"> </span><span class="k">if</span><span class="o">=</span>/dev/zero<span class="w"> </span><span class="nv">of</span><span class="o">=</span><span class="nb">test</span><span class="w"> </span><span class="nv">bs</span><span class="o">=</span>64k<span class="w"> </span><span class="nv">count</span><span class="o">=</span>2k<span class="w"> </span><span class="nv">oflag</span><span class="o">=</span>dsync
+</span><span class='line'><span class="m">2048</span>+0<span class="w"> </span>records<span class="w"> </span><span class="k">in</span>
+</span><span class='line'><span class="m">2048</span>+0<span class="w"> </span>records<span class="w"> </span>out
+</span><span class='line'><span class="m">134217728</span><span class="w"> </span>bytes<span class="w"> </span><span class="o">(</span><span class="m">134</span><span class="w"> </span>MB<span class="o">)</span><span class="w"> </span>copied,<span class="w"> </span><span class="m">612</span>.942<span class="w"> </span>s,<span class="w"> </span><span class="m">219</span><span class="w"> </span>kB/s
+</span><span class='line'>&lt;code&gt;
+</span><span class='line'>网速测试，一般般
+</span><span class='line'>&lt;/code&gt;<span class="w"> </span>sh
+</span><span class='line'>ibillxia@vm-0:~$<span class="w"> </span>ping<span class="w"> </span>www.github.com<span class="w">  </span><span class="c1"># 测试1</span>
+</span><span class='line'>PING<span class="w"> </span>github.com<span class="w"> </span><span class="o">(</span><span class="m">192</span>.30.252.129<span class="o">)</span><span class="w"> </span><span class="m">56</span><span class="o">(</span><span class="m">84</span><span class="o">)</span><span class="w"> </span>bytes<span class="w"> </span>of<span class="w"> </span>data.
+</span><span class='line'><span class="m">64</span><span class="w"> </span>bytes<span class="w"> </span>from<span class="w"> </span>ip1b-lb3-prd.iad.github.com<span class="w"> </span><span class="o">(</span><span class="m">192</span>.30.252.129<span class="o">)</span>:<span class="w"> </span><span class="nv">icmp_req</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">ttl</span><span class="o">=</span><span class="m">54</span><span class="w"> </span><span class="nv">time</span><span class="o">=</span><span class="m">73</span>.2<span class="w"> </span>ms
+</span><span class='line'><span class="m">64</span><span class="w"> </span>bytes<span class="w"> </span>from<span class="w"> </span>ip1b-lb3-prd.iad.github.com<span class="w"> </span><span class="o">(</span><span class="m">192</span>.30.252.129<span class="o">)</span>:<span class="w"> </span><span class="nv">icmp_req</span><span class="o">=</span><span class="m">2</span><span class="w"> </span><span class="nv">ttl</span><span class="o">=</span><span class="m">54</span><span class="w"> </span><span class="nv">time</span><span class="o">=</span><span class="m">75</span>.9<span class="w"> </span>ms
+</span><span class='line'><span class="m">64</span><span class="w"> </span>bytes<span class="w"> </span>from<span class="w"> </span>ip1b-lb3-prd.iad.github.com<span class="w"> </span><span class="o">(</span><span class="m">192</span>.30.252.129<span class="o">)</span>:<span class="w"> </span><span class="nv">icmp_req</span><span class="o">=</span><span class="m">3</span><span class="w"> </span><span class="nv">ttl</span><span class="o">=</span><span class="m">54</span><span class="w"> </span><span class="nv">time</span><span class="o">=</span><span class="m">72</span>.4<span class="w"> </span>ms
+</span><span class='line'><span class="m">64</span><span class="w"> </span>bytes<span class="w"> </span>from<span class="w"> </span>ip1b-lb3-prd.iad.github.com<span class="w"> </span><span class="o">(</span><span class="m">192</span>.30.252.129<span class="o">)</span>:<span class="w"> </span><span class="nv">icmp_req</span><span class="o">=</span><span class="m">4</span><span class="w"> </span><span class="nv">ttl</span><span class="o">=</span><span class="m">54</span><span class="w"> </span><span class="nv">time</span><span class="o">=</span><span class="m">72</span>.3<span class="w"> </span>ms
+</span><span class='line'><span class="m">64</span><span class="w"> </span>bytes<span class="w"> </span>from<span class="w"> </span>ip1b-lb3-prd.iad.github.com<span class="w"> </span><span class="o">(</span><span class="m">192</span>.30.252.129<span class="o">)</span>:<span class="w"> </span><span class="nv">icmp_req</span><span class="o">=</span><span class="m">5</span><span class="w"> </span><span class="nv">ttl</span><span class="o">=</span><span class="m">54</span><span class="w"> </span><span class="nv">time</span><span class="o">=</span><span class="m">66</span>.2<span class="w"> </span>ms
+</span><span class='line'><span class="m">64</span><span class="w"> </span>bytes<span class="w"> </span>from<span class="w"> </span>ip1b-lb3-prd.iad.github.com<span class="w"> </span><span class="o">(</span><span class="m">192</span>.30.252.129<span class="o">)</span>:<span class="w"> </span><span class="nv">icmp_req</span><span class="o">=</span><span class="m">6</span><span class="w"> </span><span class="nv">ttl</span><span class="o">=</span><span class="m">54</span><span class="w"> </span><span class="nv">time</span><span class="o">=</span><span class="m">66</span>.1<span class="w"> </span>ms
+</span><span class='line'>^C
+</span><span class='line'>---<span class="w"> </span>github.com<span class="w"> </span>ping<span class="w"> </span>statistics<span class="w"> </span>---
+</span><span class='line'><span class="m">6</span><span class="w"> </span>packets<span class="w"> </span>transmitted,<span class="w"> </span><span class="m">6</span><span class="w"> </span>received,<span class="w"> </span><span class="m">0</span>%<span class="w"> </span>packet<span class="w"> </span>loss,<span class="w"> </span><span class="nb">time</span><span class="w"> </span>5001ms
+</span><span class='line'>rtt<span class="w"> </span>min/avg/max/mdev<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">66</span>.117/71.077/75.947/3.656<span class="w"> </span>ms
+</span><span class='line'>ibillxia@vm-0:~$<span class="w"> </span>ping<span class="w"> </span>www.stackoverflow.com<span class="w">    </span><span class="c1"># 测试2</span>
+</span><span class='line'>PING<span class="w"> </span>stackoverflow.com<span class="w"> </span><span class="o">(</span><span class="m">198</span>.252.206.140<span class="o">)</span><span class="w"> </span><span class="m">56</span><span class="o">(</span><span class="m">84</span><span class="o">)</span><span class="w"> </span>bytes<span class="w"> </span>of<span class="w"> </span>data.
+</span><span class='line'><span class="m">64</span><span class="w"> </span>bytes<span class="w"> </span>from<span class="w"> </span>stackoverflow.com<span class="w"> </span><span class="o">(</span><span class="m">198</span>.252.206.140<span class="o">)</span>:<span class="w"> </span><span class="nv">icmp_req</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">ttl</span><span class="o">=</span><span class="m">49</span><span class="w"> </span><span class="nv">time</span><span class="o">=</span><span class="m">76</span>.1<span class="w"> </span>ms
+</span><span class='line'><span class="m">64</span><span class="w"> </span>bytes<span class="w"> </span>from<span class="w"> </span>stackoverflow.com<span class="w"> </span><span class="o">(</span><span class="m">198</span>.252.206.140<span class="o">)</span>:<span class="w"> </span><span class="nv">icmp_req</span><span class="o">=</span><span class="m">2</span><span class="w"> </span><span class="nv">ttl</span><span class="o">=</span><span class="m">49</span><span class="w"> </span><span class="nv">time</span><span class="o">=</span><span class="m">88</span>.4<span class="w"> </span>ms
+</span><span class='line'><span class="m">64</span><span class="w"> </span>bytes<span class="w"> </span>from<span class="w"> </span>stackoverflow.com<span class="w"> </span><span class="o">(</span><span class="m">198</span>.252.206.140<span class="o">)</span>:<span class="w"> </span><span class="nv">icmp_req</span><span class="o">=</span><span class="m">3</span><span class="w"> </span><span class="nv">ttl</span><span class="o">=</span><span class="m">49</span><span class="w"> </span><span class="nv">time</span><span class="o">=</span><span class="m">75</span>.1<span class="w"> </span>ms
+</span><span class='line'><span class="m">64</span><span class="w"> </span>bytes<span class="w"> </span>from<span class="w"> </span>stackoverflow.com<span class="w"> </span><span class="o">(</span><span class="m">198</span>.252.206.140<span class="o">)</span>:<span class="w"> </span><span class="nv">icmp_req</span><span class="o">=</span><span class="m">4</span><span class="w"> </span><span class="nv">ttl</span><span class="o">=</span><span class="m">49</span><span class="w"> </span><span class="nv">time</span><span class="o">=</span><span class="m">75</span>.1<span class="w"> </span>ms
+</span><span class='line'><span class="m">64</span><span class="w"> </span>bytes<span class="w"> </span>from<span class="w"> </span>stackoverflow.com<span class="w"> </span><span class="o">(</span><span class="m">198</span>.252.206.140<span class="o">)</span>:<span class="w"> </span><span class="nv">icmp_req</span><span class="o">=</span><span class="m">5</span><span class="w"> </span><span class="nv">ttl</span><span class="o">=</span><span class="m">49</span><span class="w"> </span><span class="nv">time</span><span class="o">=</span><span class="m">75</span>.3<span class="w"> </span>ms
+</span><span class='line'><span class="m">64</span><span class="w"> </span>bytes<span class="w"> </span>from<span class="w"> </span>stackoverflow.com<span class="w"> </span><span class="o">(</span><span class="m">198</span>.252.206.140<span class="o">)</span>:<span class="w"> </span><span class="nv">icmp_req</span><span class="o">=</span><span class="m">6</span><span class="w"> </span><span class="nv">ttl</span><span class="o">=</span><span class="m">49</span><span class="w"> </span><span class="nv">time</span><span class="o">=</span><span class="m">82</span>.6<span class="w"> </span>ms
+</span><span class='line'>^C
+</span><span class='line'>---<span class="w"> </span>stackoverflow.com<span class="w"> </span>ping<span class="w"> </span>statistics<span class="w"> </span>---
+</span><span class='line'><span class="m">6</span><span class="w"> </span>packets<span class="w"> </span>transmitted,<span class="w"> </span><span class="m">6</span><span class="w"> </span>received,<span class="w"> </span><span class="m">0</span>%<span class="w"> </span>packet<span class="w"> </span>loss,<span class="w"> </span><span class="nb">time</span><span class="w"> </span>5005ms
+</span><span class='line'>rtt<span class="w"> </span>min/avg/max/mdev<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">75</span>.130/78.813/88.437/5.061<span class="w"> </span>ms
+</span><span class='line'>ibillxia@vm-0:~$<span class="w"> </span>ping<span class="w"> </span>www.facebook.com<span class="w">     </span><span class="c1"># 测试3</span>
+</span><span class='line'>PING<span class="w"> </span>star.c10r.facebook.com<span class="w"> </span><span class="o">(</span><span class="m">31</span>.13.77.81<span class="o">)</span><span class="w"> </span><span class="m">56</span><span class="o">(</span><span class="m">84</span><span class="o">)</span><span class="w"> </span>bytes<span class="w"> </span>of<span class="w"> </span>data.
+</span><span class='line'><span class="m">64</span><span class="w"> </span>bytes<span class="w"> </span>from<span class="w"> </span>edge-star-shv-06-sjc1.facebook.com<span class="w"> </span><span class="o">(</span><span class="m">31</span>.13.77.81<span class="o">)</span>:<span class="w"> </span><span class="nv">icmp_req</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">ttl</span><span class="o">=</span><span class="m">81</span><span class="w"> </span><span class="nv">time</span><span class="o">=</span><span class="m">153</span><span class="w"> </span>ms
+</span><span class='line'><span class="m">64</span><span class="w"> </span>bytes<span class="w"> </span>from<span class="w"> </span>edge-star-shv-06-sjc1.facebook.com<span class="w"> </span><span class="o">(</span><span class="m">31</span>.13.77.81<span class="o">)</span>:<span class="w"> </span><span class="nv">icmp_req</span><span class="o">=</span><span class="m">2</span><span class="w"> </span><span class="nv">ttl</span><span class="o">=</span><span class="m">81</span><span class="w"> </span><span class="nv">time</span><span class="o">=</span><span class="m">153</span><span class="w"> </span>ms
+</span><span class='line'><span class="m">64</span><span class="w"> </span>bytes<span class="w"> </span>from<span class="w"> </span>edge-star-shv-06-sjc1.facebook.com<span class="w"> </span><span class="o">(</span><span class="m">31</span>.13.77.81<span class="o">)</span>:<span class="w"> </span><span class="nv">icmp_req</span><span class="o">=</span><span class="m">3</span><span class="w"> </span><span class="nv">ttl</span><span class="o">=</span><span class="m">81</span><span class="w"> </span><span class="nv">time</span><span class="o">=</span><span class="m">153</span><span class="w"> </span>ms
+</span><span class='line'><span class="m">64</span><span class="w"> </span>bytes<span class="w"> </span>from<span class="w"> </span>edge-star-shv-06-sjc1.facebook.com<span class="w"> </span><span class="o">(</span><span class="m">31</span>.13.77.81<span class="o">)</span>:<span class="w"> </span><span class="nv">icmp_req</span><span class="o">=</span><span class="m">4</span><span class="w"> </span><span class="nv">ttl</span><span class="o">=</span><span class="m">81</span><span class="w"> </span><span class="nv">time</span><span class="o">=</span><span class="m">153</span><span class="w"> </span>ms
+</span><span class='line'><span class="m">64</span><span class="w"> </span>bytes<span class="w"> </span>from<span class="w"> </span>edge-star-shv-06-sjc1.facebook.com<span class="w"> </span><span class="o">(</span><span class="m">31</span>.13.77.81<span class="o">)</span>:<span class="w"> </span><span class="nv">icmp_req</span><span class="o">=</span><span class="m">5</span><span class="w"> </span><span class="nv">ttl</span><span class="o">=</span><span class="m">81</span><span class="w"> </span><span class="nv">time</span><span class="o">=</span><span class="m">153</span><span class="w"> </span>ms
+</span><span class='line'>^C
+</span><span class='line'>---<span class="w"> </span>star.c10r.facebook.com<span class="w"> </span>ping<span class="w"> </span>statistics<span class="w"> </span>---
+</span><span class='line'><span class="m">6</span><span class="w"> </span>packets<span class="w"> </span>transmitted,<span class="w"> </span><span class="m">5</span><span class="w"> </span>received,<span class="w"> </span><span class="m">16</span>%<span class="w"> </span>packet<span class="w"> </span>loss,<span class="w"> </span><span class="nb">time</span><span class="w"> </span>5006ms
+</span><span class='line'>rtt<span class="w"> </span>min/avg/max/mdev<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">153</span>.577/153.740/153.951/0.449<span class="w"> </span>ms
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>再来看看一些系统和软件信息。</p>
+
+
+<p>查看linux内核版本、系统体系结构及预安装软件版本
+<code>sh
+ibillxia@vm-0:~$ uname -a
+Linux vm-0.ibillxia.koding.kd.io 3.13.0-5-generic #20 SMP Mon Jan 20 19:56:12 PST 2014 x86_64 x86_64 x86_64 GNU/Linux
+ibillxia@vm-0:~$ git --version
+git version 1.8.1.2
+ibillxia@vm-0:~$ mysql --version
+mysql  Ver 14.14 Distrib 5.5.32, for debian-linux-gnu (x86_64) using readline 6.2
+ibillxia@vm-0:~$ apache2 -v
+Server version: Apache/2.2.22 (Ubuntu)
+Server built:   Jul 12 2013 13:18:14
+</code>
+常用编程语言版本
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span></span>ibillxia@vm-0:~$<span class="w"> </span>gcc<span class="w"> </span>--version
+</span><span class='line'>gcc<span class="w"> </span><span class="o">(</span>Ubuntu/Linaro<span class="w"> </span><span class="m">4</span>.7.3-1ubuntu1<span class="o">)</span><span class="w"> </span><span class="m">4</span>.7.3
+</span><span class='line'>Copyright<span class="w"> </span><span class="o">(</span>C<span class="o">)</span><span class="w"> </span><span class="m">2012</span><span class="w"> </span>Free<span class="w"> </span>Software<span class="w"> </span>Foundation,<span class="w"> </span>Inc.
+</span><span class='line'>This<span class="w"> </span>is<span class="w"> </span>free<span class="w"> </span>software<span class="p">;</span><span class="w"> </span>see<span class="w"> </span>the<span class="w"> </span><span class="nb">source</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>copying<span class="w"> </span>conditions.<span class="w">  </span>There<span class="w"> </span>is<span class="w"> </span>NO
+</span><span class='line'>warranty<span class="p">;</span><span class="w"> </span>not<span class="w"> </span>even<span class="w"> </span><span class="k">for</span><span class="w"> </span>MERCHANTABILITY<span class="w"> </span>or<span class="w"> </span>FITNESS<span class="w"> </span>FOR<span class="w"> </span>A<span class="w"> </span>PARTICULAR<span class="w"> </span>PURPOSE.&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;ibillxia@vm-0:~$<span class="w"> </span>g++<span class="w"> </span>--version
+</span><span class='line'>g++<span class="w"> </span><span class="o">(</span>Ubuntu/Linaro<span class="w"> </span><span class="m">4</span>.7.3-1ubuntu1<span class="o">)</span><span class="w"> </span><span class="m">4</span>.7.3
+</span><span class='line'>Copyright<span class="w"> </span><span class="o">(</span>C<span class="o">)</span><span class="w"> </span><span class="m">2012</span><span class="w"> </span>Free<span class="w"> </span>Software<span class="w"> </span>Foundation,<span class="w"> </span>Inc.
+</span><span class='line'>This<span class="w"> </span>is<span class="w"> </span>free<span class="w"> </span>software<span class="p">;</span><span class="w"> </span>see<span class="w"> </span>the<span class="w"> </span><span class="nb">source</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>copying<span class="w"> </span>conditions.<span class="w">  </span>There<span class="w"> </span>is<span class="w"> </span>NO
+</span><span class='line'>warranty<span class="p">;</span><span class="w"> </span>not<span class="w"> </span>even<span class="w"> </span><span class="k">for</span><span class="w"> </span>MERCHANTABILITY<span class="w"> </span>or<span class="w"> </span>FITNESS<span class="w"> </span>FOR<span class="w"> </span>A<span class="w"> </span>PARTICULAR<span class="w"> </span>PURPOSE.&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;ibillxia@vm-0:~$<span class="w"> </span>java<span class="w"> </span>-version
+</span><span class='line'>java<span class="w"> </span>version<span class="w"> </span><span class="s2">&quot;1.7.0_25&quot;</span>
+</span><span class='line'>OpenJDK<span class="w"> </span>Runtime<span class="w"> </span>Environment<span class="w"> </span><span class="o">(</span>IcedTea<span class="w"> </span><span class="m">2</span>.3.10<span class="o">)</span><span class="w"> </span><span class="o">(</span>7u25-2.3.10-1ubuntu0.13.04.2<span class="o">)</span>
+</span><span class='line'>OpenJDK<span class="w"> </span><span class="m">64</span>-Bit<span class="w"> </span>Server<span class="w"> </span>VM<span class="w"> </span><span class="o">(</span>build<span class="w"> </span><span class="m">23</span>.7-b01,<span class="w"> </span>mixed<span class="w"> </span>mode<span class="o">)</span>
+</span><span class='line'>ibillxia@vm-0:~$<span class="w"> </span>go<span class="w"> </span>version&lt;br/&gt;
+</span><span class='line'>go<span class="w"> </span>version<span class="w"> </span>go1.1.1<span class="w"> </span>linux/amd64
+</span><span class='line'>ibillxia@vm-0:~$<span class="w"> </span>ruby<span class="w"> </span>--version
+</span><span class='line'>ruby<span class="w"> </span><span class="m">1</span>.9.3p194<span class="w"> </span><span class="o">(</span><span class="m">2012</span>-04-20<span class="w"> </span>revision<span class="w"> </span><span class="m">35410</span><span class="o">)</span><span class="w"> </span><span class="o">[</span>x86_64-linux<span class="o">]</span>
+</span><span class='line'>ibillxia@vm-0:~$<span class="w"> </span>php<span class="w"> </span>--version
+</span><span class='line'>PHP<span class="w"> </span><span class="m">5</span>.4.9-4ubuntu2.3<span class="w"> </span><span class="o">(</span>cli<span class="o">)</span><span class="w"> </span><span class="o">(</span>built:<span class="w"> </span>Sep<span class="w">  </span><span class="m">4</span><span class="w"> </span><span class="m">2013</span><span class="w"> </span><span class="m">19</span>:32:25<span class="o">)</span>
+</span><span class='line'>Copyright<span class="w"> </span><span class="o">(</span>c<span class="o">)</span><span class="w"> </span><span class="m">1997</span>-2012<span class="w"> </span>The<span class="w"> </span>PHP<span class="w"> </span>Group
+</span><span class='line'>Zend<span class="w"> </span>Engine<span class="w"> </span>v2.4.0,<span class="w"> </span>Copyright<span class="w"> </span><span class="o">(</span>c<span class="o">)</span><span class="w"> </span><span class="m">1998</span>-2012<span class="w"> </span>Zend<span class="w"> </span>Technologies
+</span><span class='line'>ibillxia@vm-0:~$<span class="w"> </span>python<span class="w"> </span>--version<span class="w">                                                                                                                                                                                                                                   </span>&lt;br/&gt;
+</span><span class='line'>Python<span class="w"> </span><span class="m">2</span>.7.4
+</span><span class='line'>ibillxia@vm-0:~$<span class="w"> </span>perl<span class="w"> </span>--version&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;This<span class="w"> </span>is<span class="w"> </span>perl<span class="w"> </span><span class="m">5</span>,<span class="w"> </span>version<span class="w"> </span><span class="m">14</span>,<span class="w"> </span>subversion<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="o">(</span>v5.14.2<span class="o">)</span><span class="w"> </span>built<span class="w"> </span><span class="k">for</span><span class="w"> </span>x86_64-linux-gnu-thread-multi
+</span><span class='line'><span class="o">(</span>with<span class="w"> </span><span class="m">80</span><span class="w"> </span>registered<span class="w"> </span>patches,<span class="w"> </span>see<span class="w"> </span>perl<span class="w"> </span>-V<span class="w"> </span><span class="k">for</span><span class="w"> </span>more<span class="w"> </span>detail<span class="o">)</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Copyright<span class="w"> </span><span class="m">1987</span>-2011,<span class="w"> </span>Larry<span class="w"> </span>Wall&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Perl<span class="w"> </span>may<span class="w"> </span>be<span class="w"> </span>copied<span class="w"> </span>only<span class="w"> </span>under<span class="w"> </span>the<span class="w"> </span>terms<span class="w"> </span>of<span class="w"> </span>either<span class="w"> </span>the<span class="w"> </span>Artistic<span class="w"> </span>License<span class="w"> </span>or<span class="w"> </span>the
+</span><span class='line'>GNU<span class="w"> </span>General<span class="w"> </span>Public<span class="w"> </span>License,<span class="w"> </span>which<span class="w"> </span>may<span class="w"> </span>be<span class="w"> </span>found<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>Perl<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="nb">source</span><span class="w"> </span>kit.&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Complete<span class="w"> </span>documentation<span class="w"> </span><span class="k">for</span><span class="w"> </span>Perl,<span class="w"> </span>including<span class="w"> </span>FAQ<span class="w"> </span>lists,<span class="w"> </span>should<span class="w"> </span>be<span class="w"> </span>found<span class="w"> </span>on
+</span><span class='line'>this<span class="w"> </span>system<span class="w"> </span>using<span class="w"> </span><span class="s2">&quot;man perl&quot;</span><span class="w"> </span>or<span class="w"> </span><span class="s2">&quot;perldoc perl&quot;</span>.<span class="w">  </span>If<span class="w"> </span>you<span class="w"> </span>have<span class="w"> </span>access<span class="w"> </span>to<span class="w"> </span>the
+</span><span class='line'>Internet,<span class="w"> </span>point<span class="w"> </span>your<span class="w"> </span>browser<span class="w"> </span>at<span class="w"> </span>http://www.perl.org/,<span class="w"> </span>the<span class="w"> </span>Perl<span class="w"> </span>Home<span class="w"> </span>Page.
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h2>Installing and Using KDApps</h2>
+
+
+<p>除了系统已安装的基本应用外，用户还可以在<a href="https://koding.com/Apps">Koding/Apps</a>上选择一些官方的apps安装到自己的vm上。可以
+在线绘图、编辑照片等等。</p>
+
+
+
+
+<h2>Online Teamwork</h2>
+
+
+<p>Koding还具有团退协作功能，你可以创建自己的group或参加到别人的group中。加入到一个team后，系统会分配你一个Session ID，通过这个ID你可以进入
+到队友的vm当中，然后你们相互之间都可以看到对方的编码动态。</p>
+
+
+
+
+<p>关于Koding的更多内容，请戳<a href="http://learn.koding.com/getting-started/">Learn Koding</a>。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[2013IDF声龙语音识别技术演示]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/04/10/Intel-Developer-Forum-2013-Nuance-Dragon-Presentation/"/>
+    <updated>2013-04-10T12:57:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/04/10/Intel-Developer-Forum-2013-Nuance-Dragon-Presentation</id>
+    <content type="html"><![CDATA[<p>2013英特尔信息技术峰会(Intel Developer Forum, IDF)上，来自Nuance的声龙语音合成和识别技术的演示，中文语音识别不给力，
+笑点频出啊，哈哈</p>
+
+
+
+
+<p><iframe height=560 width=780 src="http://player.youku.com/embed/XNTQwNjQ0MjUy" frameborder=0 allowfullscreen></iframe></p>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[EFI和操作系统]]></title>
+    <link href="http://ibillxia.github.io/blog/2012/09/23/EFI-and-operating-system/"/>
+    <updated>2012-09-23T23:03:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2012/09/23/EFI-and-operating-system</id>
+    <content type="html"><![CDATA[<p>前两天在98上看到一个帖子 windows 8 没法和linux共存？ 里面有一个概念就是EFI</p>
+
+<h2>什么是EFI？</h2>
+
+
+<p>EFI英文全称为Extensible Firmware Interface，中文译为可扩展固件接口，其主要目的是为了提供一组在 OS 加载之前（启动前）在
+所有平台上一致的、正确指定的启动服务。EFI最初由Intel开发，并在2002年12月所发布1.1版，后来在2005年Intel将此规范交由UEFI论坛
+来推广与发展，并更名为Unified EFI(UEFI)。</p>
+
+
+
+
+<p>EFI是一种个人电脑系统规格，用来定义操作系统与系统固件之间的软件界面，为替代BIOS的升级方案。可扩展固件接口（EFI）负责
+加电自检（POST）、连系操作系统以及提供连接操作系统与硬件的接口。UEFI在EFI基础上增加与改进了加密编码（cryptography）、
+网络认证（network authentication）与用户界面架构（User Interface Architecture）等方面的内容。EFI在软件层次中的位置如下图</br>
+<img src="/images/2012/IMAG2012092301.png">
+</p>
+
+
+
+
+<!-- more -->
+
+
+<h2>为什么有EFI？</h2>
+
+
+<p>EFI技术源于英特尔安腾处理器（Itanium）平台的推出。安腾处理器是英特尔瞄准服务器高端市场投入近十年研发力量设计产生的
+与x86系列完全不同的64位新架构。在x86系列处理器进入32位的时代，由于兼容性的原因，新的处理器(80386)保留了16位的运行方式(实模式)，
+此后多次处理器的升级换代都保留了这种运行方式。甚至在含64位扩展技术的至强系列处理器中，处理器加电启动时仍然会切换到16位的
+实模式下运行。英特尔将这种情况归咎于BIOS技术的发展缓慢。</p>
+
+
+
+
+<p>为什么这么说呢？因为自从PC兼容机厂商通过净室的方式复制出第一套BIOS源程序，BIOS就以16位汇编代码，寄存器参数调用方式，
+静态链接，以及1MB以下内存固定编址的形式存在了十几年。虽然由于各大BIOS厂商近年来的努力，有许多新元素添加到产品中，
+如PnP BIOS，ACPI，传统USB设备支持等等，但BIOS的根本性质没有得到任何改变。这迫使英特尔在开发新的处理器时，都必须考虑加进
+使性能大大降低的兼容模式。有人曾打了一个比喻：这就像保时捷新一代的全自排跑车，被人套上去一个蹩脚打档器。正是在这种背景下，
+Intel发展了EFI技术。</p>
+
+
+
+
+<h2>EFI与操作系统又有什么关系呢？</h2>
+
+
+<p>上文提到EFI是BIOS的升级版，那么EFI与OS的关系是不是也和BIOS与OS的关系一样呢？</br>
+要回答这个问题，我们首先得将EFI与BIOS进行一个详细的比较：</br>
+（1）EFI运行于32位或64位模式，突破传统的BIOS的16位实模式，达到处理器的最大寻址；</br>
+（2）EFI利用加载驱动的形式，识别及操作硬件，不同于BIOS利用挂载真实模式中断的方式增加硬件功能；</br>
+（3）EFI大部分（99%）是用模块化的C语言编写的，较BIOS而言更易于实现，容错和纠错特性更强，更易于扩展；</br>
+（4）EFI系统下的驱动并不是由可以直接运行在CPU上的代码组成的，而是用EFI Byte Code编写而成的（有点像Java
+的Byte Code），这是一组专用于EFI驱动的虚拟机器语言，必须在EFI驱动运行环境（Driver Execution Environment，或DXE）
+下被解释运行，这就保证了充分的向下兼容性；</br>
+（5）UEFI内置图形驱动功能，可以提供一个高分辨率的彩色图形环境，用户进入后能用鼠标点击调整配置，一切就像操作Windows
+系统下的应用软件一样简单。BIOS将不再是高手才能玩转的工具，光这一点就足以让很多菜鸟朋友心仪不已了。</br>
+（6）强大的可扩展性是UEFI的另一大优点。我们都知道，当电脑出现故障导致无法进入操作系统时，我们往往要借助其他工具才能
+解决问题，BIOS在诊断系统故障方面的作用实是在太小了。不过，UEFI将不会重蹈BIOS功能单一的覆辙！UEFI使用模块化设计，它在
+逻辑上分为硬件控制与OS（操作系统）软件管理两部分，硬件控制为所有UEFI版本所共有，而OS软件管理其实是一个可编程的开放接口。
+借助这个接口，主板厂商可以实现各种丰富的功能。比如我们熟悉的各种备份及诊断功能可通过UEFI加以实现，主板或固件厂商可以
+将它们作为自身产品的一大卖点。如果你更习惯让别人来维护机器，UEFI也可提供强大的联网功能，其他用户可以对你的主机进行
+可靠的远程故障诊断，而这一切并不需要进入操作系统！
+</p>
+
+
+
+
+<p>由以上比较可知，EFI在开机时的作用和BIOS一样，就是初始化PC，但在细节上却有很多不一样。BIOS对PC的初始化，只是按照
+一定的顺序对硬件通电，简单地检查硬件是否能工作，而EFI不但检查硬件的完好性，还会加载硬件在EFI中的驱动程序，不用操作
+系统负责驱动的加载工作。 对于很多非专业人士而言，EFI的最革命之处，就在于颠 覆了BIOS的界面概念，让操作界面和Windows
+一样易于上手。在EFI的操作界面中，鼠标成为了替代键盘的输入工具，各功能调节的模块也做的和Windows程序一样，可以说，EFI
+就是一个小型化的Windows系统。</p>
+
+
+
+
+<p>说EFI是一个小型化的Windows系统，毫不夸张。EFI在概念上非常类似于一个低阶的操作系统，并且具有操控所有硬件资源的能力。
+不少人感觉它的不断发展将有可能代替现代的操作系统。事实上，EFI的缔造者们在第一版规范出台时就将EFI的能力限制于不足以
+威胁操作系统的统治地位。首先，它只是硬件和预启动软件间的接口规范；其次，EFI环境下不提供中断的机制，也就是说每个EFI
+驱动程序必须用轮询(polling)的方式来检查硬件状态，并且需要以解释的方式运行，较操作系统下的机械码驱动效率更低；再则，
+EFI系统不提供复杂的缓存器保护功能，它只具备简单的缓存器管理机制，具体来说就是指运行在x86处理器的段保护模式下，以最大
+寻址能力为限把缓存器分为一个平坦的段(Segment)，所有的程序都有权限访问任何一段位置，并不提供真实的保护服务。当EFI所有
+组件加载完毕时，系统可以开启一个类似于操作系统Shell的命令解释环境，在这里，用户可以调入执行任何EFI应用程序，这些程序
+可以是硬件检测及除错软件，引导管理，设置软件，操作系统引导软件等等。理论上来说，对于EFI应用程序的功能并没有任何限制，
+任何人都可以编写这类软件，并且效果较以前MS-DOS下的软件更华丽，功能更强大。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[伪造IP地址的原理]]></title>
+    <link href="http://ibillxia.github.io/blog/2010/08/31/the-elements-of-ip-faking/"/>
+    <updated>2010-08-31T09:41:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2010/08/31/the-elements-of-ip-faking</id>
+    <content type="html"><![CDATA[<p>入侵者使用假IP地址发送包，利用基于IP地址证实的应用程序。其结果是未授权的远端用户进入带有防火墙的主机系统。</p>
+
+
+
+
+<p>假设有两台主机A、B和入侵者控制的主机X。假设B授予A某些特权，使得A能够获得B所执行的一些操作。X的目标就是得到与B相同的权利。
+为了实现该目标，X必须执行两步操作：首先，与B建立一个虚假连接；然后，阻止A向B报告网络证实系统的问题。主机X必须假造A的IP地址，
+从而使B相信从X发来的包的确是从A发来的。</p>
+
+
+
+
+<p>我们同时假设主机A和B之间的通信遵守TCP／IP的三次握手机制。握手方法是：</p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>A->：SYN（序列号=M）
+</span><span class='line'>B->A：SYN（序列号＝N），ACK（应答序号=M+1）
+</span><span class='line'>A->B：ACK（应答序号＝N+1）</span></code></pre></td></tr></table></div></figure></p>
+
+<!--more-->
+
+
+<p>主机X伪造IP地址步骤如下：首先，X冒充A，向主机B发送一个带有随机序列号的SYN包。主机B响应，向主机A发送一个带有应答号的SYN+ACK包、
+该应答号等于原序列号加1。同时，主机B产生自己发送包序列号，并将其与应答号一起发送。为了完成三次握手，主机X需要向主</p>
+
+
+
+
+<p>机B回送一个应答包，其应答号等于主机B向主机A发送的包序列号加1。假设主机X与A和B不同在一个子网内，则不能检测到B的包，
+主机X只有算出B的序列号，才能创建TCP连接。其过程描述如下：</p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>X->B：SYN（序列号=M），SRC=A
+</span><span class='line'>B->A：SYN（序列号=N），ACK（应答号=M+1）
+</span><span class='line'>X->B：ACK（应答号＝N+1），SRC＝A</span></code></pre></td></tr></table></div></figure></p>
+
+<p>同时，主机X应该阻止主机A响应主机B的包。为此，X可以等到主机A因某种原因终止运行，或者阻塞主机A的操作系统协议部分，使它不能响应主机B。
+一旦主机X完成了以上操作，它就可以向主机B发送命令。主机B将执行这些命令，认为他们是由合法主机A发来的。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[UTF8中文编码范围]]></title>
+    <link href="http://ibillxia.github.io/blog/2010/08/21/utf8-chinese-coding/"/>
+    <updated>2010-08-21T10:31:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2010/08/21/utf8-chinese-coding</id>
+    <content type="html"><![CDATA[<p>UTF-8有点类似于Haffman编码，它将Unicode编码为： </br>
+00000000-0000007F的字符，用单个字节来表示； </br>
+00000080-000007FF的字符用两个字节表示 （中文的编码范围） </br>
+00000800-0000FFFF的字符用3字节表示</br>
+编码转换：iconv -f “文件目前编码” -t “文件转换后的编码” -o “转换后生成的新文件名” “源文件名”temp = Iconv.conv("UTF-8","gb2312",a) </p>
+
+
+
+
+<p>因为目前为止Unicode-16规范没有指定FFFF以上的字符，所以UTF-8最多是使用3个字节来表示一个字符。但理论上来说，UTF-8最多需要用6字节表示一个字符。 
+在UTF-8里，英文字符仍然跟ASCII编码一样，因此原先的函数库可以继续使用。而中文的编码范围是在0080-07FF之间，因此是2个字节表示（但这两个字节
+和GB编码的两个字节是不同的）。 </p>
+
+
+<!--more-->
+
+
+<h2>big endian和little endian</h2>
+
+
+<p>我们一般将endian翻译成“字节序”，将big endian和little endian称作“大尾”和“小尾”。</p>
+
+
+
+
+<p>“endian”这个词出自《格列佛游记》。小人国的内战就源于吃鸡蛋时是究竟从大头(Big-Endian)敲开还是从小头(Little-Endian)敲开，
+由此曾发生过六次叛乱，其中一个皇帝送了命，另一个丢了王位。</p>
+
+
+
+
+<p>big endian和little endian是CPU处理多字节数的不同方式。例如“汉”字的Unicode编码是6C49。那么写到文件里时，究竟是将6C写在前面，
+还是将49写在前面？如果将6C写在前面，就是big endian。而如果将49写在前面，就是little endian。</p>
+
+
+
+
+<h2>UTF编码</h2>
+
+
+<p>UTF-8就是以8位为单元对UCS进行编码。从UCS-2到UTF-8的编码方式如下：</br>
+
+UCS-2编码(16进制) UTF-8 字节流(二进制)</br>
+0000 - 007F 0xxxxxxx</br>
+0080 - 07FF 110xxxxx 10xxxxxx</br>
+0800 - FFFF 1110xxxx 10xxxxxx 10xxxxxx </p>
+
+
+
+
+<p>例如“汉”字的Unicode编码是6C49。6C49在0800-FFFF之间，所以肯定要用3字节模板了：1110xxxx 10xxxxxx 10xxxxxx。
+将6C49写成二进制是：0110 110001 001001， 用这个比特流依次代替模板中的x，得到：11100110 10110001 10001001，即E6 B1 89。</p>
+
+
+
+
+<p>读者可以用记事本测试一下我们的编码是否正确。</p>
+
+
+
+
+<p>UTF-16以16位为单元对UCS进行编码。对于小于0x10000的UCS码，UTF-16编码就等于UCS码对应的16位无符号整数。对于不小于0x10000的UCS码，
+定义了一个算法。不过由于实际使用的UCS2，或者UCS4的BMP必然小于0x10000，所以就目前而言，可以认为UTF-16和UCS-2基本相同。
+但UCS-2只是一个编码方案，UTF-16却要用于实际的传输，所以就不得不考虑字节序的问题。</p>
+
+
+
+
+<h2>UTF的字节序和BOM</h2>
+
+
+<p>UTF-8以字节为编码单元，没有字节序的问题。UTF-16以两个字节为编码单元，在解释一个UTF-16文本前，首先要弄清楚每个编码单元的字节序。
+例如收到一个“奎”的Unicode编码是594E，“乙”的Unicode编码是4E59。如果我们收到UTF-16字节流“594E”，那么这是“奎”还是“乙”？</p>
+
+
+
+
+<p>Unicode规范中推荐的标记字节顺序的方法是BOM。BOM不是“Bill Of Material”的BOM表，而是Byte Order Mark。BOM是一个有点小聪明的想法：</br>
+
+在UCS编码中有一个叫做"ZERO WIDTH NO-BREAK SPACE"的字符，它的编码是FEFF。
+而FFFE在UCS中是不存在的字符，所以不应该出现在实际传输中。</br>
+UCS规范建议我们在传输字节流前，先传输字符"ZERO WIDTH NO-BREAK SPACE"。</p>
+
+
+
+
+<p>这样如果接收者收到FEFF，就表明这个字节流是Big-Endian的；如果收到FFFE，就表明这个字节流是Little-Endian的。
+因此字符"ZERO WIDTH NO-BREAK SPACE"又被称作BOM。</p>
+
+
+
+
+<p>UTF-8不需要BOM来表明字节顺序，但可以用BOM来表明编码方式。字符"ZERO WIDTH NO-BREAK SPACE"的UTF-8编码是EF BB BF（读者
+可以用我们前面介绍的编码方法验证一下）。所以如果接收者收到以EF BB BF开头的字节流，就知道这是UTF-8编码了。</p>
+
+
+
+
+<p>Windows就是使用BOM来标记文本文件的编码方式的。</p>
+
+
+
+]]></content>
+  </entry>
+  
+</feed>

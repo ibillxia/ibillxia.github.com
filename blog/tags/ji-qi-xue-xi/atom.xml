@@ -1,0 +1,1022 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 机器学习 | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/ji-qi-xue-xi/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[TOP 10开源的推荐系统简介]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/03/10/top-10-open-source-recommendation-systems/"/>
+    <updated>2014-03-10T22:29:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/03/10/top-10-open-source-recommendation-systems</id>
+    <content type="html"><![CDATA[<p>最近这两年推荐系统特别火，本文搜集整理了一些比较好的开源推荐系统，即有轻量级的适用于做研究的SVDFeature、LibMF、LibFM等，也有重量级的适用于工业系统的
+Mahout、Oryx、EasyRecd等，供大家参考。PS：这里的top 10仅代表个人观点。</p>
+
+
+<h2>#1.SVDFeature</h2>
+
+
+<center><img src="/images/2014/IMAG2014031001.png"></center>
+
+
+<p>主页：<a href="http://svdfeature.apexlab.org/wiki/Main_Page">http://svdfeature.apexlab.org/wiki/Main_Page</a> 语言：C++</br>
+一个feature-based协同过滤和排序工具，由上海交大Apex实验室开发，代码质量较高。在KDD Cup 2012中获得第一名，KDD Cup 2011中获得第三名，相关论文
+发表在2012的JMLR中，这足以说明它的高大上。</br>
+SVDFeature包含一个很灵活的Matrix Factorization推荐框架，能方便的实现SVD、SVD++等方法, 是单模型推荐算法中精度最高的一种。SVDFeature代码精炼，可以用
+相对较少的内存实现较大规模的单机版矩阵分解运算。另外含有Logistic regression的model，可以很方便的用来进行ensemble。</p>
+
+
+
+
+<!--more-->
+
+
+
+
+<h2>#2.LibMF</h2>
+
+
+<center><img src="/images/2014/IMAG2014031002.gif"></center>
+
+
+<p>主页：<a href="http://www.csie.ntu.edu.tw/~cjlin/libmf/">http://www.csie.ntu.edu.tw/~cjlin/libmf/</a> 语言：C++</br>
+作者<a href="http://www.csie.ntu.edu.tw/~cjlin/">Chih-Jen Lin</a>来自大名鼎鼎的台湾国立大学，他们在机器学习领域享有盛名，近年连续多届KDD Cup竞赛上均
+获得优异成绩，并曾连续多年获得冠军。台湾大学的风格非常务实，业界常用的LibSVM， Liblinear等都是他们开发的，开源代码的效率和质量都非常高。</br>
+LibMF在矩阵分解的并行化方面作出了很好的贡献，针对SGD（随即梯度下降）优化方法在并行计算中存在的locking problem和memory discontinuity问题，提出了一种
+矩阵分解的高效算法FPSGD（Fast Parallel SGD），根据计算节点的个数来划分评分矩阵block，并分配计算节点。系统介绍可以见这篇
+<a href="http://www.csie.ntu.edu.tw/~cjlin/papers/libmf.pdf">论文</a>（ACM Recsys 2013的 Best paper Award）。</p>
+
+
+
+
+<h2>#3.LibFM</h2>
+
+
+<center><img src="/images/2014/IMAG2014031003.jpg"></center>
+
+
+<p>主页：<a href="http://www.libfm.org/">http://www.libfm.org/</a> 语言：C++</br>
+作者是德国Konstanz大学的Steffen Rendle，他用LibFM同时玩转KDD Cup 2012 Track1和Track2两个子竞赛单元，都取得了很好的成绩，说明LibFM是非常管用的利器。</br>
+LibFM是专门用于矩阵分解的利器，尤其是其中实现了MCMC（Markov Chain Monte Carlo）优化算法，比常见的SGD优化方法精度要高，但运算速度要慢一些。当然LibFM中还
+实现了SGD、SGDA（Adaptive SGD）、ALS（Alternating Least Squares）等算法。</p>
+
+
+
+
+<h2>#4.Lenskit</h2>
+
+
+<center><img src="/images/2014/IMAG2014031004.png"></center>
+
+
+<p><p>主页：<a href="http://lenskit.grouplens.org/">http://lenskit.grouplens.org/</a> 语言Java</br>
+<p>这个Java开发的开源推荐系统，来自美国的明尼苏达大学的GroupLens团队，也是推荐领域知名的测试数据集Movielens的作者。</br>
+该源码托管在GitHub上，<a href="https://github.com/grouplens/lenskit">https://github.com/grouplens/lenskit</a>。主要包含lenskit-api,lenskit-core,
+lenskit-knn,lenskit-svd,lenskit-slopone,lenskit-parent,lenskit-data-structures,lenskit-eval,lenskit-test等模块，主要实现了k-NN，SVD，Slope-One等
+典型的推荐系统算法。</p></p>
+
+<h2>#5.GraphLab</h2>
+
+
+<center><img src="/images/2014/IMAG2014031005.png"></center>
+
+
+<p>主页：<a href="http://docs.graphlab.org/collaborative_filtering.html">GraphLab - Collaborative Filtering</a> 语言：C++</br>
+Graphlab是基于C++开发的一个高性能分布式graph处理挖掘系统，特点是对迭代的并行计算处理能力强（这方面是hadoop的弱项），由于功能独到，GraphLab在业界名声很响。
+用GraphLab来进行大数据量的random walk或graph-based的推荐算法非常有效。Graphlab虽然名气比较响亮（CMU开发），但是对一般数据量的应用来说可能还用不上。</br>
+GraphLab主要实现了ALS，CCD++，SGD，Bias-SGD，SVD++，Weighted-ALS，Sparse-ALS，Non-negative Matrix Factorization，Restarted Lanczos Algorithm等算法。</p>
+
+
+<h2>#6.Mahout</h2>
+
+
+<center><img src="/images/2014/IMAG2014031006.png"></center>
+
+
+<p>主页：<a href="http://mahout.apache.org/">http://mahout.apache.org/</a> 语言：Java</br>
+Mahout 是 Apache Software Foundation (ASF) 开发的一个全新的开源项目，其主要目标是创建一些可伸缩的机器学习算法，供开发人员在 Apache 在许可下免费
+使用。Mahout项目是由 Apache Lucene社区中对机器学习感兴趣的一些成员发起的，他们希望建立一个可靠、文档翔实、可伸缩的项目，在其中实现一些常见的用于
+聚类和分类的机器学习算法。该社区最初基于 Ngetal. 的文章 “Map-Reduce for Machine Learning on Multicore”，但此后在发展中又并入了更多广泛的机器学习
+方法，包括Collaborative Filtering（CF），Dimensionality Reduction，Topic Models等。此外，通过使用 Apache Hadoop 库，Mahout 可以有效地扩展到云中。</br>
+在Mahout的Recommendation类算法中，主要有User-Based CF，Item-Based CF，ALS，ALS on Implicit Feedback，Weighted MF，SVD++，Parallel SGD等。</p>
+
+
+<h2>#7.Myrrix</h2>
+
+
+<center><img src="/images/2014/IMAG2014031007.png"></center>
+
+
+<p>主页：<a href="http://myrrix.com/">http://myrrix.com/</a> 语言：Java</br>
+Myrrix最初是Mahout的作者之一Sean Owen基于Mahout开发的一个试验性质的推荐系统。目前Myrrix已经是一个完整的、实时的、可扩展的集群和推荐系统，主要
+架构分为两部分：服务层：在线服务，响应请求、数据读入、提供实时推荐；计算层：用于分布式离线计算，在后台使用分布式机器学习算法为服务层更新机器学习
+模型。Myrrix使用这两个层构建了一个完整的推荐系统，服务层是一个HTTP服务器，能够接收更新，并在毫秒级别内计算出更新结果。服务层可以单独使用，无需
+计算层，它会在本地运行机器学习算法。计算层也可以单独使用，其本质是一系列的Hadoop jobs。目前Myrrix以被 Cloudera 并入Oryx项目。</p>
+
+
+<h2>#8.EasyRec</h2>
+
+
+<center><img src="/images/2014/IMAG2014031008.png"></center>
+
+
+<p>主页：<a href="http://easyrec.org/">http://easyrec.org/</a> 语言：Java</br>
+EasyRec是一个易集成、易扩展、功能强大且具有可视化管理的推荐系统，更像一个完整的推荐产品，包括了数据录入模块、管理模块、推荐挖掘、离线分析等。
+EasyRec可以同时给多个不同的网站提供推荐服务，通过tenant来区分不同的网站。架设EasyRec服务器，为网站申请tenant，通过tenant就可以很方便的集成到
+网站中。通过各种不同的数据收集（view,buy.rating）API收集到网站的用户行为，EasyRec通过离线分析，就可以产生推荐信息，您的网站就可以通过
+Recommendations和Community Rankings来进行推荐业务的实现。</p>
+
+
+<h2>#9.Waffles</h2>
+
+
+<center><img src="/images/2014/IMAG2014031009.png"></center>
+
+
+<p>主页：<a href="http://waffles.sourceforge.net/">http://waffles.sourceforge.net/</a> 语言：C++</br>
+Waffles英文原意是蜂蜜甜饼，在这里却指代一个非常强大的机器学习的开源工具包。Waffles里包含的算法特别多，涉及机器学习的方方面面，推荐系统位于
+其中的Waffles_recommend tool，大概只占整个Waffles的1/10的内容，其它还有分类、聚类、采样、降维、数据可视化、音频处理等许许多多工具包，估计
+能与之媲美的也就数Weka了。</p>
+
+
+<h2>#10.RapidMiner</h2>
+
+
+<center><img src="/images/2014/IMAG2014031010.png"></center>
+
+
+<p>主页：<a href="http://rapidminer.com/">http://rapidminer.com/</a> 语言：Java</br>
+RapidMiner（前身是Yale）是一个比较成熟的数据挖掘解决方案，包括常见的机器学习、NLP、推荐、预测等方法（推荐只占其中很小一部分），而且带有GUI的
+数据分析环境，数据ETL、预处理、可视化、评估、部署等整套系统都有。另外RapidMiner提供commercial license，提供R语言接口，感觉在向着一个商用的
+数据挖掘公司的方向在前进。</br>
+======================================分割线======================================</p>
+
+
+<p>开源的推荐系统大大小小的还有很多，以上只是介绍了一些在学术界和工业界比较流行的TOP 10，而且基本上都是用C++/Java实现的，在参考资料[1]、[2]中还提
+到的有Crab（Python）、CofiRank（C++）、MyMediaLite（.NET/C#）、PREA（Java）、Python-recsys（Python）、Recommendable（Ruby）、Recommenderlab（R）、
+Oryx（Java）、recommendify（Ruby）、RecDB（SQL）等等，当然GitHub上还有更多。。。即有适合单机运行的，也有适合集群的。虽然使用的编程语言不同，但实现
+的算法都大同小异，主要是SVD、SGD、ALS、MF、CF及其改进算法等。</p>
+
+
+<h2>参考资料</h2>
+
+
+<p>[1]<a href="http://blog.csdn.net/cserchen/article/details/14231153">推荐系统开源软件列表汇总和点评</a></br>
+[2]<a href="http://www.oschina.net/search?scope=project&tag1=0&tag2=0&lang=0&os=0&q=%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F">开源中国社区 - 搜索：推荐系统</a>
+</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[VALSE2013]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/04/22/VALSE2013/"/>
+    <updated>2013-04-22T22:28:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/04/22/VALSE2013</id>
+    <content type="html"><![CDATA[<h3>学术研讨</h3>
+
+
+<p>VALSE是Vision And Learning SEminar的缩写，它主要目的是为计算机视觉、图像处理、模式识别与机器学习研究领域内的中国青年学者（以70后研发
+人员为主）提供一个深层次学术交流的舞台。虽然参与会议和做报告的人主要是做视觉的，但很多问题是机器学习和模式识别当中的一般性问题，所以我这
+个搞语音的也去打酱油了^_^。</p>
+
+
+
+
+<p>今年的VALSE在南京东南大学召开，参加会议的人数超出预期，会场爆满，仅学校的老师和公司的研究人员就占了会场大半，学生沦落到只能座最后两排，
+或者座分会场（这个太不科学了-_-!）。会程安排也很紧凑，中午几乎没有休息时间，吃饭都很赶，而下午也很晚（6点半左右）才结束。这次会议有好几个
+perfect的报告，但也有些不太感兴趣的，有的甚至感觉很2。除了一些报告，还有两个主题讨论会，印象中主要包括三个论题：学术界与工业界的Gap及衔接
+问题，深度学习是否是计算机视觉的终极解决方案，计算机视觉要不要从生物视觉机理中受启发等。</p>
+
+
+
+
+<p>闲话少说，言归正传，数萝卜下窖的讲讲这两天的经历吧。
+第一天上午，第一个做报告的是MSRA的张磊，主要讲了计算机视觉的一些基本问题，从AI的历史将起，提到了Turing Test，是人工智能
+的Benchmark。而CV的一个基本问题是Object Recognition，人们的研究经历了从之前的Model Based到如今的Data Driven及Big Data的过程，各种模型和方法可谓
+层出不穷，然而对于真正解决问题、真正达到人类一般的视觉智能，还相差甚远。接着他讲了关于在路灯下找钥匙的故事（详询http://tongyanyan.blog.edu.cn/2006/427512.html），
+听了这个故事后，感觉那个找钥匙的人很滑稽可笑，然而再想想我们自己正在做的研究，是不是在某种程度上和故事中的这个人一样呢。通过这个故事，他引出自己
+的观点：要想解决Object Recognition这个问题或者说要解决CV的问题，就需要More Effective Representation & Match。接下来讲在Representation方面一些研究
+人员提出的一些人工设计的Feature，而在Match方面则从Point、Line、Plane、Volume（点线面体）进行了详尽的讲述。最后还提了一下Deep Neural Network在CV中的
+应用，可以discover hidden patterns。虽然对CV中的很多概念和模型方法不太了解，但感觉还是挺有收获的。</p>
+
+
+
+
+<p>上午的后两个报告都是讲Sparse的，虽然之前看过关于Sparse Coding的东西，但当他们在上面讲的，主要偏重与Sparse这个问题的优化求解方法及其变形，
+涉及到很多数学公式和推导，感觉很枯燥，加之晚睡早起，有点犯困，所以基本没有听进去。贾佳亚的报告还似懂非懂，而陈欢欢的Sparse Bayesian Learning
+表示完全没听懂。个人感觉Sparse还是很重要的，所以在弄完Deep Learning这个专题后，我想有必要对这两个报告及其相关论文再做深入的学习和研究。</p>
+
+
+<!--more-->
+
+
+<p>中午3个东南大学的同学请我们实验室的在他们学校食堂吃饭，虽然不太记得他们名字了，真心感谢他们！</p>
+
+
+
+
+<p>下午第一个报告是高新波的IQA&VALSE，主要讲了图像质量评价的一些东西，虽然也提到了一些生物视觉方面的东西，感觉很没趣，基本没怎么听，打了个盹。
+第二个报告是俞洪波的关于生物视觉方面的东西，很感兴趣，他从深层复杂网络结构、神经元、突触、离子通道、蛋白等多个层面上讲了视觉系统的信息处理流程，
+后面还提到了视觉功能柱，指出了视觉神经元具有很强的选择性，不同部位的神经元对不同方向、距离的视觉信息具有选择性的激活增强，最后还讲了一些模拟
+视觉系统的计算模型，并描述了一些实验，虽然对报告题目中的Self Organization Model到底是什么还不是很清楚，但对生物视觉系统有了更进一步的了解，
+而且知道了他们是怎么获取神经元激活区域的。</p>
+
+
+
+
+<p>下午的第2个Session的第一个报告是颜水成的Fashion Recommendation，包括Hair Style，Makeup，Clothing，Shoes等的Recommendation，不太感冒，只是对他重复提到
+的关于华人做研究的一个问题深表同感，他说华人做研究其实很不错的，能在很多TOP会议期刊发Paper甚至Best Paper，但原创性的问题却很少，我们都在提高别人的Citation，
+所以华人还需要在发现问题方面多下功夫，而不是仅仅在解决问题方面。后面两个报告一个是王亦洲的General Purpose Vision，表示没听懂。最后一个报告是王晓刚的Crowd 
+Video Surveillance，主要是讲在Video中识别人并跟踪人的移动，或者统计视场中人的数量之类的，只是感性的了解了一下，印象里报告中好像没有提到什么具体的CV技术，
+只是举了一个人体位置跟踪的例子，还有一个用在足球视屏中运动员跟踪的例子。</p>
+
+
+
+
+<p>第二天上午第一个Session是两个报告，一个是陈小武的Image/Video/3D Scene Understanding and Editing，主要分以下四个方面：Illumination Learning and Synthesis，
+Labeling and Lavering and Editing，Estimating 3D Model from a single Image，Video Event Representation and Inference，总体感觉讲的内容涉及到很多东西，甚至他的
+学生不仅懂CV，还要懂美术、剪纸等，而且他们每年都会发CVPR、ICCV、ECCV之类的，感觉还挺NB的。另外一个报告是非常期待的于凯的关于深度学习和大数据的报告，但听了之后，
+感觉有些Depressed，因为他的报告中没有涉及Deep Learning的一些细节的东西，诸如RBM的原理及其训练等，基本上只是泛泛而谈，之前对Deep Learning做了深入的调研和学习，
+自我感觉Deep Learning也没什么神秘的，虽然对Gibbs采样和CD算法的理论还没有完全理解清楚，但我觉得Deep Learning更多的是一种思想方法，在Deep Architecture中，Knowledge
+通过一层一层抽象和提取后，对于Classification、Clustering等任务具有更有效Representation，而且在Training Error非常小的情况下，还是可以再Testing中获得理想的Error Ratio，
+相比Shallow Architecture，不存在模型Over Fitting的问题。另外，有人提到Deep Architecture中Layer数目的确定的问题，于凯的回答是，在Neural Networks中加一层后，进行Deep 
+Learning的过程，如果相对于没加该层得到的Test Error更小，并且是非常有效的性能提升，那么就加进这一层。然后同样的，再加一层，再进行Deep Learning，以此类推。</p>
+
+
+
+
+<p>上午的后一个Session是关于CV在Industry中的Application，先是来在Industry中的一些研究开发人员对他们目前的工作做一些简短的介绍，感觉某些公司有严重的广告嫌疑，很是讨厌。
+然后是讨论阶段，各自就CV在学术界和工业界之间的Gap发表意见，总结起来主要有以下观点：一方面学术界与工业界的Gap是必要的，学术必须要超前，这样工业界才可能将其成熟的应用；
+另一方面，学术界与工业界的Gap可以通过在工业界设置研究院（比如MSRA、百度最近在硅谷设置深度学习研究院之类），这样可以加快学术成果应用于工业界的进程，学术最终的目的就是
+在工业界中发挥巨大作用，服务广大民众，给社会带来价值。</p>
+
+
+
+
+<p>上午的Panel严重超时了，直到快1点了才结束，去餐馆吃饭，我们跟老板说我们下午要考试，让快点上菜，结果上菜速度果然飞快，而我们吃得也很快，基本上一盘菜一会儿就吃光，
+真是高效啊，哈哈！</p>
+
+
+
+
+<p>下午首先是一个Panel，讨论（更确切的说是辩论）了两个主题，一个是关于计算机视觉是否要借鉴吸收生物神经视觉的结果，另一个是Deep Learning是否是CV的终极解决方案，这两个辩论
+都非常精彩，笑点不断。Panel开始之前，首先是两位报告者发言，首先上台的是 @老师木（袁进辉），他自我介绍了一番，然后讲了讲生物视觉与计算机视觉的紧密联系，认为计算机视觉要想
+取得重大突破，就必须借鉴生物视觉的研究的发现。另外一位是李学龙老师，很有个性，只写了一张PPT，但发言时却如滔滔江水绵绵不绝，可以听得出，他对生物视觉也非常了解，也认为计算机
+视觉必须借鉴生物视觉的一些研究成果。后面的讨论非常精彩，将学术娱乐化了。这两个论题本身就很具争议性，正反两方各执其词，要辩论出个是非来，还真需要真才实学。</p>
+
+
+
+
+<p>Panel完之后是两个报告，一个是吴建鑫的Approximating Additive Kernel for Large Scale Vision Tasks，没怎么听懂。另一个是张敏灵的Multi-label Learning，感觉很没趣，主要是
+觉得这并不是一个新问题，但在图像标注方面确实是一个很重要的问题。</p>
+
+
+
+
+<p>最后，还可以从一些微博内容中获取更多关于VALSE2013的信息，可以搜索主题\#VALSE\# 或\#VALSE2013\#，或者关注 @潘布衣（会议Chair潘刚）、@张磊MSRA、@余凯_西二旗民工、
+@老师木等等。。。</p>
+
+
+
+
+<h3>游玩休闲</h3>
+
+
+<p>我们周五下午6点多到，下雨了。坐地铁然后走到旅馆，吃晚饭就8点了，但还好雨也听了，我们就去附近的夫子庙、秦淮河逛了逛。
+<center><img src="/images/2013/IMAG2013042201.jpg"></center>
+第二天晚上去阅江楼逛了逛，到哪儿才发现晚上关门，坑爹啊！不过在外面远眺夜晚的阅江楼也不错，然后走了一个把小时到南京长江大桥。
+<center><img src="/images/2013/IMAG2013042202.jpg"></center>
+第三天晚上就待在住处。因为订的第四天下午6点多的票，所以白天就可以尽情的去玩玩了。第一站来到了中山园陵
+<center><img src="/images/2013/IMAG2013042203.jpg"></center>
+只可惜周一不开放，被挡在“天下为公”的门外。原打算接下来要去的雨花台、大屠杀纪念馆也不开放，坑爹啊！
+<center><img src="/images/2013/IMAG2013042204.jpg"></center>
+木办法，就在里面找了一个开放的十朝历史博物馆去了
+<center><img src="/images/2013/IMAG2013042205.jpg"></center>
+然后去总统府了，就在外面看了看
+<center><img src="/images/2013/IMAG2013042206.jpg"></center>
+再然后去玄武门，一到哪儿就又下雨了
+<center><img src="/images/2013/IMAG2013042207.jpg"></center>
+进里面看了看玄武湖，然后就直接回旅馆了
+<center><img src="/images/2013/IMAG2013042208.jpg"></center>
+</p>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[深度学习及其在语音方面的应用]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/04/17/Deep-Learning-and-its-application-in-audio-and-speech-processing/"/>
+    <updated>2013-04-17T22:43:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/04/17/Deep-Learning-and-its-application-in-audio-and-speech-processing</id>
+    <content type="html"><![CDATA[<p>以下是今天在组会上讲的内容，与大家分享一下。有些地方我也没有完全理解，欢迎大家一起来讨论。</p>
+
+
+<p><center>
+<embed width="780"
+    height="574"
+    name="plugin"
+    src="http://ibillxia.github.io/upload/Deep Learning - Bill Xia.pdf"
+    type="application/pdf"
+/>
+</center></p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[卷积神经网络（CNN）]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/04/06/Convolutional-Neural-Networks/"/>
+    <updated>2013-04-06T23:34:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/04/06/Convolutional-Neural-Networks</id>
+    <content type="html"><![CDATA[<h2>1. 概述</h2>
+
+
+<p>卷积神经网络是一种特殊的深层的神经网络模型，它的特殊性体现在两个方面，一方面它的神经元间的连接是<strong>非全连接</strong>的，
+另一方面同一层中某些神经元之间的连接的<strong>权重是共享的</strong>（即相同的）。它的非全连接和权值共享的网络结构使之更类似于生物
+神经网络，降低了网络模型的复杂度（对于很难学习的深层结构来说，这是非常重要的），减少了权值的数量。</p>
+
+
+
+
+<p>卷积网络最初是受视觉神经机制的启发而设计的，是为识别二维形状而设计的一个多层感知器，这种网络结构对平移、比例缩放、倾斜或者共他
+形式的变形具有高度不变性。1962年Hubel和Wiesel通过对猫视觉皮层细胞的研究，提出了感受野(receptive field)的概念，1984年日本学者Fukushima
+基于感受野概念提出的神经认知机(neocognitron)模型，它可以看作是卷积神经网络的第一个实现网络，也是感受野概念在人工神经网络领域的首次应用。</p>
+
+
+
+
+<p>神经认知机将一个视觉模式分解成许多子模式(特征)，然后进入分层递阶式相连的特征平面进行处理，它试图将视觉系统模型化，使其能够在即使物体有
+位移或轻微变形的时候，也能完成识别。神经认知机能够利用位移恒定能力从激励模式中学习，并且可识别这些模式的变化形。在其后的应用研究中，Fukushima
+将神经认知机主要用于手写数字的识别。随后，国内外的研究人员提出多种卷积神经网络形式，在邮政编码识别（Y. LeCun etc）、车牌识别和人脸识别等方面
+得到了广泛的应用。</p>
+
+
+
+
+<h2>2. CNN的结构</h2>
+
+
+<p>卷积网络是为识别二维形状而特殊设计的一个多层感知器，这种网络结构对平移、比例缩放、倾斜或者共他形式的变形具有高度不变性。
+这些良好的性能是网络在有监督方式下学会的，网络的结构主要有稀疏连接和权值共享两个特点，包括如下形式的约束：</br>
+1 特征提取。每一个神经元从上一层的局部接受域得到突触输人，因而迫使它提取<strong>局部特征</strong>。一旦一个特征被提取出来，
+只要它相对于其他特征的位置被近似地保留下来，它的精确位置就变得没有那么重要了。</br>
+2 特征映射。网络的每一个计算层都是由<strong>多个特征映射组</strong>成的，每个特征映射都是平面形式的。平面中单独的神经元在约束下<strong>共享
+相同的突触权值</strong>集，这种结构形式具有如下的有益效果：a.平移不变性。b.自由参数数量的缩减(通过权值共享实现)。</br>
+3.子抽样。每个卷积层跟着一个实现局部平均和子抽样的计算层，由此特征映射的分辨率降低。这种操作具有使特征映射的输出对平移和其他
+形式的变形的敏感度下降的作用。</p>
+
+
+<!--more-->
+
+
+
+
+<h3>2.1 稀疏连接(Sparse Connectivity)</h3>
+
+
+<p>卷积网络通过在相邻两层之间强制使用局部连接模式来利用图像的空间局部特性，在第m层的隐层单元只与第m-1层的输入单元的局部区域有连接，第m-1层的这些局部
+区域被称为空间连续的接受域。我们可以将这种结构描述如下：</br>
+设第m-1层为视网膜输入层，第m层的接受域的宽度为3，也就是说该层的每个单元与且仅与输入层的3个相邻的神经元相连，第m层与第m+1层具有类似的链接规则，如下图所示。
+<center><img src="/images/2013/IMAG2013040201.jpg"></center>
+可以看到m+1层的神经元相对于第m层的接受域的宽度也为3，但相对于输入层的接受域为5，这种结构将学习到的过滤器（对应于输入信号中被最大激活的单元）限制在局部空间
+模式（因为每个单元对它接受域外的variation不做反应）。从上图也可以看出，多个这样的层堆叠起来后，会使得过滤器（不再是线性的）逐渐成为全局的（也就是覆盖到了更
+大的视觉区域）。例如上图中第m+1层的神经元可以对宽度为5的输入进行一个非线性的特征编码。
+</p>
+
+
+
+
+<h3>2.2 权值共享(Shared Weights)</h3>
+
+
+<p>在卷积网络中，每个稀疏过滤器<em>$h_{i}$</em>通过共享权值都会覆盖整个可视域，这些共享权值的单元构成一个特征映射，如下图所示。
+<center><img src="/images/2013/IMAG2013040202.jpg"></center>
+在图中，有3个隐层单元，他们属于同一个特征映射。同种颜色的链接的权值是相同的，我们仍然可以使用梯度下降的方法来学习这些权值，只需要对原始算法做一些小的改动，
+这里共享权值的梯度是所有共享参数的梯度的总和。我们不禁会问为什么要权重共享呢？一方面，重复单元能够对特征进行识别，而不考虑它在可视域中的位置。另一方面，权值
+共享使得我们能更有效的进行特征抽取，因为它极大的减少了需要学习的自由变量的个数。通过控制模型的规模，卷积网络对视觉问题可以具有很好的泛化能力。
+</p>
+
+
+
+
+<h3>2.3 The Full Model</h3>
+
+
+<p>卷积神经网络是一个多层的神经网络，每层由多个二维平面组成，而每个平面由多个独立神经元组成。网络中包含一些简单元和复杂元，分别记为S-元
+和C-元。S-元聚合在一起组成S-面，S-面聚合在一起组成S-层，用Us表示。C-元、C-面和C-层(Us)之间存在类似的关系。网络的任一中间级由S-层与C-层
+串接而成，而输入级只含一层，它直接接受二维视觉模式，样本特征提取步骤已嵌入到卷积神经网络模型的互联结构中。</p>
+
+
+
+
+<p>一般地，Us为特征提取层，每个神经元的输入与前一层的局部感受野相连，并提取该局部的特征，一旦该局部特征被提取后，它与其他特征间的位置关系
+也随之确定下来；Uc是特征映射层，网络的每个计算层由多个特征映射组成，每个特征映射为一个平面，平面上所有神经元的权值相等。特征映射结构采用
+影响函数核小的sigmoid函数作为卷积网络的激活函数，使得特征映射具有位移不变性(这一句表示没看懂，那位如果看懂了，请给我讲解一下)。此外，由于
+一个映射面上的神经元共享权值，因而减少了网络自由参数的个数，降低了网络参数选择的复杂度。卷积神经网络中的每一个特征提取层(S-层)都紧跟着一个
+用来求局部平均与二次提取的计算层(C-层)，这种特有的两次特征提取结构使网络在识别时对输入样本有较高的畸变容忍能力。</p>
+
+
+
+
+<p>下图是一个卷积网络的实例
+<center><img src="/images/2013/IMAG2013040203.jpg"></center>
+图中的卷积网络工作流程如下，输入层由32×32个感知节点组成，接收原始图像。然后，计算流程在卷积和子抽样之间交替进行，如下所
+述：第一隐藏层进行卷积，它由8个特征映射组成，每个特征映射由28×28个神经元组成，每个神经元指定一个 5×5 的接受域；第二隐藏层实现子
+抽样和局部平均，它同样由 8 个特征映射组成，但其每个特征映射由14×14 个神经元组成。每个神经元具有一个 2×2 的接受域，一个可训练
+系数，一个可训练偏置和一个 sigmoid 激活函数。可训练系数和偏置控制神经元的操作点。第三隐藏层进行第二次卷积，它由 20 个特征映射组
+成每个特征映射由 10×10 个神经元组成。该隐藏层中的每个神经元可能具有和下一个隐藏层几个特征映射相连的突触连接，它以与第一个卷积
+层相似的方式操作。第四个隐藏层进行第二次子抽样和局部平均汁算。它由 20 个特征映射组成，但每个特征映射由 5×5 个神经元组成，它以
+与第一次抽样相似的方式操作。第五个隐藏层实现卷积的最后阶段，它由 120 个神经元组成，每个神经元指定一个 5×5 的接受域。最后是个全
+连接层，得到输出向量。相继的计算层在卷积和抽样之间的连续交替，我们得到一个“双尖塔”的效果，也就是在每个卷积或抽样层，随着空
+间分辨率下降，与相应的前一层相比特征映射的数量增加。卷积之后进行子抽样的思想是受到动物视觉系统中的“简单的”细胞后面跟着“复
+杂的”细胞的想法的启发而产生的。</p>
+
+
+
+
+<p>图中所示的多层感知器包含近似 100000 个突触连接，但只有大约2600 个自由参数。自由参数在数量上显著地减少是通过权值共享获得
+的，学习机器的能力（以 VC 维的形式度量）因而下降，这又提高它的泛化能力。而且它对自由参数的调整通过反向传播学习的随机形式来实
+现。另一个显著的特点是使用权值共享使得以并行形式实现卷积网络变得可能。这是卷积网络对全连接的多层感知器而言的另一个优点。</p>
+
+
+
+
+<h2>3. CNN的学习</h2>
+
+
+<p>总体而言，前面提到的卷积网络可以简化为下图所示模型：
+<center><img src="/images/2013/IMAG2013040204.jpg"></center>
+其中，input 到C1、S4到C5、C5到output是全连接，C1到S2、C3到S4是一一对应的连接，S2到C3为了消除网络对称性，去掉了一部分连接，
+可以让特征映射更具多样性。需要注意的是 C5 卷积核的尺寸要和 S4 的输出相同，只有这样才能保证输出是一维向量。</p>
+
+
+
+
+<h3>3.1 卷积层的学习</h3>
+
+
+<p>卷积层的典型结构如下图所示。
+<center><img src="/images/2013/IMAG2013040205.jpg"></center>
+</p>
+
+
+
+
+<p>卷积层的前馈运算是通过如下算法实现的：</br>
+<center>卷积层的输出= Sigmoid( Sum(卷积) +偏移量) </center>
+其中卷积核和偏移量都是可训练的。下面是其核心代码：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="n">ConvolutionLayer</span><span class="o">::</span><span class="n">fprop</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="n">output</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="c1">//取得卷积核的个数</span>
+</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="o">=</span><span class="n">kernel</span><span class="p">.</span><span class="n">GetDim</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">        </span><span class="c1">//第i个卷积核对应输入层第a个特征映射，输出层的第b个特征映射</span>
+</span><span class='line'><span class="w">        </span><span class="c1">//这个卷积核可以形象的看作是从输入层第a个特征映射到输出层的第b个特征映射的一个链接</span>
+</span><span class='line'><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="o">=</span><span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">b</span><span class="o">=</span><span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">];</span>
+</span><span class='line'><span class="w">        </span><span class="c1">//用第i个卷积核和输入层第a个特征映射做卷积</span>
+</span><span class='line'><span class="w">        </span><span class="n">convolution</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Conv</span><span class="p">(</span><span class="n">input</span><span class="p">[</span><span class="n">a</span><span class="p">],</span><span class="n">kernel</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span><span class='line'><span class="w">        </span><span class="c1">//把卷积结果求和</span>
+</span><span class='line'><span class="w">        </span><span class="n">sum</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="n">convolution</span><span class="p">;</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">bias</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">        </span><span class="c1">//加上偏移量</span>
+</span><span class='line'><span class="w">        </span><span class="n">sum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">bias</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="c1">//调用Sigmoid函数</span>
+</span><span class='line'><span class="w">    </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Sigmoid</span><span class="p">(</span><span class="n">sum</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+其中，input是 n1×n2×n3 的矩阵，n1是输入层特征映射的个数，n2是输入层特征映射的宽度，n3是输入层特征映射的高度。output, sum, convolution,
+bias是n1×(n2-kw+1)×(n3-kh+1)的矩阵，kw,kh是卷积核的宽度高度(图中是5×5)。kernel是卷积核矩阵。table是连接表，即如果第a输入和第b个输出之间
+有连接，table里就会有[a,b]这一项，而且每个连接都对应一个卷积核。</p>
+
+
+
+
+<p>卷积层的反馈运算的核心代码如下：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="n">ConvolutionLayer</span><span class="o">::</span><span class="n">bprop</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="n">output</span><span class="p">,</span><span class="n">in_dx</span><span class="p">,</span><span class="n">out_dx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="c1">//梯度通过DSigmoid反传</span>
+</span><span class='line'><span class="w">    </span><span class="n">sum_dx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DSigmoid</span><span class="p">(</span><span class="n">out_dx</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="c1">//计算bias的梯度</span>
+</span><span class='line'><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">bias</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">        </span><span class="n">bias_dx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sum_dx</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="c1">//取得卷积核的个数</span>
+</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="o">=</span><span class="n">kernel</span><span class="p">.</span><span class="n">GetDim</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'><span class="w">    </span><span class="p">{</span>
+</span><span class='line'><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="o">=</span><span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">b</span><span class="o">=</span><span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">];</span>
+</span><span class='line'><span class="w">        </span><span class="c1">//用第i个卷积核和第b个输出层反向卷积（即输出层的一点乘卷积模板返回给输入层），并把结果累加到第a个输入层</span>
+</span><span class='line'><span class="w">        </span><span class="n">input_dx</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">DConv</span><span class="p">(</span><span class="n">sum_dx</span><span class="p">[</span><span class="n">b</span><span class="p">],</span><span class="n">kernel</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span><span class='line'><span class="w">        </span><span class="c1">//用同样的方法计算卷积模板的梯度</span>
+</span><span class='line'><span class="w">        </span><span class="n">kernel_dx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">DConv</span><span class="p">(</span><span class="n">sum_dx</span><span class="p">[</span><span class="n">b</span><span class="p">],</span><span class="n">input</span><span class="p">[</span><span class="n">a</span><span class="p">]);</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+其中in_dx,out_dx 的结构和 input,output 相同，代表的是相应点的梯度。
+</p>
+
+
+<p></p>
+
+
+
+
+<h3>3.2 子采样层的学习</h3>
+
+
+<p>子采样层的典型结构如下图所示。
+<center><img src="/images/2013/IMAG2013040206.jpg"></center></p>
+
+
+
+
+<p>类似的字采样层的输出的计算式为：</br>
+<center>输出= Sigmoid( 采样*权重 +偏移量)</center>
+其核心代码如下：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="n">SubSamplingLayer</span><span class="o">::</span><span class="n">fprop</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="n">output</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n1</span><span class="o">=</span><span class="w"> </span><span class="n">input</span><span class="p">.</span><span class="n">GetDim</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n2</span><span class="o">=</span><span class="w"> </span><span class="n">input</span><span class="p">.</span><span class="n">GetDim</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n3</span><span class="o">=</span><span class="w"> </span><span class="n">input</span><span class="p">.</span><span class="n">GetDim</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n1</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">n2</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">k</span><span class="o">&lt;</span><span class="n">n3</span><span class="p">;</span><span class="n">k</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">                </span><span class="c1">//coeff 是可训练的权重，sw 、sh 是采样窗口的尺寸。</span>
+</span><span class='line'><span class="w">                </span><span class="n">sub</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">/</span><span class="n">sw</span><span class="p">][</span><span class="n">k</span><span class="o">/</span><span class="n">sh</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">]</span><span class="o">*</span><span class="n">coeff</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span><span class='line'><span class="w">            </span><span class="p">}</span>
+</span><span class='line'><span class="w">        </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n1</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">        </span><span class="c1">//加上偏移量</span>
+</span><span class='line'><span class="w">        </span><span class="n">sum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sub</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bias</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Sigmoid</span><span class="p">(</span><span class="n">sum</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+</p>
+
+
+
+
+<p>子采样层的反馈运算的核心代码如下：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="n">SubSamplingLayer</span><span class="o">::</span><span class="n">bprop</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="n">output</span><span class="p">,</span><span class="n">in_dx</span><span class="p">,</span><span class="n">out_dx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="c1">//梯度通过DSigmoid反传</span>
+</span><span class='line'><span class="w">    </span><span class="n">sum_dx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DSigmoid</span><span class="p">(</span><span class="n">out_dx</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="c1">//计算bias和coeff的梯度</span>
+</span><span class='line'><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n1</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">        </span><span class="n">coeff_dx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="n">bias_dx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">n2</span><span class="o">/</span><span class="n">sw</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">k</span><span class="o">&lt;</span><span class="n">n3</span><span class="o">/</span><span class="n">sh</span><span class="p">;</span><span class="n">k</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">                </span><span class="n">coeff_dx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">sub</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">]</span><span class="o">*</span><span class="n">sum_dx</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">];</span>
+</span><span class='line'><span class="w">                </span><span class="n">bias_dx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">sum_dx</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">]);</span>
+</span><span class='line'><span class="w">            </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n1</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">n2</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">k</span><span class="o">&lt;</span><span class="n">n3</span><span class="p">;</span><span class="n">k</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">                </span><span class="n">in_dx</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">coeff</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">sum_dx</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">/</span><span class="n">sw</span><span class="p">][</span><span class="n">k</span><span class="o">/</span><span class="n">sh</span><span class="p">];</span>
+</span><span class='line'><span class="w">            </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+</p>
+
+
+
+
+<h3>3.3 全连接层的学习</h3>
+
+
+<p>全连接层的学习与传统的神经网络的学习方法类似，也是使用BP算法，这里就不详述了。</p>
+
+
+
+
+<p>关于CNN的完整代码可以参考https://github.com/ibillxia/DeepLearnToolbox/tree/master/CNN中的Matlab代码。</p>
+
+
+
+
+<h2>References</h2>
+
+
+<p>[1] Learn Deep Architectures for AI, Chapter 4.5.</br>
+[2] Deep Learning Tutorial, Release 0.1, Chapter 6.</br>
+[3] Convolutional Networks for Images Speech and Time-Series.</br>
+[4] 基于卷积网络的三维模型特征提取. 王添翼.</br>
+[5] 卷积神经网络的研究及其在车牌识别系统中的应用. 陆璐.
+</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[神经网络的学习方法概述]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/03/27/learning-process-of-neural-networks/"/>
+    <updated>2013-03-27T23:51:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/03/27/learning-process-of-neural-networks</id>
+    <content type="html"><![CDATA[<p>本文主要讨论一下神经网络的一般学习方法，主要有error-correction learning，memory-based learning， Hebbian learning，competitive learning，
+Boltzmann learning等。然后介绍一些学习的方式，如监督学习、非监督学习、强化学习等。最后是一些具体的应用领域和实际问题。</p>
+
+
+
+
+<h2>1.Knowledge Representation</h2>
+
+
+<p>好的学习方法固然重要，但知识的表示，直接影响到feature的表示，也是非常重要的，因此在正式讨论学习方法之前，我们首先谈谈知识的表示。
+首先一个问题是，什么是知识？在PRML中我们有如下定义：</br>
+<blockquote><p>Knowledge refers to stored information or models used by a person or machine to interpret, predict, and appropriately respond to the outside world.</p><footer><strong>Fischler and Firschein</strong> <cite>Intelligence: The Eye，the Brain and the Computer</cite></footer></blockquote>
+</p>
+
+
+
+
+<!-- more -->
+
+
+<p>在知识的表示中需要考虑的两个核心问题是：</br>
+1). What information is actually made explicit(明确的；清楚的；直率的；详述的);</br>
+2). How the information is physically encoded for subsequent(后来的，随后的) use.</br>
+很显然，这里知识的表示是目标驱动的(goal directed)，在现实世界的智能设备中，一些好的解决问题的办法依赖于好的知识表示方法。
+</p>
+
+
+
+
+<p>一个精心设计的神经网络应该能够很恰当的表示出现实世界的知识，这是一个极大的挑战，因为知识的表示方式是多种多样的，而现实世界的知识也是丰富多彩的，
+也就意味着我们的神经网络的输入是千变万化的。一般而言，在PRML中我们将现实世界的知识分为以下两种：</br>
+1). Prior information = the known facts.</br>
+2). Observation (measurements). Usually noisy, but give examples(prototypes) for training the neural network.</br>
+其中Observation中的examples包含两种类型的，一种是labeled，另一种是unlabeled。</p>
+
+
+
+
+<p>在神经网络中，那些自由变量(包括weights和biases)是知识表示的关键。知识的表示一般应该满足一下几个规则：</br>
+<strong>Rule 1</strong>. Similar inputs from similar classes should produce similar representations inside the network, and they should be classiﬁed to the same category.</br>
+<strong>Rule 2</strong>. Items to be categorized as separate classes should be given widely diﬀerent representations in the network.</br>
+<strong>Rule 3</strong>. If a particular feature is important, there should be a large number of neurons involved in representing it in the network.</br>
+<strong>Rule 4</strong>. Prior information and invariances should be built into the design of a neural network.</p>
+
+
+
+
+<p>一方面，我们应该如何将先验知识运用到我们的神经网络(简记为NN)的设计中呢？没有通用的方法，但能产生更好结果的专用方法到是有两种：</br>
+1). Restricting the network architecture through the use of local connections known as receptive ﬁelds(接受域).</br>
+2). Constraining the choice of synaptic weights through the use of weight-sharing.</br>
+这两种方法都是通过减少需要学习的自由变量来达到目的的。当然我们也可以利用Bayes公式来将先验知识应用到我们的NN的设计中。</p>
+
+
+
+
+<p>另一方面，我们应该如何将Invariances(不变性；恒定性)融入到我们的NN的设计中呢？我们有三种思路可以考虑：</br>
+<strong>1). Invariance by Structure</strong> - Synaptic connections between the neurons are created so that transformed versions of the 
+same input are forced to produce the same output. Drawback: the number of synaptic connections tends to grow very large.</br>
+<strong>2). Invariance by Training</strong> - The network is trained using diﬀerent examples of the same object corresponding to 
+diﬀerent transformations (for example rotations). Drawbacks: computational load, generalization ability for other objects.</br>
+<strong>3). Invariant feature space</strong> - Try to extract features of the data invariant to transformations. Use these instead of the 
+original input data. Probably the most suitable technique to be used for neural classiﬁers. Requires prior knowledge on the problem.</br>
+然而，要优化一个NN的结构是非常困难的，通常需要一些先验的知识。
+</p>
+
+
+
+
+<h2>2.Basic Learning Rules</h2>
+
+
+<p>首先我们对NN的学习做如下的定义：</br>
+<blockquote><p>Learning is a process by which the free parameters of a neural network are adapted through a process of stimulation by the environment in which the network is embedded. The type of learning is determined by the manner in which the parameters changes take place.</p><footer><strong>Simon Haykin</strong> <cite>Neural Networks: A Comprehensive Foundation</cite></footer></blockquote>
+这个定义蕴含以下几个意思：</br>
+1). The neural network is <em>stimulated</em> by an envirnment.</br>
+2). The neural network <em>undergoes changes</em> in its free parameters as a result of this stimulation.</br>
+3). The neural network <em>responds in a new way</em> to the envirnment because of the changes that have 
+occurred in its internal structure.</br>
+</p>
+
+
+
+
+<h4>2.1 Error-Correction Learning</h4>
+
+
+<p>Error-Correction的学习方法的核心思想是：对于给定输入，优化权值(weights)使得输出(设为$y_{k}(n)$)与真实值(设为$d_{k}(n)$)
+的偏差最小。我们先定义一个error signal如下：</br>
+<center>$e_{k}(n) = d_{k}(n) - y_{k}(n)$.</center></br>
+那么，我们需要优化的目标函数为：</br>
+<center>$\mathscr{E}(n) = \frac{1}{2}e^{2}_{k}(n)$.</center></br>
+其中$\mathscr{E}(n)$称为error energy，也是我们要优化(最小化)的目标函数。</p>
+
+
+
+
+<p>那么如何来求解这个优化问题呢？这里我们有一个所谓的delta-rule，也称为Widrow-Hoff rule</br>
+<center>$\Delta w_{kj}(n) = \eta e_{k}(n)x_{j}(n)$.</center></br>
+这里$w_{kj}(n)$是第$k$个输出神经元的第$j$个输入的权重，$\Delta w_{kj}(n)$为第$n$步迭代过程中，权值$w_{kj}(n)$的改变量，$\eta$称为学习速率，
+是一个$(0,1]$之间的常数。关于该方法的详细内容会在后续文章中深入讨论。</p>
+
+
+
+
+<h4>2.2 Memory-Based Learning</h4>
+
+
+<p>Memory-Based Learning，顾名思义，是一种将past experiences全部保存起来的策略。假设我们的经验数据集为：</br>
+<center>{$(x_{1},d_{1}),(x_{2},d_{2}),...,(x_{N},d_{N})$}.</center></br>
+那么对于新来的测试数据$\mathbf{x} _{test}$，我们需要分析它与经验数据的关系，主要就是需要找出与它最相近的经验数据，即它的local neighborhood。
+在Memory-Based Learning方法中，主要涉及两个问题，一个是定义local neighborhood的标准，另一个是训练样本集上的学习规则。一个最简单的学习规则是
+最近邻规则(nearest-neighbor rule)。另外我们可以构造Memory-Based Classifier，如k-nearest-neighbor classifier，radial-basis function networks 
+classifier等。</p>
+
+
+
+
+<h4>2.3 Hebbian Learning</h4>
+
+
+<p>Hebb规则是最古老也是最流行的NN学习规则，现在一般都是它的扩展版的规则，其基本思想是根据联接的神经元的活化
+水平改变权，即两种神经元间联接权的变化与两神经元的活化值（激活值）相关，若突触(connection)两端的两神经元同时
+兴奋，则联接加强；若不同时兴奋，则联接减弱甚至忽略。</p>
+
+
+
+
+<p>Hebbian规则有以下几个特点：</br>
+Time-dependent: 权值修正仅发生于突触前(如输入$x_{i}$)和突触后(如输出$y_{j}$)同时存在信号的时候；</br>
+Local: 仅使用神经元能够取得的局部的信息；</br>
+Interactive: 权值修正同时依赖于突触前和突触后，信号间的交互可以是确定性的或随机的；</br>
+Conjunctional or Correlational: 突触前与突触后的信号产生时间与权值修正是密切相关的。</p>
+
+
+
+
+<p>权值修正可以分为Hebbian, anti-Hebbian, 和non-Hebbian等三种情况。Hebbian方式会增强正相关的突触前和突触后的信号，而减弱负相关的
+突触前和突触后的信号。anti-Hebbian方式则与Hebbian相反。而non-Hebbian则不使用Hebbian方式。Hebbian的权值修正方式的一般形式为：</br>
+<center>$\Delta w_{kj}(n) = F(y_{k}(n),x_{j}(n))$.</center></br>
+其中$F(y,x)$是关于突触后($y$)和突触前($x$)的函数，对于标准的Hebbian学习规则，该函数为$\eta y_{k}(n)x_{j}(n)$；而对于协方差的Hebbian学习
+规则，该函数为$\eta [x_{j}(n)-m_{x}][y_{k}(n)-m_{y}]$。</p>
+
+
+
+
+<h4>2.4 Competitive Learning</h4>
+
+
+<p>竞争型学习规则是指网络的某神经元群体中所有神经元相互竞争对外界刺激模式响应的能力，竞争取胜的神经元的联接权变化向着对这一
+刺激模式竞争更为有力的方向进行。具体而言，就是任何时候输出层的神经元有且仅有一个(即输出最大的那个神经元)是激活的，这种学习
+规则比较适合于寻找分类任务的相关feature。</p>
+
+
+
+
+<h4>2.5 Boltzmann Learning</h4>
+
+
+<p>Boltzmann的学习方法是一种随机化的学习方法，它结合随机过程、概率和能量等概念来调整网络的变量，从而使网络的能量函数最小（或最大）。
+在学习过程中，网络变量的随机变化不是完全随机的，而是据能量函数的改变有指导的进行。网络的变量可以是联接权，也可以是神经元的状
+态。能量函数可定义为问题的目标函数或者网络输出的均方差函数。 基于Boltzmann的学习方法的NN称为Boltzmann机，关于Boltzmann机的更多
+详细内容将会在后续文章中深入讨论。</p>
+
+
+
+
+<h2>3.Learning Methodologies</h2>
+
+
+<h4>3.1 Credit-Assignment Problem</h4>
+
+
+<p>Credit Assignment(CA) Problem是指，一个learning machine的输出结果应该归功于或归咎于哪些内部或中间decision。在很多情况下，输出结果是由一些列的
+actions来决定的，也就是说，中间决策过程影响需要采取的特定的action，然后这些action而不是那些decision直接影响最终的输出的。在这种情况下，我们
+可以将这个CA问题分解为两个子问题：</br>
+1). The assignment of credit for outcomes to actions. This is called the <em>Temporal Credit-Assignment problem</em> in that it involves the 
+instants of time when the actions that deserve credit were actually taken.</br>
+2). The assignment of credit for actions to internal decisions. This is called the <em>Structural Credit-Assignment problem</em> in that it involves 
+assigning credit to the <em>internal strucures</em> of actions generated by the system.</br>
+结构型CA问题在多组件的learning machine中比较常见，我们需要知道哪些组件需要修改，以及修改后能够对最终结果有多大的改善。而时间型CA问题中，我们需要
+知道在某一时刻采取的多个action中，哪些action主要决定了最终的输出。</p>
+
+
+
+
+<p>当我们使用Error-Correction来训练一个多层的前向反馈神经网络时，就会出现CA问题。很显然，最终输出与隐层和输出层的神经元都是相关的，而权值的修正
+是通过当前输出自适应目标输出来实现的。</p>
+
+
+
+
+<p>PS：这一节看的云里雾里的，似懂非懂，感觉有点脱离NN的样子，但这ms是一个general的问题，所以其中的一些术语也是general的，比如decision，action，credit等，
+导致理解起来比较困难，:-( </p>
+
+
+
+
+<h4>3.2 Learning with a Teacher</h4>
+
+
+<p>Learning with a Teacher也就是supervised learning(监督学习)，Error-Correction的学习方法就属于这种。在监督学习中，对于分类或识别问题，输入数据
+不仅包含输入的feature，还包含它对应的label，即它所属的类别(也就是teacher提供的answer)。Error-Correction的学习方法的目标函数就是使NN的输出与Teacher的
+answer的差异最小，即均方误差最小。经过监督学习之后，NN应该能够在不需要Teacher的情况下对新数据进行处理(分类或识别等)。</p>
+
+
+
+
+<h4>3.3 Learning without a Teacher</h4>
+
+
+<p>Learning without a Teacher包含两种学习方法：非监督学习(Unsupervised Learning)和增强学习(Reinforcement Learning)。在非监督学习中，
+没有Teacher指导学习过程，也没有可用的critic，此时NN只能尝试着学习出数据中隐含的统计规律，例如用一个适合的线性模型来区分输入数据。
+Competitive Learning和Hebbian Learning都算是非监督型学习。经过非监督学习之后，NN可以对输入数据进行特征编码。</p>
+
+
+
+
+<p>而在增强学习中，用到了critic，它将从环境中获取的原始信号转换为更高质量的启发式的增强信号。系统从延迟的reinforcement中学习，
+这意味着系统观察到的是时序的状态向量，这最终将会产生启发式的增强信号。增强学习的目标是为了最小化一个cost-to-go-function，它的
+另一个任务是discover the actions determining the best overall behavior of the system。增强学习的过程与动态规划算法非常相似。</p>
+
+
+
+
+<h2>4.Learning Tasks</h2>
+
+
+<p>前文中主要讨论了一些Learning Algorithm和Learning Paradigm，在这一节主要介绍一些Learning的Task，对于一个特定的Learning Task，需要使用对应的
+学习算法。</p>
+
+
+
+
+<h4>4.1 Pattern Association</h4>
+
+
+<p><em>Associative Memory</em>是一种像大脑一样分布式的、learns by association的memory。Association是人类记忆的主要特点，它可以分为
+<em>autoassociation</em>和<em>heteroassociation</em>。在autoassociation中，NN需要通过不断的将patterns(vectors)呈现给NN来保存一个pattern集合，最后
+NN会呈现原始pattern的部分描述或包含噪声的version，而我们的任务就是要恢复这个特定的pattern。而在heteroassociation中，任意一个输入的pattern集与
+另外人一个输出的pattern集是成对的。Autoassociation使用非监督的学习方法，而heteroassociation使用监督学习的方法。</br>
+PS:这一段表示看不太懂，有些概念无法理解！</p>
+
+
+
+
+<h4>4.2 Pattern Recognition</h4>
+
+
+<p>模式识别如语音识别、人脸识别、物体识别等，在模式识别中，NN首先通过学习训练出网络的链接权重，然后对测试数据进行分类。一般输入数据为高维的
+特征向量(feature vector)，经过训练后，数据的决策空间根据特征的pattern被分割成了若干区域。在模式识别中NN起到两种角色：一方面在非监督NN中进行特征
+提取，另一方面在随后的监督学习中用于分类决策。在多层前向反馈网络中，隐层就可以看做是特征提取(往往是对特征进行了降维，即输入的维数大于隐层的
+神经元个数)的角色。</p>
+
+
+
+
+<h4>4.3 Function Approximation</h4>
+
+
+<p>设有一个非线性的输入输出映射$d = f(x)$，其中$x$为输入，$d$为输出，而映射函数$f(.)$是未知的，但我们知道的是一系列带label的样本</br>
+<center>$\mathscr{F} = $ { $(x_{1},d_{1}),(x_{2},d_{2}),...,(x_{N},d_{N})$ }.</center></br>
+那么NN的目标就是找到一个映射$F(.)$最大可能的接近$f(.)$。如果有足够的训练样本和free parameters，那个这个目标是可以实现的。</p>
+
+
+
+
+<h4>4.4 Control</h4>
+
+
+<p>NN也可以用于控制系统，例如用在误差反馈控制系统中。</p>
+
+
+
+
+<h4>4.5 Filtering</h4>
+
+
+<p>一个Filter可以从包含噪声的观察样本中获取一些有趣的性质，它可以用于Filtering、Smoothing以及Prediction等，例如它可以解决cocktail party problem(鸡尾
+酒会问题)，这是一个blind signal separation的问题，这可以通过independent的假设来解决。</p>
+
+
+
+
+<h2>5. Adaptation</h2>
+
+
+<p>在一个稳定的环境中，一个NN经过学习之后，就可以保持weight不变了，并将之应用在新数据上。但在实际应用中，环境是会随着时间而改变的，这就需要我们不断
+更新我们的NN模型，也就是要根据环境变化(输入数据的变化)来改变weight，这个过程称为Adaptation。在Adaptation中，线性的adaptation方法是最简单的，然而更多的
+可能是使用非线性的filter。在实际中，我们也可以在适当的时机重新训练NN。</p>
+
+
+
+
+<h2>推荐资料</h2>
+
+
+<p>Machine Learning Lecture by Andrew Ng, Stanford University</br>
+Lecture VIII: Neural Network - Representation</br>
+Lecture IX: Neural Network - Learning</br>
+Video courses on Coursera: https://class.coursera.org/ml-2012-002/lecture/index</br>
+Lecture homepage in Standford: http://cs229.stanford.edu/</p>
+
+
+
+
+<h2>参考文献</h2>
+
+
+<p>[1] Simon Haykin, “Neural Networks: a Comprehensive Foundation”, 2009 (3rd edition)</br>
+[2]<a href="http://www.cis.hut.fi/Opinnot/T-61.3030/schedule2007.shtml">T-61.3030 PRINCIPLES OF NEURAL COMPUTING (5 CP)</a></br>
+</p>
+
+
+
+]]></content>
+  </entry>
+  
+</feed>

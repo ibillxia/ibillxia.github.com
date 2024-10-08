@@ -1,0 +1,384 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>UML需求分析步骤实例解析 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2010/10/26/UML-model-building-example-for-requirement-analysis">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">UML需求分析步骤实例解析</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-10-26T13:08:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>本节向大家介绍一下UML需求分析的一般步骤，本节用实例向大家介绍，相信通过本节的介绍你对UML需求分析有一定的认识。下面让我们一起来学习具体介绍吧。</p>
+
+
+<h2>基于UML需求分析</h2>
+
+
+<p>在初步的业务需求描述已经形成的前提下，基于UML需求分析大致可分为以下步骤：</br>
+（1）利用用例及用例图表示需求。从业务需求描述出发获取执行者和场景；对场景进行汇总、分类、抽象；形成用例；确定执行者与用例、用例与用例图
+之间的关系，生成用例图。</br>
+（2）利用包图及类图表示目标软件系统的总体框架结构。根据领域知识、业务需求描述和既往经验设计目标软件系统的顶层架构；从业务需求描述中
+提取“关键概念”，形成领域概念模型；从概念模型和用例出发，研究系统中主要的类之间的关系，生成类图。</br>
+上述两个步骤并没有时序关系，它们可以并行展开，如图1所示。</br>
+<center><img src="/images/2010/IMAG2010102601.jpg"></center>
+</p>
+
+
+
+
+<p>本节将依次介绍上述步骤中涉及的UML语言机制，并结合“家庭保安系统”实例说明每步骤中基于UML需求分析方法。</p>
+
+
+<!--more-->
+
+
+
+
+<h2>开发场景</h2>
+
+
+<p>场景是指从单个执行者的角度观察目标软件系统的功能和外部行为。这种功能通过系统与用户之间的交互来表征。因此也可以说，场景是用户与系统之间
+进行交互的一组具体的动作。相对于用例而言，场景是用例的实例，而用例是某类场景的共同抽象。</br>
+对场景的完整描述应包含场景名称、执行者实例，前置条件、事件流和后置条件。</br>
+例如，“家庭保安系统”的初步需求描述：“家庭保安系统”的软件允许用户在安装时进行系统配置，
+实施对传感器的监控并通过控制面板与用户进行信息交互。</p>
+
+
+
+
+<p>配置操作包括：</br>
+（1）指定每一传感器的种类和编号；</br>
+（2）设置开、关机密码；</br>
+（3）指定报警电话电码；</br>
+（4）指定报警延迟和电话重拨延迟时间（以秒为单位）；</br>
+当软件系统收到传感器发出的数据后，判别是否出现异常事件。如果是，则在指定的延迟时间内拨报警电话号码，拨号操作将按照重拨延迟反复进行，
+直至电话接通。然后软件系统负责报告时间、地点和异常事件的性质。</p>
+
+
+
+
+<p>开机后，软件系统负责显示当前工作状态，接收并处理用户指令。</p>
+
+
+
+
+<p>根据以上描述，该系统具有“系统配置”、“开机”、“关机”、“门窗监测”、“烟雾监测”和“复位”等场景。其中，门窗监测场景的具体描述如下：</br>
+场景名称：门窗监测。</br>
+参与执行者实例：警报器、报警电话、显示器和门窗监视器。</br>
+前置条件：系统已开机。</br>
+事件流：</br>
+（1）门窗监视器发现门或窗户发生异动，向软件系统报告异常事件。</br>
+（2）软件系统启动警报器并拨报警电话号码。</br>
+（3）报警电话接通后，软件系统播出语音，报告异常事件发生的时间、地点和事件的性质（门窗异动）。</br>
+（4）系统在控制面板的显示器上显示报警时间及当前状态（报警：门窗异动）。</br>
+后置条件：系统处于“报警”状态。</p>
+
+
+
+
+<p>UML需求分析过程中根据场景作用的不同，可以将其划分为以下类型：</br>
+（1）实际场景。对实际的业务处理流程或其优化流程的描述。实际场景是用户需求的重要组成部分。</br>
+（2）设想场景。分析人员对目标软件系统投入应用后经改进或优化的业务流程的描述。这种场景可视为一种纸面原型，主要用于帮助分析人员挖掘潜在的用户需求。</br>
+（3）评价场景。以确认需求或提出改进建议为主要目的的业务流程描述。评价场景可以在用例生成后用例进行实例化而形成，以便用户对用例进行评价或改进。</br>
+（4）培训场景。面向开发人员及用户解释系统的功能和外部行为的业务流程描述。</p>
+
+
+
+
+<p>对以下问题的回答有助于分析人员进行UML需求分析获取场景：</br>
+（1）目标软件系统有哪些执行者？</br>
+（2）执行者希望系统执行哪些任务？</br>
+（3）执行者希望获得哪些信息？这些信息由谁生成？由谁修改？</br>
+（4）执行者需要通知系统哪些事件？系统响应这些事件时会表现出哪些外部行为？</br>
+（5）系统将通告执行者哪些事件？</br>
+总之，确定执行者和场景的关键在于理解业务领域和初步需求描述文档。场景将促成开发人员和用户对业务处理流程和目标软件系统的功能范围的共同理解。
+在场景确定之后，通过对场景的汇总、分类归并和抽象即可形成用例。本节关于UML需求分析相关内容介绍到这里。</p>
+
+
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2010/10/26/UML-model-building-example-for-requirement-analysis/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2010-10-26T13:08:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/engineering/'>Engineering</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/uml/'>UML</a>, <a class='tag' href='/blog/tags/xu-qiu-fen-xi/'>需求分析</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2010/10/19/10-difference-between-linux-and-bsd/" title="Previous Post:
+        Linux与BSD之间的10个不同之处">&laquo; Linux与BSD之间的10个不同之处</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2011/03/12/linkedin-10-years-ancestor-of-commercial-sns/"
+        title="Next Post: LinkedIn十年来路：低调而沉稳的商业SNS鼻祖 ">LinkedIn十年来路：低调而沉稳的商业SNS鼻祖 
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2010/10/26/UML-model-building-example-for-requirement-analysis/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2010/10/26/UML-model-building-example-for-requirement-analysis/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

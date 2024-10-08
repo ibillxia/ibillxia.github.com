@@ -1,0 +1,391 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>GMM-SVM-NAP Method in Speaker Recognition - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2012/08/13/GMM-SVM-NAP-Method-in-Speaker-Recognition">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">GMM-SVM-NAP Method in Speaker Recognition</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-08-13T22:38:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>1.Gaussian Mixture Models(GMM)</h2>
+
+
+<p>For a D-dimensional feature vector, x, the mixture density used for the likelihood function is deﬁned as</br>
+<center>$p(x|\lambda) = \sum_{i=1}^{M}w_{i}p_{i}(x)$.</center></br>
+The density is a weighted linear combination of $M$ unimodal Gaussian densities , $p_{i}(x)$</br>
+<center>$p_{i}(x) = \frac{1}{(2\pi)^{D/2}|\sum _{i}|^{1/2}} exp[-\frac{1}{2}(x-\mu_{i})^{T}(\sum _{i})^{-1}(x-\mu_{i})]$.</center></br>
+</p>
+
+
+
+
+<h2>2.Support Vector Machines(SVM)</h2>
+
+
+<p>An SVM is a two-class classifier constructed from sums of a kernel function $K(• , •)$</br>
+<center>$f(x) = \sum_{i=1}{N}\alpha_{i} t_{i} K(x,x_{i}) + d$.</center></br>
+$t_{i}$ are the ideal outputs,  $\sum_{i=1}{N}\alpha_{i} t_{i}=0$ and $\alpha_{i} > 0$,$x_{i}$ are support vectors and obtained 
+from the training set by an optimization process.</br>
+$K(. , .)$ is constrained to have certain properties (the Mercer condition), so that it can be expressed as</br>
+<center>$K(x,y) = b(x)^{T} b(y)$.</center></br>
+Kernel function examples: <a href="http://www.shamoxia.com/html/y2010/2292.html">http://www.shamoxia.com/html/y2010/2292.html</a>
+</p>
+
+
+
+
+<!-- more -->
+
+
+<h2>3.GMM-SVM</h2>
+
+
+<p>GMM Supervectors：given a speaker utterance, GMM-UBM training is performed by MAP adaptation of the means $m_{i}$, 
+and we form a GMM supervector $m = [m_{i}]$</br>
+<img src="/images/2012/IMAG2012081301.jpg"></br>
+GMM Supervectors Linear Kernel: a natural distance between the two utterances is the KL divergence, while it does n't satisfy 
+the Mercer condition, we consider the following approximation</br>
+<center>$\begin{align}
+D(g_{a}\parallel g_{b}) = &\int_{R^{n}}g_{a}xlog\left(\frac{g_{a}(x)}{g_{b}(x)} \right)dx \\
+\leq & \sum_{i=1}^{N} \lambda _{i}D(N(.;m_{i}^{a},\Sigma _{i})\parallel N(.;m_{i}^{b},\Sigma _{i}))\\
+= &\frac{1}{2}\sum_{i=1}^{N}\lambda_{i}(m_{i}^{a}-m_{i}^{b})\Sigma ^{-1}(m_{i}^{a}-m_{i}^{b})
+\end{align}$</center></br>
+we can define a new distance formula,</br>
+<center>$d(m^{a},m^{b}) = \frac{1}{2} \sum_{i=1}^{N}\lambda_{i}(m_{i}^{a}-m_{i}^{b})\Sigma_{i}^{-1}(m_{i}^{a}-m_{i}^{b})$</center></br>
+From the distance, we can find the corresponding inner product which is the kernel function.
+</p>
+
+
+
+
+<h2>4.SVM-NAP</h2>
+
+
+<p>Nuisance Attribute Projection(NAP) attempts to remove the unwanted within-class variation of the observed feature vectors. 
+This is achieved by applying the transform</br>
+<center>$y' = P_{n}y = (I-V_{n}V_{n}^{T})y$.</center></br>
+where Vn is the principal directions of within-class variability.
+</p>
+
+
+
+
+<p>The SVM NAP constructs a new kernel,
+<center>$\begin{align}
+K(m^{a},m^{b}) =& [Pb(m^{a})]^{T}[Pb(m^{b})]\\
+=& b(m^{a})^{t}Pb(m^{b})\\
+=& b(m^{a})^{t}(I-vv^{t})b(m^{b})
+\end{align}$.</center></br>
+where $P$ is a projection ($P^{2} = P$) , $v$ is the direction being removed from the SVM expansion 
+space. $b(.)$ is the SVM expansion, and $\parallel v\parallel ^{2} = 1$.
+</p>
+
+
+
+
+<h2>5.Experiments on NIST SRE 2010</h2>
+
+
+<p>In the experiments, I use the spro4 to extract MFCC and LPCC features, and use Alize to 
+build GMM-UBM and all of the remained tasks.</p>
+
+
+
+
+<h2>References</h2>
+
+
+<p>
+[1]Douglas A. Reynolds, T. F. Quatieri, and R. Dunn, Speaker verication using adapted Gaussian mixture models, Digital Signal Processing, vol. 10, no. 1-3, pp. 1941, 2000.</br>
+[2]W. Campbell, “Generalized linear discriminant sequence kernels for speaker recognition,” in IEEE International Conference on Acoustics, Speech, and Signal Processing, vol. 1, 2002, pp. 161–164.</br>
+[3]W. M. Campbell, D. E. Sturim, D. A. Reynolds, A. Solomonoff, SVM Based Speaker Verification Using a GMM Supervector Kernel and NAP Variability Compensation.</br>
+[4]Robbie Vogt, Sachin Kajarekar, Sridha Sridharan, Discriminant NAP for SVM Speaker Recognition.
+</p>
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2012/08/13/GMM-SVM-NAP-Method-in-Speaker-Recognition/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2012-08-13T22:38:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/alize/'>Alize</a>, <a class='tag' href='/blog/tags/gmm/'>GMM</a>, <a class='tag' href='/blog/tags/svm/'>SVM</a>, <a class='tag' href='/blog/tags/shuo-hua-ren-shi-bie/'>说话人识别</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2012/07/20/PCA-based-speaker-recognition/" title="Previous Post:
+        基于主成分分析分类器的说话人识别">&laquo; 基于主成分分析分类器的说话人识别</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2012/08/14/the-log-sum-inequanlity/"
+        title="Next Post: The Log Sum Inequality">The Log Sum Inequality
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2012/08/13/GMM-SVM-NAP-Method-in-Speaker-Recognition/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2012/08/13/GMM-SVM-NAP-Method-in-Speaker-Recognition/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

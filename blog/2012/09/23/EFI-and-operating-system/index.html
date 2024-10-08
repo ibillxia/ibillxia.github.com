@@ -1,0 +1,383 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>EFI和操作系统 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2012/09/23/EFI-and-operating-system">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">EFI和操作系统</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-09-23T23:03:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>前两天在98上看到一个帖子 windows 8 没法和linux共存？ 里面有一个概念就是EFI</p>
+
+<h2>什么是EFI？</h2>
+
+
+<p>EFI英文全称为Extensible Firmware Interface，中文译为可扩展固件接口，其主要目的是为了提供一组在 OS 加载之前（启动前）在
+所有平台上一致的、正确指定的启动服务。EFI最初由Intel开发，并在2002年12月所发布1.1版，后来在2005年Intel将此规范交由UEFI论坛
+来推广与发展，并更名为Unified EFI(UEFI)。</p>
+
+
+
+
+<p>EFI是一种个人电脑系统规格，用来定义操作系统与系统固件之间的软件界面，为替代BIOS的升级方案。可扩展固件接口（EFI）负责
+加电自检（POST）、连系操作系统以及提供连接操作系统与硬件的接口。UEFI在EFI基础上增加与改进了加密编码（cryptography）、
+网络认证（network authentication）与用户界面架构（User Interface Architecture）等方面的内容。EFI在软件层次中的位置如下图</br>
+<img src="/images/2012/IMAG2012092301.png">
+</p>
+
+
+
+
+<!-- more -->
+
+
+<h2>为什么有EFI？</h2>
+
+
+<p>EFI技术源于英特尔安腾处理器（Itanium）平台的推出。安腾处理器是英特尔瞄准服务器高端市场投入近十年研发力量设计产生的
+与x86系列完全不同的64位新架构。在x86系列处理器进入32位的时代，由于兼容性的原因，新的处理器(80386)保留了16位的运行方式(实模式)，
+此后多次处理器的升级换代都保留了这种运行方式。甚至在含64位扩展技术的至强系列处理器中，处理器加电启动时仍然会切换到16位的
+实模式下运行。英特尔将这种情况归咎于BIOS技术的发展缓慢。</p>
+
+
+
+
+<p>为什么这么说呢？因为自从PC兼容机厂商通过净室的方式复制出第一套BIOS源程序，BIOS就以16位汇编代码，寄存器参数调用方式，
+静态链接，以及1MB以下内存固定编址的形式存在了十几年。虽然由于各大BIOS厂商近年来的努力，有许多新元素添加到产品中，
+如PnP BIOS，ACPI，传统USB设备支持等等，但BIOS的根本性质没有得到任何改变。这迫使英特尔在开发新的处理器时，都必须考虑加进
+使性能大大降低的兼容模式。有人曾打了一个比喻：这就像保时捷新一代的全自排跑车，被人套上去一个蹩脚打档器。正是在这种背景下，
+Intel发展了EFI技术。</p>
+
+
+
+
+<h2>EFI与操作系统又有什么关系呢？</h2>
+
+
+<p>上文提到EFI是BIOS的升级版，那么EFI与OS的关系是不是也和BIOS与OS的关系一样呢？</br>
+要回答这个问题，我们首先得将EFI与BIOS进行一个详细的比较：</br>
+（1）EFI运行于32位或64位模式，突破传统的BIOS的16位实模式，达到处理器的最大寻址；</br>
+（2）EFI利用加载驱动的形式，识别及操作硬件，不同于BIOS利用挂载真实模式中断的方式增加硬件功能；</br>
+（3）EFI大部分（99%）是用模块化的C语言编写的，较BIOS而言更易于实现，容错和纠错特性更强，更易于扩展；</br>
+（4）EFI系统下的驱动并不是由可以直接运行在CPU上的代码组成的，而是用EFI Byte Code编写而成的（有点像Java
+的Byte Code），这是一组专用于EFI驱动的虚拟机器语言，必须在EFI驱动运行环境（Driver Execution Environment，或DXE）
+下被解释运行，这就保证了充分的向下兼容性；</br>
+（5）UEFI内置图形驱动功能，可以提供一个高分辨率的彩色图形环境，用户进入后能用鼠标点击调整配置，一切就像操作Windows
+系统下的应用软件一样简单。BIOS将不再是高手才能玩转的工具，光这一点就足以让很多菜鸟朋友心仪不已了。</br>
+（6）强大的可扩展性是UEFI的另一大优点。我们都知道，当电脑出现故障导致无法进入操作系统时，我们往往要借助其他工具才能
+解决问题，BIOS在诊断系统故障方面的作用实是在太小了。不过，UEFI将不会重蹈BIOS功能单一的覆辙！UEFI使用模块化设计，它在
+逻辑上分为硬件控制与OS（操作系统）软件管理两部分，硬件控制为所有UEFI版本所共有，而OS软件管理其实是一个可编程的开放接口。
+借助这个接口，主板厂商可以实现各种丰富的功能。比如我们熟悉的各种备份及诊断功能可通过UEFI加以实现，主板或固件厂商可以
+将它们作为自身产品的一大卖点。如果你更习惯让别人来维护机器，UEFI也可提供强大的联网功能，其他用户可以对你的主机进行
+可靠的远程故障诊断，而这一切并不需要进入操作系统！
+</p>
+
+
+
+
+<p>由以上比较可知，EFI在开机时的作用和BIOS一样，就是初始化PC，但在细节上却有很多不一样。BIOS对PC的初始化，只是按照
+一定的顺序对硬件通电，简单地检查硬件是否能工作，而EFI不但检查硬件的完好性，还会加载硬件在EFI中的驱动程序，不用操作
+系统负责驱动的加载工作。 对于很多非专业人士而言，EFI的最革命之处，就在于颠 覆了BIOS的界面概念，让操作界面和Windows
+一样易于上手。在EFI的操作界面中，鼠标成为了替代键盘的输入工具，各功能调节的模块也做的和Windows程序一样，可以说，EFI
+就是一个小型化的Windows系统。</p>
+
+
+
+
+<p>说EFI是一个小型化的Windows系统，毫不夸张。EFI在概念上非常类似于一个低阶的操作系统，并且具有操控所有硬件资源的能力。
+不少人感觉它的不断发展将有可能代替现代的操作系统。事实上，EFI的缔造者们在第一版规范出台时就将EFI的能力限制于不足以
+威胁操作系统的统治地位。首先，它只是硬件和预启动软件间的接口规范；其次，EFI环境下不提供中断的机制，也就是说每个EFI
+驱动程序必须用轮询(polling)的方式来检查硬件状态，并且需要以解释的方式运行，较操作系统下的机械码驱动效率更低；再则，
+EFI系统不提供复杂的缓存器保护功能，它只具备简单的缓存器管理机制，具体来说就是指运行在x86处理器的段保护模式下，以最大
+寻址能力为限把缓存器分为一个平坦的段(Segment)，所有的程序都有权限访问任何一段位置，并不提供真实的保护服务。当EFI所有
+组件加载完毕时，系统可以开启一个类似于操作系统Shell的命令解释环境，在这里，用户可以调入执行任何EFI应用程序，这些程序
+可以是硬件检测及除错软件，引导管理，设置软件，操作系统引导软件等等。理论上来说，对于EFI应用程序的功能并没有任何限制，
+任何人都可以编写这类软件，并且效果较以前MS-DOS下的软件更华丽，功能更强大。</p>
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2012/09/23/EFI-and-operating-system/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2012-09-23T23:03:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/technics/'>Technics</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/bios/'>BIOS</a>, <a class='tag' href='/blog/tags/efi/'>EFI</a>, <a class='tag' href='/blog/tags/cao-zuo-xi-tong/'>操作系统</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2012/08/14/the-log-sum-inequanlity/" title="Previous Post:
+        The Log Sum Inequality">&laquo; The Log Sum Inequality</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2012/09/26/convex-optimization-overview/"
+        title="Next Post: 凸优化简介">凸优化简介
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2012/09/23/EFI-and-operating-system/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2012/09/23/EFI-and-operating-system/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

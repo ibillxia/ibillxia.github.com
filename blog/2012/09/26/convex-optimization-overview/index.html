@@ -1,0 +1,517 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>凸优化简介 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2012/09/26/convex-optimization-overview">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">凸优化简介</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-09-26T23:03:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>在machine learning 的很多问题中，我们最终往往要求解某个函数的最优值。用数学术语表示就是，
+给定一个函数 $f: R^{n} \rightarrow R$，求 $ x \in R^{n} $使得$f(x)$ 取得最小（大）值。例如least-square,
+logistic regression, linear regression, svm, etc. 这类问题统称为优化问题。</p>
+
+<h2>1.引言</h2>
+
+
+<p>在一般情况下，求解任意一个函数的全局最优值是很困难的。但是对于一种特定类型的函数——凸函数（convex function），
+我们可以很有效的求解其全局最优值。这里的“有效”是指在实际问题求解中，能在多项式复杂度的时间里求解。
+人们将这类函数的最值问题称为凸优化问题（Convex Optimal Problem）。下面我从凸集和凸函数讲起，然后
+介绍凸优化的一般描述和典型问题举例。</p>
+
+
+
+
+<h2>2.凸集及其实例</h2>
+
+
+<p><strong>凸集的定义</strong>：一个集合$C$是凸集，当且仅当对任意$x,y\in C$和$\theta \in R$且$0\leq \theta \leq 1$，都有</br>
+<center>$\theta x + (1-\theta)y \in C$.</center>
+其几何意义在于，在集合C中任取两个点，连接两点的直线段上的任一点也在集合C中。下图是凸集和非凸集的例子：</br>
+<img src="/images/201209026/IMAG20120902601.jpg">
+</p>
+
+
+
+
+<!-- more -->
+
+
+<p><strong>凸集的实例</strong>：
+以下列举几个简单的凸集实例</br>
+（1）所有Rn。很显然，对任意给定的$x,y\in R^{n}$ 都有 $\theta x + (1-\theta)y \in R^{n}$。
+（2）非负卦限，R^{n}_{+}。很显然也符合定义。</br>
+（3）单位球。设$\parallel . \parallel$为$R^{n}$上的模（例如欧几里得空间的模为$\parallel x\parallel = sqrt(sum(x_{i}^{2}))$.）,
+那么集合${x|\parallel x\parallel \leq 1}$是一个凸集。
+</p>
+
+
+
+
+<h2>3.凸函数及判定和Jensen不等式</h2>
+
+
+<p>凸优化中的一个核心概念就是凸函数。</br>
+<strong>凸函数定义</strong>：一个函数$f: R^{n} → R$是凸函数当且仅当其定义域（设为$D(f)$）是凸集，
+且对任意的$x,y\in D(f)$和$\theta \in R$且$0\leq \theta \leq 1$，都有</br>
+<center>$f(\theta x + (1-\theta)y \leq \theta f(x) + (1-\theta) f(y))$.</center>
+设$f(x)$为一元函数，那么上式的几何意义在于，曲线上任意两点处的割线在函数曲线的上方，如下图所示：</br>
+<img src="/images/2012/IMAG20120902602.jpg">
+</p>
+
+
+
+
+<p>常见的凸函数有指数函数（$f(x) = a^{x}，a>1$）、负对数函数（$f(x)=-log_{a}x，a>1，x>0$）、开口向上的二次函数等。</p>
+
+
+
+
+<p><strong>凸函数第一判定定理</strong>：设函数$f: R^{n} → R$是一阶可导的，那么$f$是凸函数当且仅当对任意的$x,y \in D(f)$都有：
+<center>$f(y) \geq f(x) + f'(x)(y-x)$</center>
+其中$f(x) + f'(x)(y-x)$称为$f(x)$在$x$处的一阶近似。</p>
+
+
+
+
+<p><strong>凸函数第二判定定理</strong>：设函数$f: R^{n} → R$是二阶可导的，那么$f$是凸函数当且仅当对任意的$x\in D(f)$都有：</p>
+
+
+<center>$f''(x)  \succeq 0$.</center>
+
+
+<p>其中，当$f''(x)$是矩阵时，符号‘$ \succeq $’表示半正定，而非一个个的不等式（在一维的情况下，相当于'$\geq$'；
+在二维情况下，不是表示对所有的$i$和$j$都有$X_{ij} \geq 0$，而是表示$X$为半正定矩阵）。
+</p></p>
+
+<p><strong>Jensen不等式</strong>：我们先看凸函数的定义中的不等式:</br>
+<center>$f(\theta x+(1-\theta y)) \leq \theta f(x) + (1-\theta)f(y), for 0\leq \theta \leq 1$.</center>
+类似的可以将其推广到多个点的情况：</br>
+<center>$f(\sum_{i=1}^{k}\theta_{i}x_{i}) \leq \sum_{i=1}{k}\theta_{i}f(x_{i}), for \sum_{i=1}^{k}\theta_{i} = 1, \theta_{i} \geq 0 \forall i$.</center>
+因为上式中的和为1，可以将其看作为是概率密度，则上式又可写为：</br>
+<center>$f(E[x]) \leq E[f(x)]$.</center>
+这个不等式称为Jensen不等式。
+</p>
+
+
+
+
+<h2>4.凸优化问题举例</h2>
+
+
+<p>有了凸集和凸函数的定义，现在我们重点讨论凸优化问题的求解方法。凸优化的一般描述为：</br>
+<center>$minimize f(x)$,</center>
+<center>$subject to x \in C$.</center>
+其中$f(x)$为凸函数，$C$是一个凸集，这是不带约束条件的情况下的凸优化问题。对于带约束条件的问题而言，其一般描述为：</br>
+<center>$minimize f(x)$,</center>
+<center>$subject to g_{i}(x) \leq 0, i=1,2,...,m; h_{j}(x) = 0, j=1,2,...,p$.</center>
+其中$f(x)$为凸函数，$g_{i}(x)$对所有的$i$均为凸函数，$h_{j}(x)$均为仿射函数。注意$g_{i}(x)$不等式中不等号的方向。
+</p>
+
+
+
+
+<p>凸问题中的全局优化：首先要分清楚什么是局部最优，什么是全局最优。局部最优是指在该最优值附近的点对应的函数值
+都比该最优值大，而全局最优是指对可行域里所有点，其函数值都比该最优值大。对于凸优化问题，它具有一个很重要的特性，
+那就是所有的局部最优值都是全局最优的（关于其证明这里就不讲了，感兴趣的可以自行查查资料或后文中的参考文献）。</p>
+
+
+
+
+<h4>几类特殊的凸优化问题：</h4>
+
+
+<p>（1）线性规划（Linear Programing, LP）: 目标函数和约束条件函数都是线性函数的情况，一般形式如下：</br>
+<center>$minimize c^{T}x +d$,</center>
+<center>$subject to Gx \preceq h; Ax = b$.</center>
+</p>
+
+
+
+
+<p>（2）二次规划（Quadratic Programing, QP）: 目标函数为二次函数，约束条件为线性函数，一般形式为：</br>
+<center>$minimize 1/2 x^{T}Px + c^{T}x +d$,</center>
+<center>$subject to Gx \preceq h; Ax = b$.</center>
+LP可以看做是QP的特例，QP包含LP。
+</p>
+
+
+
+
+<p>（3）二次约束的二次规划（Quadratically Constrained Quadratic Programming, QCQP）: 目标函数和约束条件均为
+二次函数的情况，一般形式为：</br>
+<center>$minimize 1/2 x^{T}Px + c^{T}x +d$,</center>
+<center>$subject to 1/2 x^{T}Qx + r^{T}x + s \preceq h, i=1,2,...,m; Ax = b$.</center>
+QP可以看做是QCQP的特例，QCQP包含QP。
+</p>
+
+
+
+
+<p>半正定规划（Semideﬁnite Programming，SDP）: 其一般形式为：</br>
+<center>$minimize tr(CX)$,</center>
+<center>$subject to tr(A_{i}X) = b_{i},i=1,2,...,p; 0 \preceq X$.</center>
+其中对称矩阵$X\inS^{n}$为决策变量，矩阵$C$，$A_{i}$均为对称矩阵，条件$0 \preceq X$的作用为约束$X$为半正定的。
+QCQP可以看做是SDP的特例，SDP包含QCQP。SDP在machine learning中有非常广泛的应用。
+</p>
+
+
+
+
+<h2>5.凸优化应用举例</h2>
+
+
+<p>下面我们来看几个实例。</br>
+（1）支持向量机（Support Vector Machines，SVM）：凸优化在machine learning中的一个典型的应用就是基于支持向量机分类器，
+它可以用如下优化问题表示：</br>
+<center>$minimize 1/2 \parallel x \parallel ^{2} + C \xi _{i}$,</center>
+<center>$subject to y^{(i)}(w^{T}x^{(i)}+b) \geq 1 - \xi _{i}, \xi_{i} \geq 0, i = 1,2,...,m$.</center>
+其中决策变量$w\in R^{n}, \xi \in R^{n}, b \in R$. $C\in R, x(i), y(i), i=1,2, ... , m$由
+具体问题定义。可以看出，这是一个典型的QP问题。
+</p>
+
+
+
+
+<p>（2）带约束的least squares问题：其一般描述为</br>
+<center>$minimize 1/2\parallel Ax-b \parallel ^{2} $,</center>
+<center>$subject to l \preceq x \preceq u$.</center>
+这也是一个很典型的QP问题。
+</p>
+
+
+
+
+<p>（3）Maximum Likelihood for Logistic Regression：该问题的目标函数为:</br>
+<center>$l (\theta) = \sum_{i=1}^{n}[y^{(i)}ln g(\theta^{T}x^{(i)}) + (1-y^{(i)})ln(1-g(\theta^{T}x^{(i)}))]$</center>
+其中$g(z)$为Sigmoid函数，关于Logistic Regression请参见Andrew Ng的Machine Learning的第6讲。
+</p>
+
+
+
+
+<h2>6.凸优化问题求解简介</h2>
+
+
+<p>上文中提到了几类特殊的凸优化问题，并举了几个应用实例，但并没有给出解法。对于凸优化问题，目前没有一个通用的解析式的
+解决方案，但是我们仍然可以用非解析的方法来有效的求解很多问题。内点法（后续文章中会详细介绍）被证明是很好的解决方案，
+特别具有实用性，在某些问题中，能够在多项式时间复杂度下，将解精确到指定精度。</p>
+
+
+
+
+<p>我们将会看到，经过10到100次的迭代，内点法可以解决一般的凸优化问题，其中每次迭代的时间复杂度为</br>
+<center>$max{n^{3},n^{2}m,F}$.</center>
+其中$F$为计算目标函数和约束条件函数的一阶、二阶导数的总时间代价。如同用解析法求解线性规划问题，内点法也是非常可靠的，
+在一般的PC机上，它可以在几十秒的时间内求解含有上百个变量、上千个约束条件的凸优化问题。对于一些特殊的结构（如稀疏的），
+内点法可以求解包含上千个变量和约束条件的凸优化问题。
+</p>
+
+
+
+
+<p>对于一般的凸优化问题的求解，还没有像求解最小二乘和线性规划那么成熟的技术，基于内点法的一般凸优化问题求解依然是
+当前的一个研究热点。虽然目前还没有公认的最好的解决方案，但我们有理由相信，在不久的将来，内点法求解一般的凸优化问题
+是一项技术。事实上，对于一些特定的凸优化问题，如二次锥规划和几何规划问题（后续文章将会介绍），内点法在向一项技术迈进。</p>
+
+
+
+
+<h2>参考文献</h2>
+
+
+<p>
+[1]Book: Stephen Boyd and Lieven Vandenberghe. Convex Optimization. Cambridge University Press, 2004</br>
+[2]Slide: Zico Kolter (updated by Honglak Lee). Convex Optimization Overview. October 17, 2008</br>
+[3]Standford Convex Optimization Course I：http://www.stanford.edu/class/ee364a/lectures.html
+</p>
+
+
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2012/09/26/convex-optimization-overview/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2012-09-26T23:03:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/math/'>Math</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/tu-you-hua/'>凸优化</a>, <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2012/09/23/EFI-and-operating-system/" title="Previous Post:
+        EFI和操作系统">&laquo; EFI和操作系统</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2012/10/22/BCI-based-animal-robot-summarize/"
+        title="Next Post: 基于BCI的动物机器人研究分析与展望">基于BCI的动物机器人研究分析与展望
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2012/09/26/convex-optimization-overview/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2012/09/26/convex-optimization-overview/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

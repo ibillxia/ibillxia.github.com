@@ -1,0 +1,539 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>深入理解STL源码(1) 空间配置器(allocator) - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">深入理解STL源码(1) 空间配置器(allocator)</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-06-13T22:04:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>在STL中，Memory Allocator 处于最底层的位置，为一切的 Container 提供存储服务，是一切其他组件的基石。对于一般使用 STL 的用户而言，Allocator 是不可见的，如果需要对 STL 进行扩展，如编写自定义的容器，就需要调用 Allocator 的内存分配函数进行空间配置。本文涉及到的 SGI STL 源代码文件有 <code>alloc.h</code>, <code>stl_config.h</code>, <code>stl_alloc.h</code>, <code>stl_threads.h</code> 这4个。</p>
+
+<p>在C++中，一个对象的内存配置和释放一般都包含两个步骤，对于内存的配置，首先是调用operator new来配置内存，然后调用对象的类的构造函数进行初始化；而对于内存释放，首先是调用析构函数，然后调用 operator delete进行释放。 如以下代码：
+<code>cpp
+class Foo { ... };
+Foo* pf = new Foo;
+...
+delete pf;
+</code>
+Allocator 的作用相当于operator new 和operator delete的功能，只是它考虑得更加细致周全。SGI STL 中考虑到了内存分配失败的异常处理，内置轻量级内存池（主要用于处理小块内存的分配，应对内存碎片问题）实现， 多线程中的内存分配处理（主要是针对内存池的互斥访问）等，本文就主要分析 SGI STL 中在这三个方面是如何处理的。在介绍着三个方面之前，我们先来看看 Allocator的标准接口。</p>
+
+<!-- more -->
+
+
+<h2>1. Allocator 的标准接口</h2>
+
+<p>在 SGI STL 中，Allocator的实现主要在文件<code>alloc.h</code> 和 <code>stl_alloc.h</code> 文件中。根据 STL 规范，Allocator 需提供如下的一些接口（见 <code>stl_alloc.h</code> 文件的第588行开始的class template allocator）：<br/>
+<code>cpp
+// 标识数据类型的成员变量，关于中间的6个变量的涵义见后续文章（关于Traits编程技巧）
+typedef alloc _Alloc;
+typedef size_t     size_type;
+typedef ptrdiff_t  difference_type;
+typedef _Tp*       pointer;
+typedef const _Tp* const_pointer;
+typedef _Tp&amp;       reference;
+typedef const _Tp&amp; const_reference;
+typedef _Tp        value_type;
+template &lt;class _Tp1&gt; struct rebind {
+    typedef allocator&lt;_Tp1&gt; other;
+}; // 一个嵌套的class template，仅包含一个成员变量 other
+// 成员函数
+allocator() __STL_NOTHROW {}  // 默认构造函数，其中__STL_NOTHROW 在 stl_config.h中定义，要么为空，要么为 throw()
+allocator(const allocator&amp;) __STL_NOTHROW {}  // 拷贝构造函数
+template &lt;class _Tp1&gt; allocator(const allocator&lt;_Tp1&gt;&amp;) __STL_NOTHROW {} // 泛化的拷贝构造函数
+~allocator() __STL_NOTHROW {} // 析构函数
+pointer address(reference __x) const { return &amp;__x; } // 返回对象的地址
+const_pointer address(const_reference __x) const { return &amp;__x; }  // 返回const对象的地址
+_Tp* allocate(size_type __n, const void* = 0) {
+    return __n != 0 ? static_cast&lt;_Tp*&gt;(_Alloc::allocate(__n * sizeof(_Tp))) : 0;
+    // 配置空间，如果申请的空间块数不为0，那么调用 _Alloc 也即 alloc 的 allocate 函数来分配内存，
+} //这里的 alloc 在 SGI STL 中默认使用的是__default_alloc_template&lt;__NODE_ALLOCATOR_THREADS, 0&gt;这个实现（见第402行）
+void deallocate(pointer __p, size_type __n) { _Alloc::deallocate(__p, __n * sizeof(_Tp)); } // 释放空间
+size_type max_size() const __STL_NOTHROW  // max_size() 函数，返回可成功配置的最大值
+    { return size_t(-1) / sizeof(_Tp); }  //这里没看懂，这里的size_t(-1)是什么意思？
+void construct(pointer __p, const _Tp&amp; __val) { new(__p) _Tp(__val); } // 调用 new 来给新变量分配空间并赋值
+void destroy(pointer __p) { __p-&gt;~_Tp(); } // 调用 _Tp 的析构函数来释放空间
+</code>
+在SGI STL中设计了如下几个空间分配的 class template：<br/>
+<code>cpp
+template &lt;int __inst&gt; class __malloc_alloc_template // Malloc-based allocator.  Typically slower than default alloc
+typedef __malloc_alloc_template&lt;0&gt; malloc_alloc
+template&lt;class _Tp, class _Alloc&gt; class simple_alloc
+template &lt;class _Alloc&gt; class debug_alloc
+template &lt;bool threads, int inst&gt; class __default_alloc_template // Default node allocator.
+typedef __default_alloc_template&lt;__NODE_ALLOCATOR_THREADS, 0&gt; alloc
+typedef __default_alloc_template&lt;false, 0&gt; single_client_alloc
+template &lt;class _Tp&gt;class allocator
+template&lt;&gt;class allocator&lt;void&gt;
+template &lt;class _Tp, class _Alloc&gt;struct __allocator
+template &lt;class _Alloc&gt;class __allocator&lt;void, _Alloc&gt;
+</code>
+其中<code>simple_alloc</code> , <code>debug_alloc</code> , <code>allocator</code> 和 <code>__allocator</code>  的实现都比较简单，都是对其他适配器的一个简单封装（因为实际上还是调用其他配置器的方法，如 <code>_Alloc::allocate</code> ）。而真正内容比较充实的是 <code>__malloc_alloc_template</code> 和 <code>__default_alloc_template</code> 这两个配置器，这两个配置器就是 SGI STL 配置器的精华所在。其中 <code>__malloc_alloc_template</code> 是SGI STL 的第一层配置器，只是对系统的 <code>malloc</code> , <code>realloc</code> 函数的一个简单封装，并考虑到了分配失败后的异常处理。而 <code>__default_alloc_template</code> 是SGI STL 的第二层配置器，在第一层配置器的基础上还考虑了内存碎片的问题，通过内置一个轻量级的内存池。下文将先介绍第一级配置器的异常处理机制，然后介绍第二级配置器的内存池实现，及在多线程环境下内存池互斥访问的机制。</p>
+
+<h2>2. SGI STL 内存分配失败的异常处理</h2>
+
+<p>内存分配失败一般是由于out-of-memory(oom)，SGI STL 本身并不会去处理oom问题，而只是提供一个 private 的函数指针成员和一个 public 的设置该函数指针的方法，让用户来自定义异常处理逻辑：
+``` cpp
+private:</p>
+
+<h1>ifndef __STL_STATIC_TEMPLATE_MEMBER_BUG</h1>
+
+<p>  static void (* __malloc_alloc_oom_handler)();  // 函数指针</p>
+
+<h1>endif</h1>
+
+<p>public:
+  static void (<em> __set_malloc_handler(void (</em><strong>f)()))() // 设置函数指针的public方法
+  {
+    void (* </strong>old)() = <strong>malloc_alloc_oom_handler;
+    </strong>malloc_alloc_oom_handler = <strong>f;
+    return(</strong>old);
+  }
+<code>
+如果用户没有调用该方法来设置异常处理函数，那么就不做任何异常处理，仅仅是想标准错误流输出一句out of memory并退出程序（对于使用new和C++特性的情况而言，则是抛出一个`std::bad_alloc()`异常）， 因为该函数指针的缺省值为0，此时对应的异常处理是 `__THROW_BAD_ALLOC`：
+</code> cpp
+// line 152 ~ 155</p>
+
+<h1>ifndef __STL_STATIC_TEMPLATE_MEMBER_BUG</h1>
+
+<p>template <int __inst>
+void (* <strong>malloc_alloc_template&lt;</strong>inst>::__malloc_alloc_oom_handler)() = 0;</p>
+
+<h1>endif</h1>
+
+<p>// in <em>S_oom_malloc and </em>S_oom_realloc
+<strong>my_malloc_handler = </strong>malloc_alloc_oom_handler;
+if (0 == <strong>my_malloc_handler) { </strong>THROW_BAD_ALLOC; }
+// in preprocess, line 41 ~ 50</p>
+
+<h1>ifndef __THROW_BAD_ALLOC</h1>
+
+<h1>if defined(<strong>STL_NO_BAD_ALLOC) || !defined(</strong>STL_USE_EXCEPTIONS)</h1>
+
+<h1>include <stdio.h></h1>
+
+<h1>include <stdlib.h></h1>
+
+<h1>define __THROW_BAD_ALLOC fprintf(stderr, "out of memory\n"); exit(1)</h1>
+
+<h1>else /<em> Standard conforming out-of-memory handling </em>/</h1>
+
+<h1>include <new></h1>
+
+<h1>define __THROW_BAD_ALLOC throw std::bad_alloc()</h1>
+
+<h1>endif</h1>
+
+<h1>endif</h1>
+
+<pre><code>SGI STL 内存配置失败的异常处理机制就是这样子了，提供一个默认的处理方法，也留有一个用户自定义处理异常的接口。
+
+## 3. SGI STL 内置轻量级内存池的实现
+第一级配置器 `__malloc_alloc_template` 仅仅只是对 `malloc` 的一层封装，没有考虑可能出现的内存碎片化问题。内存碎片化问题在大量申请小块内存是可能非常严重，最终导致碎片化的空闲内存无法充分利用。SGI 于是在第二级配置器 `__default_alloc_template` 中 内置了一个轻量级的内存池。 对于小内存块的申请，从内置的内存池中分配。然后维护一些空闲内存块的链表（简记为空闲链表，free list），小块内存使用完后都回收到空闲链表中，这样如果新来一个小内存块申请，如果对应的空闲链表不为空，就可以从空闲链表中分配空间给用户。具体而言SGI默认最大的小块内存大小为128bytes，并设置了128/8=16 个free list，每个list 分别维护大小为 8, 16, 24, ..., 128bytes 的空间内存块（均为8的整数倍），如果用户申请的空间大小不足8的倍数，则向上取整。
+
+SGI STL内置内存池的实现请看 `__default_alloc_template` 中被定义为 private 的这些成员变量和方法（去掉了部分预处理代码和互斥处理的代码）：
+</code></pre>
+
+<p>private:</p>
+
+<h1>if ! (defined(<strong>SUNPRO_CC) || defined(</strong>GNUC__))</h1>
+
+<pre><code>enum {_ALIGN = 8}; // 对齐大小
+enum {_MAX_BYTES = 128}; // 最大有内置内存池来分配的内存大小
+enum {_NFREELISTS = 16}; // _MAX_BYTES/_ALIGN  // 空闲链表个数
+</code></pre>
+
+<h1>endif</h1>
+
+<p>  static size_t  <em>S_round_up(size_t <strong>bytes) // 不是8的倍数，向上取整
+    { return (((</strong>bytes) + (size_t) </em>ALIGN-1) &amp; ~((size_t) <em>ALIGN - 1)); }
+__PRIVATE:
+  union </em>Obj { // 空闲链表的每个node的定义
+        union <em>Obj* </em>M_free_list_link;
+        char <em>M_client_data[1];   };
+  static </em>Obj<em> <strong>STL_VOLATILE <em>S_free_list[]; // 空闲链表数组
+  static size_t </em>S_freelist_index(size_t </strong>bytes) { // <strong>bytes 对应的free list的index
+        return (((</strong>bytes) + (size_t)<em>ALIGN-1)/(size_t)</em>ALIGN - 1);
+  }
+  static void</em> <em>S_refill(size_t __n); // 从内存池中申请空间并构建free list，然后从free list中分配空间给用户
+  static char* </em>S_chunk_alloc(size_t <strong>size, int&amp; </strong>nobjs); // 从内存池中分配空间
+  static char<em> _S_start_free;  // 内存池空闲部分的起始地址
+  static char</em> <em>S_end_free; // 内存池结束地址
+  static size_t </em>S_heap_size; // 内存池堆大小，主要用于配置内存池的大小
+<code>``
+其中</code><em>S_refill<code>和</code></em>S_chunk_alloc<code>这两个函数是该内存池机制的核心。</code><em>_default_alloc_template<code>对外提供的 public 的接口有</code>allocate<code>,</code>deallocate<code>和</code>reallocate<code>这三个，其中涉及内存分配的</code>allocate<code>和</code>reallocate<code>的逻辑思路是，首先看申请的size（已round up）对应的free list是否为空，如果为空，则调用</code></em>S_refill<code>来分配，否则直接从对应的free list中分配。而</code>deallocate` 的逻辑是直接将空间插入到相应free list的最前面。</p>
+
+<p>函数 <code>_S_refill</code> 的逻辑是，先调用 <code>_S_chunk_alloc</code> 从内存池中分配20块小内存（而不是用户申请的1块），将这20块中的第一块返回给用户，而将剩下的19块依次链接，构建一个free list。这样下次再申请同样大小的内存就不用再从内存池中取了。有了 <code>_S_refill</code> ，用户申请空间时，就不是直接从内存池中取了，而是从 free list 中取。因此 <code>allocate</code> 和 <code>reallocate</code> 在相应的free list为空时都只需直接调用 <code>_S_refill</code> 就行了。</p>
+
+<p>这里默认是依次申请20块，但如果内存池空间不足以分配20块时，会尽量分配足够多的块，这些处理都在 <code>_S_chunk_alloc</code> 函数中。该函数的处理逻辑如下（源代码这里就不贴了）：</p>
+
+<blockquote><p>1) 能够分配20块</p>
+
+<blockquote><p>从内存池分配20块出来，改变 <code>_S_start_free</code> 的值，返回分配出来的内存的起始地址</p></blockquote>
+
+<p>2) 不足以分配20块，但至少能分配一块</p>
+
+<blockquote><p>分配经量多的块数，改变 <code>_S_start_free</code> 的值，返回分配出来的内存的起始地址</p></blockquote>
+
+<p>3) 一块也分配不了</p>
+
+<blockquote><p>首先计算新内存池大小 <code>size_t __bytes_to_get = 2 * __total_bytes + _S_round_up(_S_heap_size &gt;&gt; 4)</code><br/>
+将现在内存池中剩余空间插入到适当的free list中<br/>
+调用 <code>malloc</code> 来获取一大片空间作为新的内存池：<br/>
+-- 如果分配成功，则调整 <code>_S_end_free</code> 和 <code>_S_heap_size</code> 的值，并重新调用自身，从新的内存池中给用户分配空间；
+-- 否则，分配失败，考虑从比当前申请的空间大的free list中分配空间，如果无法找不到这样的非空free list，则调用第一级配置器的allocate，看oom机制能否解决问题</p></blockquote></blockquote>
+
+<p>SGI STL的轻量级内存池的实现就是酱紫了，其实并不复杂。</p>
+
+<h2>4. SGI STL 内存池在多线程下的互斥访问</h2>
+
+<p>最后，我们来看看SGI STL中如何处理多线程下对内存池互斥访问的（实际上是对相应的free list进行互斥访问，这里访问是只需要对free list进行修改的访问操作）。在SGI的第二级配置器中与内存池互斥访问相关的就是 <code>_Lock</code> 这个类了，它仅仅只包含一个构造函数和一个析构函数，但这两个函数足够了。在构造函数中对内存池加锁，在析构函数中对内存池解锁：
+``` cpp
+//// in __default_alloc_template</p>
+
+<h1>ifdef __STL_THREADS</h1>
+
+<pre><code>static _STL_mutex_lock _S_node_allocator_lock; // 互斥锁变量
+</code></pre>
+
+<h1>endif</h1>
+
+<p>class <em>Lock {
+    public:
+        </em>Lock() { <strong>NODE_ALLOCATOR_LOCK; }
+        ~_Lock() { </strong>NODE_ALLOCATOR_UNLOCK; }
+};
+//// in preprocess</p>
+
+<h1>ifdef __STL_THREADS</h1>
+
+<h1>include <stl_threads.h> // stl 的线程，只是对linux或windows线程的一个封装</h1>
+
+<h1>define __NODE_ALLOCATOR_THREADS true</h1>
+
+<h1>ifdef __STL_SGI_THREADS</h1>
+
+<h1>define <strong>NODE_ALLOCATOR_LOCK if (threads &amp;&amp; </strong>us_rsthread_malloc) \</h1>
+
+<pre><code>            { _S_node_allocator_lock._M_acquire_lock(); }  // 获取锁
+</code></pre>
+
+<h1>define <strong>NODE_ALLOCATOR_UNLOCK if (threads &amp;&amp; </strong>us_rsthread_malloc) \</h1>
+
+<pre><code>            { _S_node_allocator_lock._M_release_lock(); }  // 释放锁
+</code></pre>
+
+<h1>else /<em> !__STL_SGI_THREADS </em>/</h1>
+
+<h1>define __NODE_ALLOCATOR_LOCK \</h1>
+
+<pre><code>    { if (threads) _S_node_allocator_lock._M_acquire_lock(); }
+</code></pre>
+
+<h1>define __NODE_ALLOCATOR_UNLOCK \</h1>
+
+<pre><code>    { if (threads) _S_node_allocator_lock._M_release_lock(); }
+</code></pre>
+
+<h1>endif</h1>
+
+<h1>else /<em> !__STL_THREADS </em>/</h1>
+
+<h1>define __NODE_ALLOCATOR_LOCK</h1>
+
+<h1>define __NODE_ALLOCATOR_UNLOCK</h1>
+
+<h1>define __NODE_ALLOCATOR_THREADS false</h1>
+
+<h1>endif</h1>
+
+<p>```</p>
+
+<p>由于在 <code>__default_alloc_template</code> 的对外接口中，只有 <code>allocate</code> 和 <code>deallocate</code> 中直接涉及到对free list进行修改的操作，所以在这两个函数中，在对free list进行修改之前，都要实例化一个 <code>_Lock</code> 的对象 <code>__lock_instance</code> ，此时调用构造函数进行加锁，当函数结束时，的对象 <code>__lock_instance</code> 自动析构，释放锁。这样，在多线程下，可以保证free list的一致性。</p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2014-06-13T22:04:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/c-plus-plus/'>C++</a>, <a class='tag' href='/blog/tags/stl/'>STL</a>, <a class='tag' href='/blog/tags/nei-cun-guan-li/'>内存管理</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2014/06/08/stl-source-insight-0-stl-overview/" title="Previous Post:
+        深入理解STL源码(0) STL简介">&laquo; 深入理解STL源码(0) STL简介</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/"
+        title="Next Post: 深入理解STL源码(2) 迭代器(Iterators)和Traits">深入理解STL源码(2) 迭代器(Iterators)和Traits
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

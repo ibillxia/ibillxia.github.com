@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: Conference | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/conference/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[AI 顶级会议列表]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/01/02/ai-top-conferences/"/>
+    <updated>2013-01-02T19:17:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/01/02/ai-top-conferences</id>
+    <content type="html"><![CDATA[<p>注: 本文为小百合BBS的daniel所写，稍有删改。</p>
+
+
+<p>tier-1的列得较全, tier-2的不太全, tier-3的很不全.同分的按字母序排列. 不很严谨地说, tier-1是可以令人羡慕的, tier-2是可以令人
+尊敬的,由于AI的相关会议非常多, 所以能列进tier-3的也是不错的。</p>
+
+
+
+
+<h3>The First Class</h3>
+
+
+<p>今天先谈谈AI里面tier-1的conferences, 其实基本上就是AI里面大家比较公认的top conference. 下面同分的按字母序排列.</p>
+
+
+
+
+<p>IJCAI (1+): AI最好的综合性会议, 1969年开始, 每两年开一次, 奇数年开. 因为AI实在太大, 所以虽然每届基本上能录100多篇（现在已经
+到200多篇了），但分到每个领域就没几篇 了，象machine learning、computer vision这么大的领域每次大概也就10篇左右, 所以难度很大. 
+不过从录用率上来看倒不太低,基本上20%左右, 因为内行人都会掂掂分量, 没希望的就别浪费reviewer的时间了. 最近中国大陆投往国际会议
+的文章象潮水一样, 而且因为国内很少有能自己把关的研究组, 所以很多会议都在complain说中国的低质量文章严重妨碍了PC的工作效
+率（囧o(╯□╰)o）. 在这种情况下, 估计这几年国际会议的录用率都会降下去. 另外, 以前的IJCAI是没有poster的, 03年开始, 为了减少
+被误杀的好人, 增加了2页纸的poster.值得一提的是, IJCAI是由貌似一个公司的"IJCAI Inc."主办的(当然实际上并不是公司, 实际上是
+个基金会), 每次会议上要发几个奖, 其中最重要的两个是IJCAI Research Excellence Award 和 Computer& Thoughts Award, 前者是终身
+成就奖, 每次一个人, 基本上是AI的最高奖(有趣的是, 以AI为主业拿图灵奖的6位中, 有2位还没得到这个奖), 后者是奖给35岁以下的青年
+科学家,每次一个人. 这两个奖的获奖演说是每次IJCAI的一个重头戏.另外, IJCAI 的 PC member相当于其他会议的area chair, 权力很大, 
+因为是由PC member去找 reviewer 来审, 而不象一般会议的PC member其实就是 reviewer. 为了制约这种权力, IJCAI的审稿程序是每篇
+文章分配2位PC member, primary PC member去找3位reviewer, second PC member 找一位. （PS：一个非常好的消息是IJCAI-2013要来
+中国Beijing了，非常感谢王飞跃老师等的辛勤的申办！但愿能够亲临现场！）。IJCAI-2013的Important dates：</br>
+ Abstract submission: January 26, 2013 (11:59PM, UTC-12).</br>
+ Paper submission: January 31, 2013 (11:59PM, UTC- 12).</br>
+ Author feedback: March 4-6, 2013 (11:59PM, UTC-12).</br>
+ Notification of acceptance/rejection: April 2, 2013.</br>
+ Camera-ready copy due: Apr 23, 2013.</br>
+ Technical sessions: August 3-9, 2013.</p>
+
+
+
+
+<!-- more -->
+
+
+<p>AAAI (1): 美国人工智能学会AAAI的年会. 是一个很好的会议, 但其档次不稳定, 可以给到1+, 也可以给到1-或者2+, 总的来说我给它"1". 
+这是因为它的开法完全受IJCAI制约: 每年开, 但如果这一年的IJCAI在北美举行, 那么就停开. 所以, 偶数年里因为没有IJCAI, 它就 是最好
+的AI综合性会议, 但因为号召力毕竟比IJCAI要小一些, 特别是欧洲人捧AAAI场的比IJCAI少得多(其实亚洲人也是), 所以比IJCAI还是要稍弱
+一点, 基本上在1和1+之间; 在奇数年, 如果IJCAI不在北美, AAAI自然就变成了比IJCAI低一级的会议(1-或2+), 例如2005年既有IJCAI又有AAAI, 
+两个会议就进行了协调, 使得IJCAI的录用通知时间比AAAI的deadline早那么几天, 这样IJCAI落选的文章可以投往AAAI.在审稿时IJCAI 的 
+PC chair也在一直催, 说大家一定要快, 因为AAAI那边一直在担心IJCAI的录用通知出晚了AAAI就麻烦了.（据吴飞老师说我浙CS历史上Accepted的
+才5篇左右，好难中啊！）</p>
+
+
+
+
+<p>COLT (1): 这是计算学习理论最好的会议, ACM主办, 每年举行. 计算学习理论基本上可以看成理论计算机科学和机器学习的交叉, 所以这个
+会被一些人看成是理论计算机科学的会而不是AI的会. 我一个朋友用一句话对它进行了精彩的刻画: "一小群数学家在开会". 因为 COLT的领域
+比较小, 所以每年会议基本上都是那些人. 这里顺便提一件有趣的事, 因为最近国内搞的会议太多太滥, 而且很多会议都是LNCS/LNAI出论文集, 
+LNCS/LNAI基本上已经被搞臭了, 但很不幸的是,LNCS/LNAI中有一些很好的会议, 例如COLT.</p>
+
+
+
+
+<p>CVPR (1): 计算机视觉和模式识别方面最好的会议之一, IEEE主办, 每年举行. 虽然题目上有计算机视觉, 但个人认为它的模式识别味道更重
+一些. 事实上它应该是模式识别最好的会 议, 而在计算机视觉方面, 还有ICCV与之相当. IEEE一直有个倾向, 要把会办成"盛会", 历史上已经有
+些会被它从quality很好的会办成"盛会"了. CVPR搞不好也要走这条路. 这几年录的文章已经不少了. 最近负责CVPR会议的TC的chair发信说, 对这
+个community来说, 让好人被误杀比被坏人漏网更糟糕, 所以我们是不是要减少好人被误杀的机会啊? 所以我估计明 年或者后年的CVPR就要扩招了.
+（YM我们实验室一位已经毕业的中过两篇CVPR的师兄！）</p>
+
+
+
+
+<p>ICCV (1): 介绍CVPR的时候说过了, 计算机视觉方面最好的会之一. IEEE主办, 每年举行.</p>
+
+
+
+
+<p>ICML (1): 机器学习方面最好的会议之一. 现在是IMLS主办, 每年举行. 参见关于NIPS的介绍.</p>
+
+
+
+
+<p>NIPS (1): 神经计算方面最好的会议之一, NIPS主办, 每年举行. 值得注意的是, 这个会每年的举办地都是一样的, 以前是美国丹佛, 现在是
+加拿大温哥华; 而且它是年底开会,会开完后第2年才出论文集, 也就是说, NIPS'05的论文集是06年出. 会议的名字是"Advances in Neural Information 
+Processing Systems", 所以, 与ICML\ECML这样的"标准的"机器学习会议不同, NIPS里有相当一部分神经科学的内容, 和机器学习有一定的距离. 
+但由于会议的主体内容是机器学习, 或者说与机器学习关系紧密, 所以不少人把NIPS看成是机器学习方面最好的会议之一. 这个会议基本上控制
+在Michael Jordan的徒子徒孙手中, 所以对Jordan系的人来说, 发NIPS并不是难事, 一些未必很强的工作也能发上去, 但对这个圈子之外的人来说, 
+想发一篇实在很难, 因为留给"外人"的口子很小. 所以对Jordan系以外的人来说, 发NIPS的难度比ICML更大. 换句话说,ICML比较开放, 小圈子的
+影响不象NIPS那么大, 所以北美和欧洲人都认, 而NIPS则有些人( 特别是一些欧洲人, 包括一些大家)坚决不投稿. 这对会议本身当然并不是好事, 
+但因为Jordan系很强大, 所以它似乎也不太care. 最近IMLS(国际机器学习学会)改选理事, 有资格提名的人包括近三年在ICML\ECML\COLT发过文章
+的人, NIPS则被排除在外了. 无论如何, 这是一个非常好的会.</p>
+
+
+
+
+<p>ACL (1-): 计算语言学/自然语言处理方面最好的会议, ACL (Association of  Computational Linguistics) 主办, 每年开.</p>
+
+
+
+
+<p>KR (1-): 知识表示和推理方面最好的会议之一, 实际上也是传统AI(即基于逻辑的AI)最好的会议之一. KR Inc.主办, 现在是偶数昕?</p>
+
+
+
+
+<p>SIGIR (1-): 信息检索方面最好的会议, ACM主办, 每年开. 这个会现在小圈子气越来越重. 信息检索应该不算AI, 不过因为这里面用到机器
+学习越来越多, 最近几年甚至有点机器学习应用会议的味道了, 所以把它也列进来.</p>
+
+
+
+
+<p>SIGKDD (1-): 数据挖掘方面最好的会议, ACM主办, 每年开. 这个会议历史比较短, 毕竟,与其他领域相比,数据挖掘还只是个小弟弟甚至小侄儿. 
+在几年前还很难把它列在tier-1里面, 一方面是名声远不及其他的top conference响亮, 另一方面是相对容易被录用. 但现在它被列在tier-1应该是
+毫无疑问的事情了. 另: 参见sir和lucky的介绍.</p>
+
+
+
+
+<p>UAI (1-): 名字叫"人工智能中的不确定性", 涉及表示\推理\学习等很多方面, AUAI(Association of UAI) 主办, 每年开.</p>
+
+
+
+
+<h3>The Second Class</h3>
+
+
+<p>tier-2的会议列得不全, 我熟悉的领域比较全一些.</p>
+
+
+<p>AAMAS (2+): agent方面最好的会议. 但是现在agent已经是一个一般性的概念, 几乎所有 AI有关的会议上都有这方面的内容, 所以AAMAS下降的趋势非常明显.</p>
+
+
+<p>ECCV (2+): 计算机视觉方面仅次于ICCV的会议, 因为这个领域发展很快, 有可能升级到1-去.</p>
+
+
+<p>ECML (2+): 机器学习方面仅次于ICML的会议, 欧洲人极力捧场, 一些人认为它已经是1-了. 我保守一点, 仍然把它放在2+. 因为机器学习发展很快, 这个会议的reputation上升非常明显.</p>
+
+
+<p>ICDM (2+): 数据挖掘方面仅次于SIGKDD的会议, 目前和SDM相当. 这个会只有5年历史, 上升速度之快非常惊人. 几年前ICDM还比不上PAKDD, 现在已经拉开很大距离了.</p>
+
+
+<p>SDM (2+): 数据挖掘方面仅次于SIGKDD的会议, 目前和ICDM相当. SIAM的底子很厚, 但在CS里面的影响比ACM和IEEE还是要小, SDM眼看着要被ICDM超过了, 但至少目前还是相当的.</p>
+
+
+<p>ICAPS (2): 人工智能规划方面最好的会议, 是由以前的国际和欧洲规划会议合并来的. 因为这个领域逐渐变冷清, 影响比以前已经小了.</p>
+
+
+<p>ICCBR (2): Case-Based Reasoning方面最好的会议. 因为领域不太大, 而且一直半冷不热,所以总是停留在2上.</p>
+
+
+<p>COLLING (2): 计算语言学/自然语言处理方面仅次于ACL的会, 但与ACL的差距比ICCV-ECCV 和ICML-ECML大得多.</p>
+
+
+<p>ECAI (2): 欧洲的人工智能综合型会议, 历史很久, 但因为有IJCAI/AAAI压着, 很难往上升.</p>
+
+
+<p>ALT (2-): 有点象COLT的tier-2版, 但因为搞计算学习理论的人没多少, 做得好的数来数去就那么些group, 基本上到COLT去了, 所以ALT里面有不少并非计算学习理论的内容.</p>
+
+
+<p>EMNLP (2-): 计算语言学/自然语言处理方面一个不错的会. 有些人认为与COLLING相当, 但我觉得它还是要弱一点.</p>
+
+
+<p>ILP (2-): 归纳逻辑程序设计方面最好的会议. 但因为很多其他会议里都有ILP方面的内容,所以它只能保住2-的位置了.</p>
+
+
+<p>PKDD (2-): 欧洲的数据挖掘会议, 目前在数据挖掘会议里面排第4. 欧洲人很想把它抬起来, 所以这些年一直和ECML一起捆绑着开, 
+希望能借ECML把它带起来. 但因为ICDM和SDM, 这已经不太可能了. 所以今年的PKDD和ECML虽然还是一起开, 但已经独立审稿了(以前
+是可以同时投两个会, 作者可以声明优先被哪个会考虑, 如果ECML中不了还可以被PKDD接受).</p>
+
+
+
+
+<h3>The Third Class</h3>
+
+
+<p>列得很不全. 另外, 因为AI的相关会议非常多, 所以能列在tier-3也算不错了, 基本上能进到所有AI会议中的前30%吧</p>
+
+
+<p>ACCV (3+): 亚洲的计算机视觉会议, 在亚太级别的会议里算很好的了.</p>
+
+
+<p>DS (3+): 日本人发起的一个接近数据挖掘的会议.</p>
+
+
+<p>ECIR (3+): 欧洲的信息检索会议, 前几年还只是英国的信息检索会议.</p>
+
+
+<p>ICTAI (3+): IEEE最主要的人工智能会议, 偏应用, 是被IEEE办烂的一个典型. 以前的quality还是不错的, 但是办得
+越久声誉反倒越差了, 糟糕的是似乎还在继续下滑, 现在其实3+已经不太呆得住了.</p>
+
+
+<p>PAKDD (3+): 亚太数据挖掘会议, 目前在数据挖掘会议里排第5.</p>
+
+
+<p>ICANN (3+): 欧洲的神经网络会议, 从quality来说是神经网络会议中最好的, 但这个领域的人不重视会议,在该领域它的重要性不如IJCNN.</p>
+
+
+<p>AJCAI (3): 澳大利亚的综合型人工智能会议, 在国家/地区级AI会议中算不错的了.</p>
+
+
+<p>CAI (3): 加拿大的综合型人工智能会议, 在国家/地区级AI会议中算不错的了.</p>
+
+
+<p>CEC (3): 进化计算方面最重要的会议之一, 盛会型. IJCNN/CEC/FUZZ-IEEE这三个会议是计算智能或者说软计算方面最重要的会议, 
+它们经常一起开, 这时就叫WCCI (World Congress on Computational Intelligence). 但这个领域和CS其他分支不太一样, 倒是和其他
+学科相似, 只重视journal, 不重视会议, 所以录用率经常在85%左右, 所录文章既有quality非常高的论文, 也有入门新手的习作.</p>
+
+
+<p>FUZZ-IEEE (3): 模糊方面最重要的会议, 盛会型, 参见CEC的介绍.</p>
+
+
+<p>GECCO (3): 进化计算方面最重要的会议之一, 与CEC相当，盛会型.</p>
+
+
+<p>ICASSP (3): 语音方面最重要的会议之一, 这个领域的人也不很care会议.（可怜我们做语音的啊！）</p>
+
+
+<p>ICIP (3): 图像处理方面最著名的会议之一, 盛会型.</p>
+
+
+<p>ICPR (3): 模式识别方面最著名的会议之一, 盛会型.</p>
+
+
+<p>IEA/AIE (3): 人工智能应用会议. 一般的会议提名优秀论文的通常只有几篇文章, 被提名就已经是很高的荣誉了, 这个会很有趣, 
+每次都搞1、20篇的优秀论文提名, 专门搞几个session做被提名论文报告, 倒是很热闹.</p>
+
+
+<p>IJCNN (3): 神经网络方面最重要的会议, 盛会型, 参见CEC的介绍.</p>
+
+
+<p>IJNLP (3): 计算语言学/自然语言处理方面比较著名的一个会议.</p>
+
+
+<p>PRICAI (3): 亚太综合型人工智能会议, 虽然历史不算短了, 但因为比它好或者相当的综合型会议太多, 所以很难上升.</p>
+
+
+
+
+<h3>Appendix - 英文缩写全称</h3>
+
+
+<h5>tier-1</h5>
+
+
+<p>IJCAI (1+): International Joint Conference on Artificial Intelligence</br>
+AAAI (1): National Conference on Artificial Intelligence</br>
+COLT (1): Annual Conference on Computational Learning Theory</br>
+CVPR (1): IEEE International Conference on Computer Vision and Pattern Recognition</br>
+ICCV (1): IEEE International Conference on Computer Vision</br>
+ICML (1): International Conference on Machine Learning</br>
+NIPS (1): Annual Conference on Neural Information Processing Systems</br>
+ACL (1-): Annual Meeting of the Association for Computational Linguistics</br>
+KR (1-): International Conference on Principles of Knowledge Representation and Reasoning</br>
+SIGIR (1-): Annual International ACM SIGIR Conference on Research and Development in Information Retrieval</br>
+SIGKDD (1-): ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</br>
+UAI (1-): International Conference on Uncertainty in Artificial Intelligence</p>
+
+
+
+
+<h5>tier-2</h5>
+
+
+<p>AAMAS (2+): International Joint Conference on Autonomous Agents and Multiagent Systems</br>
+ECCV (2+): European Conference on Computer Vision</br>
+ECML (2+): European Conference on Machine Learning</br>
+ICDM (2+): IEEE International Conference on Data Mining</br>
+SDM (2+): SIAM International Conference on Data Mining</br>
+ICAPS (2): International Conference on Automated Planning and Scheduling</br>
+ICCBR (2): International Conference on Case-Based Reasoning</br>
+COLLING (2): International Conference on Computational Linguistics</br>
+ECAI (2): European Conference on Artificial Intelligence</br>
+ALT (2-): International Conference on Algorithmic Learning Theory</br>
+EMNLP (2-): Conference on Empirical Methods in Natural Language Processing</br>
+ILP (2-): International Conference on Inductive Logic Programming</br>
+PKDD (2-): European Conference on Principles and Practice of Knowledge Discovery in Databases</p>
+
+
+
+
+<h5>tier-3</h5>
+
+
+<p>ACCV (3+): Asian Conference on Computer Vision</br>
+DS (3+): International Conference on Discovery Science</br>
+ECIR (3+): European Conference on IR Research</br>
+ICTAI (3+): IEEE International Conference on Tools with Artificial Intelligence</br>
+PAKDD (3+): Pacific-Asia Conference on Knowledge Discovery and Data Mining</br>
+ICANN (3+): International Conference on Artificial Neural Networks</br>
+AJCAI (3): Australian Joint Conference on Artificial Intelligence</br>
+CAI (3): Canadian Conference on Artificial Intelligence</br>
+CEC (3): IEEE Congress on Evolutionary Computation</br>
+FUZZ-IEEE (3): IEEE International Conference on Fu Systems</br>
+GECCO (3): Genetic and Evolutionary Computation Conference</br>
+ICASSP (3): International Conference on Acoustics, Speech, and Signal Processing</br>
+ICIP (3): International Conference on Image Processing</br>
+ICPR (3): International Conference on Pattern Recognition</br>
+IEA/AIE (3): International Conference on Industrial and Engineering Applications of Artificial Intelligence and Expert Systems</br>
+IJCNN (3): International Joint Conference on Neural Networks</br>
+IJNLP (3): International Joint Conference on Natural Language Processing</br>
+PRICAI (3): Pacific-Rim International Conference on Artificial Intelligence</p>
+
+
+
+]]></content>
+  </entry>
+  
+</feed>

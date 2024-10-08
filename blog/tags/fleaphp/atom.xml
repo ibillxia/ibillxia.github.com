@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: FleaPHP | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/fleaphp/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[PHP格式化打印数组，调试有用]]></title>
+    <link href="http://ibillxia.github.io/blog/2010/08/25/php-print-in-format-very-useful-in-debuging/"/>
+    <updated>2010-08-25T10:08:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2010/08/25/php-print-in-format-very-useful-in-debuging</id>
+    <content type="html"><![CDATA[<p>以下是从FleaPHP上挖来的，感谢FleaPHP的开发者们。</p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span></span><span class="o">/&lt;</span><span class="nx">em</span><span class="o">&gt;*</span>
+</span><span class='line'><span class="o">*</span> <span class="nx">输出变量的内容，通常用于调试</span>
+</span><span class='line'><span class="o">*</span>
+</span><span class='line'><span class="o">*</span> <span class="o">@</span><span class="nx">package</span> <span class="nx">Core</span>
+</span><span class='line'><span class="o">*</span>
+</span><span class='line'><span class="o">*</span> <span class="o">@</span><span class="nx">param</span> <span class="nx">mixed</span> <span class="nv">$vars</span> <span class="nx">要输出的变量</span>
+</span><span class='line'><span class="o">*</span> <span class="o">@</span><span class="nx">param</span> <span class="nx">string</span> <span class="nv">$label</span>
+</span><span class='line'><span class="o">*</span> <span class="o">@</span><span class="nx">param</span> <span class="nx">boolean</span> <span class="nv">$return</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">em</span><span class="o">&gt;/</span>
+</span><span class='line'><span class="k">function</span> <span class="nf">dump</span><span class="p">(</span><span class="nv">$vars</span><span class="p">,</span> <span class="nv">$label</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$return</span> <span class="o">=</span> <span class="k">false</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nb">ini_get</span><span class="p">(</span><span class="s1">&#39;html_errors&#39;</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$content</span> <span class="o">=</span> <span class="s2">&quot;&lt;pre&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nv">$label</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$content</span> <span class="o">.=</span> <span class="s2">&quot;&lt;strong&gt;</span><span class="si">{</span><span class="nv">$label</span><span class="si">}</span><span class="s2"> :&lt;/strong&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="nv">$content</span> <span class="o">.=</span> <span class="nb">htmlspecialchars</span><span class="p">(</span><span class="nb">print_r</span><span class="p">(</span><span class="nv">$vars</span><span class="p">,</span> <span class="k">true</span><span class="p">));</span>
+</span><span class='line'>        <span class="nv">$content</span> <span class="o">.=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;/pre&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$content</span> <span class="o">=</span> <span class="nv">$label</span> <span class="o">.</span> <span class="s2">&quot; :</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">.</span> <span class="nb">print_r</span><span class="p">(</span><span class="nv">$vars</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nv">$return</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nv">$content</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">echo</span> <span class="nv">$content</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">null</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<!--more-->
+
+
+<p>所以只要在自己的代码脚本所有函数外面，ctrl+c/ctrl+v上面这段代码，就可以有dump()函数格式化打印数组了。</p>
+
+]]></content>
+  </entry>
+  
+</feed>

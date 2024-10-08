@@ -1,0 +1,631 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>为什么要进行傅立叶变换 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2013/04/04/why-do-Fourier-transformation">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">为什么要进行傅立叶变换</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-04-04T10:42:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>一、傅立叶变换的由来</h2>
+
+
+<p>关于傅立叶变换，无论是书本还是在网上可以很容易找到关于傅立叶变换的描述，但是大都是些故弄玄虚的文章，太过抽象，
+尽是一些让人看了就望而生畏的公式的罗列，让人很难能够从感性上得到理解，最近，我偶尔从网上看到一个关于数字信号处理
+的电子书籍，是一个叫Steven W. Smith, Ph.D.外国人写的，写得非常浅显，里面有七章由浅入深地专门讲述关于离散信号的傅
+立叶变换，虽然是英文文档，我还是硬着头皮看完了有关傅立叶变换的有关内容，看了有茅塞顿开的感觉，在此把我从中得到的
+理解拿出来跟大家分享，希望很多被傅立叶变换迷惑的朋友能够得到一点启发，这电子书籍是免费的，有兴趣的朋友也可以从网
+上下载下来看一下，URL地址是：http://www.dspguide.com/pdfbook.htm </p>
+
+
+
+
+<p>要理解傅立叶变换，确实需要一定的耐心，别一下子想着傅立叶变换是怎么变换的，当然，也需要一定的高等数学基础，最基本
+的是级数变换，其中傅立叶级数变换是傅立叶变换的基础公式。</p>
+
+
+
+
+<h2>二、傅立叶变换的提出</h2>
+
+
+<p>让我们先看看为什么会有傅立叶变换？傅立叶是一位法国数学家和物理学家的名字，英语原名是Jean Baptiste Joseph Fourier(1768-1830), 
+Fourier对热传递很感兴趣，于1807年在法国科学学会上发表了一篇论文，运用正弦曲线来描述温度分布，论文里有个在当时具有争议性的决断：
+任何连续周期信号可以由一组适当的正弦曲线组合而成。当时审查这个论文的人，其中有两位是历史上著名的数学家拉格朗日(Joseph Louis 
+Lagrange, 1736-1813)和拉普拉斯(Pierre Simon de Laplace, 1749-1827)，当拉普拉斯和其它审查者投票通过并要发表这个论文时，拉格朗日
+坚决反对，在近50年的时间里，拉格朗日坚持认为傅立叶的方法无法表示带有棱角的信号，如在方波中出现非连续变化斜率。法国科学学会屈服
+于拉格朗日的威望，拒绝了傅立叶的工作，幸运的是，傅立叶还有其它事情可忙，他参加了政治运动，随拿破仑远征埃及，法国大革命后因会被
+推上断头台而一直在逃避。直到拉格朗日死后15年这个论文才被发表出来。</p>
+
+
+
+
+<!--more-->
+
+
+
+
+<p>谁是对的呢？拉格朗日是对的：正弦曲线无法组合成一个带有棱角的信号。但是，我们可以用正弦曲线来非常逼近地表示它，逼近到两种表示方法
+不存在能量差别，基于此，傅立叶是对的。</p>
+
+
+
+
+<p><b>为什么我们要用正弦曲线来代替原来的曲线呢？</b>如我们也还可以用方波或三角波来代替呀，分解信号的方法是无穷的，但<b>分解信号的目的是为了
+更加简单地处理原来的信号。用正余弦来表示原信号会更加简单，因为正余弦拥有原信号所不具有的性质：正弦曲线保真度。</b>一个正弦曲线信号
+输入后，输出的仍是正弦曲线，只有幅度和相位可能发生变化，但是频率和波的形状仍是一样的。且只有正弦曲线才拥有这样的性质，正因如此
+我们才不用方波或三角波来表示。</p>
+
+
+
+
+<h2>三、傅立叶变换分类</h2>
+
+
+<p>根据原信号的不同类型，我们可以把傅立叶变换分为四种类别：</br>
+1 非周期性连续信号 傅立叶变换（Fourier Transform）</br>
+2 周期性连续信号 傅立叶级数(Fourier Series)</br>
+3 非周期性离散信号 离散时域傅立叶变换（Discrete Time Fourier Transform）</br>
+4 周期性离散信号 离散傅立叶变换(Discrete Fourier Transform)
+</p>
+
+
+
+
+<p>下图是四种原信号图例：
+<center><img src="/images/2013/IMAG2013040401.jpg"></center>
+</p>
+
+
+
+
+<p>这四种傅立叶变换都是针对正无穷大和负无穷大的信号，即信号的的长度是无穷大的，我们知道这对于计算机处理来说是不可能的，那么有没有
+针对长度有限的傅立叶变换呢？没有。因为正余弦波被定义成从负无穷小到正无穷大，我们无法把一个长度无限的信号组合成长度有限的信号。面对
+这种困难，方法是把长度有限的信号表示成长度无限的信号，可以把信号无限地从左右进行延伸，延伸的部分用零来表示，这样，这个信号就可以被
+看成是非周期性离解信号，我们就可以用到离散时域傅立叶变换的方法。还有，也可以把信号用复制的方法进行延伸，这样信号就变成了周期性离解
+信号，这时我们就可以用离散傅立叶变换方法进行变换。这里我们要学的是离散信号，对于连续信号我们不作讨论，因为计算机只能处理离散的数值
+信号，我们的最终目的是运用计算机来处理信号的。</p>
+
+
+
+
+<p>但是对于非周期性的信号，我们需要用无穷多不同频率的正弦曲线来表示，这对于计算机来说是不可能实现的。所以对于离散信号的变换只有离散傅立叶
+变换（DFT）才能被适用，<b>对于计算机来说只有离散的和有限长度的数据才能被处理，对于其它的变换类型只有在数学演算中才能用到</b>，在计算机面前我们
+只能用DFT方法，后面我们要理解的也正是DFT方法。这里要理解的是我们使用周期性的信号目的是为了能够用数学方法来解决问题，至于考虑周期性信号
+是从哪里得到或怎样得到是无意义的。</p>
+
+
+
+
+<p>每种傅立叶变换都分成实数和复数两种方法，对于实数方法是最好理解的，但是复数方法就相对复杂许多了，需要懂得有关复数的理论知识，不过，如果
+理解了实数离散傅立叶变换(real DFT)，再去理解复数傅立叶就更容易了，所以我们先把复数的傅立叶放到一边去，先来理解实数傅立叶变换，在后面
+我们会先讲讲关于复数的基本理论，然后在理解了实数傅立叶变换的基础上再来理解复数傅立叶变换。</p>
+
+
+
+
+<p>还有，这里我们所要说的变换(transform)虽然是数学意义上的变换，但跟函数变换是不同的，函数变换是符合一一映射准则的，对于离散数字信号处理（DSP），
+有许多的变换：傅立叶变换、拉普拉斯变换、Z变换、希尔伯特变换、离散余弦变换等，这些都扩展了函数变换的定义，允许输入和输出有多种的值，简单地
+说变换就是把一堆的数据变成另一堆的数据的方法。</p>
+
+
+
+
+<h2>四、傅立叶变换的物理意义</h2>
+
+
+<p>傅立叶变换是数字信号处理领域一种很重要的算法。要知道傅立叶变换算法的意义，首先要了解傅立叶原理的意义。<b>傅立叶原理表明：任何连续测量的时序或信号，
+都可以表示为不同频率的正弦波信号的无限叠加。</b>而根据该原理创立的傅立叶变换算法利用直接测量到的原始信号，以累加方式来计算该信号中不同正弦波信号的频率、
+振幅和相位。</p>
+
+
+
+
+<p>和傅立叶变换算法对应的是反傅立叶变换算法。该反变换从本质上说也是一种累加处理，这样就可以将单独改变的正弦波信号转换成一个信号。因此，可以说，
+傅立叶变换将原来难以处理的时域信号转换成了易于分析的频域信号（信号的频谱），可以利用一些工具对这些频域信号进行处理、加工。最后还可以利用傅立叶
+反变换将这些频域信号转换成时域信号。</p>
+
+
+
+
+<p>从现代数学的眼光来看，傅里叶变换是一种特殊的积分变换。它能将满足一定条件的某个函数表示成正弦基函数的线性组合或者积分。在不同的研究领域，傅里叶
+变换具有多种不同的变体形式，如连续傅里叶变换和离散傅里叶变换。</p>
+
+
+
+
+<p>在数学领域，尽管最初傅立叶分析是作为热过程的解析分析的工具，但是其思想方法仍然具有典型的还原论和分析主义的特征。"任意"的函数通过一定的分解，
+都能够表示为正弦函数的线性组合的形式，而正弦函数在物理上是被充分研究而相对简单的函数类：</br>
+1. 傅立叶变换是线性算子,若赋予适当的范数,它还是酉算子;</br>
+2. 傅立叶变换的逆变换容易求出,而且形式与正变换非常类似;</br>
+3. 正弦基函数是微分运算的本征函数,从而使得线性微分方程的求解可以转化为常系数的代数方程的求解.在线性时不变杂的卷积运算为简单的乘积运算,从而提供了
+计算卷积的一种简单手段;</br>
+4. 离散形式的傅立叶的物理系统内,频率是个不变的性质,从而系统对于复杂激励的响应可以通过组合其对不同频率正弦信号的响应来获取;</br>
+5. 著名的卷积定理指出:傅里叶变换可以化复杂的卷积运算为简单的乘积运算，从而利用数字计算机快速的算出(其算法称为快速傅立叶变换算法(FFT))。</p>
+
+
+
+
+<p>正是由于上述的良好性质,傅里叶变换在物理学、数论、组合数学、信号处理、概率、统计、密码学、声学、光学等领域都有着广泛的应用。</p>
+
+
+
+
+<h2>五、图像傅立叶变换的物理意义</h2>
+
+
+<p>图像的频率是表征图像中灰度变化剧烈程度的指标，是灰度在平面空间上的梯度。如：大面积的沙漠在图像中是一片灰度变化缓慢的区域，对应的频率值很低；
+而对于地表属性变换剧烈的边缘区域在图像中是一片灰度变化剧烈的区域，对应的频率值较高。傅立叶变换在实际中有非常明显的物理意义，设f是一个能量有限的
+模拟信号，则其傅立叶变换就表示f的谱。从纯粹的数学意义上看，傅立叶变换是将一个函数转换为一系列周期函数来处理的。从物理效果看，傅立叶变换是将图像
+从空间域转换到频率域，其逆变换是将图像从频率域转换到空间域。换句话说，傅立叶变换的物理意义是将图像的灰度分布函数变换为图像的频率分布函数，傅立叶
+逆变换是将图像的频率分布函数变换为灰度分布函数。</p>
+
+
+
+
+<p>傅立叶变换以前，图像（未压缩的位图）是由对在连续空间（现实空间）上的采样得到一系列点的集合，我们习惯用一个二维矩阵表示空间上各点，则图像可由z=f(x,y)
+来表示。由于空间是三维的，图像是二维的，因此空间中物体在另一个维度上的关系就由梯度来表示，这样我们可以通过观察图像得知物体在三维空间中的对应关系。为什么
+要提梯度？因为实际上对图像进行二维傅立叶变换得到频谱图，就是图像梯度的分布图，当然频谱图上的各点与图像上各点并不存在一一对应的关系，即使在不移频的情况
+下也是没有。傅立叶频谱图上我们看到的明暗不一的亮点，实际上图像上某一点与邻域点差异的强弱，即梯度的大小，也即该点的频率的大小（可以这么理解，图像中的低
+频部分指低梯度的点，高频部分相反）。一般来讲，梯度大则该点的亮度强，否则该点亮度弱。这样通过观察傅立叶变换后的频谱图，也叫功率图，我们首先就可以看出，
+图像的能量分布，如果频谱图中暗的点数更多，那么实际图像是比较柔和的（因为各点与邻域差异都不大，梯度相对较小），反之，如果频谱图中亮的点数多，那么实际图
+像一定是尖锐的，边界分明且边界两边像素差异较大的。对频谱移频到原点以后，可以看出图像的频率分布是以原点为圆心，对称分布的。将频谱移频到圆心除了可以清晰
+地看出图像频率分布以外，还有一个好处，它可以分离出有周期性规律的干扰信号，比如正弦干扰，一副带有正弦干扰，移频到原点的频谱图上可以看出除了中心以外还存
+在以某一点为中心，对称分布的亮点集合，这个集合就是干扰噪音产生的，这时可以很直观的通过在该位置放置带阻滤波器消除干扰。</p>
+
+
+
+
+<p>另外我还想说明以下几点： </br>
+1、图像经过二维傅立叶变换后，其变换系数矩阵表明：若变换矩阵Fn原点设在中心，其频谱能量集中分布在变换系数短阵的中心附近(图中阴影区)。若所用的二维傅立叶
+变换矩阵Fn的原点设在左上角，那么图像信号能量将集中在系数矩阵的四个角上。这是由二维傅立叶变换本身性质决定的。同时也表明一股图像能量集中低频区域。 </br>
+2 、变换之后的图像在原点平移之前四角是低频，最亮，平移之后中间部分是低频，最亮，亮度大说明低频的能量大（幅角比较大）。</p>
+
+
+
+
+<h2>六、一个关于实数离散傅立叶变换(Real DFT)的例子</h2>
+
+
+<p>先来看一个变换实例，一个原始信号的长度是16，于是可以把这个信号分解9个余弦波和9个正弦波（一个长度为N的信号可以分解成N/2+1个正余弦信号，这是为什么呢？
+结合下面的18个正余弦图,我想从计算机处理精度上就不难理解，一个长度为N的信号，最多只能有N/2+1个不同频率，再多的频率就超过了计算机所能所处理的精度范围），
+如下图，9个正弦信号：
+<center><img src="/images/2013/IMAG2013040402.jpg"></center>
+9个余弦信号：
+<center><img src="/images/2013/IMAG2013040403.jpg"></center>
+</p>
+
+
+
+
+<p>把以上所有信号相加即可得到原始信号，至于是怎么分别变换出9种不同频率信号的，我们先不急，先看看对于以上的变换结果，在程序中又是该怎么表示的，我们可以看看
+下面这个示例图：
+<center><img src="/images/2013/IMAG2013040404.jpg"></center>
+</p>
+
+
+
+
+<p>上图中左边表示时域中的信号，右边是频域信号表示方法，从左向右表示正向转换(Forward DFT)，从右向左表示逆向转换(Inverse DFT)，用小写x[]表示信号在每个时间点上
+的幅度值数组, 用大写X[]表示每种频率的副度值数组, 因为有N/2+1种频率，所以该数组长度为N/2+1，X[]数组又分两种，一种是表示余弦波的不同频率幅度值：Re X[]，另
+一种是表示正弦波的不同频率幅度值：Im X[]，Re是实数(Real)的意思，Im是虚数(Imagine)的意思，采用复数的表示方法把正余弦波组合起来进行表示，但这里我们不考虑复
+数的其它作用，只记住是一种组合方法而已，目的是为了便于表达（在后面我们会知道，复数形式的傅立叶变换长度是N，而不是N/2+1）。</p>
+
+
+
+
+<h2>七、用Matlab实现快速傅立叶变换</h2>
+
+
+<p>FFT是离散傅立叶变换的快速算法，可以将一个信号变换到频域。有些信号在时域上是很难看出什么特征的，但是如果变换到频域之后，就很容易看出特征了。这就是很多
+信号分析采用FFT变换的原因。另外，FFT可以将一个信号的频谱提取出来，这在频谱分析方面也是经常用的。 </p>
+
+
+
+
+<p>虽然很多人都知道FFT是什么，可以用来做什么，怎么去做，但是却不知道FFT之后的结果是什意思、如何决定要使用多少点来做FFT。 </p>
+
+
+
+
+<p>现在就根据实际经验来说说FFT结果的具体物理意义。一个模拟信号，经过ADC采样之后，就变成了数字信号。采样定理告诉我们，采样频率要大于信号频率的两倍，这些我就不在此啰嗦了。 </p>
+
+
+
+
+<p>采样得到的数字信号，就可以做FFT变换了。N个采样点，经过FFT之后，就可以得到N个点的FFT结果。为了方便进行FFT运算，通常N取2的整数次方。 </p>
+
+
+
+
+<p>假设采样频率为Fs，信号频率F，采样点数为N。那么FFT之后结果就是一个为N点的复数。每一个点就对应着一个频率点。这个点的模值，就是该频率值下的幅度特性。
+具体跟原始信号的幅度有什么关系呢？假设原始信号的峰值为A，那么FFT的结果的每个点（除了第一个点直流分量之外）的模值就是A的N/2倍。而第一个点就是直流分量，
+它的模值就是直流分量的N倍。而每个点的相位呢，就是在该频率下的信号的相位。第一个点表示直流分量（即0Hz），而最后一个点N的再下一个点（实际上这个点是不存在的，
+这里是假设的第N+1个点，也可以看做是将第一个点分做两半分，另一半移到最后）则表示采样频率Fs，这中间被N-1个点平均分成N等份，每个点的频率依次增加。例如某点n所
+表示的频率为：Fn=(n-1)*Fs/N。由上面的公式可以看出，Fn所能分辨到频率为为Fs/N，如果采样频率Fs为1024Hz，采样点数为1024点，则可以分辨到1Hz。1024Hz的采样率采样
+1024点，刚好是1秒，也就是说，采样1秒时间的信号并做FFT，则结果可以分析到1Hz，如果采样2秒时间的信号并做FFT，则结果可以分析到0.5Hz。如果要提高频率分辨力，则必
+须增加采样点数，也即采样时间。频率分辨率和采样时间是倒数关系。 </p>
+
+
+
+
+<p>假设FFT之后某点n用复数a+bi表示，那么这个复数的模就是$An=\sqrt{a^{2}+b^{2}}$，相位就是$Pn=atan2(b,a)$。根据以上的结果，就可以计算出n点（n≠1，且n<=N/2）
+对应的信号的表达式为：$An/(N/2)*cos(2* \pi *Fn*t+Pn)$，即$2*An/N*cos(2* \pi *Fn*t+Pn)$。对于n=1点的信号，是直流分量，幅度即为A1/N。由于FFT结果的对称性，
+通常我们只使用前半部分的结果，即小于采样频率一半的结果。 </p>
+
+
+
+
+<p>下面以一个实际的信号来做说明。假设我们有一个信号，它含有2V的直流分量，频率为50Hz、相位为-30度、幅度为3V的交流信号，以及一个频率为75Hz、相位为90度、幅度
+为1.5V的交流信号。用数学表达式就是如下：$S=2+3*cos(2*\pi*50*t-\pi*30/180)+1.5*cos(2*\pi*75*t+\pi*90/180)$。式中cos参数为弧度，所以-30度和90度要分别换算成弧度。
+我们以256Hz的采样率对这个信号进行采样，总共采样256点。按照我们上面的分析，Fn=(n-1)*Fs/N，我们可以知道，每两个点之间的间距就是1Hz，第n个点的频率就是n-1。
+我们的信号有3个频率：0Hz、50Hz、75Hz，应该分别在第1个点、第51个点、第76个点上出现峰值，其它各点应该接近0。实际情况如何呢？我们来看看FFT的结果的模值如图
+所示。
+<center><img src="/images/2013/IMAG2013040405.jpg"></center>
+</p>
+
+
+
+
+<p>从图中我们可以看到，在第1点、第51点、和第76点附近有比较大的值。我们分别将这三个点附近的数据拿上来细看： </br>
+1点： 512+0i </br>
+2点： -2.6195E-14 - 1.4162E-13i </br>
+3点： -2.8586E-14 - 1.1898E-13i </br>
+50点：-6.2076E-13 - 2.1713E-12i </br>
+51点：332.55 - 192i </br>
+52点：-1.6707E-12 - 1.5241E-12i </br>
+75点：-2.2199E-13 -1.0076E-12i </br>
+76点：3.4315E-12 + 192i </br>
+77点：-3.0263E-14 +7.5609E-13i </br>
+很明显，1点、51点、76点的值都比较大，它附近的点值都很小，可以认为是0，即在那些频率点上的信号幅度为0。接着，我们来计算各点的幅度值。分别计算这三个点的模值，结果如下： </br>
+1点： 512 </br>
+51点：384 </br>
+76点：192 </br>
+按照公式，可以计算出直流分量为：$512/N=512/256=2$；50Hz信号的幅度为：$384/(N/2)=384/(256/2)=3$；75Hz信号的幅度为$192/(N/2)=192/(256/2)=1.5$。可见，从频谱分析出来的幅度是正确的。</p>
+
+
+
+
+<p>然后再来计算相位信息。直流信号没有相位可言，不用管它。先计算50Hz信号的相位，$atan2(-192, 332.55)=-0.5236$,结果是弧度，换算为角度就是$180*(-0.5236)/pi=-30.0001$。
+再计算75Hz信号的相位，$atan2(192, 3.4315E-12)=1.5708$弧度，换算成角度就是$180*1.5708/pi=90.0002$。可见，相位也是对的。根据FFT结果以及上面的分析计算，我们就可以写出
+信号的表达式了，它就是我们开始提供的信号。
+<center><img src="/images/2013/IMAG2013040406.jpg"></center>
+</p>
+
+
+
+
+<p><b>总结：假设采样频率为Fs，采样点数为N，做FFT之后，某一点n（n从1开始）表示的频率为：$Fn=(n-1)*Fs/N$；该点的模值除以N/2就是对应该频率下的信号的幅度（对于直流信号是除以N）；
+该点的相位即是对应该频率下的信号的相位。相位的计算可用函数atan2(b,a)计算。atan2(b,a)是求坐标为(a,b)点的角度值，范围从-pi到pi。要精确到xHz，则需要采样长度为1/x秒的信号，
+并做FFT。要提高频率分辨率，就需要增加采样点数</b>，这在一些实际的应用中是不现实的，需要在较短的时间内完成分析。解决这个问题的方法有频率细分法，比较简单的方法是采样比较短
+时间的信号，然后在后面补充一定数量的0，使其长度达到需要的点数，再做FFT，这在一定程度上能够提高频率分辨力。具体的频率细分法可参考相关文献。</p>
+
+
+
+
+<h2>八、 让傅立叶变换从理性蜕变到感性，从抽象升华到具体</h2>
+
+
+<p>（应不少网友反应说以上7部分还是不够浅显而另加的一部分，希望对大家有所启发）</p>
+
+
+
+
+<p>1、我们都知道，LTI系统对谐波函数的响应也是相同频率的谐波函数，只是幅度和相位可能不同罢了，因此我们用谐波函数来表示信号正是为了导出频域的概念。
+那你就会问<b>为什么我们要在频域来分析信号，它比时域分析究竟好在哪里呢？</b>这个问题非常好，我来回答你，第一，在频域观察和分析信号有助于揭示系统的本质属性，
+更重要的是对于某些系统可以极大地简化其设计和分析过程。这一点想必大家都知道，我不再啰嗦！第二，从数学上来看，系统从时域到频域的转换就意味着系统的微分
+或差分方程将转变为代数方程，而系统的分析也将采用描述系统的复系数代数方程而不是微分或差分方程。既然如此，那么请问？童鞋，你是喜欢跟微分差分方程玩儿呢
+还是喜欢跟代数方程玩儿呢？假若你说你更喜欢跟微分差分方程玩儿。那我也无话可说啦！</p>
+
+
+
+
+<p>可能你还是觉得以上所述只是一个很理性的认识，那么接下来，满足你的感性需求。其实，在生活中，我们无时无刻不在进行着傅立叶变换。（什么？我没有听错吧？！）
+对的，请相信你的耳朵，你完全没有听错。我们来看人类听觉系统的处理过程：当我们听到一个声音，大脑的实际反应是什么？事实上耳朵感觉到一个时变的空气压力，
+这种变化也许是一个类似于口哨声的单音。当我们听到一个口哨声时，我们所关心的并不是气压随时间的振动（它非常非常快！），而是声音的三个特征：基音、声强以及
+音长。基音可以理解为频率的同义词，声强不是别的，它就是幅度。我们的耳朵—大脑系统能有效地将信号表示成三个简单的特征参数：基音、声强以及音长，并不理会气压
+的快速变化过程（一个重复的变化过程）。这样耳朵—大脑系统就提取了信号的本质信息。傅立叶变换的分析过程与此类似，只不过我们从数学意义把它更加精确化和专业话罢了。</p>
+
+
+
+
+<p>2、不要把傅立叶变换想得那么高深莫测，其实它就是对傅立叶级数的一种拓展。我们知道，傅立叶级数能描述无限时间的周期信号。那么，傅立叶级数能不能描述某些特殊的
+无限时间的非周期信号呢？答案是，不能。但我们经常要分析处理这样的信号啊！于是傅立叶变换这个家伙现身啦！傅立叶变换就是为了使傅立叶级数能够描述所有（没错！
+就是所有！）周期和非周期的无限时间信号而导出的，因而傅立叶变换是对傅立叶级数的一种拓展。</p>
+
+
+
+
+<p>可能你还是觉得以上所述只是一个很抽象的认识，那么接下来，满足你的具体需求。我们先不管是怎么进行拓展的。我们先关注另外两个概念：周期信号和非周期信号。
+他们的显著区别就在于：周期信号每隔一个有限的时间即基波周期To重复一次。它自始至终都将以这个基波周期To重复。而非周期信号则没有一个确定的或固定的周期，
+可能在一段时间内他将重复某一段波形很多次，但不会在整个无限长时间范围都如此。我们找到一个周期信号的傅立叶级数，然后让这个信号的基波周期趋于无限，就
+完成了从傅立叶级数到傅立叶变换的演变过程。因为当周期信号的基波周期趋于无限时，它的波形在有限长时间内都不会重复，这时它就不具有周期性啦！也就是说，
+说一个信号具有无限长的周期和说它是一个非周期信号实际上是一回事！</p>
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2013/04/04/why-do-Fourier-transformation/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2013-04-04T10:42:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a>, <a class='category' href='/blog/categories/math/'>Math</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/fft/'>FFT</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2013/03/30/back-propagation-neural-networks/" title="Previous Post:
+        反向传播(BP)神经网络">&laquo; 反向传播(BP)神经网络</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2013/04/06/Convolutional-Neural-Networks/"
+        title="Next Post: 卷积神经网络（CNN）">卷积神经网络（CNN）
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2013/04/04/why-do-Fourier-transformation/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2013/04/04/why-do-Fourier-transformation/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

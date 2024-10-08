@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 集合 | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/ji-he/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[深入理解STL源码(5.4) 算法之复杂算法algorithm]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms/"/>
+    <updated>2014-11-01T10:33:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms</id>
+    <content type="html"><![CDATA[<p>本文主要介绍STL中的稍微复杂的算法，主要涉及到的源码文件有 <code>stl_algo.h</code> 等。</p>
+
+<p>在文件 <code>stl_algo.h</code> 中有很多常用的算法，包括查找、计数、旋转、删除、排序、合并、集合的交并等运算、求极值、排列组合等等，本文将按源码中各算法的实现顺序来介绍其具体实现细节。由于本文涉及到的算法和相关代码太多，在文中就尽量不贴出代码了，详细的代码及相关注释请参见 <a href="http://ibillxia.github.io/upload/code/stl_algo.h">stl_algo.h</a>。</p>
+
+<p><strong>1. 求三个数的中值 median</strong><br/>
+该算法比较简单，几个if-else语句就解决了。该函数只提供内部算法使用，并不对外提供接口，也不是STL标准中的算法，限于篇幅这里就不贴代码了。另外，该算法有两个版本，一个是使用默认的大小比较，另一个是可以指定比较函数。</p>
+
+<p><strong>2. for_each</strong><br/>
+也很简单，就是对区间 [first, last) 中的每一个元素执行一个给定函数的运算，就一行语句：</p>
+
+<pre><code class="cpp">for ( ; __first != __last; ++__first) __f(*__first);
+</code></pre>
+
+<p>其中 <code>__f</code> 为用户传入的一个指定的仿函数。该算法的返回值仍为传入的仿函数 <code>__f</code> 。</p>
+
+<!--more-->
+
+
+<p><strong>3. 查找 find</strong><br/>
+函数 <code>find</code> 查找特定值的元素，函数 <code>find_if</code> 查找经过用户的指定函数 func（STL中的pred函数） 运算后结果为 true 的元素。主要代码也只有一行：</p>
+
+<pre><code class="cpp">while (__first != __last &amp;&amp; !(*__first == __val)) ++__first;
+</code></pre>
+
+<p>另外，关于find，考虑偏特化特性，还有在迭代器为随机存取迭代器时，每次循环进行4次判断和自增，这是所谓的 <a href="http://en.wikipedia.org/wiki/Loop_unrolling">loop unrolling</a>，在StackOverflow 上也有相关解释 <a href="http://stackoverflow.com/questions/24295972/">questions-24295972</a>。如果学过体系结构，应该也会提及循环展开的加速方法。</p>
+
+<p>还有一个称为 <code>adjacent_find</code> 的查找算法，它查找序列区间中连续相等的两个元素的位置，返回其中第一个元素的迭代器。这个算法就没有做过多的优化和加速考虑了。</p>
+
+<p>初次之外，在algo文件的最后部分，还有 <code>find_first_of</code>、<code>find_end</code>、`` 的算法，后面会按顺序介绍到。</p>
+
+<p><strong>4. 计数 count</strong><br/>
+该算法查找序列中值与给定值相等的元素的个数，即进行计数，返回为void，计数结果通过传入的引用参数 <code>_Size&amp; __n</code> 来返回给用户，主要代码如下：</p>
+
+<pre><code class="cpp">for ( ; __first != __last; ++__first)
+    if (*__first == __value) ++__n;
+</code></pre>
+
+<p>以上这个是非STL标准的，另外还有一个版本返回值为迭代器的 <code>difference_type</code> 的偏特化版本，这个才是STL标准。</p>
+
+<p><strong>5. 搜索search</strong><br/>
+该算法实现的功能是在区间 [first1, last1) 中搜索是否存在与区间 [first2, last2) 中元素都对应相等的子序列，存在则返回区间1中与区间2匹配的起始位置，否则返回last1。基本思路也很简单，详见源码中我的注释。还有一个版本，可以指定判断条件，而不一定是对应相等这个条件。</p>
+
+<p>另外，还有一个 <code>search_n</code> 的算法与之相似，只是这个算法搜索区间中是否存在长度为count且值均为val的子序列，存在则返回该子序列的起始位置，否则返回last。同样，它也有一个可以指定判断条件的重载版本。</p>
+
+<p><strong>6. 区间置换 swap_ranges</strong><br/>
+交换两个长度相等的区间：</p>
+
+<pre><code class="cpp">for ( ; __first1 != __last1; ++__first1, ++__first2)
+    iter_swap(__first1, __first2); // 迭代器的交换，使用iter_swap
+</code></pre>
+
+<p><strong>7. 区间变换运算 transform</strong><br/>
+对区间的每个元素进行opr运算，结果放在result中，仅这一点与 <code>for_each</code> 不同：</p>
+
+<pre><code class="cpp">for ( ; __first != __last; ++__first, ++__result)
+    *__result = __opr(*__first);
+</code></pre>
+
+<p>还有一个版本是两个等长序列的运算，结果放在result中：</p>
+
+<pre><code class="cpp">for ( ; __first1 != __last1; ++__first1, ++__first2, ++__result)
+    *__result = __binary_op(*__first1, *__first2);
+</code></pre>
+
+<p>注意该算法不需要传入第二个区间的last迭代器。</p>
+
+<p><strong>8. 替换 replace</strong><br/>
+将序列中所有值为oldval的元素值都改为newval：</p>
+
+<pre><code class="cpp">for ( ; __first != __last; ++__first)
+   if (*__first == __old_value) *__first = __new_value;
+</code></pre>
+
+<p>另外还有三个版本的替换： <code>replace_if</code>，判断条件可以自己指定，而不一定是相等；<code>replace_copy</code>，将修改后的结果存到一个新的序列中；<code>replace_copy_if</code> 是前两者的合体。</p>
+
+<p><strong>9.生成 generate</strong><br/>
+将序列中的元素的值按给定函数赋值：</p>
+
+<pre><code class="cpp">for ( ; __first != __last; ++__first) *__first = __gen();
+</code></pre>
+
+<p>还有一个 <code>generate_n</code> 将序列中的前n个元素的值按给定函数赋值。</p>
+
+<p><strong>10.移除 remove</strong><br/>
+移除序列中值为val的元素，与 replace 算法类似，有4个版本，其中 <code>remove</code> 和 <code>remove_if</code> 分别通过 <code>remove_copy</code>、<code>remove_copy_if</code> 实现，只需将后者中的result参数设为该序列的起点first。</p>
+
+<pre><code class="cpp">__first = find(__first, __last, __value);
+_ForwardIter __i = __first;
+return __first == __last ? __first 
+                   : remove_copy(++__i, __last, __first, __value);
+</code></pre>
+
+<p><strong>11.unique和unique_copy</strong><br/>
+将区间的元素的值唯一化，即去掉相邻的重复的项。由于判断时是针对相邻的元素，所以一般需要结合sort使用，如果序列无序需要先对序列排序再进行唯一化。<code>unique</code> 的实现是调用 <code>unique_copy</code> 来实现的，只是将参数中result仍设为输入序列的first。</p>
+
+<p>这个算法实现的过程中，有很多函数的调用，其中还有个问题没有解决（见代码中注释关于func4什么时候调用func3，func8什么时候调用func7的问题）。</p>
+
+<p><strong>12.反转 reverse</strong><br/>
+将区间中元素进行反转，一下是迭代器为随机存取迭代器时的实现：</p>
+
+<pre><code class="cpp">while (__first &lt; __last) iter_swap(__first++, --__last);
+</code></pre>
+
+<p>还有迭代器为双向迭代器的版本和非质变算法版本 <code>reverse_copy</code>。</p>
+
+<p><strong>13.旋转 rotate</strong><br/>
+该算法将区间 [first, last) 内的数据以 middle 为分界前后对调，即将[first,middle)+[middle,last) 变为 [middle,last)+[first,middle)。具体实施过程分为两步：首先将middle之后的元素全部调到middle之前，然后对middle之后的元素进行调整，使之按在middle之前时的顺序排列。具体步骤见源码注释，可以结合实例进行理解。该算法的时间复杂度为 $O(n)$，总体上只对序列进行了一次遍历。</p>
+
+<p>另外，除了迭代器为前向迭代器的版本之外，还有迭代器为双向迭代器、随机访问迭代器的版本，分别对算法进行了特化和优化，详见源码注释。其中迭代器为随机访问迭代器时，算法稍微复杂些，但可以通过实例来简化理解。关于旋转算法的几种实现及其效率，可以参见这个 【<a href="http://www.cs.bell-labs.com/cm/cs/pearls/s02b.pdf">Vector Rotation</a>】，其中三种算法分别对应于STL中的随机迭代器版、前向迭代器版、双向迭代器版。虽然三种算法的复杂度均为线性的，但对于大量数据的旋转，还是会存在一些明显的效率区别的。</p>
+
+<p><strong>14.随机相关算法 random</strong><br/>
+<code>random_shuffle</code> 算法将序列随机重排，具体实现是对序列中每个位置的元素与序列中一个随机的元素进行对调：</p>
+
+<pre><code class="cpp">for (_RandomAccessIter __i = __first + 1; __i != __last; ++__i)
+    iter_swap(__i, __first + __random_number((__i - __first) + 1));
+</code></pre>
+
+<p>除了这个版本采用STL的random函数生成随机数的版本外，还有一个版本可以自己指定随机数生成函数。</p>
+
+<p><code>random_sample_n</code> 和 <code>random_sample</code> 都是从序列中随机选取n个样本，不同的是输入参数的形式、返回序列的有序性等，均非STL标准。</p>
+
+<p><strong>15.分割 partition</strong><br/>
+该算法的功能是将序列按条件分割成两个子序列（实际还是一个序列，只是按分割点分成了满足条件的部分和不满足条件的部分），返回分割点的位置。有迭代器为前向迭代器、双向迭代器的版本，保证稳定性的版本 <code>stable_partition</code>。</p>
+
+<p><strong>16. 排序 sort</strong><br/>
+排序算法是STL中最重要也最复杂的算法，总代码量大概是600行（实际上还不止，因为还有调用其他函数，如partition、merge等），占整个文件的1/5。该算法接受两个随机存取迭代器参数，将区间内的元素以渐增的顺序排列，重载版本则允许用户指定一个仿函数作为排序标准。STL的所有关系型容器都拥有自动排序功能（因为底层是RB-tree，属于有序搜索树），不需要用到这个sort算法，而序列式容器中的stack、queue和priority-queue都有特定的出入限制，不允许排序，剩下vector、deque和list、slist，前两者的迭代器都是随机存取迭代器，可以使用sort算法，而list是双向迭代器，slist是前向迭代器，都不适合使用sort算法，如果要对list或slist排序，需要使用list或slist自己实现的sort函数。</p>
+
+<p><code>insert_sort</code> 插入排序：在序列长度较小时（STL中设置的是长度小于16时），使用线性（而不是二分）插入排序。</p>
+
+<p><code>sort</code> 排序：在序列较长时，将序列分割为一个个小的区间，使得区间与区间之间整体上有序，然后使用线性插入排序对整体进行排序。（这与我们通常所理解的快速排序还是有很大区别的，最后整体上进行直接插入排序，实际效果与对每个子区间分别进行插入排序的效果是一样的，效率依然是非常高的）</p>
+
+<p><code>stable_sort</code> 稳定排序：实际上为归并排序，或称为merge sort，时间复杂度仍为 $O(nlogn)$。当子区间长度小于15时，让然是直接用插入排序；当子能够申请到O(n)的buffer时，借助buffer进行merge sort，否则使用inplace merge进行stable sort。而关于两种（with buffer和inplace的）merge的算法的内容，在后文中介绍。</p>
+
+<p><code>partial_sort</code> 部分排序：使用堆进行排序，功能是将序列 <code>[first, last)</code> 中的较小的 middle-first 个元素排序并放在区间 <code>[first, middle)</code> 中，而其余的 last-middle 个元素仍然是无序的。整个算法分为两个大的步骤，首先是将middle前的元素构建一个max-heap，将middle及之后的元素中比max-heap堆顶小的元素与堆顶对调并调整堆，从而得到middle前的元素都比middle后的元素小；然后使用heap sort对middle之前的元素进行排序。</p>
+
+<p><strong>17. 第n大的数 nth_element</strong><br/>
+该算法的功能是求一个序列中排行第n大的元素，具体实现时是使用 partition 将搜索范围逐步缩小，直到不足3个元素的区间后，进行insert-sort，最后第n大的元素就位于序列的第n个位置（该算法的迭代器也要求是随机存取的迭代器）。</p>
+
+<p><strong>18. 二分查找 binary_search</strong><br/>
+该系列算法的前提条件是序列已经<strong>有序</strong>，迭代器至少是ForwardIterators。</p>
+
+<p><code>lower_bound</code> ：二分查找 val，存在则返回指向该元素的迭代器，否则返回最小的不小于 val 的元素的迭代器，即在不破坏次序的情况下val可插入的第一个位置。</p>
+
+<p><code>upper_bound</code> ： 二分查找 val，存在则返回该元素的下一个元素的迭代器，否则返回最小的不小于 val的元素的迭代器，及在不破坏次序的前提下，val可插入的最后一个位置。</p>
+
+<p><code>equal_range</code> ：二分查找 val，返回值为 val 的区间 <code>[i,j)</code>，其中 i 是 <code>lower_bound</code>，而 j 是 <code>upper_bound</code>。</p>
+
+<p><code>binary_search</code> ：二分查找，找到返回true，否则返回false。实际上使用的是 <code>lower_bound</code> 来实现的。</p>
+
+<p><strong>19. 合并 merge</strong><br/>
+<code>merge</code> ：两个<strong>有序</strong>序列合并为一个有序序列，输入为5个参数，分别为两个序列的首尾迭代器、结果的首迭代器，算法返回结果序列的尾迭代器。基本思路是同时访问两个序列，取较小者放入结果序列并后移，最后必然是一个序列结束而另一个序列还有剩余元素，只需要将剩余部分copy的结果序列的尾部即可。</p>
+
+<p><code>inplace_merge</code>：原地将一个序列的两个有序子序列合并，实际上并不一定是原地进行，当可以申请到 O(n)的内存时借助buffer来进行merge，否则进行原地合并。原地合并的基本思路如下：先比较两个有序子序列的长度，将其中较长的序列分成两等分，取该序列的中间元素 <code>first_cut</code> 作为基准，然后得到第二个子序列以该基准分割的位置 <code>second_cut</code>，再然后进行原地旋转，将两个cut之间大于基准的数据旋转到两个cut之间小于基准的数据的后面，这样两个序列就被分成了两对有序子序列，最后分别将小于和大于基准的每对有序子序列进行merge。</p>
+
+<p><strong>20. 集合算法 set</strong><br/>
+由于集合的低层容器是红黑树，因此集合中的元素是有序的，这样在遍历两个集合时，复杂度不是O(mn)，而是O(m+n)。</p>
+
+<p><code>includes</code>：判断集合1是否包含集合2. 基本思想是，遍历两个集合，依次判断集合2中的元素是否均在集合1中出现了。</p>
+
+<p><code>set_union</code>：求两个集合的并集，如果两个集合中出现了相同的元素，则只算一次。</p>
+
+<p><code>set_intersection</code>：求两个集合的交集，即只保留两个集合中都存在的元素。</p>
+
+<p><code>set_difference</code>：两个集合的差集，即集合1中存在而集合2中不存在的元素。</p>
+
+<p><code>set_symmetric_difference</code>：两个集合的对称差，即集合1中存在而2中不存在的元素或集合2中存在而集合1中不存在的元素。</p>
+
+<p><strong>21. 求极值 max/min element</strong><br/>
+遍历整个区间，找到其中最大/小的元素的值，返回的是指向最大/小值的迭代器。</p>
+
+<p><strong>22. 排列的后继和前驱 next/pre permutation</strong><br/>
+关于该算法在之前的一篇文章中有详细介绍，请参见 <a href="http://ibillxia.github.io/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/">全排列及某排列的后继的求解及其STL实现的分析</a> .</p>
+
+<p><strong>23. 找第一次出现的位置 find first of</strong><br/>
+在第一个序列中依次查找第二个序列中某个元素第一次出现的位置，使用一个双重循环，外循环遍历第一个序列，内循环遍历第二个序列，只要找到一个就立即返回在序列1中的位置，没有找到则返回序列1的尾迭代器。</p>
+
+<p><strong>24. 查找序列中的子序列 find end</strong><br/>
+在序列1中查找是否存在序列2这样的子序列，返回最后一次查找结果。还有一个版本是针对双向迭代器的类偏特化版本。</p>
+
+<p><strong>25. 判断序列是否为堆 is heap</strong><br/>
+判断一个序列是否为堆，即不断地判断父节点是否大于其孩子节点，如果不大于则返回false，否则返回true。</p>
+
+<p><strong>26. 判断序列是否有序 is sorted</strong><br/>
+判断一个序列是否有序，只需要遍历序列并判断相邻的两个元素的大小关系是否一致即可。</p>
+
+<p>Well Done！终于看完了这些算法了！其中旋转、排序、查找、合并算法是稍微复杂的，且做了一些优化，是需要仔细阅读和体会的。
+2014.11.09 更新。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[深入理解STL源码(4.2) 关联式容器之set和multiset]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/08/17/insight-into-stl-4-associative-containers-2-set-and-multiset/"/>
+    <updated>2014-08-17T21:30:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/08/17/insight-into-stl-4-associative-containers-2-set-and-multiset</id>
+    <content type="html"><![CDATA[<p>本文涉及到 SGI STL 源码的文件主要有 <code>stl_set.h</code>、 <code>stl_multiset.h</code>、 <code>set.h</code>、 <code>multiset.h</code>、 <code>set</code> 等文件。</p>
+
+<h2>1. set 简介</h2>
+
+<p>set 即集合，相比于其他容器有些特别。首先是它的每个元素是唯一的，即不允许有相同的值出现。其次，作为一种关联容器，set 的元素不像 map 那样可以同时拥有实值（value）和键值（key），set 元素的键值就是实值，实值就是键值。<br/>
+由于 set 的实质和键值相同，共用同一个内存空间，而 set 的底层容器为红黑树（中序遍历有序），因此不能对其键值进行修改，否则会破坏其有序特性。为避免非法修改操作，在SGI STL的实现中，<code>set&lt;T&gt;::iterator</code> 被定义为 RB-tree 底层的 const_iterator，_杜绝写入操作。set 与 list 有一个相似的地方是，元素插入、删除后，之前的迭代器依然有效（被删除的那个元素的迭代器除外）。<br/>
+我们知道集合有一些特殊的操作，诸如并、交、差等，在STL的 set 中，默认也提供了这些操作，如交集 <code>set_intersection</code> 、联集 <code>set_union</code> 、差集 <code>set_difference</code> 和对称差集 <code>set_symmetric_difference</code> 等。与之前那些线性容器不同的是，这些 set 的操作并不是在 set 内部实现的，而是放在了算法模块（algorithm）中，其具体实现在后面的算法章节中会具体介绍。</p>
+
+<h2>2. set 的实现</h2>
+
+<p>前面多次提到 set 的底层采用 RB-tree 容器，这是因为 RB-tree 是一种比较高效的平衡二叉搜索树，能够很好的满足元素值唯一的条件，而且查找效率高。由于 RB-tree 已实现了很多操作，因此 set 基本上只是对 RB-tree 进行了一层简单的封装。下面是其实现的主要代码：</p>
+
+<!-- more -->
+
+
+<pre><code class="cpp">template &lt;class _Key, class _Compare, class _Alloc&gt;
+class set {
+public:
+  typedef _Key     key_type;
+  typedef _Key     value_type; // 实值与键值同类型
+private:
+  typedef _Rb_tree&lt;key_type, value_type, _Identity&lt;value_type&gt;, key_compare, _Alloc&gt; _Rep_type;
+  _Rep_type _M_t;  // 底层使用红黑树作为容器
+  set() : _M_t(_Compare(), allocator_type()) {} // 默认构造函数
+  set(const set&lt;_Key,_Compare,_Alloc&gt;&amp; __x) : _M_t(__x._M_t) {}  // 拷贝构造函数
+  pair&lt;iterator,bool&gt; insert(const value_type&amp; __x) { // 插入操作
+    pair&lt;typename _Rep_type::iterator, bool&gt; __p = _M_t.insert_unique(__x); 
+    return pair&lt;iterator, bool&gt;(__p.first, __p.second);
+  }
+  void erase(iterator __position) { // 删除操作
+    typedef typename _Rep_type::iterator _Rep_iterator;
+    _M_t.erase((_Rep_iterator&amp;)__position); 
+  }
+  void clear() { _M_t.clear(); } // 清空操作
+  iterator find(const key_type&amp; __x) const { return _M_t.find(__x); } // 查找
+  size_type count(const key_type&amp; __x) const { // 计数
+    return _M_t.find(__x) == _M_t.end() ? 0 : 1;
+  }
+};
+template &lt;class _Key, class _Compare, class _Alloc&gt;
+inline bool operator==(const set&lt;_Key,_Compare,_Alloc&gt;&amp; __x, 
+                       const set&lt;_Key,_Compare,_Alloc&gt;&amp; __y) { // 比较相等操作符
+  return __x._M_t == __y._M_t;
+}
+template &lt;class _Key, class _Compare, class _Alloc&gt;
+inline bool operator&lt;(const set&lt;_Key,_Compare,_Alloc&gt;&amp; __x, 
+                      const set&lt;_Key,_Compare,_Alloc&gt;&amp; __y) { // 比较大小操作符
+  return __x._M_t &lt; __y._M_t;
+}
+</code></pre>
+
+<p>可以看到基本都是调用 <code>_M_t</code> 的方法来实现的，而这里的 <code>_M_t</code> 是一个红黑树对象。</p>
+
+<h2>3. multiset</h2>
+
+<p>multiset 的特性和用法与 set 基本相同，唯一差别在于它允许有重复的键值，因此它的插入操作使用的底层机制是 RB-tree 的 <code>insert_equal()</code> 而不是 <code>insert_unique()</code> ，下面是 multiset 的主要代码，主要列出了与 set 不同的部分。<br/>
+<code>cpp
+template &lt;class _Key, class _Compare, class _Alloc&gt;
+class multiset {
+public:
+  multiset(const value_type* __first, const value_type* __last)
+    : _M_t(_Compare(), allocator_type())
+    { _M_t.insert_equal(__first, __last); } // 构造函数
+  iterator insert(const value_type&amp; __x) { // 插入操作
+    return _M_t.insert_equal(__x);
+  }
+  iterator insert(iterator __position, const value_type&amp; __x) {
+    typedef typename _Rep_type::iterator _Rep_iterator;
+    return _M_t.insert_equal((_Rep_iterator&amp;)__position, __x);
+  }
+  void insert(const value_type* __first, const value_type* __last) {
+    _M_t.insert_equal(__first, __last);
+  }
+  void insert(const_iterator __first, const_iterator __last) {
+    _M_t.insert_equal(__first, __last);
+  }
+};
+</code>
+其他部分基本与 set 一样。</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,429 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>深入理解STL源码(2) 迭代器(Iterators)和Traits - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2014/06/21/stl-source-insight-2-iterators-and-traits">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">深入理解STL源码(2) 迭代器(Iterators)和Traits</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-06-21T21:46:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>本文涉及到 SGI STL 源码的文件有 <code>iterator.h</code>, <code>stl_iterator_base.h</code>, <code>concept_checks.h</code>, <code>stl_iterator.h</code>, <code>type_traits.h</code>, <code>stl_construct.h</code>, <code>stl_raw_storage_iter.h</code> 等7个文件。</p>
+
+<h2>1. 迭代器的设计思维</h2>
+
+<p>迭代器（iterators）是一种抽象的设计概念，显示程序中并没有直接对应于这个概念的实体。在 <em>Design Patterns</em> 一书中，对 iterators 模式的定义如下：提供一种方法，使之能够依序遍历某个聚合物（容器）所包含的各个元素，而又无需暴露该聚合物内部的表述方式。</p>
+
+<p>在STL中迭代器扮演着重要的角色。STL的中心思想在于：将数据容器（container）和算法（algorithm）分开，彼此独立设计，最后再通过某种方式将他们衔接在一起。容器和算法的泛型化，从技术的角度来看并不困难，C++ 的 class template 和 function template 可以分别达到目标，难点在于如何设计二者之间的衔接器。</p>
+
+<p>在STL中，起者这种衔接作用的是迭代器，它是一种行为类似指针的对象。指针的各种行为中最常见也最重要的便是内容获取（dereference）和成员访问（member access），因此迭代器最重要的工作就是对 <code>operator*</code> 和 <code>operator-&gt;</code> 进行重载。然而要对这两个操作符进行重载，就需要对容器内部的对象的数据类型和存储结构有所了解，于是在 STL 中迭代器的最终实现都是由容器本身来实现的，每种容器都有自己的迭代器实现，例如我们使用vector容器的迭代器的时候是这样用的 <code>vector&lt;int&gt;::iterator it;</code> 。而本文所讨论的迭代器是不依存于特定容器的迭代器，它在STL中主要有以下两个方面的作用（我自己的理解和总结）：</p>
+
+<blockquote><ul>
+<li>规定容器中需要实现的迭代器的类型及每种迭代器的标准接口</li>
+<li>通过Traits编程技巧实现迭代器相应型别的获取，弥补 C++ 模板参数推导的不足，为配置器提供可以获取容器中对象型别的接口</li>
+</ul>
+</blockquote>
+
+<p>其中前一个没啥好解释的。关于第二个，后面第3节会详细介绍，那就是Traits编程技巧。</p>
+
+<!-- more -->
+
+
+<h2>2. STL 迭代器的分类与标准接口</h2>
+
+<h3>2.1 STL 迭代器的分类</h3>
+
+<p>在SGI STL中迭代器按照移动特性与读写方式分为 <code>input_iterator</code>, <code>output_iterator</code>, <code>forward_iterator</code>, <code>bidirectional_iterator</code>, <code>random_access_iterator</code> 这5种，他们的定义都在 <code>stl_iterators_base.h</code> 文件中。这5种迭代器的特性如下：</p>
+
+<ul>
+<li>input_iterator:  这种迭代器所指对象只允许读取，而不允许改变，是只读的（read only）。</li>
+<li>output_iterator:  与上面的相反，只能写（write only）。</li>
+<li>forward_iterator: 同时允许读和写，适用于 <code>replace()</code> 等算法。</li>
+<li>bidirectional_iterator: 可双向移动，即既可以按顺序访问，也可以按逆序访问。</li>
+<li>random_access_iterator: 前4种只提供一部分指针运算功能，如前3种只支持 <code>operator++</code>, 而第4种还支持 <code>operator--</code>, 但这种随机访问迭代器还支持 <code>p+n</code>, <code>p-n</code>, <code>p[n]</code>, <code>p1-p2</code>, <code>p1+p2</code> 等。</li>
+</ul>
+
+
+<p>从以上的特性可以看出，<code>input_iterator</code> 和 <code>output_iterator</code> 都是特殊的 <code>forward_iterator</code>, 而 <code>forward_iterator</code> 是特殊的 <code>bidirectional_iterator</code>, <code>bidirectional_iterator</code> 是特殊的 <code>random_access_iterator</code> 。在 <code>stl_iterator_base.h</code> 文件中，他们的定义中我们并不能看到这种特性的表达，而只是规定了这几种迭代器类型及应该包含的成员属性，真正表达这些迭代器不同特性的代码在 <code>stl_iterator.h</code> 文件中。在 <code>stl_iterator_base.h</code> 文件中，除了对这几种迭代器类型进行规定之外，还提供了获取迭代器类型的接口、获取迭代器中的 <code>value_type</code> 类型、获取迭代器中的 <code>distance_type</code> 、获取两个迭代器的距离（<code>distance</code> 函数）、将迭代器向前推进距离 n （<code>advance</code> 函数）等标准接口。</p>
+
+<h3>2.2 STL迭代器的标准接口</h3>
+
+<p>在 <code>stl_iterator.h</code> 文件中，设计了 <code>back_insert_iterator</code>, <code>front_insert_iterator</code>, <code>insert_iterator</code>, <code>reverse_bidirectional_iterator</code>, <code>reverse_iterator</code>, <code>istream_iterator</code>, <code>ostream_iterator</code>,  等标准的迭代器，其中前3中都使用 <code>output_iterator</code> 的只写特性（只进行插入操作，只是插入的位置不同而已），而第4种使用的是 <code>bidirectional_iterator</code> 的双向访问特性，第5种使用的是 <code>random_access_iterator</code> 的随机访问特性。而最后两种标准迭代器分别是使用 <code>input_iterator</code> 和 <code>output_iterator</code> 特性的迭代器。从这几个标准的迭代器的定义中可以看出，主要是实现了 <code>operator=</code>, <code>operator*</code>, <code>operator-&gt;</code>, <code>operator==</code>, <code>operator++</code>, <code>operator--</code>, <code>operator+</code>, <code>operator-</code>, <code>operator+=</code>, <code>operator-=</code> 等指针操作的标准接口。根据定义的操作符的不同，就是不同类型的迭代器了。</p>
+
+<p>例如，下面是 <code>back_insert_iterator</code> 的标准定义：
+<code>cpp
+template &lt;class _Container&gt;
+class back_insert_iterator {
+protected:
+  _Container* container;
+public:
+  // member variables
+  typedef _Container          container_type;
+  typedef output_iterator_tag iterator_category;
+  typedef void                value_type;
+  typedef void                difference_type;
+  typedef void                pointer;
+  typedef void                reference;
+  // member functions, mainly about operator overloading
+  explicit back_insert_iterator(_Container&amp; __x) : container(&amp;__x) {}
+  back_insert_iterator&lt;_Container&gt;&amp;
+  operator=(const typename _Container::value_type&amp; __value) {
+    container-&gt;push_back(__value);
+    return *this;
+  }
+  back_insert_iterator&lt;_Container&gt;&amp; operator*() { return *this; }
+  back_insert_iterator&lt;_Container&gt;&amp; operator++() { return *this; }
+  back_insert_iterator&lt;_Container&gt;&amp; operator++(int) { return *this; }
+};
+</code></p>
+
+<h2>3. 迭代器相应型别与Traits编程技巧</h2>
+
+<h3>3.1 迭代器相应型别</h3>
+
+<p>在算法中运用迭代器是，很可能需要获取器相应型别，即迭代器所指对象的类型。此时需要使用到 function template 的参数推导（argument deducation）机制，在传入迭代器模板类型的同时，传入迭代器所指对象的模板类型，例如：<br/>
+<code>cpp
+template&lt;class I, class T&gt;
+void func_impl(I iter, T t){
+    // TODO: Add your code here
+}
+</code>
+这里不仅要传入类型 <code>class I</code>, 还要传入类型 <code>class T</code>。然而，迭代器的相应型别并不仅仅只有 “迭代器所指对象的类型” 这一种，例如在STL中就有如下5种：</p>
+
+<ul>
+<li>value_type: 迭代器所指对象的类型。</li>
+<li>difference_type: 表示两个迭代器之间的距离，因此也可以用来表示一个容器的最大容量。例如一个提供计数功能的泛型算法 <code>count()</code> ，其返回值的类型就是迭代器的 <code>difference_type</code> .</li>
+<li>reference_type: 从迭代器所指内容是否允许修改来看，迭代器分为 constant iterator 和 mutable iterator，如果传回一个可以修改的对象，一般是以 reference 的方式，因此需要传回引用时，使用此类型。</li>
+<li>pointer_type: 在需要传回迭代器所指对象的地址时，使用这种类型。</li>
+<li>iterator_category: 即前面提到5种的迭代器的类型。</li>
+</ul>
+
+
+<p>而且实际当中，并不是所有情况都可以通过以上的 template 的参数推导机制来实现（例如算法返回值的类型是迭代器所指对象的类型，template参数推导机制无法推导返回值类型），因此需要更一般化的解决方案，在STL中，这就是Traits编程技巧。</p>
+
+<h3>3.2 Traits 编程技巧</h3>
+
+<p>在STL的每个标准迭代器中，都定义了5个迭代器相应型别的成员变量，在STL定义了一个统一的接口：<br/>
+<code>cpp
+// In file stl_iterator_base.h
+template &lt;class _Category, class _Tp, class _Distance = ptrdiff_t,
+          class _Pointer = _Tp*, class _Reference = _Tp&amp;&gt;
+struct iterator {
+  typedef _Category  iterator_category;
+  typedef _Tp        value_type;
+  typedef _Distance  difference_type;
+  typedef _Pointer   pointer;
+  typedef _Reference reference;
+};
+</code>
+其他的迭代器都可以继承这个标注类，由于后面3个模板参数都有默认值，因此新的迭代器只需提供前两个参数即可（但在SGI STL中并没有使用继承机制）。这样在使用该迭代器的泛型算法中，可以返回这5种类型中的任意一种，而不需要依赖于 template 参数推导的机制。</p>
+
+<p>在SGI STL中，如果启用 <code>__STL_CLASS_PARTIAL_SPECIALIZATION</code> 这个宏定义，还有这样一个标准的 <code>iterator_traits</code> ：<br/>
+<code>cpp
+// In file stl_iterator_base.h
+template &lt;class _Iterator&gt;
+struct iterator_traits {
+  typedef typename _Iterator::iterator_category iterator_category;
+  typedef typename _Iterator::value_type        value_type;
+  typedef typename _Iterator::difference_type   difference_type;
+  typedef typename _Iterator::pointer           pointer;
+  typedef typename _Iterator::reference         reference;
+};
+</code>
+值得一提的是，这些类型不仅可以是泛型算法的返回值类型，还可以是传入参数的类型。例如 <code>iterator_category</code> 可以作为迭代器的接口 <code>advance()</code> 和 <code>distance()</code>  的传入参数之一。 不同类型的迭代器实现同一算法的方式可能不同，可以通过这个参数类型来区分不同的重载函数。</p>
+
+<h2>4. SGI 中的 __type_traits</h2>
+
+<p>traits 编程技巧非常赞，适度弥补了 C++ template 本身的不足。 STL 只对迭代器加以规范，设计了 <code>iterator_traits</code> 这样的东西，SGI进一步将这种技法扩展到了迭代器之外，于是有了所谓的 <code>__type_traits</code>。</p>
+
+<p>在SGI中， <code>__type_traits</code> 可以获取一些类型的特殊属性，如该类型是否具备 trivial default ctor？是否具备 trivial copy ctor？是否具备 trivial assignment operator？是否具备 tivial dtor？是否是 plain old data（POD）？ 如果答案是肯定的，那么我们对这些类型进行构造、析构、拷贝、赋值等操作时，就可以采用比较有效的方法，如不调用该类型的默认构造、析构函数，而是直接调用 <code>malloc()</code>, <code>free()</code>, <code>memcpy()</code> 等等，这对于大量而频繁的操作容器，效率有显著的提升。</p>
+
+<p>SGI中 <code>__type_traits</code> 的特性的实现都在 <code>type_traits.h</code> 文件中。其中将 <code>bool</code>, <code>char</code>, <code>short</code>, <code>int</code>, <code>long</code>, <code>float</code>, <code>double</code> 等基本的数据类型及其相应的指针类型的这些特性都定义为 <code>__true_type</code>，这以为着，这些对基本类型进行构造、析构、拷贝、赋值等操作时，都是使用系统函数进行的。而除了这些类型之外的其他类型，除非用户指定了它的这些特性为 <code>__true_type</code>，默认都是 <code>__false_type</code> 的，不能直接调用系统函数来进行内存配置或赋值等，而需要调用该类型的构造函数、拷贝构造函数等。</p>
+
+<p>另外，用户在自定义类型时，究竟一个 class 什么时候应该是 <code>__false_type</code> 的呢？一个简单的判断标准是：如果 class 内部有指针成员并需要对其进行动态配置内存是，这个 class 就需要定义为 <code>__false_type</code>的，需要给该类型定义构造函数、拷贝构造函数、析构函数等等。</p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2014-06-21T21:46:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/c-plus-plus/'>C++</a>, <a class='tag' href='/blog/tags/stl/'>STL</a>, <a class='tag' href='/blog/tags/die-dai-qi/'>迭代器</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2014/06/13/stl-source-insight-1-memory-allocator/" title="Previous Post:
+        深入理解STL源码(1) 空间配置器(allocator)">&laquo; 深入理解STL源码(1) 空间配置器(allocator)</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2014/06/29/stl-source-insight-3-sequential-containers-1-vector/"
+        title="Next Post: 深入理解STL源码(3.1) 序列式容器之vector">深入理解STL源码(3.1) 序列式容器之vector
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

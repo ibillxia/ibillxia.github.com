@@ -1,0 +1,464 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Sql Server数据库常用的命令语句 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2009/07/20/useful-commands-in-MS-SQL-Server">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">Sql Server数据库常用的命令语句</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2009-07-20T14:44:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><strong>1. 查看数据库的版本</strong> <br/>
+<code>
+select @@version
+</code></p>
+
+<p><strong>2. 查看数据库所在机器操作系统参数</strong>
+<code>
+exec master..xp_msver
+</code></p>
+
+<p><strong>3. 查看数据库启动的参数</strong><br/>
+<code>
+sp_configure
+</code></p>
+
+<p><strong>4. 查看数据库启动时间</strong><br/>
+<code>
+select convert(varchar(30),login_time,120) from   master..sysprocesses where spid=1
+</code>
+查看数据库服务器名和实例名</p>
+
+<pre><code>print 'Server Name...............: ' + convert(varchar(30),@@SERVERNAME) 
+print 'Instance..................: ' + convert(varchar(30),@@SERVICENAME)
+</code></pre>
+
+
+
+<!--more-->
+
+
+<p><strong>5. 查看所有数据库名称及大小</strong><br/>
+<code>
+sp_helpdb
+</code><br/>
+重命名数据库用的SQL<br/>
+<code>
+sp_renamedb 'old_dbname', 'new_dbname'
+</code></p>
+
+<p><strong>6. 查看所有数据库用户登录信息</strong><br/>
+<code>
+sp_helplogins
+</code><br/>
+查看所有数据库用户所属的角色信息
+<code>
+sp_helpsrvrolemember
+</code><br/>
+修复迁移服务器时孤立用户时,可以用的 <code>fix_orphan_user</code> 脚本或者 <code>LoneUser</code> 过程<br/>
+更改某个数据对象的用户属主<br/>
+<code>
+sp_changeobjectowner [@objectname =] 'object', [@newowner =] 'owner'
+</code>
+注意: 更改对象名的任一部分都可能破坏脚本和存储过程。
+把一台服务器上的数据库用户登录信息备份出来可以用 <code>add_login_to_aserver</code> 脚本</p></p>
+
+<p><strong>7. 查看链接服务器</strong><br/>
+<code>
+sp_helplinkedsrvlogin
+</code>
+查看远端数据库用户登录信息<br/>
+<code>
+sp_helpremotelogin
+</code></p>
+
+<p><strong>8.查看某数据库下某个数据对象的大小</strong><br/>
+<code>
+sp_spaceused @objname
+</code>
+还可以用 <code>sp_toptables</code> 过程看最大的N(默认为50)个表<br/>
+查看某数据库下某个数据对象的索引信息<br/>
+<code>
+sp_helpindex @objname
+</code>
+还可以用 <code>SP_NChelpindex</code> 过程查看更详细的索引情况<br/>
+<code>
+SP_NChelpindex @objname
+</code>
+<code>clustered</code> 索引是把记录按物理顺序排列的，索引占的空间比较少。</p>
+
+<p>对键值DML操作十分频繁的表我建议用非 <code>clustered</code> 索引和约束，<code>fillfactor</code> 参数都用默认值。<br/>
+查看某数据库下某个数据对象的的约束信息<br/>
+<code>
+sp_helpconstraint @objname
+</code></p>
+
+<p><strong>9.查看数据库里所有的存储过程和函数</strong><br/>
+<code>
+use @database_name
+sp_stored_procedures
+</code>
+查看存储过程和函数的源代码<br/>
+<code>
+sp_helptext '@procedure_name'
+</code>
+查看包含某个字符串@str的数据对象名称<br/>
+<code>
+select distinct object_name(id) from syscomments where text like '%@str%'
+</code>
+创建加密的存储过程或函数在AS前面加WITH ENCRYPTION参数<br/>
+解密加密过的存储过程和函数可以用 <code>sp_decrypt</code> 过程</p>
+
+<p><strong>10.查看数据库里用户和进程的信息</strong><br/>
+<code>
+sp_who
+</code>
+查看SQL Server数据库里的活动用户和进程的信息<br/>
+<code>
+sp_who 'active'
+</code>
+查看SQL Server数据库里的锁的情况<br/>
+<code>
+sp_lock
+</code>
+进程号1--50是SQL Server系统内部用的,进程号大于50的才是用户的连接进程.<br/>
+spid是进程编号,dbid是数据库编号,objid是数据对象编号<br/>
+查看进程正在执行的SQL语句<br/>
+<code>
+dbcc inputbuffer ()  
+</code>
+推荐大家用经过改进后的 <code>sp_who3</code> 过程可以直接看到进程运行的SQL语句<br/>
+<code>
+sp_who3  
+</code>
+检查死锁用 <code>sp_who_lock</code> 过程<br/>
+<code>
+sp_who_lock
+</code></p>
+
+<p><strong>11.收缩数据库日志文件的方法</strong><br/>
+收缩简单恢复模式数据库日志，收缩后 <code>@database_name_log</code> 的大小单位为M<br/>
+<code>
+backup log @database_name with no_log
+dbcc shrinkfile (@database_name_log, 5)
+</code></p>
+
+<p><strong>12.分析SQL Server SQL 语句的方法</strong> <br/>
+<code>
+set statistics time {on | off}
+set statistics io {on | off}
+</code>
+图形方式显示查询执行计划<br/>
+在查询分析器->查询->显示估计的评估计划(D)-Ctrl-L 或者点击工具栏里的图形 <br/>
+文本方式显示查询执行计划<br/>
+<code>
+set showplan_all {on | off}
+set showplan_text { on | off }
+set statistics profile { on | off }
+</code></p>
+
+<p><strong>13.出现不一致错误时，NT事件查看器里出3624号错误，修复数据库的方法</strong>
+先注释掉应用程序里引用的出现不一致性错误的表，然后在备份或其它机器上先恢复然后做修复操作<br/>
+<code>
+alter database [@error_database_name] set single_user
+</code>
+修复出现不一致错误的表
+<code>
+dbcc checktable('@error_table_name',repair_allow_data_loss)
+</code>
+或者可惜选择修复出现不一致错误的小型数据库名<br/>
+<code>
+dbcc checkdb('@error_database_name',repair_allow_data_loss)
+alter database [@error_database_name] set multi_user
+</code>
+CHECKDB 有3个参数: <br/>
+<code>repair_allow_data_loss</code> 包括对行和页进行分配和取消分配以改正分配错误、结构行或页的错误，以及删除已损坏的文本对象，这些修复可能会导致一些数据丢失。修复操作可以在用户事务下完成以允许用户回滚所做的更改。如果回滚修复，则数据库仍会含有错误，应该从备份进行恢复。如果由于所提供修复等级的缘故遗漏某个错误的修复，则将遗漏任何取决于该修复的修复。修复完成后，请备份数据库。<br/>
+<code>repair_fast</code> 进行小的、不耗时的修复操作，如修复非聚集索引中的附加键。 这些修复可以很快完成，并且不会有丢失数据的危险。<br/>
+<code>repair_rebuild</code> 执行由 <code>repair_fast</code> 完成的所有修复，包括需要较长时间的修复（如重建索引）。<br/>
+执行这些修复时不会有丢失数据的危险。</p></p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2009/07/20/useful-commands-in-MS-SQL-Server/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2009-07-20T14:44:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/engineering/'>Engineering</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/sql/'>SQL</a>, <a class='tag' href='/blog/tags/shu-ju-ku/'>数据库</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2009/06/05/io-buffer-in-c-language/" title="Previous Post:
+        C语言输入输出缓冲区">&laquo; C语言输入输出缓冲区</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2009/07/23/useful-queries-methods-in-MS-SQL-Server/"
+        title="Next Post: Sql Server数据库常用的查询语句">Sql Server数据库常用的查询语句
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2009/07/20/useful-commands-in-MS-SQL-Server/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2009/07/20/useful-commands-in-MS-SQL-Server/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

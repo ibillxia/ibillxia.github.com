@@ -1,0 +1,874 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/page11">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2010/08/25/php-print-in-format-very-useful-in-debuging/">PHP格式化打印数组，调试有用</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-08-25T10:08:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2010/08/25/php-print-in-format-very-useful-in-debuging/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>以下是从FleaPHP上挖来的，感谢FleaPHP的开发者们。</p>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span></span><span class="sd">/**</span>
+</span><span class='line'><span class="sd">* 输出变量的内容，通常用于调试</span>
+</span><span class='line'><span class="sd">*</span>
+</span><span class='line'><span class="sd">* @package Core</span>
+</span><span class='line'><span class="sd">*</span>
+</span><span class='line'><span class="sd">* @param mixed $vars 要输出的变量</span>
+</span><span class='line'><span class="sd">* @param string $label</span>
+</span><span class='line'><span class="sd">* @param boolean $return</span>
+</span><span class='line'><span class="sd">*/</span>
+</span><span class='line'><span class="k">function</span> <span class="nf">dump</span><span class="p">(</span><span class="nv">$vars</span><span class="p">,</span> <span class="nv">$label</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$return</span> <span class="o">=</span> <span class="k">false</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nb">ini_get</span><span class="p">(</span><span class="s1">&#39;html_errors&#39;</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$content</span> <span class="o">=</span> <span class="s2">&quot;&lt;pre&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nv">$label</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$content</span> <span class="o">.=</span> <span class="s2">&quot;&lt;strong&gt;</span><span class="si">{</span><span class="nv">$label</span><span class="si">}</span><span class="s2"> :&lt;/strong&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="nv">$content</span> <span class="o">.=</span> <span class="nb">htmlspecialchars</span><span class="p">(</span><span class="nb">print_r</span><span class="p">(</span><span class="nv">$vars</span><span class="p">,</span> <span class="k">true</span><span class="p">));</span>
+</span><span class='line'>        <span class="nv">$content</span> <span class="o">.=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;/pre&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$content</span> <span class="o">=</span> <span class="nv">$label</span> <span class="o">.</span> <span class="s2">&quot; :</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">.</span> <span class="nb">print_r</span><span class="p">(</span><span class="nv">$vars</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nv">$return</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nv">$content</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">echo</span> <span class="nv">$content</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">null</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/08/25/php-print-in-format-very-useful-in-debuging/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2010/08/21/utf8-chinese-coding/">UTF8中文编码范围</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-08-21T10:31:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2010/08/21/utf8-chinese-coding/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>UTF-8有点类似于Haffman编码，它将Unicode编码为： </br>
+00000000-0000007F的字符，用单个字节来表示； </br>
+00000080-000007FF的字符用两个字节表示 （中文的编码范围） </br>
+00000800-0000FFFF的字符用3字节表示</br>
+编码转换：iconv -f “文件目前编码” -t “文件转换后的编码” -o “转换后生成的新文件名” “源文件名”temp = Iconv.conv("UTF-8","gb2312",a) </p>
+
+
+
+
+<p>因为目前为止Unicode-16规范没有指定FFFF以上的字符，所以UTF-8最多是使用3个字节来表示一个字符。但理论上来说，UTF-8最多需要用6字节表示一个字符。 
+在UTF-8里，英文字符仍然跟ASCII编码一样，因此原先的函数库可以继续使用。而中文的编码范围是在0080-07FF之间，因此是2个字节表示（但这两个字节
+和GB编码的两个字节是不同的）。 </p>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/08/21/utf8-chinese-coding/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2010/08/20/several-open-source-web-crawlers-comparing/">开源网络爬虫介绍及其比较</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-08-20T18:53:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2010/08/20/several-open-source-web-crawlers-comparing/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>主流的爬虫</h2>
+
+
+<p><strong>Nutch</strong></br>
+开发语言：Java</br>
+主页：<a href="http://lucene.apache.org/nutch/">http://lucene.apache.org/nutch/</a></br>
+简介：</br>
+Apache的子项目之一，属于Lucene项目下的子项目。</br>
+Nutch是一个基于Lucene，类似Google的完整网络搜索引擎解决方案，基于Hadoop的分布式处理模型保证了系统的性能，类似Eclipse的插件机制
+保证了系统的可客户化，而且很容易集成到自己的应用之中。
+</p>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/08/20/several-open-source-web-crawlers-comparing/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2010/08/10/php-connecting-tool-snoopy-introduction-and-application/">PHP采集利器snoopy应用详解</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-08-10T19:34:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2010/08/10/php-connecting-tool-snoopy-introduction-and-application/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Snoopy是一个php类，用来模拟浏览器的功能，可以获取网页内容，发送表单。Snoopy正确运行需要你的服务器的PHP版本在4以上，
+并且支持PCRE（Perl Compatible Regular Expressions），基本的LAMP服务都支持。</p>
+
+
+
+
+<h2>一、Snoopy的一些特点</h2>
+
+
+<p>1.抓取网页的内容 fetch</br>
+2.抓取网页的文本内容 (去除HTML标签) fetchtext</br>
+3.抓取网页的链接，表单 fetchlinks fetchform</br>
+4.支持代理主机</br>
+5.支持基本的用户名/密码验证</br>
+6.支持设置user_agent, referer(来路), cookies和header content(头文件)</br>
+7.支持浏览器重定向，并能控制重定向深度</br>
+8.能把网页中的链接扩展成高质量的url(默认)</br>
+9.提交数据并且获取返回值</br>
+10.支持跟踪HTML框架</br>
+11.支持重定向的时候传递cookies，要求php4以上就可以了，由于本身是php一个类，无需扩支持，服务器不支持curl时候的最好选择</p>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/08/10/php-connecting-tool-snoopy-introduction-and-application/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/">PHP函数`call_user_func`和`call_user_func_array`详解</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-08-04T21:38:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>`call_user_func`函数类似于一种特别的调用函数的方法，使用方法如下：</p>
+
+
+
+
+<pre><code class="php">function a($b,$c) 
+{
+    echo $b;
+    echo $c;
+}
+call_user_func('a', "111","222");
+call_user_func('a', "333","444");
+//显示 111 222 333 444
+</code></pre>
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2010/07/21/php-send-email/">PHP发送邮件</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-07-21T10:05:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2010/07/21/php-send-email/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>现在很多主机空间都是IIS上执行PHP程序，大多不能直接用mail()发送邮件，有了这个类只要你有注册过邮箱，
+就可以随意的发送邮件，速度也不慢哦。</p>
+
+
+
+
+<p>先给一个具体的使用示例：</p>
+
+
+
+
+<pre><code class="php">&lt;? 
+require (FILE_DIR."smtp.php"); 
+$smtpserver = "smtp.xxx.com";//SMTP服务器 
+$smtpserverport =25;//SMTP服务器端口 
+$smtpusermail = "xxxxx@xxx.com";//SMTP服务器的用户邮箱 
+$smtpemailto = "aaaaa@xxx.com";//发送给谁 
+$smtpuser = "xxxxx";//SMTP服务器的用户帐号 
+$smtppass = "xxxxx";//SMTP服务器的用户密码 
+$mailsubject = "Test Subject";//邮件主题 
+$mailbody = "&lt;h1&gt;This is a test mail&lt;/h1&gt;";//邮件内容 
+$mailtype = "HTML";//邮件格式（HTML/TXT）,TXT为文本邮件 
+$smtp = new smtp($smtpserver,$smtpserverport,true,$smtpuser,$smtppass);//这里面的一个true是表示使用身份验证,否则不使用身份验证. 
+$smtp-&gt;debug = TRUE;//是否显示发送的调试信息 
+$smtp-&gt;sendmail($smtpemailto, $smtpusermail, $mailsubject, $mailbody, $mailtype); 
+?&gt;
+</code></pre>
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/07/21/php-send-email/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2010/07/19/ucenter-sync-login-mechanism/">UCenter同步登陆机制</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-07-19T14:34:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2010/07/19/ucenter-sync-login-mechanism/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>UC同步登陆机制</h2>
+
+
+<p>以用户登录为例介绍UC的同步机制，其它注销，改密码，消息，头像，好友均类同。UC同步登陆的过程如下：</p>
+
+
+
+
+<p>1.从用户xxx在某一应用程序的`login.php`，输入用户名，密码讲起。</br>
+先用`uc_user_login`函数到`uc server`验证此用户和密码，如正确，则写入session,写入cookies，并更新应用程序会员表中的登录ip，
+登录时间。用户感觉不到这个过程。</p>
+
+
+
+
+<p>2.然后通过`uc_user_synlogin`通知uc server 用户xxx登录成功,这个过程可能使用ajax，用户感觉不到通知过程。</p>
+
+
+
+
+<p>3.uc server收到这个消息后，马上命令手下，把xxx登录的消息，像令牌环一样，发给所有愿意接收（后台中那个是否开启同步登录）
+这个消息的其它应用程序。其实就是带参数访问一下各应用程序的uc.php,用户感觉不到这个过程。</p>
+
+
+
+
+<p>4.各应用程序靠api下的uc.php来接收uc server发来的消息，并对uc server言听计从，让干什么就干什么。现在，收到让xxx用户
+在你的程序中登录的命令，马上执行。</br>
+并写本应用程序的session，并且使用p3p, 写入相同域或不同域的cookies.   用户感觉不到这个过程。</p>
+
+
+
+
+<p>5.最后所有和uc整合的程序，xxx均登录成功。用户从www.test.com/bbs登录后， 跳到www.test.com/news同样显示登录。
+因为bbs 和news系统在后台均已登录。</p>
+
+
+
+
+<p>6.应用程序与uc server的会话结束。</p>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2010/07/18/UML-based-library-management-system-requirement-analysis-and-system-design/">基于UML的图书管理系统的需求分析</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-07-18T10:06:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2010/07/18/UML-based-library-management-system-requirement-analysis-and-system-design/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>一个图书馆的图书资料库在正常运转中总是面对大量的读者信息、书籍信息以及两者相互作用产生的借书信息、还书信息。
+图书馆作为一个信息资源的集散地，图书和用户借阅资料繁多，包含着很多的信息数据。图书管理系统的开发和应用主要通过
+两个步骤来实现：首先是基于系统功能的需求分析，其次是系统模型的设计和实现。
+</p>
+
+
+
+
+<h2>1.需求分析</h2>
+
+
+<p>需求分析是软件工程过程的一个重要阶段,其中一个主要任务是确定系统的功能需求,采用面向对象方法,基于UML的可视化
+系统需求分析,因为有用户的积极参与,既可以加快设计者对于问题的理解,又能够在系统描述方面减少语义差异,保证分析的
+正确性。需求分析的目标就是建立需求模型,即从功能需求出发建立用例模型, UML的用例视图从用户的需求中提取,以盒图的
+方式描述待开发的系统的功能需求。每个用例都指定了客户的需求即他们需要系统干什么。用例图为设计活动不仅记录需求
+而且还提供了一种挖掘的信息, 它记录了需求到设计结果之间的映射关系,能够确保设计结果具有明确的根据或者说具有可
+维护性,基于UML的软件开发过程是以用例驱动的。</p>
+
+
+
+
+<p>首先我们进行角色识别，角色识别的任务是找出所有可能与系统发生交互行为的外部实体、对象、系统。它们的行为不受系统控制，
+但是可以提供输入给系统。对于一所大学的图书管理系统，基本的功能是完成图书的借阅和相关信息的管理，服务的对象有本科生，
+研究生，教师，及其他学校的学生，还有社会人员，这些人可归结为一类即读者。而为帮助读者顺利完成借还书的可以是工作人员，
+可以是自动借还书机，他们可以归结为一类即图书管理人员。因此对于一个图书管理系统主要有两类角色，读者、图书管理员。</p>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/07/18/UML-based-library-management-system-requirement-analysis-and-system-design/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2010/04/10/10-stories-in-management/">管理的十个寓言故事</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-04-10T12:36:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2010/04/10/10-stories-in-management/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>▲ (一)相信自己是一只雄鹰 ▲</h2>
+
+
+<p>一个人在高山之巅的鹰巢里，抓到了一只幼鹰，他把幼鹰带回家，养在鸡笼里。这只幼鹰和鸡一起啄食、嬉闹和休息。它以为自己是一只鸡。 
+这只鹰渐渐长大，羽翼丰满了，主人想把它训练成猎鹰，可是由于终日和鸡混在一起，它已经变得和鸡完全一样，根本没有飞的愿望了。 主人试了
+各种办法，都毫无效果，最后把它带到山顶上，一把将它扔了出去。这只鹰像块石头似的，直掉下去，慌乱之中它拼命地扑打翅膀，就这样，它
+终于飞了起来！ </p>
+
+
+
+
+<p><strong>秘诀1：磨练召唤成功的力量。</strong></p>
+
+
+
+
+<h2>▲ (二)五枚金币 ▲</h2>
+
+
+<p>有个叫阿巴格的人生活在内蒙古草原上。有一次，年少的阿巴格和他爸爸在草原上迷了路，阿巴格又累又怕，到最后快走不动了。爸爸就从兜里
+掏出５枚硬币，把一枚硬币埋在草地里，把其余４枚放在阿巴格的手上，说：“人生有５枚金币，童年、少年、青年、中年、老年各有一枚，你现在
+才用了一枚，就是埋在草地里的那一枚，你不能把５枚都扔在草原里，你要一点点地用，每一次都用出不同来，这样才不枉人生一世。今天我们一定
+要走出草原，你将来也一定要走出草原。世界很大，人活着，就要多走些地方，多看看，不要让你的金币没有用就扔掉。”在父亲的鼓励下，那天阿巴格
+走出了草原。长大后，阿巴格离开了家乡，成了一名优秀的船长。 </p>
+
+
+
+
+<p><strong>秘诀2：珍惜生命，就能走出挫折的沼泽地。</strong></p>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/04/10/10-stories-in-management/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2009/07/23/useful-queries-methods-in-MS-SQL-Server/">Sql Server数据库常用的查询语句</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2009-07-23T22:31:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2009/07/23/useful-queries-methods-in-MS-SQL-Server/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>一、表操作</h2>
+
+<p>例 1 对于表的教学管理数据库中的表 STUDENTS ，可以定义如下：
+<code>
+Create TABLE STUDENTS (SNO NUMERIC (6, 0) NOT NULL
+SNAME CHAR (8) NOT NULL
+AGE NUMERIC(3,0)
+SEX CHAR(2)
+BPLACE CHAR(20)
+PRIMARY KEY(SNO))
+</code></p>
+
+<p>例 2 对于表的教学管理数据库中的表 ENROLLS ，可以定义如下：
+<code>
+Create TABLE ENROLLS(SNO NUMERIC(6,0) NOT NULL
+CNO CHAR(4) NOT NULL
+GRADE INT
+PRIMARY KEY(SNO,CNO)
+FOREIGN KEY(SNO) REFERENCES STUDENTS(SNO)
+FOREIGN KEY(CNO) REFERENCES COURSES(CNO)
+CHECK ((GRADE IS NULL) or (GRADE BETWEEN 0 AND 100)))
+</code></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2009/07/23/useful-queries-methods-in-MS-SQL-Server/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page12">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">Blog Archives</a></li>
+    
+    <li class="next"><a href="/page10">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

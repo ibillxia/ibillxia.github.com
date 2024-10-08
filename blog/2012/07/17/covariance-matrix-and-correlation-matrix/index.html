@@ -1,0 +1,385 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>协方差矩阵和相关系数矩阵 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2012/07/17/covariance-matrix-and-correlation-matrix">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">协方差矩阵和相关系数矩阵</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-07-17T12:35:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>1.概述</h2>
+
+
+<p>首先从随机变量的方差的性质讲起。</br>
+设$X$，$Y$是两个随机变量，$E(X)$，$E(Y)$，$D(X)$，$D(Y)$分别为各自的期望和方差，则有:</br>
+<center>$D(X+Y)=D(X)+D(Y)+2E{(X-E(X))(Y-E(Y))} $.   (1)</center></br>
+特别的，当$X$，$Y$相互独立时，有:</br>
+<center>$D(X+Y)=D(X)+D(Y) $.    (2)</center></br>
+对比（1）式和（2）式知，$X$，$Y$相互独立时还应该有:</br>
+<center>$E{(X-E(X))(Y-E(Y))} =0 $.      (3)</center></br>
+这意味着当$E{(X-E(X))(Y-E(Y))}\neq 0$时，X与Y不相互独立，而是存在一定关系的。</p>
+
+
+
+
+<h2>2.相关系数和协方差</h2>
+
+
+<p>
+我们把$E{(X-E(X))(Y-E(Y))}$拿出来，单独定义一个概念，即协方差，记为$Cov(X,Y)$，即：
+<center>$Cov(X,Y)=E{(X-E(X))(Y-E(Y))} $.     (4)</center></br>
+而</br>
+<center>$\rho _{XY} = \frac{Cov(X,Y)}{\sqrt{DX}\sqrt{DY}}$.     (5)</center></br>
+称为随机变量$X$，$Y$的<strong>相关系数</strong>。</br>
+将$Cov(X,Y)$的定义式展开，易得：
+<center>$Cov(X,Y)=E(XY)-E(X)E(Y)$.      (6)</center></br>
+我们常常用这一式子计算<strong>协方差</strong>。
+</p>
+
+
+
+
+<!-- more -->
+
+
+<p>协方差的性质：</br>
+i) $Cov(aX,bY)=abCov(X,Y)$，a，b是常数；</br>
+ii) $Cov(X1+X2，Y)=Cov(X1,Y)+Cov(X2,Y)$.</p>
+
+
+
+
+<p>相关系数的性质：</br>
+i) $\mid \rho _{XY} \mid \leq 1$；</br>
+ii) $\mid \rho _{XY} \mid=1$的充要条件是，存在常数a，b使得$P{Y=a+bX}=1$。</p>
+
+
+
+
+<h2>3.协方差矩阵和相关系数矩阵</h2>
+
+
+<p>上面的定义都是针对二维随机变量的，那么对于n维随机变量，相应的有协方差矩阵和相关系数矩阵的定义。</p>
+
+
+
+
+<p>设n维随机变量$(X1,X2,…,Xn)$的二阶混合中心距</br>
+<center>$c _{ij} = Cov(X_{i},X_{j})=E{[X_{i}-E(X_{i})][X_{j}-E(X_{j})]},i,j=1,2,…,n$.      (7)</center></br>
+都存在，则称矩阵</br>
+<center>$C=[c_{ij}]$.</center>
+为该$n$维随机变量的协方差矩阵。相应的有相关系数矩阵的定义$\sum=[\rho _{ij}]$。
+</p>
+
+
+
+
+<p>设有m个样本，则可构成m×n的样本矩阵X，对X进行标准化变换后得到矩阵Z，那么由相关系数矩阵的定义有</br>
+<center>$\sum = Z^{T}*Z$</center></br>
+其中$Z^{T}$为$Z$的转置。
+</p>
+
+
+
+
+<h2>4.协方差矩阵和相关系数矩阵的关系</h2>
+
+
+<p>由二者的定义公式可知，经<strong>标准化</strong>的样本数据的协方差矩阵就是原始样本数据的相关矩阵。
+<strong>这里所说的标准化指正态化</strong>，即将原始数据处理成均值为0，方差为1的标准数据。</p>
+
+
+
+
+<h2>参考文献</h2>
+
+
+<p>《概率论与数理统计》浙大第4版</p>
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2012/07/17/covariance-matrix-and-correlation-matrix/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2012-07-17T12:35:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/math/'>Math</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/xie-fang-chai/'>协方差</a>, <a class='tag' href='/blog/tags/ju-zhen/'>矩阵</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2012/07/08/Google-PageRank-Algorithm/" title="Previous Post:
+        Google PageRank 算法">&laquo; Google PageRank 算法</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2012/07/18/MFCC-feature-extraction/"
+        title="Next Post: MFCC参数提取及Matalab实现">MFCC参数提取及Matalab实现
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2012/07/17/covariance-matrix-and-correlation-matrix/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2012/07/17/covariance-matrix-and-correlation-matrix/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

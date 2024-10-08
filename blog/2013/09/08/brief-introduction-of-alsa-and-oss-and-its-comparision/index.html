@@ -1,0 +1,459 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Linux的OSS和ALSA声音系统简介及其比较 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2013/09/08/brief-introduction-of-alsa-and-oss-and-its-comparision">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">Linux的OSS和ALSA声音系统简介及其比较</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-09-08T19:46:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>概述</h2>
+
+
+<p>昨天想在Ubuntu上用一下HTK工具包来绘制语音信号的频谱图和提取MFCC的结果，但由于前段时间把Ubuntu升级到13.04，系统的声卡驱动
+是ALSA（Advanced Linux Sound Architecture，高级Linux声音体系），而不是HTK中所使用的OSS（Open Sound System，开放声音系统）。
+网上查阅了大半天，按照 http://forum.ubuntu.org.cn/viewtopic.php?t=316792 中提供的方法用OSS4来替换ALSA，结果OSS4没替换成功，
+而原来的ALSA也不好使了，真坑爹啊！到现在还没办法完全复原，现在只能通过alsamixer来设置音量了，系统的音量设置根本无法用，而且
+声音设置中的输入设备和输出设备都是空的。（现在将系统升级到13.10版，系统的音量设置可以用了，哈哈）捣鼓了半天也没还原回来唉，
+整个人都快崩溃了，都是由于对Linux不熟悉才被虐至如此地步，得恶补啊！！！下面本文就主要介绍一下OSS和ALSA，并将二者进行比较。</p>
+
+
+
+
+<p>在介绍OSS和ALSA之前，先介绍一下音频设备的一些基础知识。</br>
+数字音频设备，有时也称codec，PCM，DSP，ADC/DAC设备，用来播放或录制数字化的声音。它的指标主要有：采样速率（电话为8K，DVD为96K）、
+channel数目（单声道，立体声）、采样分辨率（8-bit，16-bit）等。</br>
+mixer（混频器）：用来控制多个输入、输出的音量，也控制输入（microphone，line-in，CD）之间的切换。</br>
+synthesizer（合成器）：通过一些预先定义好的波形来合成声音，有时用在游戏中声音效果的产生。</br>
+MIDI接口：MIDI接口是为了连接舞台上的synthesizer、键盘、道具、灯光控制器的一种串行接口。</p>
+
+
+
+
+<!--more-->
+
+
+
+
+<h2>OSS开放声音系统简介</h2>
+
+
+<p>Open Sound System是一个类Unix和POSIX兼容系统上一个可选的声音架构。OSSv3是Linux下原始的声音系统并集成在内核里，但是OSSv4
+在2002年OSS成为商业软件时它地位被ALSA所取代。OSSv4在2007年又成为了开源软件，4Front Technologies以GPL协议发布了它的源码。</p>
+
+
+
+
+<p>OSS（Open Sound System）是unix平台上一个统一的音频接口。以前，每个Unix厂商都会提供一个自己专有的API，用来处理音频。这就
+意味着为一种Unix平台编写的音频处理应用程序，在移植到另外一种Unix平台上时，必须要重写。不仅如此，在一种平台上具备的功能，
+可能在另外一个平台上无法实现。但是，OSS出现以后情况就大不一样了，只要音频处理应用程序按照OSS的API来编写，那么在移植到另外
+一个平台时，只需要重新编译即可。因此，OSS提供了源代码级的可移植性。</p>
+
+
+
+
+<p>同时，很多的Unix工作站中，只能提供录音与放音的功能。有了OSS后，给这些工作站带来了MIDI功能，加上音频流、语音识别/生成、
+计算机电话（CT）、JAVA以及其它的多媒体技术，在Unix工作站中，同样可以享受到同Windows、Macintosh环境一样的音频世界。另外，
+OSS还提供了与视频和动画播放同步的音频能力，这对在Unix中实现动画、游戏提供了帮助。</p>
+
+
+
+
+<p>在Unix系统中，所有的设备都被统一成文件，通过对文件的访问方式（首先open，然后read/write，同时可以使用ioctl读取/设置参数，
+最后close）来访问设备.在OSS中，主要有以下的几种设备文件：</br>
+/dev/mixer：访问声卡中内置的mixer，调整音量大小，选择音源。</br>
+/dev/sndstat：测试声卡，执行cat /dev/sndstat会显示声卡驱动的信息。</br>
+/dev/dsp、/dev/dspW、/dev/audio：读这个设备就相当于录音，写这个设备就相当于放音。/dev/dsp与/dev/audio之间的区别在于采样的编码
+不同，/dev/audio使用μ律编码，/dev/dsp使用8-bit（无符号）线性编码，/dev/dspW使用16-bit（有符号）线形编码。/dev/audio主要是为了
+与SunOS兼容，所以尽量不要使用。</br>
+/dev/sequencer：访问声卡内置的，或者连接在MIDI接口的synthesizer。</p>
+
+
+
+
+<p>OSS为音频编程提供三种设备，分别是/dev/dsp，/dev/dspW和/dev/audio，用户可以直接使用Unix的命令来放音和录音，命令cat /dev/dsp >xyz
+可用来录音，录音的结果放在xyz文件中；命令cat xyz >/dev/dsp播放声音文件xyz。如果通过编程的方式来使用这些设备，那么Unix平台通过
+文件系统提供了统一的访问接口。程序员可以通过文件的操作函数直接控制这些设备，这些操作函数包括：open、close、read、write、ioctl等。</p>
+
+
+
+
+<h2>ALSA高级Linux声音系统简介</h2>
+
+
+<p>高级Linux声音体系（英语：Advanced Linux Sound Architecture，缩写为ALSA）是Linux内核中，为声卡提供的驱动组件，以替代原先的
+OSS（开放声音系统）。一部分的目的是支持声卡的自动配置，以及完美的处理系统中的多个声音设备，这些目的大多都已达到。另一个声音
+框架JACK使用ALSA提供低延迟的专业级音频编辑和混音能力。</p>
+
+
+
+
+<p>这个项目开始于为1998年Gravis Ultrasound所开发的驱动，它一直作为一个单独的软件包开发，直到2002年他被引进入Linux内核的开发
+版本(2.5.4-2.5.5)。从2.6版本开始ALSA成为Linux内核中默认的标准音频驱动程序集，OSS则被标记为废弃。</p>
+
+
+
+
+<p>ALSA由许多声卡的声卡驱动程序组成，同时它也提供一个称为libasound的API库。应用程序开发者应该使用libasound而不是内核中的ALSA接口。
+因为libasound提供最高级并且编程方便的编程接口。并且提供一个设备逻辑命名功能，这样开发者甚至不需要知道类似设备文件这样的低层接口。
+相反，OSS/Free驱动是在内核系统调用级上编程，它要求开发者提供设备文件名并且利用ioctrl来实现相应的功能。为了向后兼容，ALSA提供内核
+模块来模拟OSS，这样之前的许多在OSS基础上开发的应用程序不需要任何改动就可以在ALSA上运行。另外，libaoss库也可以模拟OSS，而它不需要
+内核模块。另外，ALSA还包含插件功能，使用插件可以扩展新的声卡驱动，包括完全用软件实现的虚拟声卡。ALSA提供一系列基于命令行的工具集，
+比如混音器(mixer)，音频文件播放器(aplay)，以及控制特定声卡特定属性的工具。</p>
+
+
+
+
+<p>ALSA API主要分为以下几种接口：</br>
+控制接口：提供灵活的方式管理注册的声卡和对存在的声卡进行查询。</br>
+PCM接口：提供管理数字音频的捕捉和回放。</br>
+原始MIDI接口: 支持 MIDI (Musical Instrument Digital Interface)，一种标准电子音乐指令集。这些API提供访问声卡上的MIDI总线。
+这些原始借口直接工作在 The MIDI事件上，程序员只需要管理协议和时间。</br>
+记时接口: 为支持声音的同步事件提供访问声卡上的定时器。</br>
+音序器接口：一个比原始MIDI接口高级的MIDI编程和声音同步高层接口。它可以处理很多的MIDI协议和定时器。</br>
+混音器接口：控制发送信号和控制声音大小的声卡上的设备。</p>
+
+
+
+
+<p>API库使用逻辑设备名而不是设备文件。设备名字可以是真实的硬件名字也可以是插件名字。硬件名字使用hw:i,j这样的格式。其中i是卡号，
+j是这块声卡上的设备号。第一个声音设备是hw:0,0.这个别名默认引用第一块声音设备并且在本文示例中一真会被用到。插件使用另外的唯一名字。
+比如plughw:,表示一个插件，这个插件不提供对硬件设备的访问，而是提供像采样率转换这样的软件特性，硬件本身并不支持这样的特性。</p>
+
+
+
+
+<h2>OSS与ALSA的优缺点比较</h2>
+
+
+<p>ALSA是一个完全开放源代码的音频驱动程序集，除了像OSS那样提供了一组内核驱动程序模块之外，ALSA还专门为简化应用程序的编写提供了
+相应的函数库，与OSS提供的基于ioctl的原始编程接口相比，ALSA函数库使用起来要更加方便一些。利用该函数库，开发人员可以方便快捷的
+开发出自己的应用程序，细节则留给函数库内部处理。当然ALSA也提供了类似于OSS的系统接口，不过ALSA的开发者建议应用程序开发者使用
+音频函数库而不是驱动程序的API。Ubuntu默认使用ALSA作为底层声音驱动，程序则与PulseAudio交互，这是一个很不错的方案。</p>
+
+
+
+
+<p>下面来比较一下OSS和ALSA的优缺点：</br>
+<strong>(1)OSS的优点（对用户来说）</strong></br>
+在内核空间（kernel space）里面包含了一个透明软件混音器(vmix)。这样多个程序就可以同时使用声音设备而且没有任何问题。</br>
+这个混音器可以让你单独调节各个程序的音量。</br>
+对某些老声卡有着更好的支持比如创新（Creative）的X-Fi。</br>
+声音程序的初始反应时间一般更好。</br>
+对使用OSS的应用程序接口（API）的程序有更好的支持，很多程序都支持OSS的API，而不需要ALSA的模拟。</br>
+
+<strong>(2)OSS的优点（对开发者来说）</strong></br>
+清晰的API文档，更易于使用。</br>
+支持用户空间的声音驱动。</br>
+可移植性强，OSS也可以在BSDs和Solaris下运行。</br>
+本身可以跨平台，可以更方便移植到新的操作系统。</br>
+
+<strong>(3)ALSA的优点</strong></br>
+ALSA对USB音频设备支持更好，而OSS的输出还在试验中，输入还未实现。</br>
+ALSA支持蓝牙声音设备。</br>
+ALSA支持AC'97和HDAudio dial-up soft-modems (比如Si3055)。</br>
+ALSA对MIDI支持得更好，但用OSS你只能通过软件合成器（如timidity和fluidsynth）来使用MIDI。</br>
+ALSA对待机支持更好，而用OSS，你需要在待机前使用soundoff来停止OSS驱动，在恢复后使用soundon来启动OSS。</br>
+OSS的jack检测目前在某些HDAudio-powered主板上不能正常工作。也就是说在某些型号的主板上，你可能需要在插入耳机的
+时候手动关闭外置扬声器。而ALSA没这个问题。
+</p>
+
+
+
+
+<h2>参考资料</h2>
+
+
+<p>[1]Archlinux上介绍OSS的Wiki：https://wiki.archlinux.org/index.php/OSS_%28%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87%29 </br>
+[2]Archlinux上介绍ALSA的Wiki：https://wiki.archlinux.org/index.php/Advanced_Linux_Sound_Architecture_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87) </br>
+[3]OSS--跨平台的音频接口简介: http://www.ibm.com/developerworks/cn/linux/l-ossapi/ </br>
+[4]Linux ALSA声卡驱动之一：ALSA架构简介: http://blog.csdn.net/droidphone/article/details/6271122 </br>
+[5]Linux ALSA声卡编程简介: http://enmind.blog.163.com/blog/static/164138001201092334620355/</p>
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2013/09/08/brief-introduction-of-alsa-and-oss-and-its-comparision/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2013-09-08T19:46:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/linux/'>Linux</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/audio/'>Audio</a>, <a class='tag' href='/blog/tags/htk/'>HTK</a>, <a class='tag' href='/blog/tags/linux/'>Linux</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2013/07/20/details-of-wave-format-and-reading-wave-files-in-C-language/" title="Previous Post:
+        PCM WAVE格式详解及用C语言实现wave文件的读取">&laquo; PCM WAVE格式详解及用C语言实现wave文件的读取</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2013/10/30/why-web-companies-all-are-beginning-to-play-hardware-products/"
+        title="Next Post: 互联网公司为什么都在玩硬件？">互联网公司为什么都在玩硬件？
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2013/09/08/brief-introduction-of-alsa-and-oss-and-its-comparision/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2013/09/08/brief-introduction-of-alsa-and-oss-and-its-comparision/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

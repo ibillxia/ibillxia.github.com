@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: SPro | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/spro/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[使用Alize等工具构建说话人识别平台]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/04/26/building-speaker-recognition-system-using-alize-etc/"/>
+    <updated>2013-04-26T22:07:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/04/26/building-speaker-recognition-system-using-alize-etc</id>
+    <content type="html"><![CDATA[<p>前段时间有好几位同学询问如何用Alize实现说话人识别的问题，由于寒假前赶Paper，来不及详细解答，更没时间写Demo。
+开学后不久抽时间写了一个Demo，并上传到了GitHub：<a href="https://github.com/ibillxia/VoicePrintReco/tree/master/Demo">VoicePrintReco-branch-master</a>. 现在新版的 Alize 3.0 已经提供了更多的官方 demo，我也将 GitHub 的源码升级了 <a href="https://github.com/ibillxia/VoicePrintReco">VPR2.0</a>， 其中的Demos文件夹有Alize官方的4个demo和我自己写的这个demo。</p>
+
+<h3>基本流程</h3>
+
+<p>下面将利用Alize+SPro进行简单的GMM-Based的说话人识别的基本流程总结如下：</p>
+
+<h4>1.Features extraction 特征提取</h4>
+
+<p>sfbcep.exe（MFCC）或slpcep.exe（LPCC）</p>
+
+<h4>2.Silence removal 静音检测和去除</h4>
+
+<p>NormFeat.exe 先能量规整<br/>
+EnergyDetector.exe 基于能量检测的静音去除</p>
+
+<h4>3.Features Normalization 特征规整</h4>
+
+<p>NormFeat.exe 再使用这个工具进行特征规整</br></p>
+
+<h4>4.World model training</h4>
+
+<p>TrainWorld.exe 训练UBM</br></p>
+
+<h4>5.Target model training</h4>
+
+<p>TrainTarget.exe 在训练好UBM的基础上训练training set的GMM</br></p>
+
+<h4>6.Testing</h4>
+
+<p>ComputeTest.exe 将testing set在training set的GMM上进行测试和打分</br></p>
+
+<h4>7.Score Normalization</h4>
+
+<p>ComputeNorm.exe 将得分进行规整</br></p>
+
+<h4>8. Compute EER 计算等错误率</h4>
+
+<p>你可以查查计算EER的matlab代码，NIST SRE的官网上有下载<a href="http://www.itl.nist.gov/iad/mig//tools/DETware_v2.1.targz.htm">DETware_v2.1.tar.gz</a> 。_</p>
+
+<!-- more -->
+
+
+<h3>获取帮助</h3>
+
+<p>关于各步骤中参数的问题，可以在命令行“工具 -help”来查看该工具个参数的具体含义，另外还可参考Alize源码中各个工具的test目录中提供的实例，
+而关于每个工具的作用及理论知识则需要查看相关论文。</p>
+
+<p>常见问题及解答: <a href="http://mistral.univ-avignon.fr/mediawiki/index.php/Frequently_asked_questions">Frequently asked questions - by alize</a></p>
+
+<p>更多问题请在 <a href="https://groups.google.com/forum/?fromgroups=&amp;hl=zh-CN#!forum/alize---voice-print-recognition">Google Groups</a> 提出，大家一起讨论！</p>
+
+<p>另外，还可以通过 QQ 群：二⑦九⑥四④零⑤柒 进行Real-Time的交流与讨论，加群请注明学校姓名，以防广告。</p>
+
+<h3>推荐资料</h3>
+
+<p>[1] ALIZE - User Manual: <a href="http://mistral.univ-avignon.fr/doc/userguide_alize.001.pdf">userguide_alize.001.pdf</a><br/>
+[2] LIA_SPKDET Package documentation: <a href="http://mistral.univ-avignon.fr/doc/userguide_LIA_SpkDet.002.pdf">userguide_LIA_SpkDet.002.pdf</a><br/>
+[3] <a href="http://www-clips.imag.fr/geod/User/laurent.besacier/NEW-TPs/TP-Biometrie/tools/CommentsLBInstall/doc.pdf">Reference System based on speech modality ALIZE/LIA RAL</a><br/>
+[4] Jean-Francois Bonastre, etc. ALIZE/SpkDet: a state-of-the-art open source software for speaker recognition<br/>
+[5] TOMMIE GANNERT. A Speaker Veri?cation System Under The Scope: Alize<br/>
+[6] <a href="http://mistral.univ-avignon.fr/mediawiki/index.php/Main_Page">Alize Wiki</a></p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: Google | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/google/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Google PageRank 算法]]></title>
+    <link href="http://ibillxia.github.io/blog/2012/07/08/Google-PageRank-Algorithm/"/>
+    <updated>2012-07-08T00:00:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2012/07/08/Google-PageRank-Algorithm</id>
+    <content type="html"><![CDATA[<h2>1.概述</h2>
+
+
+<p>互联网发展早期的搜索引擎，对web页面的排序，是根据搜索的词组（短语）在页面中的出现次数（occurence ），
+并用页面长度和html标签的重要性提示等进行权重修订。链接名气(link popularity)技术通过其它文档链接到当前
+页面（inbound links）的链接数量来决定当前页的重要性，这样可以有效地抵制被人为加工的页面欺骗搜索引擎的手法。</p>
+
+
+
+
+<p>PageRank(网页级别)，2001年9月被授予美国专利，专利人是Google创始人之一拉里•佩奇（Larry Page）。因此，PageRank里
+的page不是指网页，而是指佩奇，即这个等级方法是以佩奇来命名的。它是Google排名运算法则（排名公式）的一部分，是Google用于
+用来标识网页的等级/重要性的一种方法，是Google用来衡量一个网站的好坏的重要标准之一。PageRank计算页面的重要性，对每个
+链入(inbound)赋以不同的权值，链接提供页面的越重要则此链接入越高。当前页的重要性，是由其它页面的重要性决定的。
+在揉合了诸如Title标识和Keywords标识等所有其它因素之后，Google通过PageRank来调整结果，使那些更具“等级/重要性”的网页
+在搜索结果中令网站排名获得提升，从而提高搜索结果的相关性和质量。</p>
+
+
+
+
+<!-- more -->
+
+
+<h2>2.PageRank算法核心原理</h2>
+
+
+<p>Lawrence Page 和 Sergey Brin 提出了用户行为的随机冲浪模型，他们把用户点击链接的行为，视为一种不关心内容的随机行为。
+而用户点击页面内的链接的概率，完全由页面上链接数量的多少决定的，一个页面通过随机冲浪到达的概率就是链入它的别的页面上
+的链接的被点击概率的和。另外用户不可能无限的点击链接，常常因劳累而随机跳入另一个页面。</p>
+
+
+
+
+<p>设用户访问页面i的概率为pi，它继续访问其他页面有两种可能的方式：一是以概率q随机访问任何一个页面，二是以概率（1-q）访问
+页面i中的某个链接。这样，从页面i转到页面j的概率为：</p>
+
+
+<center>$\frac{q}{n} + \frac{(1-q)A _{ij}}{n _{i}}$.</center>
+
+
+
+
+<p>其中（1-q）也称为阻尼系数（damping factor），n为总网页数，ni为页面i链出的网页数，矩阵A为整个网络的邻接矩阵（页面i链出
+到页面j则Aij=1，否则Aij=0）。则用户访问页面j的总概率为：</p>
+
+
+<center>$p_{j} = \sum_{i=1}^{n}(\frac{qp_{i}}{n} + (1-q) \frac{p_{i}}{n_{i}} A_{ij}) $.</center>
+
+
+
+
+<p>可以发现，在计算新的PR（PageRank）时用到了原来的PR，由此可知，PageRank算法是一种迭代算法。</p>
+
+
+
+
+<h2>3.算法中的几个问题</h2>
+
+
+<h4>（1）迭代初始值的确定</h4>
+
+
+<p>初始条件下，每个网页的级别可以一视同仁，由于每个页面的入度和出度不同，经过若干次迭代后得到的PR可以很好的
+反应页面链入和链出的情况。根据Lawrence Page 和 Sergey Brin公开发表的文章，他们实际需要进行100次迭代才能得到
+整个互联网的满意的网页级别值，他们还从理论上证明了不论初始值如何选取，这种算法都保证了网页排名的估计值能收敛
+到他们的真实值。在迭代的过程中，每个网页的网页级别的和是收敛于整个网络的页面数的，所以，每个页面的平均网页级别
+是1。于是，可以将每个网页的初始PR定为1。阻尼系数一般设为0.85。</p>
+
+
+
+
+<h4>（2）算法的时间复杂性</h4>
+
+
+<p>在互联网上网页的数量是巨大的，上面提到的二维矩阵从理论上讲有网页数目平方之多个元素。如果我们假定有十亿个网页，
+那么这个矩阵 就有一百亿亿个元素。这样大的矩阵相乘，计算量是非常大的。拉里和谢尔盖两人利用稀疏矩阵计算的技巧，
+大大的简化了计算量，并实现了这个网页排名算法。今天 Google 的工程师把这个算法移植到并行的计算机中，进一步缩短了
+计算时间，使网页更新的周期比以前短了许多。因此该算法的时间性能不是问题。</p>
+
+
+
+
+<h2>4.算法的特性</h2>
+
+
+<p>（1）页面的网页级别由链向它的页面的网页级别决定，但每个链入页面的贡献的值是不同的。如果页面中链出越多，
+它对当前页面的贡献就越小；而页面的链入页面越多，其网页级别就越高。</p>
+
+
+
+
+<p>（2）入链总是能增加当前页面的级别，尤其当前页与其下级页面构成回路时，这种贡献更大。</p>
+
+
+
+
+<p>（3）增加出链不会影响整个web的总级别，但一个站点失去的级别值等于链到的站点的增加值之和。</p>
+
+
+
+
+<p>（4）阻尼系数越大，页面级别的收益越大，且整个回路上都能收到更大的收益。</p>
+
+
+
+
+<p>（5）增加页面后，所有页面级别增加了1，但每个页面的级别值减少了，这是由于新加页面分享了入链代来的值。
+从这个结果看，增加页面减少了已有页面的级别值。当然，大站点也会因内容丰富而吸引其它站点的出链而得以级别值增加。</p>
+
+
+
+
+<h2>5.算法的改进</h2>
+
+
+<p>PageRank算法的优点是：它是一个与查询无关的静态算法，所有网页的PageRank值通过离线计算获得；有效减少在线
+查询时的计算量，极大降低了查询响应时间。其不足之处是：人们的查询具有主题特征，PageRank忽略了主题相关性，
+导致结果的相关性和主题性降低；另外，PageRank有很严重的对新网页的歧视。算法的改进方法主要有如下三种：</p>
+
+
+
+
+<h4>（1）主题敏感的PageRank（Topic-Sedsitive PageRank）</h4>
+
+
+<p>在这个算法中，我们需要预先计算离线时页面的重要性的分数；然后，我们为每一个页面计算多种重要性分数，
+即关于不同的主题来计算这个页面的重要性分数。在查询的时候，把这些重要性分数与根据被查询的主题的重要性
+分数综合在一起，就形成一个复合的PageRank分数。采用这种方法能形成更加精确的排序值，而不是原始普通的排序值。</p>
+
+
+
+
+<h4>（2）二次方程推断法（Quadratic Extra polation）</h4>
+
+
+<p>这是一个可以加快PageRank的运算速度的方法。它能通过周期性的削减当前的矩阵乘幂迭代的非主要特征向量的方法，
+大大加快其收敛速度。使用这种方法计算PageRank值时，当计算一个包含8000万个节点的网络图时，与采用原来的PageRank
+方法相比，计算速度可以提高20%-300%。</p>
+
+
+
+
+<h4>（3）分块矩阵排序算法（BlockRank Algorithm）</h4>
+
+
+<p>该算法是PageRank算法的另一个加速算法，它首先把网络根据领域划分成不同的区域（块），为每个区域计算它们的
+局部PageRank值；估计它们的相对的重要性（每个区域的BlockRank值）；用这个区域的Block-Rank.值来给每个区域
+的Block-Rank赋予一定的权重。然后再把这些加权的局部的PageRank值近似地看作全局的PageRank向量，把这个向量
+作为标准的PageRank算法的开始向量。这种方法可以减少计算的迭代次数，可以把更多的时间用于收敛速度慢的区域
+的计算，提高了局部PageRank计算的有效性。BlockRank算法可以采取并行或分布的形式来进行计算，节约运算的时间。
+此外，局部的PageRank计算结果在以后的计算中可以被再利用。</p>
+
+
+
+
+<h2>6.小结</h2>
+
+
+<p>今天，Google搜索引擎比最初复杂、完善了许多，但是PageRank算法在Google所有的算法中依然是至关重要的。
+在学术界，这个算法被公认为是文献检索中虽大的贡献之一，并且被很多大学列入信息检索课程（Information Retrieval）
+的教程。佩奇本人也因为这个算法在30多岁时当选为美国工程院院士，是继乔布斯和盖茨之后又一位当选为院士的辍学生。
+由于PageRank算法受到专利保护，它带来两个结果：首先，其他搜索引擎开始时都比较遵守游戏规则，不去侵犯它，
+这对当时还是很弱小的Google是一个很好的保护；其次，它使得斯坦福大学拥有了超过1%的Google股票，带来了
+超过10亿美元的收益。</p>
+
+
+
+
+<h3>7.参考文献</h3>
+
+
+<p>
+Wikipedia-PageRank（<a href="http://zh.wikipedia.org/wiki/Pagerank">http://zh.wikipedia.org/wiki/Pagerank</a>）</br>
+《数学之美》 吴军 著 人民邮电出版社</br>
+Google PageRank算法（<a href="http://www.charlesgao.com/?p=157">http://www.charlesgao.com/?p=157</a>）</br>
+百度百科-PageRank（<a href="http://baike.baidu.com/view/1518.htm">http://baike.baidu.com/view/1518.htm</a>）</br>
+Google PageRank 算法（<a href="http://blog.csdn.net/stevexk/article/details/560247">http://blog.csdn.net/stevexk/article/details/560247</a>）</br>
+</p>
+
+
+
+]]></content>
+  </entry>
+  
+</feed>

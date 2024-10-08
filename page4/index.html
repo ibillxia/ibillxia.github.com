@@ -1,0 +1,805 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/page4">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2014/03/10/top-10-open-source-recommendation-systems/">TOP 10开源的推荐系统简介</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-03-10T22:29:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2014/03/10/top-10-open-source-recommendation-systems/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>最近这两年推荐系统特别火，本文搜集整理了一些比较好的开源推荐系统，即有轻量级的适用于做研究的SVDFeature、LibMF、LibFM等，也有重量级的适用于工业系统的
+Mahout、Oryx、EasyRecd等，供大家参考。PS：这里的top 10仅代表个人观点。</p>
+
+
+<h2>#1.SVDFeature</h2>
+
+
+<center><img src="/images/2014/IMAG2014031001.png"></center>
+
+
+<p>主页：<a href="http://svdfeature.apexlab.org/wiki/Main_Page">http://svdfeature.apexlab.org/wiki/Main_Page</a> 语言：C++</br>
+一个feature-based协同过滤和排序工具，由上海交大Apex实验室开发，代码质量较高。在KDD Cup 2012中获得第一名，KDD Cup 2011中获得第三名，相关论文
+发表在2012的JMLR中，这足以说明它的高大上。</br>
+SVDFeature包含一个很灵活的Matrix Factorization推荐框架，能方便的实现SVD、SVD++等方法, 是单模型推荐算法中精度最高的一种。SVDFeature代码精炼，可以用
+相对较少的内存实现较大规模的单机版矩阵分解运算。另外含有Logistic regression的model，可以很方便的用来进行ensemble。</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/03/10/top-10-open-source-recommendation-systems/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2014/03/01/koding-an-amazing-online-development-environment/">Koding——一个惊艳的在线编程开发平台</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-03-01T22:43:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2014/03/01/koding-an-amazing-online-development-environment/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>最近在v2ex上发现了一个非常酷的云编程发开平台——Koding，与大家分享一下，主要介绍一下它的基本功能和操作。</p>
+
+
+<h2>What is Koding?</h2>
+
+
+<p>Koding是一个在线的编程开发平台，致力于简化全球化的合作项目开发，并为每个人提供免费计算和开发资源。它已不仅仅是一个在线的编辑器那么简单，
+而是通过提供免费的虚拟机（vm），上面安装了ubuntu操作系统，有真实的终端，允许开发者进行go、nodejs、ruby、python、php、js、C/C++等语言的开发，
+可以安装各种工具和应用，。更主要的是，它是完全在线的，可以从世界上的任何地方访问，只需要一个浏览器。不仅如此，他还具有完美的社交功能，
+可以和团队成员在线协作。</p>
+
+
+<center><img src="/images/2014/IMAG2014030101.png"></center>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/03/01/koding-an-amazing-online-development-environment/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2014/02/23/makers-the-new-industrial-evolution/">互联网引发的制造业革命——读《创客》</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-02-23T22:07:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2014/02/23/makers-the-new-industrial-evolution/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>其实很早之前就买了这本书，是在13年6月份和『看见』、『黑客与画家』等一起买的吧，看完这两本书后也就开始看『创客』了，
+但都是断断续续的看，没有花比较集中的时间，而且感觉前面几章将的内容没有那么大的吸引力。后来双11做活动，又买了10来本书，
+其中有雷军、周鸿祎等IT大佬的传记，还有几本成功励志类、文学类的书，就又跳着去看这些书了。开学初闲着无聊就又拿起这本书
+来看了，看到了第二部分后，才发现原来这本书是如此之好，特别是开源硬件、众筹、云工厂等新兴工业和商业模式，让人印象深刻。</p>
+
+
+
+
+<h2>作者&内容简介</h2>
+
+
+<p>这本书的作者是克里斯•安德森，一个很多人耳熟能详的名字。现任『连线』杂志主编，是3D Robotics和DIY Drones的联合创始人，
+也是『纽约时报』畅销书『长尾理论』及『免费：商业的未来』的作者。</p>
+
+
+<center><img src="/images/2014/IMAG2014022301.jpg"></center>
+
+
+<p>『创客：新工业革命』一书以独特的视角分析了传统的制造业在汹涌澎湃的互联网浪潮中发生的翻天覆地的变化。在互联网这个广阔媒介的
+笼罩下，每个人都可以分享自己的idea、设计方案和产品原型，也可以评论和完善他人的idea、方案和产品，每个人都可以DIY，都可以自己动手
+创造出新的东西。只要你敢想敢做，nothing is impossible！在长尾效应无法避免的情况下，每个人都可以设计个性化的产品，解决个性化的
+问题，新发明不断涌现。3D打印的兴起，使得新产品的制造更加模块化，更加便捷。硬件设计的开源，又加剧了产品的分化和个性化，也使得其
+更新换代和性能提升更快。云工厂又使得发明者可以不用白手起家建立加工厂，从而更加便捷的将自己的设计付诸实践。而众筹这种新的集资模式
+又解决了发明者自尽缺乏的后顾之忧，而且提前为之提供了市场需求情况。所有的这些因素，使得制造业空前的繁荣，一场新的工业革命正在萌发。</p>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/02/23/makers-the-new-industrial-evolution/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/12/24/if-giraffe-cried-would-it-choking-so-long/">如果长颈鹿哭了，它会不会要哽咽好久</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-12-24T19:29:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/12/24/if-giraffe-cried-would-it-choking-so-long/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>一篇很唯美的文章，来自豆瓣相册：<a href="http://www.douban.com/photos/album/63673280/?start=0">如果长颈鹿哭了，它会不会要哽咽好久</a>，有微小删改。<br/>
+在酷我调频的莫萱日记“<a href="http://www.kuwo.cn/yinyue/3619660/">关于我爱你这件小事</a>”这一期中听到的，分享给大家，顺祝大家圣诞快乐！</p>
+
+<center><img src="/images/2013/IMAG2013122401.jpg"></center>
+
+
+<p>长颈鹿的脖子那么长 哽咽的时候是不是很难受<br/>
+我没有长长的脖子 却哽咽的说不出话<br/>
+章鱼有三颗心脏 心痛的时候是不是很疼<br/>
+我没有三颗心脏 体会不到无法忍受的痛再多三倍<br/>
+乌鸦可以学人说话 尴尬的时候会不会装咳嗽<br/>
+我假装咳嗽 假装被沙子迷了眼 你也没有看我一眼<br/>
+骆驼有长长的睫毛 想哭的时候能不能说眼睛进了沙<br/>
+我假装咳嗽 假装被沙子迷了眼 你也没有看我一眼<br/>
+蛇没有宽宽的肩膀 她累的时候给不了能够依靠的温暖<br/>
+是因为我太弱小 没有很可靠的肩膀么<br/>
+小强有两个大脑 孤单的时候会不会一起想着谁<br/>
+无时无刻的清澈的想念 一定比两个大脑一起想你还多吧<br/>
+蜉蝣只能活很短 可能一辈子都来不及和心里珍藏的那个人说一些想说的话<br/>
+我又能活多久 时间会不会给我可以开口的勇气<br/>
+把人生看做是自己独一无二的创作 便不会频频回首<br/>
+你会不会忽然地出现 在旧时光的风景里 成为珍藏一生的美丽</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/12/24/if-giraffe-cried-would-it-choking-so-long/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/11/11/36kr-open-day-hangzhou-station-review-and-summary/">36氪开放日杭州站回顾与总结</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-11-11T19:10:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/11/11/36kr-open-day-hangzhou-station-review-and-summary/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>11月10日，36氪开放日第二次来到杭州站，首次进入大学，进行互联网行业创业和投资的机遇、观点和经验分享。这次开放日主要包含三个部分：</br>
+（1）成功创业者/投资者的主题分享；</br>
+（2）初创团队的产品发布与展示；</br>
+（3）观众参与: 10位观众每人1分钟demo展示。</br>
+本文回顾并总结一下这次活动的主要观点。</p>
+
+
+
+
+<center><img src="/images/2013/IMAG2013111101.jpg"></center>
+
+
+
+
+<p>主题分享的特邀嘉宾有来自阿里的副总裁纪纲，来自阿米巴的资本合伙人、挖财董事长李治国，来自丁香园的CTO、微信「小道消息」作者冯大辉@Fenng，
+毕业于浙大的个推创始人方毅@方毅_个推，来自网易杭研院的产品经理、目前负责易信的章行，来自Nokia的体验创新中心总经理傅蕾。</p>
+
+
+<p>初创团队的产品展示有7个，分别是——金亦冶-Kivvi收银平板：时尚店主的POS收银机，徐文俊-找大巴：首创BO2O大巴招投标预订直销模式、大巴预订神器，何翱翔-九漫：交互式动态漫画，
+袁一伦-要出发旅行：主打周边自驾游，李军-微洽：面向企业的社交化工作平台，胡笃晟-阿姨厨房：为厨艺爱好者提供在家创业、P2P模式的餐饮服务电子商务平台，凌曙-同船渡：位置景点
+创建和结伴出游的旅行产品。</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/11/11/36kr-open-day-hangzhou-station-review-and-summary/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/30/why-web-companies-all-are-beginning-to-play-hardware-products/">互联网公司为什么都在玩硬件？</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-10-30T21:07:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/10/30/why-web-companies-all-are-beginning-to-play-hardware-products/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>昨天360高调推出安全手环，延续着去年以来互联网公司进军硬件行业的风气。小米手机一炮而红后，互联网公司纷纷进军手机硬件行业，
+百度、阿里、盛大、360等等都推出了自己的定制手机，不过巨头们发现原来硬件并没有想象中那般好玩。但不好玩也得玩，你不玩别人也
+会玩。</p>
+
+
+
+
+<center><img src="/images/2013/IMAG2013103001.jpeg"></center>
+
+
+
+
+<p>但今年，巨头们不玩手机了，改玩其他了，有的是自己独立生产，有的是与厂家合作，内嵌自己的服务。这其中的玩家包括百度、360、小米、盛大、乐视等。</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/10/30/why-web-companies-all-are-beginning-to-play-hardware-products/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/09/08/brief-introduction-of-alsa-and-oss-and-its-comparision/">Linux的OSS和ALSA声音系统简介及其比较</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-09-08T19:46:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/09/08/brief-introduction-of-alsa-and-oss-and-its-comparision/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>概述</h2>
+
+
+<p>昨天想在Ubuntu上用一下HTK工具包来绘制语音信号的频谱图和提取MFCC的结果，但由于前段时间把Ubuntu升级到13.04，系统的声卡驱动
+是ALSA（Advanced Linux Sound Architecture，高级Linux声音体系），而不是HTK中所使用的OSS（Open Sound System，开放声音系统）。
+网上查阅了大半天，按照 http://forum.ubuntu.org.cn/viewtopic.php?t=316792 中提供的方法用OSS4来替换ALSA，结果OSS4没替换成功，
+而原来的ALSA也不好使了，真坑爹啊！到现在还没办法完全复原，现在只能通过alsamixer来设置音量了，系统的音量设置根本无法用，而且
+声音设置中的输入设备和输出设备都是空的。（现在将系统升级到13.10版，系统的音量设置可以用了，哈哈）捣鼓了半天也没还原回来唉，
+整个人都快崩溃了，都是由于对Linux不熟悉才被虐至如此地步，得恶补啊！！！下面本文就主要介绍一下OSS和ALSA，并将二者进行比较。</p>
+
+
+
+
+<p>在介绍OSS和ALSA之前，先介绍一下音频设备的一些基础知识。</br>
+数字音频设备，有时也称codec，PCM，DSP，ADC/DAC设备，用来播放或录制数字化的声音。它的指标主要有：采样速率（电话为8K，DVD为96K）、
+channel数目（单声道，立体声）、采样分辨率（8-bit，16-bit）等。</br>
+mixer（混频器）：用来控制多个输入、输出的音量，也控制输入（microphone，line-in，CD）之间的切换。</br>
+synthesizer（合成器）：通过一些预先定义好的波形来合成声音，有时用在游戏中声音效果的产生。</br>
+MIDI接口：MIDI接口是为了连接舞台上的synthesizer、键盘、道具、灯光控制器的一种串行接口。</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/09/08/brief-introduction-of-alsa-and-oss-and-its-comparision/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/20/details-of-wave-format-and-reading-wave-files-in-C-language/">PCM WAVE格式详解及用C语言实现wave文件的读取</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-07-20T20:07:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/07/20/details-of-wave-format-and-reading-wave-files-in-C-language/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>1.PCM Wave格式详解</h2>
+
+
+<p>WAVE文件格式是微软RIFF(Resource Interchange File Format,资源交换文件标准)的一种，是针对于多媒体文件存储的一种文件格式和标准。
+一般而言，RIFF文件由文件头和数据两部分组成，一个WAVE文件由一个“WAVE”数据块组成，这个“WAVE”块又由一个"fmt"子数据块和一个“data”子
+数据块组成，也称这种格式为“Canonical form”（权威/牧师格式），如下图所示：
+<center><img src="/images/2013/IMAG2013072001.gif"></center>
+</p>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/07/20/details-of-wave-format-and-reading-wave-files-in-C-language/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/30/add-a-back-to-top-button-on-ur-octpress-blog/">给Octpress博客添加返回顶部按钮</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-06-30T10:47:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/06/30/add-a-back-to-top-button-on-ur-octpress-blog/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>有时候，博客文章太长，需要返回顶部时，需要用鼠标拖着滚动条向上好半天，这里提供一个用 jQuery 来实现的动态上滚的示例。这个示例完全参考和翻译自 webdesignerwall 的 blog：<a href="http://webdesignerwall.com/tutorials/animated-scroll-to-top">http://webdesignerwall.com/tutorials/animated-scroll-to-top</a>，其中有部分删改，并在本人的 blog 上实现。</p>
+
+<p>主要包含HTML和CSS的设计，基于jQuery的JS的设计。另外还有一点小trick</p>
+
+<h2>Design &amp; CSS</h2>
+
+<p>相关的 HTML 代码很简单，在source/_include/custom/footer.html中添加如下代码：</p>
+
+<pre><code class="html">&lt;p id = "back-top"&gt;
+    &lt;a href="#top"&gt;&lt;span&gt;&lt;/span&gt;Back to Top&lt;/a&gt;
+&lt;/p&gt;
+</code></pre>
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/06/30/add-a-back-to-top-button-on-ur-octpress-blog/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/28/swimming-tutorial-with-gif-images/">蛙泳、自由泳、仰泳、蝶泳图解动画教你游泳</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-06-28T21:37:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/06/28/swimming-tutorial-with-gif-images/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>最近在室友的带领下，开始去cjl游泳馆学游泳，这里转载一篇游泳教程，分享给初学游泳的网友们</p>
+
+
+
+
+<h2>蛙泳</h2>
+
+
+<p>蛙泳配合有一个顺口溜，在讲解蛙泳动作要领之前先介绍给大家：“划手腿不动，收手再收腿，先伸胳膊后蹬腿，并拢伸直漂一会儿。”
+从顺口溜中可以看到，手的动作是先于腿的动作。一定要在收手后再收腿，伸手后再蹬腿。</p>
+
+
+
+
+<center><img src="/images/2013/IMAG2013062801.gif"></center>
+
+
+
+
+<p>臂部动作：</br>
+1、外划。双手前伸，手掌倾斜大约45度(小拇指朝上)。双手同时向外、后方划，继而屈臂向后、向下方划。</br>
+2、内划。掌心由外转向内，手带动小臂加速内划，手由下向上并在胸前并拢(手高肘低、肘在肩下)，前伸。</br>
+3、前伸。双手向前伸(肘关节伸直)。要提醒大家注意的是：外划是放松的，内划是用力的、加速完成的、前伸是积极的。
+</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/06/28/swimming-tutorial-with-gif-images/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page5">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">Blog Archives</a></li>
+    
+    <li class="next"><a href="/page3">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

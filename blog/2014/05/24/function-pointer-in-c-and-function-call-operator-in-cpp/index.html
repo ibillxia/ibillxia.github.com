@@ -1,0 +1,455 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>C语言函数指针与C++函数调用操作符 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2014/05/24/function-pointer-in-c-and-function-call-operator-in-cpp">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">C语言函数指针与C++函数调用操作符</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-05-24T21:27:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>概述</h2>
+
+<p>在编程过程中，一些特殊的时候，我们需要向一个函数传递另一个函数的地址（比如在快速排序中，我们需要传入两个元素大小比较的函数的地址），此时在C语言中一般是通过传递一个函数指针来实现。最近在看《STL源码剖析》一书，上面提到，在C++中其实可以通过另一种方式实现，那就是函数调用操作符<code>()</code> 。本文首先介绍一下C语言中函数指针的用法，然后再介绍C++中函数调用操作符的用法。</p>
+
+<h2>C语言中的函数指针</h2>
+
+<p>我们先直接看一个例子吧。这个例子比较全面而且简单，其中的函数指针是带参数且有返回值的函数指针，而且还有把函数指针作为参数来传递的代码。这个例子来自 <a href="http://blog.jobbole.com/44639/">jobbole伯乐在线</a>，代码如下：</p>
+
+<!-- more -->
+
+
+
+
+<pre><code class="c">#include &lt;stdio.h&gt;
+
+// 函数原型
+int add(int x, int y);
+int subtract(int x, int y);
+int domath(int (*mathop)(int, int), int x, int y);
+
+// 加法 x+ y
+int add(int x, init y) {
+    return x + y;
+}
+
+// 减法 x - y
+int subtract(int x, int y) {
+    return x - y;
+}
+
+// 根据输入执行函数指针
+int domath(int (*mathop)(int, int), int x, int y) {
+    return (*mathop)(x, y);
+}
+
+int main() {
+    // 用加法调用domath
+    int a = domath(add, 10, 2);
+    printf("Add gives: %d\n", a);
+
+    // 用减法调用domath
+    int b = domath(subtract, 10, 2);
+    printf("Subtract gives: %d\n", b);
+}
+</code></pre>
+
+<p>在函数 <code>domath</code> 中，我们可以根据传入的 <code>mathop</code> 函数指针来做不同的计算操作。另外，在该文中，最后提到函数名会被隐式的转换为函数指针，就像作为参数传递的时候，数组名被隐式的转换为指针一样。在函数指针被要求当作输入的任何地方，都能够使用函数名，解引用符 <code>*</code> 和取地址符 <code>&amp;</code> 用在函数名之前基本上都是多余的。这个之前还真不知道，新技能get，哈哈</p>
+
+<h4>使用typedef</h4>
+
+<p>在C语言中，对于函数指针，我们可以使用 <code>typedef</code> 将其定义为一种数据类型，这样我们就可以定义这种类型的变量了，就像使用普通的变量类型一样。下面是一个具体的定义（来自<a href="http://stackoverflow.com/questions/4295432/typedef-function-pointer">stackoverflow</a> Jacob的回答）：</p>
+
+<pre><code>    typedef   void      (*FunctionFunc)  ( );
+   //         ^                ^         ^
+   //     return type      type name  arguments
+</code></pre>
+
+<p>这里 <code>typedef</code> 的使用方法与一般的 <code>typedef A B</code> 的使用方式不不大一样的，如果没有接触过这种用法，可能开起来很别扭（在很多开源库中可能经常会碰到）。下面是其具体使用的实例（不完整代码）：</p>
+
+<pre><code class="c">FunctionFunc x;
+void doSomething() { printf("Hello there\n"); }
+x = &amp;doSomething;
+x(); //prints "Hello there"
+</code></pre>
+
+<p>根据上面提到的隐式转换，这里的取址符其实是没有必要的。关于C语言的函数指针就介绍到这儿了，接下来介绍一下C++的函数调用操作符。</p>
+
+<h2>C++中的函数调用操作符</h2>
+
+<p>在C++中，函数调用操作符是指左右小括弧 <code>()</code> ，该操作符是可以重载的。许多 STL 算法都提供了两个版本，一个用于一般情况（例如排序时以递增方式排列），一个用于特殊情况（例如排序时按照使用者自定义的大小关系进行排序）。 上面讲了，在C语言中使用者是通过传递函数指针的方式来实现的。然而，函数指针有一些缺点，最重要的是它无法持有自己的状态（这里指局部状态，local states，具体可以通过后面的例子来理解），也无法达到组件技术中的可适配性 —— 也就是无法再将某些修饰条件加诸于其上而改变其状态。</p>
+
+<p>在C++中，对应于C中函数指针的东西是仿函数（functor），使用起来就像函数一样。其实现方法是对某个 class 进行 <code>operator()</code> 重载，他就成为一个仿函数。而要成为一个可适配（adaptable）的仿函数，还需要其他的一些努力（在《STL源码剖析》一书的第8章，关于适配器（adaptor）的内容）。这里，我们只拿书中的那个例子来简单的看一下仿函数的定义和使用方法吧。代码如下：</p>
+
+<pre><code class="cpp">#include &lt;iostream&gt;
+using namespace std;
+
+// 对plus进行operator() 重载，使得 plus 变成了一个仿函数
+template&lt;class T&gt;
+struct plus{
+    T operator() (const T &amp;x, const T &amp;y) const {return x+y;}
+};
+
+// 对 minus 进行operator() 重载，使得 minus 变成了一个仿函数
+template&lt;class T&gt;
+struct minus{
+    T operator() (const T &amp;x, const T &amp;y) const {return x-y;}
+};
+
+int main(){
+    // 以下产生仿函数对象
+    plus&lt;int&gt; plusObj;
+    minus&lt;int&gt; minusObj;
+    // 以下使用仿函数，就像使用一般函数一样
+    cout&lt;&lt;plusObj(3,5)&lt;&lt;endl;
+    cout&lt;&lt;minusObj(3,5)&lt;&lt;endl;
+    // 也可以这样使用，通过临时对象（匿名对象）
+    cout&lt;&lt;plus&lt;int&gt;()(3,5)&lt;&lt;endl;
+    cout&lt;&lt;minus&lt;int&gt;()(3,5)&lt;&lt;endl;
+    return 0;
+}
+</code></pre>
+
+<p>这里的 <code>plus&lt;T&gt;</code> 和 <code>minus&lt;T&gt;</code> 已经非常接近 STL 的实现了，唯一的差别是它缺乏“可适配能力”，关于 STL 中的适配器（adaptor），我现在也还没看完该书，也还不太了解，在后续文章中应该会介绍到。读者可以自行google。</p>
+
+<h2>在快排中使用函数调用操作符</h2>
+
+<p>为了加深对函数调用操作符的理解，并将其真正用到实际中，这里拿快排这个非常典型的例子，并充分利用C++及STL的特性。下面是核心代码：</p>
+
+<pre><code class="cpp">template&lt;typename InIt,typename FuncType&gt;
+void myqsort(InIt begin, InIt end, FuncType cmp){
+    if(begin==end||begin==end-1)return;
+    InIt it = mysplit(begin,end,cmp);
+    if(it!=end){
+        myqsort(begin,it,cmp);
+        myqsort(it+1,end,cmp);
+    }
+}
+
+template&lt;typename InIt,typename FuncType&gt;
+InIt mysplit(InIt begin, InIt end, FuncType cmp){
+    InIt itl,itr;
+    itl=begin;
+    itr=end-1;
+    while(itl != itr){
+        while(itl != itr &amp;&amp; cmp(*itr,*begin)&gt;0)itr--;
+        if(itl==itr)break;
+        while(itl != itr &amp;&amp; cmp(*begin,*itl)&gt;0)itl++;
+        if(itl==itr)break;
+        swap(*itl,*itr);
+        itr--;
+    }
+    return itl;
+}
+
+class Test{
+public:
+    double m_lf;
+    string m_str;
+public:
+    void set(){ cin&gt;&gt;m_lf&gt;&gt;m_str; }
+    void print(){ cout&lt;&lt;m_lf&lt;&lt;" "&lt;&lt;m_str&lt;&lt;endl; }
+};
+
+struct cmpd{
+    int operator()(Test a,Test b){
+        if(abs(a.m_lf - b.m_lf)&lt;INF)return 0;
+        if(a.m_lf &gt; b.m_lf)return 1;
+        return -1;
+    }
+};
+
+struct cmps{
+    int operator()(Test a,Test b){
+        return a.m_str.compare(b.m_str);
+    }
+};
+</code></pre>
+
+<p>完整的代码及测试输入可以通过以下链接打包下载：<a href="https://ibillxia.github.io/upload/code/20140525.tar.gz">code-2014-05-25</a>。</p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2014/05/24/function-pointer-in-c-and-function-call-operator-in-cpp/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2014-05-24T21:27:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/c-plus-plus/'>C++</a>, <a class='tag' href='/blog/tags/cyu-yan/'>C语言</a>, <a class='tag' href='/blog/tags/stl/'>STL</a>, <a class='tag' href='/blog/tags/zhi-zhen/'>指针</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2014/05/17/insight-into-define-and-inline-function-in-c/" title="Previous Post:
+        深入理解C语言的define和内联函数">&laquo; 深入理解C语言的define和内联函数</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2014/06/08/stl-source-insight-0-stl-overview/"
+        title="Next Post: 深入理解STL源码(0) STL简介">深入理解STL源码(0) STL简介
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2014/05/24/function-pointer-in-c-and-function-call-operator-in-cpp/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2014/05/24/function-pointer-in-c-and-function-call-operator-in-cpp/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

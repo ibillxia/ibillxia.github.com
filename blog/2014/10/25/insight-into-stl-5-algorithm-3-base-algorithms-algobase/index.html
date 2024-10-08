@@ -1,0 +1,496 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>深入理解STL源码(5.3) 算法之基本算法algobase - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2014/10/25/insight-into-stl-5-algorithm-3-base-algorithms-algobase">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">深入理解STL源码(5.3) 算法之基本算法algobase</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-10-25T21:13:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>本文主要介绍STL中的基本算法，主要涉及到的源码文件有 <code>stl_algobase.h</code> 等。</p>
+
+<p>在 <code>stl_algobase.h</code> 中定义的算法都比较简单基础，主要涉及区间相等判断、区间填充、求极值、交换、拷贝、字典序比较等算法，而其他诸如查找、计数、排序、旋转等算法则在文件 <code>stl_algo.h</code> 中实现。在algobase基本算法中，除了字典序比较、复制/拷贝算法外，其他都比较简单，这里先依次介绍这些简单的算法，然后再介绍字典序比较和拷贝算法。</p>
+
+<h2>1. 交换、填充等简单算法</h2>
+
+<p>由于这里很多算法比较简单（基本都在10行以内，甚至很多就一行代码），就不一一粘贴代码了。</p>
+
+<p><strong>iter_swap</strong> ：将两个 ForwardIterators 所指的对象对调，通过申请一个临时变量、三次赋值，就完成了。</p>
+
+<p><strong>min/max</strong> ：求两个数中的小、大者，还有一个版本可以指定的比较方法（仿函数）。</p>
+
+<p><strong>fill</strong> ：将 <code>[first, last)</code> 内的所有元素改填为新值 value。</p>
+
+<p><strong>fill_n</strong> ：将 <code>[first, last)</code> 内的前n个元素改填为新值 value，返回迭代器指向被填入的最后一个元素的下一位置。</p>
+
+<p><strong>mismatch</strong> ：用来平行比较两个序列，指出两者之间的第一个不匹配点，返回一对迭代器（Iterators Pair），分别指向两序列中的不匹配点。</p>
+
+<p><strong>equal</strong> ：判断两个序列在 <code>[first, last)</code> 区间内相等，如果第二个序列元素较多，将不予考虑，只有两个序列在各自区间内对应相等才返回true，否则返回false。</p>
+
+<!-- more -->
+
+
+<h2>2. 字典序比较</h2>
+
+<p><code>lexicographical_compare</code> 以“字典序排列方式”对两个序列 <code>[first, last)</code> 和 <code>[first2, last2)</code> 进行比较。比较操作针对两个序列中的对应位置上的元素进行，直到某一对不相等或同时到达尾部或仁义序列到达尾部。该算法其实并不复杂，但有一点值得注意，那就当且仅当第一个序列字典序小于第二个序列时才返回true，以下是各种情况下的返回值：</p>
+
+<ul>
+<li>发现不相等，如果<strong>第一序列元素较小，返回true</strong>，否则返回false；</li>
+<li>到达last1而尚未到达last2，返回true；</li>
+<li>到达last2而尚未到达last1，返回false；</li>
+<li>同时到达last1和last2，返回false。</li>
+</ul>
+
+
+<p>源码如下：
+<code>cpp
+template &lt;class _InputIter1, class _InputIter2&gt;
+bool lexicographical_compare(_InputIter1 __first1, _InputIter1 __last1, _InputIter2 __first2, _InputIter2 __last2) {
+  for ( ; __first1 != __last1 &amp;&amp; __first2 != __last2; ++__first1, ++__first2) {
+    if (*__first1 &lt; *__first2)
+      return true;
+    if (*__first2 &lt; *__first1)
+      return false;
+  }
+  return __first1 == __last1 &amp;&amp; __first2 != __last2;
+}
+</code></p>
+
+<p>除了这个默认的版本外，还有一个版本提供比较方法（仿函数）的参数。另外，对于纯字符串的比较，SGI STL还做了进一步优化，使用原生指针和C标准函数 <code>memcmp()</code> 进行比较，如下：</p>
+
+<pre><code class="cpp">inline bool 
+lexicographical_compare(const unsigned char* __first1, const unsigned char* __last1,
+                        const unsigned char* __first2,const unsigned char* __last2) {
+  const size_t __len1 = __last1 - __first1;
+  const size_t __len2 = __last2 - __first2;
+  const int __result = memcmp(__first1, __first2, min(__len1, __len2));
+  return __result != 0 ? __result &lt; 0 : __len1 &lt; __len2;
+}
+</code></pre>
+
+<h2>3. 复制/拷贝算法</h2>
+
+<p>在很多应用程序中，复制copy是一个很常见的操作，特别是在赋值的时候。对于稍微复杂的对象，在不同的语言中赋值时会有一些差别，有的编程语言赋值仅仅是对等号右边的对象的一个引用，而并没有正真的产生一个新的对象，更不用说对象中可能包含的对象成员，例如Python当中的赋值、浅拷贝copy和深拷贝deepcopy等。</p>
+
+<p>而STL 中的copy，除了简单的单一对象的拷贝之外，还有序列区间的拷贝等，这里就涉及到空间分配和时间效率问题。在C++中，复制操作主要是运用assignment operator（复制运算符） 或 copy constructor（拷贝构造函数），在STL的copy算法中使用的是前者，而对于某些具有trivial assignment operator的数据，则可以使用内存直接复制行为（例如C标准库函数memmove、memcpy等），就能极大的节省时间。SGI STL用尽各种办法，包括函数重载、型别特性、偏特化（partial specialization）等技巧（关于偏特化请参见 <a href="http://www.jellythink.com/archives/410">C++模板特化与偏特化</a>），无所不用其极地加强效率。</p>
+
+<p>除了上面提到的元素型别、偏特化等问题，还有元素复制顺序的问题。copy 算法是将原始区间 <code>[first, last)</code> 内的元素复制到目标区间 <code>[result, result+last-first)</code> 区间内，复制时既可以从 first 开始往 last 复制，但也可以从 last-1开始向 first 复制，后者在 STL 另取名为 copy_backward_。从后往前复制的好处在于，不用担心目标区间与原始区间有重叠，因为如果有重叠区域，那么简单的 copy 时，对于原始数据而言 <code>[result, last)</code> 区间的数据在被复制前被修改了，从而得不到预期的结果。当然，有一种情况使用 copy 不用担心这个问题，那就是对于迭代器为原生指针，使用 memmove （而不是 memcpy，关于二者的区别参见 <a href="http://stackoverflow.com/questions/4415910/memcpy-vs-memmove">memcpy() vs memmove()</a>）进行复制，此时 memmove 会先将整个区间复制下来，没有被覆盖的危险。</p>
+
+<p>在介绍 copy 算法的源码具体实现前，根据源码及其注释再做一个简单的小结：copy 算法中的一些辅助函数有两个目的，其一是对于简单的数据类型尽量使用 memmove，其二是对于具有 RandomAccessIterators 的对象使用一个计数器来进行循环；除此之外，SGI STL针对编译器是否具有函数模板偏特化、类模板偏特化等进行了适配。下面是 copy 的源码，其中添加了比较详细具体的注释：</p>
+
+<pre><code class="cpp">// 首先是几个与偏特化无关的公用的3个函数
+template &lt;class _InputIter, class _OutputIter, class _Distance&gt;
+inline _OutputIter 
+__copy(_InputIter __first, _InputIter __last,
+       _OutputIter __result,input_iterator_tag, _Distance*){
+  for ( ; __first != __last; ++__result, ++__first) // 使用迭代器遍历和复制
+    *__result = *__first;
+  return __result;
+}
+template &lt;class _RandomAccessIter, class _OutputIter, class _Distance&gt;
+inline _OutputIter
+__copy(_RandomAccessIter __first, _RandomAccessIter __last,
+       _OutputIter __result, random_access_iterator_tag, _Distance*){
+  for (_Distance __n = __last - __first; __n &gt; 0; --__n) { //对于随机访问迭代器，使用一个计数器n
+    *__result = *__first;
+    ++__first;
+    ++__result;
+  }
+  return __result;
+}
+template &lt;class _Tp&gt;
+inline _Tp*
+__copy_trivial(const _Tp* __first, const _Tp* __last, _Tp* __result) {
+  memmove(__result, __first, sizeof(_Tp) * (__last - __first)); // 直接使用 memmove
+  return __result + (__last - __first);
+}
+//============== __STL_FUNCTION_TMPL_PARTIAL_ORDER 对于具有函数模板偏特性的编译器
+#if defined(__STL_FUNCTION_TMPL_PARTIAL_ORDER)
+template &lt;class _InputIter, class _OutputIter&gt;
+inline _OutputIter 
+__copy_aux2(_InputIter __first, _InputIter __last, _OutputIter __result, __false_type) { // false_type 的重载版
+  return __copy(__first, __last, __result, __ITERATOR_CATEGORY(__first), __DISTANCE_TYPE(__first));
+}
+template &lt;class _InputIter, class _OutputIter&gt;
+inline _OutputIter 
+__copy_aux2(_InputIter __first, _InputIter __last, _OutputIter __result, __true_type) { // true_type 的重载版
+  return __copy(__first, __last, __result, __ITERATOR_CATEGORY(__first), __DISTANCE_TYPE(__first));
+}
+#ifndef __USLC__
+template &lt;class _Tp&gt;
+inline _Tp* 
+__copy_aux2(_Tp* __first, _Tp* __last, _Tp* __result, __true_type) { // 原生指针的重载版
+  return __copy_trivial(__first, __last, __result);
+}
+#endif /* __USLC__ */
+template &lt;class _Tp&gt;
+inline _Tp* 
+__copy_aux2(const _Tp* __first, const _Tp* __last, _Tp* __result, __true_type) { // 常量指针的重载版
+  return __copy_trivial(__first, __last, __result);
+}
+template &lt;class _InputIter, class _OutputIter, class _Tp&gt;
+inline _OutputIter 
+__copy_aux(_InputIter __first, _InputIter __last, _OutputIter __result, _Tp*) {
+  typedef typename __type_traits&lt;_Tp&gt;::has_trivial_assignment_operator _Trivial;
+  return __copy_aux2(__first, __last, __result, _Trivial());
+}
+template &lt;class _InputIter, class _OutputIter&gt;
+inline _OutputIter 
+copy(_InputIter __first, _InputIter __last, _OutputIter __result) { //最终的对外接口
+  return __copy_aux(__first, __last, __result, __VALUE_TYPE(__first));
+}
+//============== __STL_CLASS_PARTIAL_SPECIALIZATION 对于具有类模板偏特性的编译器
+#elif defined(__STL_CLASS_PARTIAL_SPECIALIZATION)
+template &lt;class _InputIter, class _OutputIter, class _BoolType&gt;
+struct __copy_dispatch { // 类1，泛化版
+  static _OutputIter copy(_InputIter __first, _InputIter __last, _OutputIter __result) {
+    typedef typename iterator_traits&lt;_InputIter&gt;::iterator_category _Category;
+    typedef typename iterator_traits&lt;_InputIter&gt;::difference_type _Distance;
+    return __copy(__first, __last, __result, _Category(), (_Distance*) 0);
+  }
+};
+template &lt;class _Tp&gt;
+struct __copy_dispatch&lt;_Tp*, _Tp*, __true_type&gt;{ // 类2，特化版
+  static _Tp* copy(const _Tp* __first, const _Tp* __last, _Tp* __result) {
+    return __copy_trivial(__first, __last, __result);
+  }
+};
+template &lt;class _Tp&gt;
+struct __copy_dispatch&lt;const _Tp*, _Tp*, __true_type&gt;{ // 类3，特化版
+  static _Tp* copy(const _Tp* __first, const _Tp* __last, _Tp* __result) {
+    return __copy_trivial(__first, __last, __result);
+  }
+};
+template &lt;class _InputIter, class _OutputIter&gt;
+inline _OutputIter 
+copy(_InputIter __first, _InputIter __last, _OutputIter __result) { // 对外接口
+  typedef typename iterator_traits&lt;_InputIter&gt;::value_type _Tp;
+  typedef typename __type_traits&lt;_Tp&gt;::has_trivial_assignment_operator _Trivial;
+  return __copy_dispatch&lt;_InputIter, _OutputIter, _Trivial&gt;
+    ::copy(__first, __last, __result);
+}
+//============== 其他，完全不具有偏特化特性的情况
+#else /* __STL_CLASS_PARTIAL_SPECIALIZATION */
+template &lt;class _InputIter, class _OutputIter&gt;
+inline _OutputIter 
+copy(_InputIter __first, _InputIter __last, _OutputIter __result){ // 对外接口，泛化版
+  return __copy(__first, __last, __result, __ITERATOR_CATEGORY(__first), __DISTANCE_TYPE(__first));
+}
+
+#define __SGI_STL_DECLARE_COPY_TRIVIAL(_Tp)                                \
+  inline _Tp* copy(const _Tp* __first, const _Tp* __last, _Tp* __result) { \ // 对外接口，特化版
+    memmove(__result, __first, sizeof(_Tp) * (__last - __first));          \
+    return __result + (__last - __first);                                  \
+  }
+
+__SGI_STL_DECLARE_COPY_TRIVIAL(char)
+__SGI_STL_DECLARE_COPY_TRIVIAL(signed char)
+__SGI_STL_DECLARE_COPY_TRIVIAL(unsigned char)
+__SGI_STL_DECLARE_COPY_TRIVIAL(short)
+__SGI_STL_DECLARE_COPY_TRIVIAL(unsigned short)
+__SGI_STL_DECLARE_COPY_TRIVIAL(int)
+__SGI_STL_DECLARE_COPY_TRIVIAL(unsigned int)
+__SGI_STL_DECLARE_COPY_TRIVIAL(long)
+__SGI_STL_DECLARE_COPY_TRIVIAL(unsigned long)
+#ifdef __STL_HAS_WCHAR_T
+__SGI_STL_DECLARE_COPY_TRIVIAL(wchar_t)
+#endif
+#ifdef _STL_LONG_LONG
+__SGI_STL_DECLARE_COPY_TRIVIAL(long long)
+__SGI_STL_DECLARE_COPY_TRIVIAL(unsigned long long)
+#endif
+__SGI_STL_DECLARE_COPY_TRIVIAL(float)
+__SGI_STL_DECLARE_COPY_TRIVIAL(double)
+__SGI_STL_DECLARE_COPY_TRIVIAL(long double)
+#undef __SGI_STL_DECLARE_COPY_TRIVIAL
+#endif /* __STL_CLASS_PARTIAL_SPECIALIZATION */
+</code></pre>
+
+<p>以上是 copy 的完整代码，关于复制还有两个接口，一个是 <code>copy_n</code>，另一个是 <code>copy_backward</code>，前者复制区间 <code>[first, last)</code> 中前 n 个元素，后者从last-1 往 first 复制，这里就不详细展开了。</p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2014/10/25/insight-into-stl-5-algorithm-3-base-algorithms-algobase/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2014-10-25T21:13:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/c-plus-plus/'>C++</a>, <a class='tag' href='/blog/tags/stl/'>STL</a>, <a class='tag' href='/blog/tags/suan-fa/'>算法</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2014/10/19/insight-into-stl-5-algorithm-2-numeric-algorithms/" title="Previous Post:
+        深入理解STL源码(5.2) 算法之数值算法">&laquo; 深入理解STL源码(5.2) 算法之数值算法</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms/"
+        title="Next Post: 深入理解STL源码(5.4) 算法之复杂算法algorithm">深入理解STL源码(5.4) 算法之复杂算法algorithm
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2014/10/25/insight-into-stl-5-algorithm-3-base-algorithms-algobase/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2014/10/25/insight-into-stl-5-algorithm-3-base-algorithms-algobase/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

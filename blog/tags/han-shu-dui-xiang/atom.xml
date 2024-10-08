@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 函数对象 | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/han-shu-dui-xiang/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[深入理解STL源码(6) 仿函数|函数对象]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/11/15/insight-into-stl-6-functor-or-function-objects/"/>
+    <updated>2014-11-15T10:06:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/11/15/insight-into-stl-6-functor-or-function-objects</id>
+    <content type="html"><![CDATA[<h2>1. 仿函数|函数对象概述</h2>
+
+<p>在STL的六大组件中，仿函数可说是体积最小、观念最简单、实现最容易的一个，但小兵也能立大功——他扮演一种“策略”角色，可以让STL算法具有更加灵活的“演出”。</p>
+
+<p>在STL的历史上，仿函数(functor)是早期的命名，C++标准规格定下来后采用了新的名称——函数对象(function object)。就实际意义而言，函数对象的称谓更加贴切：一种具有函数特质的对象。函数对象对调用者而言可以向函数调用一样地被调用，而对被调用者而言则是以对象所定义的函数调用操作符(function call operator)。</p>
+
+<p>在C++中，函数调用操作符是指左右小括弧 <code>()</code> ，该操作符是可以重载的。许多 STL 算法都提供了两个版本，一个用于一般情况（例如排序时使用 <code>operator&lt;</code> 以递增方式排列），一个用于特殊情况（例如排序时按照使用者自定义的大小关系进行排序）。这有点类似于C语言中的函数指针，但函数指针无法满足STL对抽象性的要求，也不能和STL其他组件（如配接器adaptor）搭配，产生更灵活的变化，关于这一点下一节将详细介绍。</p>
+
+<h2>2. 可适配(Adaptable)的关键</h2>
+
+<p>STL算法非常灵活的一个关键因素之一在于STL仿函数的可配接性(adaptability)，即函数可以被配接器修饰，彼此相积木一样地串接。为了拥有配接能力，每一个仿函数必须定义自己的相应型别(associate types)，就像迭代器如果要融入整个STL大家庭，也必须依照规定定义自己的5个相应型别一样。这样做是为了让配接器能够获得函数的一些特性。相应型别都只是一些 typedef，所有必要操作在编译期就就全部完成了，对程序的执行效率没有任何影响，不带来任何额外负担。</p>
+
+<p>仿函数相应型别主要用来表示函数的参数型别和返回值型别，为了方便，<code>stl_function.h</code> 中定义了两个基类，分别是 <code>unary_function</code> 和 <code>binary_function</code>，分别表示一元函数和二元函数，其中都是一些型别的定义，仿函数只需要继承其中一个类，就可以拥有配接能力了。</p>
+
+<!-- more -->
+
+
+<h4>2.1 unary_function</h4>
+
+<p>该类用来封装一元函数的参数型别和返回值型别，其定义非常简单：</p>
+
+<pre><code class="cpp">template &lt;class _Arg, class _Result&gt;
+struct unary_function {
+  typedef _Arg argument_type; // 参数型别
+  typedef _Result result_type; // 返回值型别
+};
+</code></pre>
+
+<p>仿函数可以继承该类，这样用户就可以取得该仿函数的参数型别，并以相同方法获得其返回值：</p>
+
+<pre><code class="cpp">template &lt;class _Tp&gt;
+struct negate : public unary_function&lt;_Tp,_Tp&gt; { // 仿函数 negate 继承 unary_function
+  _Tp operator()(const _Tp&amp; __x) const { return -__x; }
+};
+template &lt;class _Predicate&gt;
+class unary_negate : public unary_function&lt;typename _Predicate::argument_type, bool&gt; {
+protected:
+  _Predicate _M_pred;
+public:
+  explicit unary_negate(const _Predicate&amp; __x) : _M_pred(__x) {}
+  bool operator()(const typename _Predicate::argument_type&amp; __x) const { // 获取参数的型别argument_type
+    return !_M_pred(__x);
+  }
+};
+</code></pre>
+
+<h4>2.2 binary_function</h4>
+
+<p>该类用来封装二元函数的参数一、参数二型别和返回值类型，仅比一元函数多了一个输入参数型别的定义而已，其定义如下：</p>
+
+<pre><code class="cpp">template &lt;class _Arg1, class _Arg2, class _Result&gt;
+struct binary_function {
+  typedef _Arg1 first_argument_type; // 参数一型别
+  typedef _Arg2 second_argument_type; // 参数二型别
+  typedef _Result result_type; // 返回值型别
+}; 
+template &lt;class _Tp&gt;
+struct plus : public binary_function&lt;_Tp,_Tp,_Tp&gt; { // 仿函数 plus 继承 binary_function
+  _Tp operator()(const _Tp&amp; __x, const _Tp&amp; __y) const { return __x + __y; }
+};
+</code></pre>
+
+<h2>3. STL 内建仿函数</h2>
+
+<p>STL 仿函数的分类，若以操作数的个数划分，可以分为一元和二元仿函数，若以功能划分，可以分为算术运算、关系运算、逻辑运算三大类，任何应用程序欲使用STL内建的仿函数，需要包含 <code>&lt;functional&gt;</code> 头文件，而这些仿函数的实际实现都在 <code>stl_function.h</code> 中。以下按功能分别介绍。</p>
+
+<h4>3.1 算术类(Arithmetic)仿函数</h4>
+
+<p>主要包括加法(plus)、减法(minus)、乘法(multiplies)、除法(divides)、取模(modulus)、否定(negation)等运算，除了否定以一元运算其他均为二元运算，如下：</p>
+
+<pre><code class="cpp">template &lt;class _Tp&gt;
+struct plus : public binary_function&lt;_Tp,_Tp,_Tp&gt; {
+  _Tp operator()(const _Tp&amp; __x, const _Tp&amp; __y) const { return __x + __y; } // 加法，减、乘、除、取模类似
+};
+template &lt;class _Tp&gt;
+struct negate : public unary_function&lt;_Tp,_Tp&gt; {
+  _Tp operator()(const _Tp&amp; __x) const { return -__x; }
+};
+</code></pre>
+
+<p>仿函数搭配STL算法可以很灵活，例如对vector的每个元素求连乘如下：</p>
+
+<pre><code class="cpp">accumulate(vct.begin(),vct.end(),1,multiplies&lt;int&gt;());
+</code></pre>
+
+<h4>3.2 关系运算类(Relational)仿函数</h4>
+
+<p>主要有等于(equal_to)、不等于(not_equal_to)、大于(greater)、大于等于(greater_equal)、小于(less)、小于等于(less_equal)等六种运算，每一个都是二元运算，如下：</p>
+
+<pre><code class="cpp">template &lt;class _Tp&gt;
+struct equal_to : public binary_function&lt;_Tp,_Tp,bool&gt; {
+  bool operator()(const _Tp&amp; __x, const _Tp&amp; __y) const { return __x == __y; } // 相等，其他类似 !=, &gt;, &lt;, &gt;=, &lt;=
+};
+</code></pre>
+
+<p>例如，对vector进行递减顺序排序：</p>
+
+<pre><code class="cpp">sort(vct.begin(),vct.end(),less&lt;int&gt;());
+</code></pre>
+
+<h4>3.3 逻辑运算类(Logical)仿函数</h4>
+
+<p>主要是与(logical_and)、或(logical_or)、非(logical_not)三种逻辑运算，前两者为二元运算，后者为一元运算，如下：</p>
+
+<pre><code class="cpp">template &lt;class _Tp&gt;
+struct logical_and : public binary_function&lt;_Tp,_Tp,bool&gt; {
+  bool operator()(const _Tp&amp; __x, const _Tp&amp; __y) const { return __x &amp;&amp; __y; } // 与，或(||)类似
+};
+template &lt;class _Tp&gt;
+struct logical_not : public unary_function&lt;_Tp,bool&gt;{
+  bool operator()(const _Tp&amp; __x) const { return !__x; } // 非
+};
+</code></pre>
+
+<h4>3.4 证同(identity)、选择(select)、投射(project)等非标准仿函数</h4>
+
+<p>这类仿函数都只是将参数原封不动的返回，其中某些仿函数对传回的参数有刻意的选择，或是刻意的忽略。之所以不在STL或其他泛型程序设计中直接使用原本及其简单的identity，project，select等操作，而要再划分一层出来，完全是为了间接性——间接性是抽象化的重要方法。另外，需要说明的是，这些仿函数并非C++标准，只是在SGI STL的实现中作为内部使用，一下是相关部分代码：</p>
+
+<pre><code class="cpp">// 证同函数(identity)，任何数值通过此函数后不会有任何改变，它用于set实现中，用来指定RB-tree所需的
+// KeyOfValue op，因为set元素的键值即实值，所以采用identity
+template &lt;class _Tp&gt;
+struct _Identity : public unary_function&lt;_Tp,_Tp&gt; {
+  const _Tp&amp; operator()(const _Tp&amp; __x) const { return __x; }
+};
+// 选择函数(select)，接受一个pair返回其第一个元素，用于map实现中，用来指定RB-tree所需KeyOfValue op，
+// 因为map以pair的第一个元素作为键值
+template &lt;class _Pair&gt;
+struct _Select1st : public unary_function&lt;_Pair, typename _Pair::first_type&gt; {
+  const typename _Pair::first_type&amp; operator()(const _Pair&amp; __x) const {
+    return __x.first;
+  }
+};
+// 类似与select1st，接受pair返回第二个参数，SGI STL内部并未用到该函数
+template &lt;class _Pair&gt;
+struct _Select2nd : public unary_function&lt;_Pair, typename _Pair::second_type&gt;{
+  const typename _Pair::second_type&amp; operator()(const _Pair&amp; __x) const {
+    return __x.second;
+  }
+};
+// 投射函数(project)，传回第一参数，忽略第二参数，SGI STL内部并未用到该函数
+template &lt;class _Arg1, class _Arg2&gt;
+struct _Project1st : public binary_function&lt;_Arg1, _Arg2, _Arg1&gt; {
+  _Arg1 operator()(const _Arg1&amp; __x, const _Arg2&amp;) const { return __x; }
+};
+// 投射函数(project)，传回第二参数，忽略第一参数，SGI STL内部并未用到该函数
+template &lt;class _Arg1, class _Arg2&gt;
+struct _Project2nd : public binary_function&lt;_Arg1, _Arg2, _Arg2&gt; {
+  _Arg2 operator()(const _Arg1&amp;, const _Arg2&amp; __y) const { return __y; }
+};
+</code></pre>
+
+<p>除此之外，SGI STL实现中还有 <code>constant_void_fun</code>，<code>constant_unary_fun</code>， <code>constant_binary_fun</code>， <code>subtractive_rng</code>， <code>mem_fun_t</code> 等等，想深入详细了解的可以去看看源代码，还是很好理解的。</p>
+
+<p>相关文章：<br/>
+<a href="http://ibillxia.github.io/blog/2014/05/24/function-pointer-in-c-and-function-call-operator-in-cpp/">C语言函数指针与C++函数调用操作符</a></p>
+]]></content>
+  </entry>
+  
+</feed>

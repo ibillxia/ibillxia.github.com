@@ -1,0 +1,862 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/page6">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      <div class="span9">
+  
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/26/building-speaker-recognition-system-using-alize-etc/">使用Alize等工具构建说话人识别平台</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-04-26T22:07:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/04/26/building-speaker-recognition-system-using-alize-etc/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前段时间有好几位同学询问如何用Alize实现说话人识别的问题，由于寒假前赶Paper，来不及详细解答，更没时间写Demo。
+开学后不久抽时间写了一个Demo，并上传到了GitHub：<a href="https://github.com/ibillxia/VoicePrintReco/tree/master/Demo">VoicePrintReco-branch-master</a>. 现在新版的 Alize 3.0 已经提供了更多的官方 demo，我也将 GitHub 的源码升级了 <a href="https://github.com/ibillxia/VoicePrintReco">VPR2.0</a>， 其中的Demos文件夹有Alize官方的4个demo和我自己写的这个demo。</p>
+
+<h3>基本流程</h3>
+
+<p>下面将利用Alize+SPro进行简单的GMM-Based的说话人识别的基本流程总结如下：</p>
+
+<h4>1.Features extraction 特征提取</h4>
+
+<p>sfbcep.exe（MFCC）或slpcep.exe（LPCC）</p>
+
+<h4>2.Silence removal 静音检测和去除</h4>
+
+<p>NormFeat.exe 先能量规整<br/>
+EnergyDetector.exe 基于能量检测的静音去除</p>
+
+<h4>3.Features Normalization 特征规整</h4>
+
+<p>NormFeat.exe 再使用这个工具进行特征规整</br></p>
+
+<h4>4.World model training</h4>
+
+<p>TrainWorld.exe 训练UBM</br></p>
+
+<h4>5.Target model training</h4>
+
+<p>TrainTarget.exe 在训练好UBM的基础上训练training set的GMM</br></p>
+
+<h4>6.Testing</h4>
+
+<p>ComputeTest.exe 将testing set在training set的GMM上进行测试和打分</br></p>
+
+<h4>7.Score Normalization</h4>
+
+<p>ComputeNorm.exe 将得分进行规整</br></p>
+
+<h4>8. Compute EER 计算等错误率</h4>
+
+<p>你可以查查计算EER的matlab代码，NIST SRE的官网上有下载<a href="http://www.itl.nist.gov/iad/mig//tools/DETware_v2.1.targz.htm">DETware_v2.1.tar.gz</a> 。_</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/04/26/building-speaker-recognition-system-using-alize-etc/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/22/VALSE2013/">VALSE2013</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-04-22T22:28:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/04/22/VALSE2013/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>学术研讨</h3>
+
+
+<p>VALSE是Vision And Learning SEminar的缩写，它主要目的是为计算机视觉、图像处理、模式识别与机器学习研究领域内的中国青年学者（以70后研发
+人员为主）提供一个深层次学术交流的舞台。虽然参与会议和做报告的人主要是做视觉的，但很多问题是机器学习和模式识别当中的一般性问题，所以我这
+个搞语音的也去打酱油了^_^。</p>
+
+
+
+
+<p>今年的VALSE在南京东南大学召开，参加会议的人数超出预期，会场爆满，仅学校的老师和公司的研究人员就占了会场大半，学生沦落到只能座最后两排，
+或者座分会场（这个太不科学了-_-!）。会程安排也很紧凑，中午几乎没有休息时间，吃饭都很赶，而下午也很晚（6点半左右）才结束。这次会议有好几个
+perfect的报告，但也有些不太感兴趣的，有的甚至感觉很2。除了一些报告，还有两个主题讨论会，印象中主要包括三个论题：学术界与工业界的Gap及衔接
+问题，深度学习是否是计算机视觉的终极解决方案，计算机视觉要不要从生物视觉机理中受启发等。</p>
+
+
+
+
+<p>闲话少说，言归正传，数萝卜下窖的讲讲这两天的经历吧。
+第一天上午，第一个做报告的是MSRA的张磊，主要讲了计算机视觉的一些基本问题，从AI的历史将起，提到了Turing Test，是人工智能
+的Benchmark。而CV的一个基本问题是Object Recognition，人们的研究经历了从之前的Model Based到如今的Data Driven及Big Data的过程，各种模型和方法可谓
+层出不穷，然而对于真正解决问题、真正达到人类一般的视觉智能，还相差甚远。接着他讲了关于在路灯下找钥匙的故事（详询http://tongyanyan.blog.edu.cn/2006/427512.html），
+听了这个故事后，感觉那个找钥匙的人很滑稽可笑，然而再想想我们自己正在做的研究，是不是在某种程度上和故事中的这个人一样呢。通过这个故事，他引出自己
+的观点：要想解决Object Recognition这个问题或者说要解决CV的问题，就需要More Effective Representation & Match。接下来讲在Representation方面一些研究
+人员提出的一些人工设计的Feature，而在Match方面则从Point、Line、Plane、Volume（点线面体）进行了详尽的讲述。最后还提了一下Deep Neural Network在CV中的
+应用，可以discover hidden patterns。虽然对CV中的很多概念和模型方法不太了解，但感觉还是挺有收获的。</p>
+
+
+
+
+<p>上午的后两个报告都是讲Sparse的，虽然之前看过关于Sparse Coding的东西，但当他们在上面讲的，主要偏重与Sparse这个问题的优化求解方法及其变形，
+涉及到很多数学公式和推导，感觉很枯燥，加之晚睡早起，有点犯困，所以基本没有听进去。贾佳亚的报告还似懂非懂，而陈欢欢的Sparse Bayesian Learning
+表示完全没听懂。个人感觉Sparse还是很重要的，所以在弄完Deep Learning这个专题后，我想有必要对这两个报告及其相关论文再做深入的学习和研究。</p>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/04/22/VALSE2013/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/17/Deep-Learning-and-its-application-in-audio-and-speech-processing/">深度学习及其在语音方面的应用</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-04-17T22:43:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/04/17/Deep-Learning-and-its-application-in-audio-and-speech-processing/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>以下是今天在组会上讲的内容，与大家分享一下。有些地方我也没有完全理解，欢迎大家一起来讨论。</p>
+
+
+<p><center>
+<embed width="780"
+    height="574"
+    name="plugin"
+    src="/upload/Deep Learning - Bill Xia.pdf"
+    type="application/pdf"
+/>
+</center></p>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines/">基于能量的模型和波尔兹曼机</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-04-12T22:12:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>由于深度置信网络（Deep Belief Networks，DBN）是基于限制性玻尔兹曼机（Restricted Boltzmann Machines，RBM）的深层网络结构，
+所以本文重点讨论一下玻尔兹曼机（BM），以及它的学习算法——对比散度（Contrastive Divergence，CD）算法。在介绍BM前，我们首先介绍一下
+基于能量的模型（Energy Based Model，EBM），因为BM是一种特殊的EBM。</p>
+
+
+
+
+<h2>1. 基于能量的模型(EBM)</h2>
+
+
+<p>基于能量的模型是一种具有普适意义的模型，可以说它是一种模型框架，在它的框架下囊括传统的判别模型和生成模型，图变换网络(Graph-transformer 
+Networks)，条件随机场，最大化边界马尔科夫网络以及一些流形学习的方法等。EBM通过对变量的每个配置施加一个有范围限制的能量来捕获变量之间的依赖
+关系。EBM有两个主要的任务，一个是推断(Inference)，它主要是在给定观察变量的情况，找到使能量值最小的那些隐变量的配置；另一个是学习(Learning)，
+它主要是寻找一个恰当的能量函数，使得观察变量的能量比隐变量的能量低。</p>
+
+
+
+
+<p>基于能量的概率模型通过一个能量函数来定义概率分布，
+<center>$p(x) = \frac{e^{E(x)}}{Z}.$ ... ①</center>
+其中Z为规整因子，
+<center>$Z = \sum _{x} e^{-E(x)}.$ ... ②</center>
+基于能量的模型可以利用使用梯度下降或随机梯度下降的方法来学习，具体而言，就是以训练集的负对数作为损失函数，
+<center>$l(\theta,D) = -L(\theta,D) = - \frac{1}{N}\sum_{x^{(i)}\in D} log p(x^{(i)}).$ ... ③</center>
+其中$\theta$为模型的参数，将损失函数对$\theta$求偏导，
+<center>$\Delta = \frac{\partial l(\theta,D)}{\partial \theta} = - \frac{1}{N} \frac{\partial \sum log p(x^{(i)})}{\partial \theta}.$ ... ④</center>
+即得到损失函数下降最快的方向。</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/10/Intel-Developer-Forum-2013-Nuance-Dragon-Presentation/">2013IDF声龙语音识别技术演示</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-04-10T12:57:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/04/10/Intel-Developer-Forum-2013-Nuance-Dragon-Presentation/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>2013英特尔信息技术峰会(Intel Developer Forum, IDF)上，来自Nuance的声龙语音合成和识别技术的演示，中文语音识别不给力，
+笑点频出啊，哈哈</p>
+
+
+
+
+<p><iframe height=560 width=780 src="http://player.youku.com/embed/XNTQwNjQ0MjUy" frameborder=0 allowfullscreen></iframe></p>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/06/Convolutional-Neural-Networks/">卷积神经网络（CNN）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-04-06T23:34:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/04/06/Convolutional-Neural-Networks/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>1. 概述</h2>
+
+
+<p>卷积神经网络是一种特殊的深层的神经网络模型，它的特殊性体现在两个方面，一方面它的神经元间的连接是<strong>非全连接</strong>的，
+另一方面同一层中某些神经元之间的连接的<strong>权重是共享的</strong>（即相同的）。它的非全连接和权值共享的网络结构使之更类似于生物
+神经网络，降低了网络模型的复杂度（对于很难学习的深层结构来说，这是非常重要的），减少了权值的数量。</p>
+
+
+
+
+<p>卷积网络最初是受视觉神经机制的启发而设计的，是为识别二维形状而设计的一个多层感知器，这种网络结构对平移、比例缩放、倾斜或者共他
+形式的变形具有高度不变性。1962年Hubel和Wiesel通过对猫视觉皮层细胞的研究，提出了感受野(receptive field)的概念，1984年日本学者Fukushima
+基于感受野概念提出的神经认知机(neocognitron)模型，它可以看作是卷积神经网络的第一个实现网络，也是感受野概念在人工神经网络领域的首次应用。</p>
+
+
+
+
+<p>神经认知机将一个视觉模式分解成许多子模式(特征)，然后进入分层递阶式相连的特征平面进行处理，它试图将视觉系统模型化，使其能够在即使物体有
+位移或轻微变形的时候，也能完成识别。神经认知机能够利用位移恒定能力从激励模式中学习，并且可识别这些模式的变化形。在其后的应用研究中，Fukushima
+将神经认知机主要用于手写数字的识别。随后，国内外的研究人员提出多种卷积神经网络形式，在邮政编码识别（Y. LeCun etc）、车牌识别和人脸识别等方面
+得到了广泛的应用。</p>
+
+
+
+
+<h2>2. CNN的结构</h2>
+
+
+<p>卷积网络是为识别二维形状而特殊设计的一个多层感知器，这种网络结构对平移、比例缩放、倾斜或者共他形式的变形具有高度不变性。
+这些良好的性能是网络在有监督方式下学会的，网络的结构主要有稀疏连接和权值共享两个特点，包括如下形式的约束：</br>
+1 特征提取。每一个神经元从上一层的局部接受域得到突触输人，因而迫使它提取<strong>局部特征</strong>。一旦一个特征被提取出来，
+只要它相对于其他特征的位置被近似地保留下来，它的精确位置就变得没有那么重要了。</br>
+2 特征映射。网络的每一个计算层都是由<strong>多个特征映射组</strong>成的，每个特征映射都是平面形式的。平面中单独的神经元在约束下<strong>共享
+相同的突触权值</strong>集，这种结构形式具有如下的有益效果：a.平移不变性。b.自由参数数量的缩减(通过权值共享实现)。</br>
+3.子抽样。每个卷积层跟着一个实现局部平均和子抽样的计算层，由此特征映射的分辨率降低。这种操作具有使特征映射的输出对平移和其他
+形式的变形的敏感度下降的作用。</p>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/04/06/Convolutional-Neural-Networks/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/04/why-do-Fourier-transformation/">为什么要进行傅立叶变换</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-04-04T10:42:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/04/04/why-do-Fourier-transformation/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>一、傅立叶变换的由来</h2>
+
+
+<p>关于傅立叶变换，无论是书本还是在网上可以很容易找到关于傅立叶变换的描述，但是大都是些故弄玄虚的文章，太过抽象，
+尽是一些让人看了就望而生畏的公式的罗列，让人很难能够从感性上得到理解，最近，我偶尔从网上看到一个关于数字信号处理
+的电子书籍，是一个叫Steven W. Smith, Ph.D.外国人写的，写得非常浅显，里面有七章由浅入深地专门讲述关于离散信号的傅
+立叶变换，虽然是英文文档，我还是硬着头皮看完了有关傅立叶变换的有关内容，看了有茅塞顿开的感觉，在此把我从中得到的
+理解拿出来跟大家分享，希望很多被傅立叶变换迷惑的朋友能够得到一点启发，这电子书籍是免费的，有兴趣的朋友也可以从网
+上下载下来看一下，URL地址是：http://www.dspguide.com/pdfbook.htm </p>
+
+
+
+
+<p>要理解傅立叶变换，确实需要一定的耐心，别一下子想着傅立叶变换是怎么变换的，当然，也需要一定的高等数学基础，最基本
+的是级数变换，其中傅立叶级数变换是傅立叶变换的基础公式。</p>
+
+
+
+
+<h2>二、傅立叶变换的提出</h2>
+
+
+<p>让我们先看看为什么会有傅立叶变换？傅立叶是一位法国数学家和物理学家的名字，英语原名是Jean Baptiste Joseph Fourier(1768-1830), 
+Fourier对热传递很感兴趣，于1807年在法国科学学会上发表了一篇论文，运用正弦曲线来描述温度分布，论文里有个在当时具有争议性的决断：
+任何连续周期信号可以由一组适当的正弦曲线组合而成。当时审查这个论文的人，其中有两位是历史上著名的数学家拉格朗日(Joseph Louis 
+Lagrange, 1736-1813)和拉普拉斯(Pierre Simon de Laplace, 1749-1827)，当拉普拉斯和其它审查者投票通过并要发表这个论文时，拉格朗日
+坚决反对，在近50年的时间里，拉格朗日坚持认为傅立叶的方法无法表示带有棱角的信号，如在方波中出现非连续变化斜率。法国科学学会屈服
+于拉格朗日的威望，拒绝了傅立叶的工作，幸运的是，傅立叶还有其它事情可忙，他参加了政治运动，随拿破仑远征埃及，法国大革命后因会被
+推上断头台而一直在逃避。直到拉格朗日死后15年这个论文才被发表出来。</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/04/04/why-do-Fourier-transformation/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/03/30/back-propagation-neural-networks/">反向传播(BP)神经网络</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-03-30T21:37:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/03/30/back-propagation-neural-networks/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前面几篇文章中对神经网络和深度学习进行一些简介，包括神经网络的发展历史、基本概念和常见的几种神经网络以及神经网络的学习方法等，
+本文具体来介绍一下一种非常常见的神经网络模型——反向传播(Back Propagation)神经网络。</p>
+
+
+
+
+<h2>1.概述</h2>
+
+
+<p>BP（Back Propagation）神经网络是1986年由Rumelhart和McCelland为首的科研小组提出，参见他们发表在Nature上的论文
+<em><a href="http://www.cs.toronto.edu/~hinton/absps/naturebp.pdf">Learning representations by back-propagating errors</a></em>
+值得一提的是，该文的第三作者Geoffrey E. Hinton就是在深度学习邻域率先取得突破的神犇。
+</p>
+
+
+
+
+<p>BP神经网络是一种按误差逆传播算法训练的多层前馈网络，是目前应用最广泛的神经网络模型之一。BP网络能学习和存贮大量的
+输入-输出模式映射关系，而无需事前揭示描述这种映射关系的数学方程。它的学习规则是使用最速下降法，通过反向传播来不断
+调整网络的权值和阈值，使网络的误差平方和最小。</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/03/30/back-propagation-neural-networks/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/03/27/learning-process-of-neural-networks/">神经网络的学习方法概述</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-03-27T23:51:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/03/27/learning-process-of-neural-networks/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>本文主要讨论一下神经网络的一般学习方法，主要有error-correction learning，memory-based learning， Hebbian learning，competitive learning，
+Boltzmann learning等。然后介绍一些学习的方式，如监督学习、非监督学习、强化学习等。最后是一些具体的应用领域和实际问题。</p>
+
+
+
+
+<h2>1.Knowledge Representation</h2>
+
+
+<p>好的学习方法固然重要，但知识的表示，直接影响到feature的表示，也是非常重要的，因此在正式讨论学习方法之前，我们首先谈谈知识的表示。
+首先一个问题是，什么是知识？在PRML中我们有如下定义：</br>
+<blockquote><p>Knowledge refers to stored information or models used by a person or machine to interpret, predict, and appropriately respond to the outside world.</p><footer><strong>Fischler and Firschein</strong> <cite>Intelligence: The Eye，the Brain and the Computer</cite></footer></blockquote>
+</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/03/27/learning-process-of-neural-networks/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/03/24/classes-of-neural-networks/">神经网络模型分类</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-03-24T23:07:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/03/24/classes-of-neural-networks/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>本文主要介绍一下几种不同类型的神经网络模型，主要有前馈神经网络，反馈神经网络，自组织神经网络，随机神经网络</p>
+
+
+
+
+<h2>1.前馈神经网络</h2>
+
+
+<h4>1)自适应线性神经网络(Adaline)</h4>
+
+
+<p>自适应线性神经网络（Adaptive Linear，简称Adaline) 是由威德罗（Widrow）和霍夫（Hoff）首先提出的。它与感知器的主要不同之处在于
+其神经元有一个线性激活函数，这允许输出可以是任意值，而不仅仅只是像感知器中那样只能取0或1。它采用的是W—H学习法则，也称最小均方差(LMS)
+规则对权值进行训练。自适应线性元件的主要用途是线性逼近一个函数式而进行模式联想。</p>
+
+
+
+
+<h4>2)单层感知器</h4>
+
+
+<p>单层感知器（Perceptron）是由美国计算机科学家罗森布拉特（F.Roseblatt）于1957年提出的。它是一个具有单层神经元的网络，由线性阈值
+逻辑单元所组成。它的输入可以是非离散量，而且可以通过学习而得到，这使单层感知器在神经网络研究中有着重要的意义和地位：它提出了自组织、
+自学习的思想，对能够解决的问题，有一个收敛的算法，并从数学上给出了严格的证明。</p>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/03/24/classes-of-neural-networks/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  <ul class="pager">
+    
+    <li class="previous"><a href="/page7">&larr; Older</a></li>
+    
+    <li><a href="/blog/archives">Blog Archives</a></li>
+    
+    <li class="next"><a href="/page5">Newer &rarr;</a></li>
+    
+  </ul>
+</div>
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

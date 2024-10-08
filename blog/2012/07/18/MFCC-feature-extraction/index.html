@@ -1,0 +1,472 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>MFCC参数提取及Matalab实现 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2012/07/18/MFCC-feature-extraction">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">MFCC参数提取及Matalab实现</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-07-18T20:10:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>1.概述</h2>
+
+
+<p>Mel倒谱系数（Mel-frequency cepstral coefficients，MFCC）是受人的听觉系统研究成果推动而导出的声学特征。
+研究发现，当两个音调的频率差小于临界带宽时，人就会把两个音调听成一个(屏蔽效应)。Mel刻度是对这一临界带宽的
+度量方法之一, MFCC在语音识别领域应用广泛。本文详细介绍了Mel频率倒谱系数参数的6大提取步骤。</p>
+
+
+
+
+<h2>2.什么是Mel频率倒谱系数？</h2>
+
+
+<p>Mel频率倒谱系数（Mel Frequency Cepstrum Coefficient）的缩写是MFCC，Mel频率是基于人耳听觉特性提出来的，
+它与Hz频率成非线性对应关系。Mel频率倒谱系数(MFCC)则是利用它们之间的这种关系，计算得到的Hz频谱特征。</p>
+
+
+
+
+<p>用录音设备录制一段模拟语音信号后，经由自定的取样频率(如8000 Hz、16000 Hz等)采样后转换(A/D)为数字语音信号。
+由于在时域(time domain)上语音信号的波形变化相当快速、不易观察，因此一般都会在频域(frequency domain)上来观察，
+其频谱是随着时间而缓慢变化的，因此通常可以假设在一较短时间中，其语音信号的特性是稳定的，通常我们定义这个较短
+时间为一帧(frame)，根据人的语音的音调周期值的变化，一般取10~20ms。</p>
+
+
+
+
+<!-- more -->
+
+
+<h2>3.Mel频率倒谱系数(MFCC)参数的提取步骤</h2>
+
+
+<h4>(1) 预加重(pre-emphasis)</h4>
+
+
+<p>将经采样后的数字语音信号s(n)通过一个高通滤波器(high pass filter)：</br>
+<center>$H(z)= 1 – a*z^{-1} , 0.9 < a < 1.0$. </center></br>
+其中a一般取0.95左右。经过预加重后的信号为：</br>
+<center>$s (n)= s(n)– a×s(n-1)$.</center></br>
+因为发声过程中声带和嘴唇的效应，使得高频共振峰的振幅低于低频共振峰的振幅，进行预加重的目的就是为了消除声带和
+嘴唇的效应，来补偿语音信号的高频部分。</p>
+
+
+
+
+<h4>(2) 分帧(frame blocking)</h4>
+
+
+<p>一般取10-30ms为一帧，为了避免窗边界对信号的遗漏，因此对帧做偏移时候，要有帧迭(帧与帧之间需要重叠一部分)。
+一般取帧长的一半作为帧移，也就是每次位移一帧的二分之一后再取下一帧，这样可以避免帧与帧之间的特性变化太大。</p>
+
+
+
+
+<h4>(3) 计算短时能量(energy)</h4>
+
+
+<p>短时能量代表着音量的高低，亦即声音振幅的大小，可以根据此能量的值来过滤掉语音信号中的一些细微噪声。当一帧的能量
+值低于我们定的门槛值(threshold)时，则将此帧作为静音段(silence)。</p>
+
+
+
+
+<h4>(4) 加窗(hamming window)</h4>
+
+
+<p>语音在长范围内是不停变动的，没有固定的特性无法做处理，所以将每一帧代入窗函数，窗外的值设定为0，其目的是消除各个
+帧两端可能会造成的信号不连续性。常用的窗函数有方窗、汉明窗和汉宁窗等，根据窗函数的频域特性，常采用汉明窗。公式是在
+加窗范围内，$w(i)=0.54-0.46*cos(2* \pi * \frac{i}{n-1}), i \in [0,n-1]$。</p>
+
+
+
+
+<h4>(5) 快速傅立叶变换(FFT transform)</h4>
+
+
+<p>由于语音信号在时域上的变化快速而不稳定，所以通常都将它转换到频域上来观察，此时它的频谱会随着时间作缓慢的变化。
+所以通常将加窗后的帧经过FFT (Fast Fourier Transform)求出每帧的频谱参数。</p>
+
+
+
+
+<h4>(6) 三角形带通滤波器(triangular band-pass filter)</h4>
+
+
+<p>将每帧的频谱参数通过一组N个三角形带通滤波器(N一般为20~30个)所组成的梅尔刻度滤波器，将每个频带的输出取对数，求出每一个
+输出的对数能量(log energy)，k = 1,2,… N。 再将此N个参数进行余弦变换(cosine transform)求出L阶的Mel-scale cepstrum参数。</p>
+
+
+
+
+<h2>4.Matlab程序实现</h2>
+
+
+<pre><code class="matlab">function r = mfcc(s, fs)
+% MFCC参数提取
+% Reference: 论文《MFCC和LPCC特征参数在说话人识别中的研究》
+%
+% Inputs: s  contains the signal to analize
+%         fs is the sampling rate of the signal
+%
+% Output: r contains the transformed signal
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+n = 256;  % 帧长
+m = 100;  % 帧移
+l = length(s);  % 信号总长度
+nbFrame = floor((l - n) / m) + 1;  % 信号总帧数
+for i = 1:n
+    for j = 1:nbFrame
+        M(i, j) = s(((j - 1) * m) + i);  % 分帧
+    end
+end
+h = hamming(n);  % Hamming窗w = 0.54 - 0.46*cos(2*pi*x);
+M2 = diag(h) * M;  % 对M加窗，形成对角矩阵M2
+for i = 1:nbFrame
+frame(:,i) = fft(M2(:, i));   % 进行快速傅里叶变换，将其转换到频域上
+end
+t = n / 2;
+% tmax = l / fs;
+m = melfb(20, n, fs);  % 调用20阶MEL滤波器组进行滤波
+n2 = 1 + floor(t);
+z = m * abs(frame(1:n2, :  )).^2;  % 取前n2行帧列向量的平方
+r = dct(log(z));  % 取对数后进行反余弦变换
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function m = melfb(p, n, fs)
+% MELFB  Determine matrix for a mel-spaced filterbank
+%
+% Inputs:       p   number of filters in filterbank
+%               n   length of fft
+%               fs  sample rate in Hz
+%
+% Outputs:      x   a (sparse) matrix containing the filterbank amplitudes
+%                   size(x) = [p, 1+floor(n/2)]
+%
+% Usage:        For example, to compute the mel-scale spectrum of a
+%               colum-vector signal s, with length n and sample rate fs:
+%               f = fft(s);
+%               m = melfb(p, n, fs);
+%               n2 = 1 + floor(n/2);
+%               z = m * abs(f(1:n2)).^2;
+%
+%               z would contain p samples of the desired mel-scale spectrum
+%
+%               To plot filterbanks e.g.:
+%               plot(linspace(0, (12500/2), 129), melfb(20, 256, 12500)'),
+%               title('Mel-spaced filterbank'), xlabel('Frequency (Hz)');
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+f0 = 700 / fs;
+fn2 = floor(n/2);
+lr = log(1 + 0.5/f0) / (p+1);
+% convert to fft bin numbers with 0 for DC term
+bl = n * (f0 * (exp([0 1 p p+1] * lr) - 1));
+b1 = floor(bl(1)) + 1;
+b2 = ceil(bl(2));
+b3 = floor(bl(3));
+b4 = min(fn2, ceil(bl(4))) - 1;
+pf = log(1 + (b1:b4)/n/f0) / lr;
+fp = floor(pf);
+pm = pf - fp;
+r = [fp(b2:b4) 1+fp(1:b3)];
+c = [b2:b4 1:b3] + 1;
+v = 2 * [1-pm(b2:b4) pm(1:b3)];
+m = sparse(r, c, v, p, 1+fn2);
+</code></pre>
+
+
+
+<h2>参考文献</h2>
+
+
+<p>[1] <a href="http://www.semxi.com/TechnologyDetail.aspx?nID=27">http://www.semxi.com/TechnologyDetail.aspx?nID=27</a> </br>
+[2] MFCC和LPCC特征参数在说话人识别中的研究</p>
+
+
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2012/07/18/MFCC-feature-extraction/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2012-07-18T20:10:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/audio/'>Audio</a>, <a class='tag' href='/blog/tags/mfcc/'>MFCC</a>, <a class='tag' href='/blog/tags/matlab/'>Matlab</a>, <a class='tag' href='/blog/tags/speech/'>Speech</a>, <a class='tag' href='/blog/tags/xin-hao-chu-li/'>信号处理</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2012/07/17/covariance-matrix-and-correlation-matrix/" title="Previous Post:
+        协方差矩阵和相关系数矩阵">&laquo; 协方差矩阵和相关系数矩阵</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2012/07/20/PCA-based-speaker-recognition/"
+        title="Next Post: 基于主成分分析分类器的说话人识别">基于主成分分析分类器的说话人识别
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2012/07/18/MFCC-feature-extraction/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2012/07/18/MFCC-feature-extraction/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

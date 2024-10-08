@@ -1,0 +1,1073 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: C语言 | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/cyu-yan/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[C语言函数指针与C++函数调用操作符]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/05/24/function-pointer-in-c-and-function-call-operator-in-cpp/"/>
+    <updated>2014-05-24T21:27:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/05/24/function-pointer-in-c-and-function-call-operator-in-cpp</id>
+    <content type="html"><![CDATA[<h2>概述</h2>
+
+<p>在编程过程中，一些特殊的时候，我们需要向一个函数传递另一个函数的地址（比如在快速排序中，我们需要传入两个元素大小比较的函数的地址），此时在C语言中一般是通过传递一个函数指针来实现。最近在看《STL源码剖析》一书，上面提到，在C++中其实可以通过另一种方式实现，那就是函数调用操作符<code>()</code> 。本文首先介绍一下C语言中函数指针的用法，然后再介绍C++中函数调用操作符的用法。</p>
+
+<h2>C语言中的函数指针</h2>
+
+<p>我们先直接看一个例子吧。这个例子比较全面而且简单，其中的函数指针是带参数且有返回值的函数指针，而且还有把函数指针作为参数来传递的代码。这个例子来自 <a href="http://blog.jobbole.com/44639/">jobbole伯乐在线</a>，代码如下：</p>
+
+<!-- more -->
+
+
+
+
+<pre><code class="c">#include &lt;stdio.h&gt;
+
+// 函数原型
+int add(int x, int y);
+int subtract(int x, int y);
+int domath(int (*mathop)(int, int), int x, int y);
+
+// 加法 x+ y
+int add(int x, init y) {
+    return x + y;
+}
+
+// 减法 x - y
+int subtract(int x, int y) {
+    return x - y;
+}
+
+// 根据输入执行函数指针
+int domath(int (*mathop)(int, int), int x, int y) {
+    return (*mathop)(x, y);
+}
+
+int main() {
+    // 用加法调用domath
+    int a = domath(add, 10, 2);
+    printf("Add gives: %d\n", a);
+
+    // 用减法调用domath
+    int b = domath(subtract, 10, 2);
+    printf("Subtract gives: %d\n", b);
+}
+</code></pre>
+
+<p>在函数 <code>domath</code> 中，我们可以根据传入的 <code>mathop</code> 函数指针来做不同的计算操作。另外，在该文中，最后提到函数名会被隐式的转换为函数指针，就像作为参数传递的时候，数组名被隐式的转换为指针一样。在函数指针被要求当作输入的任何地方，都能够使用函数名，解引用符 <code>*</code> 和取地址符 <code>&amp;</code> 用在函数名之前基本上都是多余的。这个之前还真不知道，新技能get，哈哈</p>
+
+<h4>使用typedef</h4>
+
+<p>在C语言中，对于函数指针，我们可以使用 <code>typedef</code> 将其定义为一种数据类型，这样我们就可以定义这种类型的变量了，就像使用普通的变量类型一样。下面是一个具体的定义（来自<a href="http://stackoverflow.com/questions/4295432/typedef-function-pointer">stackoverflow</a> Jacob的回答）：</p>
+
+<pre><code>    typedef   void      (*FunctionFunc)  ( );
+   //         ^                ^         ^
+   //     return type      type name  arguments
+</code></pre>
+
+<p>这里 <code>typedef</code> 的使用方法与一般的 <code>typedef A B</code> 的使用方式不不大一样的，如果没有接触过这种用法，可能开起来很别扭（在很多开源库中可能经常会碰到）。下面是其具体使用的实例（不完整代码）：</p>
+
+<pre><code class="c">FunctionFunc x;
+void doSomething() { printf("Hello there\n"); }
+x = &amp;doSomething;
+x(); //prints "Hello there"
+</code></pre>
+
+<p>根据上面提到的隐式转换，这里的取址符其实是没有必要的。关于C语言的函数指针就介绍到这儿了，接下来介绍一下C++的函数调用操作符。</p>
+
+<h2>C++中的函数调用操作符</h2>
+
+<p>在C++中，函数调用操作符是指左右小括弧 <code>()</code> ，该操作符是可以重载的。许多 STL 算法都提供了两个版本，一个用于一般情况（例如排序时以递增方式排列），一个用于特殊情况（例如排序时按照使用者自定义的大小关系进行排序）。 上面讲了，在C语言中使用者是通过传递函数指针的方式来实现的。然而，函数指针有一些缺点，最重要的是它无法持有自己的状态（这里指局部状态，local states，具体可以通过后面的例子来理解），也无法达到组件技术中的可适配性 —— 也就是无法再将某些修饰条件加诸于其上而改变其状态。</p>
+
+<p>在C++中，对应于C中函数指针的东西是仿函数（functor），使用起来就像函数一样。其实现方法是对某个 class 进行 <code>operator()</code> 重载，他就成为一个仿函数。而要成为一个可适配（adaptable）的仿函数，还需要其他的一些努力（在《STL源码剖析》一书的第8章，关于适配器（adaptor）的内容）。这里，我们只拿书中的那个例子来简单的看一下仿函数的定义和使用方法吧。代码如下：</p>
+
+<pre><code class="cpp">#include &lt;iostream&gt;
+using namespace std;
+
+// 对plus进行operator() 重载，使得 plus 变成了一个仿函数
+template&lt;class T&gt;
+struct plus{
+    T operator() (const T &amp;x, const T &amp;y) const {return x+y;}
+};
+
+// 对 minus 进行operator() 重载，使得 minus 变成了一个仿函数
+template&lt;class T&gt;
+struct minus{
+    T operator() (const T &amp;x, const T &amp;y) const {return x-y;}
+};
+
+int main(){
+    // 以下产生仿函数对象
+    plus&lt;int&gt; plusObj;
+    minus&lt;int&gt; minusObj;
+    // 以下使用仿函数，就像使用一般函数一样
+    cout&lt;&lt;plusObj(3,5)&lt;&lt;endl;
+    cout&lt;&lt;minusObj(3,5)&lt;&lt;endl;
+    // 也可以这样使用，通过临时对象（匿名对象）
+    cout&lt;&lt;plus&lt;int&gt;()(3,5)&lt;&lt;endl;
+    cout&lt;&lt;minus&lt;int&gt;()(3,5)&lt;&lt;endl;
+    return 0;
+}
+</code></pre>
+
+<p>这里的 <code>plus&lt;T&gt;</code> 和 <code>minus&lt;T&gt;</code> 已经非常接近 STL 的实现了，唯一的差别是它缺乏“可适配能力”，关于 STL 中的适配器（adaptor），我现在也还没看完该书，也还不太了解，在后续文章中应该会介绍到。读者可以自行google。</p>
+
+<h2>在快排中使用函数调用操作符</h2>
+
+<p>为了加深对函数调用操作符的理解，并将其真正用到实际中，这里拿快排这个非常典型的例子，并充分利用C++及STL的特性。下面是核心代码：</p>
+
+<pre><code class="cpp">template&lt;typename InIt,typename FuncType&gt;
+void myqsort(InIt begin, InIt end, FuncType cmp){
+    if(begin==end||begin==end-1)return;
+    InIt it = mysplit(begin,end,cmp);
+    if(it!=end){
+        myqsort(begin,it,cmp);
+        myqsort(it+1,end,cmp);
+    }
+}
+
+template&lt;typename InIt,typename FuncType&gt;
+InIt mysplit(InIt begin, InIt end, FuncType cmp){
+    InIt itl,itr;
+    itl=begin;
+    itr=end-1;
+    while(itl != itr){
+        while(itl != itr &amp;&amp; cmp(*itr,*begin)&gt;0)itr--;
+        if(itl==itr)break;
+        while(itl != itr &amp;&amp; cmp(*begin,*itl)&gt;0)itl++;
+        if(itl==itr)break;
+        swap(*itl,*itr);
+        itr--;
+    }
+    return itl;
+}
+
+class Test{
+public:
+    double m_lf;
+    string m_str;
+public:
+    void set(){ cin&gt;&gt;m_lf&gt;&gt;m_str; }
+    void print(){ cout&lt;&lt;m_lf&lt;&lt;" "&lt;&lt;m_str&lt;&lt;endl; }
+};
+
+struct cmpd{
+    int operator()(Test a,Test b){
+        if(abs(a.m_lf - b.m_lf)&lt;INF)return 0;
+        if(a.m_lf &gt; b.m_lf)return 1;
+        return -1;
+    }
+};
+
+struct cmps{
+    int operator()(Test a,Test b){
+        return a.m_str.compare(b.m_str);
+    }
+};
+</code></pre>
+
+<p>完整的代码及测试输入可以通过以下链接打包下载：<a href="https://ibillxia.github.io/upload/code/20140525.tar.gz">code-2014-05-25</a>。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[深入理解C语言的define和内联函数]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/05/17/insight-into-define-and-inline-function-in-c/"/>
+    <updated>2014-05-17T22:43:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/05/17/insight-into-define-and-inline-function-in-c</id>
+    <content type="html"><![CDATA[<h2>概述</h2>
+
+<p>在 <code>Robert C.Searcord</code> 的 <em>The</em> <em>Cert</em> <em>C</em> <em>Secure</em> <em>Coding</em> <em>Standard</em> 一书中，关于宏定义的规范中第一条就是</p>
+
+<blockquote><p>用内联函数或静态函数替代与函数相似的宏</p></blockquote>
+
+<p>这个规范非常实用。内联函数是C99标准中新增的，当宏定义和内联函数可以互换时，应该优先考虑选择内联函数，这也是为什么在C++标准库函数中 <code>max</code>, <code>min</code>, <code>swap</code> 等都是通过内联函数来实现的原因。 宏定义是完全原封不动的很SB的替换，而内联函数则并非简单的文本替换，而是按函数调用的方式展开。关于内联函数相对于宏替换的优点，在wiki有如下几点的总结：</p>
+
+<ul>
+<li>宏调用并不执行类型检查，甚至连正常参数也不检查，但是函数调用却要检查。</li>
+<li>C语言的宏使用的是文本替换，可能导致无法预料的后果，因为需要重新计算参数和操作顺序。</li>
+<li>在宏中的编译错误很难发现，因为它们引用的是扩展的代码，而不是程序员键入的。</li>
+<li>许多结构体使用宏或者使用不同的语法来表达很难理解。内联函数使用与普通函数相同的语言，可以随意的内联和不内联。</li>
+<li>内联代码的调试信息通常比扩展的宏代码更有用。</li>
+</ul>
+
+
+<p>其中前面两条很好理解，相信大家应该不陌生，这里主要通过具体讨论一个该书中提到的一个程序实例来感受一下后面几点。</p>
+
+<!-- more -->
+
+
+<h2>宏定义引起的运行时错误</h2>
+
+<p>下面我们看一个稍微复杂的例子，这个例子是在运行时才出现另我们感到意外的错误（这里的运行时错误并不是指 <code>Runtime Error</code>，么么哒）。</p>
+
+<pre><code class="c">#include &lt;stdio.h&gt;
+
+int count=0;
+
+void g(void){
+    printf("Called g, count=%d.\n",count);
+}
+
+#define EXEC_BUMP(func) (func(),++count)
+typedef void(*exec_func)(void);  // 定义函数指针类型
+inline void exec_bump(exec_func f){
+    f();
+    ++count;
+}
+
+int main(void)
+{
+    int count=0;
+    while(count++&lt;10){
+        //EXEC_BUMP(g);  // (1) 宏定义实现
+        exec_bump(g);    // (2) 内联实现
+    }
+    return 0;
+}
+</code></pre>
+
+<p>使用宏定义的实现得到输出如下：</p>
+
+<pre><code>Called g, count=0.
+Called g, count=0.
+Called g, count=0.
+Called g, count=0.
+Called g, count=0.
+</code></pre>
+
+<p>这并不是我们想要的结果。而使用内联函数实现得到的输出如下：</p>
+
+<pre><code>Called g, count=0.
+Called g, count=1.
+Called g, count=2.
+Called g, count=3.
+Called g, count=4.
+Called g, count=5.
+Called g, count=6.
+Called g, count=7.
+Called g, count=8.
+Called g, count=9.
+</code></pre>
+
+<p>这才是我们想要的结果。根据这两个输出结果，我们可以分析宏定义和内联的区别。通过宏定义时，直接使用 <code>(g(),++count);</code> 替换 <code>EXEC_BUMP(g);</code> 即可，这样每次调用 <code>g()</code> 函数时输出的 <code>count</code> 是全局的变量，所以都是0；而调用完 <code>g()</code> 函数之后，对局部变量 <code>count</code> 进行了自加操作，所以循环了5次。然而使用内联函数实现时，是按照函数调用的方式展开的，首先将全局变量和内联函数的传入参数压栈，然后是执行函数体，最后参数出栈；因此，内联函数中调用 <code>g()</code> 函数时输出的 <code>count</code> 也是全局变量，而且在内联函数中的 <code>++count</code> 也是对全局变量的操作，因此每次调用时输出的计数变量是递增的。  由此，我们可以更清楚的理解内联函数的替换原理了，它是由编译器显式地将函数调用中的压栈、函数体、出栈等步骤生成到可执行文件中，而不是像普通函数那样，函数体与调用该函数的代码部分是分离的，在调用内联函数时不需要跳转，因而执行效率会比普通的函数要高。（然而，如果函数本身代码较多，如果使用内联，就会在可执行文件中多个地方有该内联函数的函数体，这样可执行文件的大小就会比不使用内联的大。因此，一般不会将函数体复杂的函数定义为内联函数，除非特殊情况下，为了运行时间性能的考虑）</p>
+
+<h2>宏定义的典型应用场景</h2>
+
+<p>上面主要是对宏定义的贬低和歧视，其实宏定义也并非毫无用武之地，下面几种情况下宏定义还是不可替代的：</p>
+
+<p>（1）用于实现局部函数 <br/>
+此时无法用内联函数替代宏定义。因为宏定义代码块中的自动变量可以和引用宏的前后代码块互为使用，即宏引用前的代码快中的自动变量可以在宏中直接使用，而宏中定义的自动变量可以在宏引用的代码块之后使用。例如，比较常见是：</p>
+
+<pre><code class="c">#include &lt;stdio.h&gt;
+#define FOR(i,n) for(int i=0;i&lt;n;i++)  // 宏定义部分
+
+int main(){
+    int a[]={1,2,3,4,5};
+    FOR(j,5) // 宏引用，这里j是在宏中才定义的自动变量
+        printf("%d ",a[j]);  // 但是可以在宏引用之后的代码中使用
+    return 0;
+}
+</code></pre>
+
+<p>其中对临时变量 <code>j</code> 的声明是在宏中定义的，可以在宏调用完后使用这个变量。同样的，也可以在宏定义前声明临时变量，而直接在宏中使用（不需要作为参数传递给宏）。</p>
+
+<p>（2）宏可以支持某种形式的惰式计算<br/>
+例如：</p>
+
+<pre><code class="c">#define SELECT(s,v1,v2) ((s)?(v1):(v2))
+</code></pre>
+
+<p>这个是无法用内联实现的。</p>
+
+<p>(3)宏定义可以产生编译时常量<br/>
+例如：</p>
+
+<pre><code class="c">#define ADD(a,b) ((a)+(b))
+</code></pre>
+
+<p>调用 <code>ADD(3,4)</code> 会产生一个常量表达式 <code>3+4</code> ，而内联无此效果。</p>
+
+<p>（4）实现类型通用的函数<br/>
+如果不借助C++模板这样的机制，C语言内联是无法实现这样的功能的，而只能针对不同的数据类型定义不同名的函数。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[原地交换两个变量的值]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/04/11/swap-two-variables-in-place/"/>
+    <updated>2014-04-11T22:27:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/04/11/swap-two-variables-in-place</id>
+    <content type="html"><![CDATA[<h2>引子</h2>
+
+<p>在码代码的过程中，不经意间就会遇到需要交换两个变量的情况，一般情况下都是通过新定义一个同类型的变量来中转，但自己也知道可以不用定义新变量直接原地交换，但具体如何原地交换以及其中可能隐藏的bug却了解得不是很清楚，于是乎google了一下，发现这里面还真是有很多学问呢，这里整理和总结一下。</p>
+
+<p>原地交换两个变量，最主要有加减法和异或法。</p>
+
+<p>本文完整代码链接：<a href="../upload/code/20140411.cpp">20140411.cpp</a></p>
+
+<h2>加减法</h2>
+
+<p>加减法最简单、最好理解了，设待交换的两个变量分别为 a 和 b ，首先将两者的和赋给 a ；然后将 a 与 b的差赋给 b ，这样 b 就是 a 原来的值了；最后再将 a 与 b 的差赋给 a ，这样 a 就是 b 原来的值了。具体代码如下：</p>
+
+<pre><code class="cpp">inline template &lt;class T&gt;
+void xswap(T &amp;a,T &amp;b){
+    a=a+b;
+    //printf("a=%u\n",a);
+    b=a-b;
+    a=a-b;
+}
+</code></pre>
+
+
+
+<!-- more -->
+
+
+<p>当然也可以先减后加：</p>
+
+<pre><code class="cpp">inline template &lt;class T&gt;
+void xswap2(T &amp;a,T &amp;b){
+    a=a-b;
+    //printf("a=%u\n",a);
+    b=a+b;
+    a=b-a;
+}
+</code></pre>
+
+<p>这里实现的原理与先加后减类似。粗一看，这样实现两个变量的原地交换很简单有效。但是，这其中有一个很隐秘的bug，就是溢出的问题，在先加后减的实现中，如果 a 与 b 的和大于该类型的能表示的最大值，会发生神马捏？我写了一个 main 函数来简单的测试了一下：</p>
+
+<pre><code class="cpp">int main()
+{
+    unsigned char a=255,b=1;
+    printf("a=%u,b=%u\n",a,b);
+    xswap(a,b);
+    printf("a=%u,b=%u\n",a,b);
+    return 0;
+}
+</code></pre>
+
+<p>将上面的 xswap 函数中的注释取消，编译运行后（使用Code::Blocks 13.12 MinGW g++编译），得到如下输出：</p>
+
+<pre><code>a=255,b=1
+a=0
+a=1,b=255
+</code></pre>
+
+<p>可以看到其中第2行输出的 a 的值为 0，产生了上溢（如果 a , b 同为负，可能产生下溢）。虽然最后交换的结果还是对的，但溢出的部分可能对内存中其他变量产生不可预测的后果。因此，不建议这么实现原地交换两个变量，如果实在需要用这种方法，一定要在进行加或减之前，判断时候回产生溢出。</p>
+
+<h2>异或法</h2>
+
+<p>异或法的基本原理类似，但还利用了异或的如下两个特性： a ^ 0 = a, a ^ a = 0. 用异或来实现两个变量的交换如下：</p>
+
+<pre><code class="cpp">template &lt;class T&gt;
+inline void xswap3(T &amp;a,T &amp;b){
+    a=a^b;
+    b=a^b;
+    a=b^a;
+}
+</code></pre>
+
+<p>由于异或是按位运算的，所以不存在溢出问题。因此，如果一定要原地实现两个变量的交换的话，建议用异或的方法。</p>
+
+<h2>原地交换多个变量</h2>
+
+<p>实际上，我们还可以利用上面的思想，将两个变量扩展到多个变量的原地交换，例如三个变量的交换：</p>
+
+<pre><code class="cpp">template &lt;class T&gt;
+inline void swap3(T &amp;a,T &amp;b,T &amp;c){
+    a=a^b;
+    b=a^b;
+    a=b^a;
+    b=b^c;
+    c=b^c;
+    b=b^c;
+}
+</code></pre>
+
+<p>即先交换 a 和 b，再交换 b (=a) 和 c。另外，上面的式子可以简化和压缩到一个式子，具体的技巧读者可以自行google，这里不提倡这么做。</p>
+
+<h2>STL是如何实现swap的</h2>
+
+<p>最后，我们来看看STL标准库是如何实现swap的（这里的实现版本是 move.h 文件中的一个，在 STL 中还有针对 vector, string, tree, map, multimap, deque 的 swap 函数）。</p>
+
+<pre><code class="cpp">/**
+*  @brief Swaps two values.
+*  @ingroup mutating_algorithms
+*  @param  __a  A thing of arbitrary type.
+*  @param  __b  Another thing of arbitrary type.
+*  @return   Nothing.
+*/
+template&lt;typename _Tp&gt;
+inline void
+swap(_Tp&amp; __a, _Tp&amp; __b)
+{
+  // concept requirements
+  __glibcxx_function_requires(_SGIAssignableConcept&lt;_Tp&gt;)
+
+  _Tp __tmp = _GLIBCXX_MOVE(__a);
+  __a = _GLIBCXX_MOVE(__b);
+  __b = _GLIBCXX_MOVE(__tmp);
+}
+</code></pre>
+
+<p>可以看到，这里新声明了一个变量 __tmp 来中转。至于为什么没有原地进行交换，一个可能的解释是：对于 inline 函数来说，函数调用的代码会直接被改函数体替换，再经过编译优化，最后可能只需要借助一个寄存器变量就可以实现两个变量的交换了，这是非常快的，与通过按位的异或运算的实现，在性能上区别不是太大。</p>
+
+<h2>update</h2>
+
+<p>关于溢出的更深入的讨论，可以看看陈浩的最新博文 <a href="http://coolshell.cn/articles/11466.html">C语言的整型溢出问题</a> . 这里面有提到溢出的几个危害，还有关于 C 语言标准、编译器对溢出是如何处理和对待的，以及如何写代码实现预先判断溢出。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[PCM WAVE格式详解及用C语言实现wave文件的读取]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/07/20/details-of-wave-format-and-reading-wave-files-in-C-language/"/>
+    <updated>2013-07-20T20:07:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/07/20/details-of-wave-format-and-reading-wave-files-in-C-language</id>
+    <content type="html"><![CDATA[<h2>1.PCM Wave格式详解</h2>
+
+
+<p>WAVE文件格式是微软RIFF(Resource Interchange File Format,资源交换文件标准)的一种，是针对于多媒体文件存储的一种文件格式和标准。
+一般而言，RIFF文件由文件头和数据两部分组成，一个WAVE文件由一个“WAVE”数据块组成，这个“WAVE”块又由一个"fmt"子数据块和一个“data”子
+数据块组成，也称这种格式为“Canonical form”（权威/牧师格式），如下图所示：
+<center><img src="/images/2013/IMAG2013072001.gif"></center>
+</p>
+
+
+<!--more-->
+
+
+<p>每个字段的涵义如下：
+ChunkID: 占4个字节，内容为“RIFF”的ASCII码(0x52494646)，以大端（big endian）存储。</br>
+ChunkSize: 4字节，存储整个文件的字节数（不包含ChunkID和ChunkSize这8个字节），以小端（little endian）方式存储。</br>
+Format: 4字节，内容为“WAVE”的ASCII码(0x57415645)，以大端存储。</br>
+</p>
+
+
+
+
+<p>
+其中bigendian 主要有一个特征，在内存中对操作数的存储方式和从高字节到低字节。例如：0x1234，这样一个数，存储为:</br>
+0x4000:   0x12</br>
+0x4001:   0x34</br>
+而小尾端littleendian是：</br>
+0x4000:   0x34</br>
+0x4001:   0x12</br>
+用程序在区别的话，可以考虑：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="w">       </span><span class="k">union</span><span class="w"> </span><span class="nc">w</span>
+</span><span class='line'><span class="w">      </span><span class="p">{</span>
+</span><span class='line'><span class="w">       </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+</span><span class='line'><span class="w">       </span><span class="kt">char</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+</span><span class='line'><span class="w">      </span><span class="p">}</span><span class="n">c</span><span class="p">;</span>
+</span><span class='line'><span class="w">      </span><span class="n">c</span><span class="p">.</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="w">      </span><span class="k">if</span><span class="p">(</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">b</span><span class="o">==</span><span class="mi">1</span><span class="w"> </span><span class="p">)</span><span class="w">  </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;little endian</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="w">      </span><span class="k">else</span><span class="w"> </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;big endian</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="w">      </span><span class="n">system</span><span class="p">(</span><span class="s">&quot;PAUSE&quot;</span><span class="p">);</span><span class="w"> </span>
+</span><span class='line'><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+</p>
+
+
+
+
+<p>"WAVE"格式由两个子数据块构成：“fmt”块和“data”块，其中“fmt”块的详细解释如下：
+Subchunk1ID: 占4个字节，内容为“fmt ”的ASCII码(0x666d7420)，以大端存储。</br>
+Subchunk1Size: 占4个字节，存储该子块的字节数（不含前面的Subchunk1ID和Subchunk1Size这8个字节），以小端方式存储。</br>
+AudioFormat：占2个字节，以小端方式存储，存储音频文件的编码格式，例如若为PCM则其存储值为1，若为其他非PCM格式的则有一定的压缩。</br>
+NumChannels: 占2个字节，以小端方式存储，通道数，单通道(Mono)值为1，双通道(Stereo)值为2，等等。</br>
+SampleRate: 占4个字节，以小端方式存储，采样率，如8k，44.1k等。</br>
+ByteRate: 占4个字节，以小端方式存储，每秒存储的bit数，其值=SampleRate * NumChannels * BitsPerSample/8</br>
+BlockAlign: 占2个字节，以小端方式存储，块对齐大小，其值=NumChannels * BitsPerSample/8</br>
+BitsPerSample: 占2个字节，以小端方式存储，每个采样点的bit数，一般为8,16,32等。</br>
+接下来是两个可选的扩展参数：</br>
+ExtraParamSize: 占2个字节，表示扩展段的大小。</br>
+ExtraParams: 扩展段其他自定义的一些参数的具体内容，大小由前一个字段给定。
+</p>
+
+
+
+
+<p>其中，对于每个采样点的bit数，不同的bit数读取数据的方式不同：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="c1">// data 为读取到的采样点的值，speech为原始数据流，</span>
+</span><span class='line'><span class="c1">//对应于下面的&quot;WAVE&quot;格式文件的第二个子数据块“data”块的“Data”部分。</span>
+</span><span class='line'><span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">NumSample</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+</span><span class='line'><span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">BitsPerSample</span><span class="o">==</span><span class="mi">8</span><span class="p">)</span>
+</span><span class='line'><span class="w">        </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="n">speech</span><span class="o">+</span><span class="n">i</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">BitsPerSample</span><span class="o">==</span><span class="mi">16</span><span class="p">)</span>
+</span><span class='line'><span class="w">        </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="kt">short</span><span class="o">*</span><span class="p">)</span><span class="n">speech</span><span class="o">+</span><span class="n">i</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">BitsPerSample</span><span class="o">==</span><span class="mi">32</span><span class="p">)</span>
+</span><span class='line'><span class="w">        </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="kt">int</span><span class="o">*</span><span class="p">)</span><span class="n">speech</span><span class="o">+</span><span class="n">i</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+</p>
+
+
+
+
+<p>"WAVE"格式文件的第二个子数据块是“data”，其个字段的详细解释如下：</br>
+Subchunk2ID: 占4个字节，内容为“data”的ASCII码(0x64617461)，以大端存储。</br>
+Subchunk2Size: 占4个字节，内容为接下来的正式的数据部分的字节数，其值=NumSamples * NumChannels * BitsPerSample/8</br>
+Data: 真正的语音数据部分。</br>
+</p>
+
+
+
+
+<h2>一个Wave文件头的实例</h2>
+
+
+<p>设一个wave文件的前72个字节的十六进制内容如下(可以使用Ultra Edit等工具查看wave文件头)：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="mi">52</span><span class="w"> </span><span class="mi">49</span><span class="w"> </span><span class="mi">46</span><span class="w"> </span><span class="mi">46</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="mi">08</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">57</span><span class="w"> </span><span class="mi">41</span><span class="w"> </span><span class="mi">56</span><span class="w"> </span><span class="mi">45</span><span class="w"> </span><span class="mi">66</span><span class="w"> </span><span class="mi">6</span><span class="n">d</span><span class="w"> </span><span class="mi">74</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">01</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">02</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span>
+</span><span class='line'><span class="mi">22</span><span class="w"> </span><span class="mi">56</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">88</span><span class="w"> </span><span class="mi">58</span><span class="w"> </span><span class="mo">01</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">04</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">64</span><span class="w"> </span><span class="mi">61</span><span class="w"> </span><span class="mi">74</span><span class="w"> </span><span class="mi">61</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">08</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span>
+</span><span class='line'><span class="mi">24</span><span class="w"> </span><span class="mi">17</span><span class="w"> </span><span class="mi">1</span><span class="n">e</span><span class="w"> </span><span class="n">f3</span><span class="w"> </span><span class="mi">3</span><span class="n">c</span><span class="w"> </span><span class="mi">13</span><span class="w"> </span><span class="mi">3</span><span class="n">c</span><span class="w"> </span><span class="mi">14</span><span class="w"> </span><span class="mi">16</span><span class="w"> </span><span class="n">f9</span><span class="w"> </span><span class="mi">18</span><span class="w"> </span><span class="n">f9</span><span class="w"> </span><span class="mi">34</span><span class="w"> </span><span class="n">e7</span><span class="w"> </span><span class="mi">23</span><span class="w"> </span><span class="n">a6</span><span class="w"> </span><span class="mi">3</span><span class="n">c</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="mi">11</span><span class="w"> </span><span class="n">ce</span><span class="w"> </span><span class="mi">1</span><span class="n">a</span><span class="w"> </span><span class="mi">0</span><span class="n">d</span><span class="w"> </span>
+</span></code></pre></td></tr></table></div></figure>
+则其个字段的解析如下图：
+<center><img src="/images/2013/IMAG2013072002.gif"></center>
+</p>
+
+
+
+
+<h2>C语言实现wave文件的读取</h2>
+
+
+<p>这里给出一个用基本的C语言文件操作库函数实现的Wave文件读取的实例代码，可以跨Windows和Linux平台。</p>
+
+
+<pre><code class="c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+// define Wave format structure
+typedef struct tWAVEFORMATEX
+{
+    short wFormatTag;         /* format type */
+    short nChannels;          /* number of channels (i.e. mono, stereo...) */
+    unsigned int nSamplesPerSec;     /* sample rate */
+    unsigned int nAvgBytesPerSec;    /* for buffer estimation */
+    short nBlockAlign;        /* block size of data */
+    short wBitsPerSample;     /* number of bits per sample of mono data */
+    short cbSize;             /* the count in bytes of the size of */
+                                    /* extra information (after cbSize) */
+} WAVEFORMATEX, *PWAVEFORMATEX;
+
+char* wavread(char *fname, WAVEFORMATEX *wf);
+
+int main(){
+    char fname[] = "test.wav";
+    char *speech;
+    WAVEFORMATEX wf;
+
+    speech = wavread(fname, &amp;wf);
+    // afterward processing...
+
+    return 0;
+}
+
+// read wave file
+char* wavread(char *fname, WAVEFORMATEX *wf){
+    FILE* fp;
+    char str[32];
+    char *speech;
+    unsigned int subchunk1size; // head size
+    unsigned int subchunk2size; // speech data size
+
+    // check format type
+    fp = fopen(fname,"r");
+    if(!fp){
+        fprintf(stderr,"Can not open the wave file: %s.\n",fname);
+        return NULL;
+    }
+    fseek(fp, 8, SEEK_SET);
+    fread(str, sizeof(char), 7, fp);
+    str[7] = '\0';
+    if(strcmp(str,"WAVEfmt")){
+        fprintf(stderr,"The file is not in WAVE format!\n");
+        return NULL;
+    }
+
+    // read format header
+    fseek(fp, 16, SEEK_SET);
+    fread((unsigned int*)(&amp;subchunk1size),4,1,fp);
+    fseek(fp, 20, SEEK_SET);
+    fread(wf, subchunk1size, 1, fp);
+
+    // read wave data
+    fseek(fp, 20+subchunk1size, SEEK_SET);
+    fread(str, 1, 4, fp);
+    str[4] = '\0';
+    if(strcmp(str,"data")){
+        fprintf(stderr,"Locating data start point failed!\n");
+        return NULL;
+    }
+    fseek(fp, 20+subchunk1size+4, SEEK_SET);
+    fread((unsigned int*)(&amp;subchunk2size), 4, 1, fp);
+    speech = (char*)malloc(sizeof(char)*subchunk2size);
+    if(!speech){
+        fprintf(stderr, "Memory alloc failed!\n");
+        return NULL;
+    }
+    fseek(fp, 20+subchunk1size+8, SEEK_SET);
+    fread(speech, 1, subchunk2size, fp);
+
+    fclose(fp);
+    return speech;
+}
+</code></pre>
+
+
+
+<h2>参考</h2>
+
+
+<p>
+[1]WAVE PCM soundfile format: https://ccrma.stanford.edu/courses/422/projects/WaveFormat/ </br>
+[2]Resource Interchange File Format: http://en.wikipedia.org/wiki/Resource_Interchange_File_Format </br>
+[3]基于Visual C++6.0的声音文件操作: http://www.yesky.com/20030414/1663116_1.shtml
+</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[C语言中的异常处理机制]]></title>
+    <link href="http://ibillxia.github.io/blog/2011/05/03/Exception-handling-mechanism-in-c/"/>
+    <updated>2011-05-03T11:09:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2011/05/03/Exception-handling-mechanism-in-c</id>
+    <content type="html"><![CDATA[<h2>1.概述</h2>
+
+
+<p>什么是异常？异常一般指的是程序运行期（Run-Time）发生的非正常情况。异常一般是不可预测的，如：内存不足、打开文件失败、
+范围溢出等。UNIX 使用信号给出异常，并当发生异常时转跳到信号处理过程进行异常处理。DOS下的信号对比UNIX系统而言相对较少。</p>
+
+
+
+
+<p>我们知道，不管是在c++还是在java中，异常都被认为是一种很优雅的处理错误的机制。而如果想在c语言中使用异常就比较麻烦，
+但是我们仍然可以使用c语言中强大的setjmp和longjmp函数实现类似于c++的异常处理机制。</p>
+
+
+
+
+<p>异常处理的核心思想是，把功能模块代码与系统中可能出现错误的处理代码分离开来，以此来达到使我们的代码组织起来更美观、
+逻辑上更清晰，并且同时从根本上来提高我们软件系统长时间稳定运行的可靠性。那么，现在回过头来看，实际上在计算机系统的硬件
+设计中，操作系统的总体设计中，早期的许多面向结构化程序设计语言中(例如C语言)，都有异常处理的机制和方法的广泛运用。</p>
+
+
+
+
+<h2>2.基于goto语句的异常处理</h2>
+
+
+<p>goto语句，程序员朋友们对它太熟悉了，它是C语言中使用最为灵活的一条语句，由它也充分体现出了C语言的许多特点或者说是优点。
+它虽然是一条高级语言中提供的语句，但是它一般却直接对应一条“无条件直接跳转的机器指令”，所以说它非常地特别，它引起过许多
+争议，但是这条语句仍然一直被保留了下来，即便是今天的C++语言中，也有对它的支持(虽然不建议使用它)。</p>
+
+
+
+
+<!-- more -->
+
+
+<p>goto语句有非常多的用途或优点，例如，它特别适合于在编写系统程序中被使用，它能使编写出来的代码非常简练。另外，goto语句
+另外一个最重要的作用就是，它实际上是一种对异常处理编程，最初也最原始的支持手段或方法。它能把错误处理模块的代码有效与其
+它代码分离开来。例程如下</p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="kt">void</span><span class="w"> </span><span class="n">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">argv</span><span class="p">[])</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="p">{</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">　　</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Call_Func1</span><span class="p">(</span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="n">param</span><span class="w"> </span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">　　　　</span><span class="c1">// 函数调用成功，我们正常的处理&lt;br/&gt;</span>
+</span><span class='line'><span class="w">　　　　</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Call_Func2</span><span class="p">(</span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="n">param</span><span class="w"> </span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">　　　　</span><span class="c1">// 函数调用成功，我们正常的处理&lt;br/&gt;</span>
+</span><span class='line'><span class="w">　　　　　　</span><span class="k">while</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">　　　　　　　　</span><span class="c1">//do other job&lt;br/&gt;</span>
+</span><span class='line'><span class="w">　　　　　　　　</span><span class="c1">// 如果错误直接跳转&lt;br/&gt;</span>
+</span><span class='line'><span class="w">　　　　　　　　</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">has</span><span class="w"> </span><span class="n">error</span><span class="p">)</span><span class="w"> </span><span class="k">goto</span><span class="w"> </span><span class="n">Error</span><span class="p">;</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">　　　　　　</span><span class="c1">//do other job&lt;br/&gt;</span>
+</span><span class='line'><span class="w">　　　　　　</span><span class="p">}</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">　　　　</span><span class="p">}</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">　　　　</span><span class="c1">// 如果错误直接跳转&lt;br/&gt;</span>
+</span><span class='line'><span class="w">　　　　</span><span class="k">else</span><span class="w"> </span><span class="k">goto</span><span class="w"> </span><span class="n">Error</span><span class="p">;</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">　　</span><span class="p">}</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">　　</span><span class="c1">// 如果错误直接跳转&lt;br/&gt;</span>
+</span><span class='line'><span class="w">　　</span><span class="k">else</span><span class="w"> </span><span class="k">goto</span><span class="w"> </span><span class="n">Error</span><span class="p">;</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">　　</span><span class="c1">// 错误处理模块&lt;br/&gt;</span>
+</span><span class='line'><span class="nl">Error</span><span class="p">:</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">　　</span><span class="n">process_error</span><span class="p">();</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">　　</span><span class="n">exit</span><span class="p">();</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>虽然goto 语句能有效地支持异常处理编程的实现。但是没有人却建议使用它，即便是在C语言中。因为：</br>
+(1) goto语句能破坏程序的结构化设计，使代码难于测试，且包含大量goto的代码模块不易理解和阅读。它一直遭结构化程序设计思想所抛弃，强烈建议程序员不易使用它;</br>
+(2) 与C++语言中提供的异常处理编程模型相比，它的确是太弱了一些。例如，它一般只能是在某个函数的局部作用域内跳转，也即它不能有效和方便地实现程序控制流的跨函数远程的跳转。</br>
+(3) 如果在C++语言中，用goto语句来实现异常处理，那么它将给面向对象构成极大破坏，并影响到效率。这一点，以后会继续深入阐述。</p>
+
+
+
+
+<p>虽然goto语句缺点多多，但不管如何，goto语句的确为程序员朋友们，在C语言中，有效运用异常处理思想来进行编程处理，提供了一种途径或简易的手段。
+当然，运用goto语句来进行异常处理编程已经成为历史。因为，在C语言中，早就已经提供了一种更加优雅的异常处理机制。</p>
+
+
+
+
+<h2>3.更优雅的异常处理机制：setjmp()函数与longjmp()函数</h2>
+
+
+<p>C标准库提供两个特殊的函数：setjmp() 及 longjmp()，这两个函数是结构化异常的基础，正是利用这两个函数的特性来实现异常。</p>
+
+
+<p>所以，异常的处理过程可以描述为这样：</br>
+·首先设置一个跳转点（setjmp() 函数可以实现这一功能），然后在其后的代码中任意地方调用 longjmp() 跳转回这个跳转点上，
+以此来实现当发生异常时，转到处理异常的程序上，在其后的介绍中将介绍如何实现。</br>
+·setjmp() 为跳转返回保存现场并为异常提供处理程序，longjmp() 则进行跳转（抛出异常），setjmp() 与 longjmp() 可以在函数
+间进行跳转，这就像一个全局的 goto 语句，可以跨函数跳转。</p>
+
+
+
+
+<p>举个例子，程序在 main() 函数内使用 setjmp() 设置跳转，并调用另一函数A，函数A内调用B，B抛出异常（调用longjmp() 函数），
+则程序直接跳回到 main() 函数内使用 setjmp() 的地方返回，并且返回一个值。</p>
+
+
+
+
+<h4>jmp_buf 异常结构</h4>
+
+
+<p>使用 setjmp() 及 longjmp() 函数前，需要先认识一下 jmp_buf 异常结构。jmp_buf 将使用在 setjmp() 函数中，用于保存当前程序现场（保存
+当前需要用到的寄存器的值），jmp_buf 结构在 setjmp.h 文件内声明：</p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">j_sp</span><span class="p">;</span><span class="w">  </span><span class="c1">// 堆栈指针寄存器</span>
+</span><span class='line'><span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">j_ss</span><span class="p">;</span><span class="w">  </span><span class="c1">// 堆栈段</span>
+</span><span class='line'><span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">j_flag</span><span class="p">;</span><span class="w">  </span><span class="c1">// 标志寄存器</span>
+</span><span class='line'><span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">j_cs</span><span class="p">;</span><span class="w">  </span><span class="c1">// 代码段</span>
+</span><span class='line'><span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">j_ip</span><span class="p">;</span><span class="w">  </span><span class="c1">// 指令指针寄存器</span>
+</span><span class='line'><span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">j_bp</span><span class="p">;</span><span class="w"> </span><span class="c1">// 基址指针</span>
+</span><span class='line'><span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">j_di</span><span class="p">;</span><span class="w">  </span><span class="c1">// 目的指针</span>
+</span><span class='line'><span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">j_es</span><span class="p">;</span><span class="w"> </span><span class="c1">// 附加段</span>
+</span><span class='line'><span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">j_si</span><span class="p">;</span><span class="w">  </span><span class="c1">// 源变址</span>
+</span><span class='line'><span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">j_ds</span><span class="p">;</span><span class="w"> </span><span class="c1">// 数据段</span>
+</span><span class='line'><span class="p">}</span><span class="w"> </span><span class="kt">jmp_buf</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>jmp_buf 结构存放了程序当前寄存器的值，以确保使用 longjmp() 后可以跳回到该执行点上继续执行。</p>
+
+
+
+
+<h4>setjmp() 与 longjmp() 函数详细说明</h4>
+
+
+<p>setjmp() 与 longjmp() 函数原型如下：</p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="kt">void</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Cdecl</span><span class="w"> </span><span class="n">longjmp</span><span class="p">(</span><span class="kt">jmp_buf</span><span class="w"> </span><span class="n">jmpb</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">retval</span><span class="p">);</span>
+</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Cdecl</span><span class="w"> </span><span class="n">setjmp</span><span class="p">(</span><span class="kt">jmp_buf</span><span class="w"> </span><span class="n">jmpb</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>_Cdecl 声明函数的参数使用标准C的进栈方式（由右向左）压栈，_Cdecl 是C语言的一种调用约定，除此以外，PASCAL 也是
+调用约定之一。C标准调用约定（_Cdecl）所声明的函数不自动清除堆栈，这一事务由调用者自行负责——这也是C可以支持不固定
+个数的参数的原因。此外，这一调用约定将在函数名前添加一个下划线字符，如某一函数声明为：</p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="kt">int</span><span class="w"> </span><span class="n">cdecl</span><span class="w"> </span><span class="nf">DoSomething</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>编译时将自动为 DoSomething 加上下划线前缀，即函数名变为：_DoSomething。</p>
+
+
+
+
+<p>setjmp() 与 longjmp() 函数都使用了 jmp_buf 结构作为形参，它们的调用关系是这样的：</br>
+首先调用 setjmp() 函数来初始化 jmp_buf 结构变量 jmpb，将当前CPU中的大部分影响到程序执行的寄存器的值存入 jmpb，
+为 longjmp() 函数提供跳转，setjmp() 函数是一个有趣的函数，它能返回两次，它应该是所有库函数中唯一一个能返回两次
+的函数，第一次是初始化时，返回零，第二次遇到 longjmp() 函数调用后，longjmp() 函数使 setjmp() 函数发生第二次返回，
+返回值由 longjmp() 的第二个参数给出（整型，这时不应该再返回零）。</p>
+
+
+
+
+<p>在使用 setjmp() 初始化 jmpb 后，可以其后的程序中任意地方使用 longjmp() 函数跳转会 setjmp() 函数的位置，longjmp() 
+的第一个参数便是 setjmp() 初始化的 jmpb，若想跳转回刚才设置的 setjmp() 处，则 longjmp() 函数的第一个参数是 setjmp() 
+所初始化的 jmpb 这个异常，这也说明一件事，即 jmpb 这个异常，一般需要定义为全局变量，否则，若是局部变量，当跨函数调用
+时就几乎无法使用（除非每次遇到函数调用都将 jmpb 以参数传递，然而明显地，是不值得这样做的）；longjmp() 函数的第二个参数
+是传给 setjmp() 的第二次返回值，这在介绍 setjmp() 函数时已经介绍过。</p>
+
+
+
+
+<h4>异常处理过程</h4>
+
+
+<p>先来对比（参考）一下 C++ 的异常处理，C++ 在语言层上便添加了异常处理机制，使用 try 块来包含那些可能出现错误的代码，
+你可以在 try 块代码中抛出异常，C++ 使用 throw 来抛出异常。抛出异常后，将转到异常处理程序中执行，C++ 使用 catch 块来
+包含那些处理异常的代码，catch 块可以接收不同类型的异常。需要说明的是，throw 一般不在 try 块内的代码中抛出异常，try 
+块内的代码调用了别的函数，如函数A，函数A 又调用了函数 B，throw 可以在函数B中抛出异常，或者更深的函数调用层，无论如何，
+只要有异常抛出，程序将转到 catch 处执行。</p>
+
+
+
+
+<p>C中如何实现，或者明确地说是模拟这一功能？下面介绍的是一些简单的方法。现在假设 longjmp() 第二个值为1，即 setjmp() 
+第二次将返回1。我们使用一组简单的宏来替代 setjmp() 和 longjmp() 以便使用：</br>
+首先定义一个全局的异常：</p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="kt">jmp_buf</span><span class="w"> </span><span class="n">Jump_Buffer</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>因为 setjmp() 第一次调用初始化后返回0，第二次返回非0，可以这样定义一个宏使得它功能接近于 C++ 的 try。</p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>define try if(!setjmp(Jump_Buffer))&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></p>
+
+<p> 当 setjmp() 函数第一次0 时，取非为真，则执行 try 块内的代码，如：</p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="n">try</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="n">Test</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>当因为调用 longjmp() 抛出异常而导致 setjmp() 第二次返回时（程序将会转到 setjmp() 函数处返回，这时，这时应该执行
+的是异常处理代码。longjmp() 使 setjmp() 函数返回非0，if(!setjmp(JumpBuffer)) 中将值取非则为假，是以，异常处理放在
+其后应该使用一个 else：</p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">define</span><span class="w"> </span><span class="n">catch</span><span class="w"> </span><span class="k">else</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>如此看起来便跟 C++ 相似了，setjmp() 函数的第二次返回导致 if() 中表达式值为假，刚好使 catch 块得以执行，如：</p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="n">try</span><span class="w">  </span><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="n">Test</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span><span class="w"> </span><span class="n">catch</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="n">puts</span><span class="p">(</span><span class="s">&quot;Error&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>实现如 C++ 的 throw 语句，事实上以宏替换 longjmp(jmp_buf, int) 的调用：</p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">define</span><span class="w"> </span><span class="n">throw</span><span class="w"> </span><span class="n">longjmp</span><span class="p">(</span><span class="n">Jump_Buffer</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>下面的例程解释如何使用这些宏：</p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span><span class="s">&quot;stdio.h&quot;</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span><span class="s">&quot;conio.h&quot;</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span><span class="s">&quot;setjmp.h&quot;</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">jmp_buf</span><span class="w"> </span><span class="n">Jump_Buffer</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">define</span><span class="w"> </span><span class="n">try</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">setjmp</span><span class="p">(</span><span class="n">Jump_Buffer</span><span class="p">))</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">define</span><span class="w"> </span><span class="n">catch</span><span class="w"> </span><span class="k">else</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">define</span><span class="w"> </span><span class="n">throw</span><span class="w"> </span><span class="n">longjmp</span><span class="p">(</span><span class="n">Jump_Buffer</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">int</span><span class="w"> </span><span class="n">Test</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">T</span><span class="p">)</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="p">{</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">T</span><span class="o">&gt;</span><span class="mi">100</span><span class="p">)</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">        </span><span class="n">throw</span><span class="p">;</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">    </span><span class="k">else</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">          </span><span class="n">puts</span><span class="p">(</span><span class="s">&quot;OK.&quot;</span><span class="p">);</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="p">}</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="n">Test_T</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">T</span><span class="p">)</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="p">{</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">    </span><span class="n">Test</span><span class="p">(</span><span class="n">T</span><span class="p">);</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="p">}</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="p">{</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">T</span><span class="p">;</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">    </span><span class="n">try</span><span class="p">{</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">          </span><span class="n">puts</span><span class="p">(</span><span class="s">&quot;Input a value:&quot;</span><span class="p">);</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">          </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">T</span><span class="p">);</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">          </span><span class="n">T</span><span class="o">++</span><span class="p">;</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">          </span><span class="n">Test_T</span><span class="p">(</span><span class="n">T</span><span class="p">);</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="n">catch</span><span class="p">{</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">          </span><span class="n">puts</span><span class="p">(</span><span class="s">&quot;Input Error!&quot;</span><span class="p">);</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">      </span><span class="p">}</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">    </span><span class="n">getch</span><span class="p">();</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></p>
+]]></content>
+  </entry>
+  
+</feed>

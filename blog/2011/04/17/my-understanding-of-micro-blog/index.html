@@ -1,0 +1,356 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>我是如何理解微博的 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2011/04/17/my-understanding-of-micro-blog">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">我是如何理解微博的</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2011-04-17T13:31:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h3>微博首先是媒体</h3>
+
+
+<center><img src="/images/2011/IMAG2011041701.jpg"></center>
+
+
+<p>但更确切点说，它是自媒体。它即是名人、权威们的自媒体，也是草根们的自媒体。在中国，草根现在靠着微薄，也有了些话语权，但声音还比较稚嫩，
+分贝也不够大，但无论如何，跟着意见领袖们起起哄是必须地，支持也好，反对也罢，声音还是比从前大多了。要注意的是，一个草根的声音很小，但草根
+们的声音一旦被叠加，再加上从众效应，其力量可能超乎我们想象，这时自媒体会变成众媒体（与传统的公众媒体是有区别的）。众媒体是个双刃剑，其好
+处是，多数时候，这个众媒体可能代表大多数的声音，但另一方面，作为自媒体，微博毕竟是个性化的，即使看不清真相，也能知道看问题有不同的角度。
+而当其成为众媒体时，其声音可能是趋同的，一旦人们形成某种较特殊的群体心理，个性将开始湮没、理性将开始丧失，这就有点危险，尤其在中国。</p>
+
+
+
+
+<!--more-->
+
+
+
+
+<h3>其次，微博还是网络社区</h3>
+
+
+<p>这个大社区里包含着无数的小社群，小社群之间是纵横交错的。从基本的结构上来说，这些小社群是以自我为圆心，以个人偏好为过滤器，他们筛选关注
+对象并集散信息。微博与别的社会化网络社区的不同之处在于，这个社区弱化了人际关系，但强化了信息交换。也就是，这个社区中，关系的核心纽带，既不
+是Facebook的线下关系的转移，也不是MySpace的网络交友，它的核心纽带是信息交换。信息量大的人，是微博社区的中坚人物。普通信息一般只在小社群内部
+传播，但是，当一条信息本身具有一定附着力和穿透力时，信息就会产生大规模的扩散（穿透一个个小社群），因此，微博社区发展到现在最为成功的一个无
+心插柳的作用，是大众传播。传播的大任，当然主要还在草根手里，他们免费并且无怨无悔地做播种机、宣传队。但他们也因此常常被“导向”或利用。</p>
+
+
+
+
+<h3>再次，微博也是沟通工具</h3>
+
+
+<p>在此之前，IM是公认的，也是最流行的网络沟通工具，Email次之（在中国，Email倒没那么重要）。现在的微博里，沟通气氛还是相当活跃的，海量的评论
+和转发使群体沟通显得热闹非凡。但微博上的沟通和IM的沟通有明显不同。IM上的沟通，有私密性，偏个人话题，更适合私下的沟通，多数时候，沟通是一对一
+进行的（QQ群是一对多）。而微博上的沟通，则以公共话题为主，沟通是公开的（私信除外），沟通的形式，也是多人的。另一个不同，微博进一步降低了沟通
+门槛，也就是，用户可以单向地关注别人（还是私信除外）并通过评论和转发进行沟通，而不再像QQ一样需要通过对方的批准才能开始沟通。这个做法对草根意义
+更大，因为草根更愿意扩大的自己的沟通范围，尤其是与那些他们曾经可望不可及的所谓名人进行沟通。单向开放沟通渠道后，沟通的效果究竟如何，还不能轻易
+下结论，但单就沟通形式上的突破来说，微博就已经是QQ无法替代的了。</p>
+
+
+
+
+<h3>最后，微博是开放平台</h3>
+
+
+<p>前面三条，是我对微博基本层面的理解，对这三个基本层面，无论是微博运营商也好，还是参与微博的企业也好，最好都不要进行过多的、过于画蛇添足的
+商业操作，否则将违背微博的创立时的初衷，也将破坏微博的生态环境。但从现在的趋势看，微博将成为开放平台。也就是，微博将通过开放API，进一步放大
+其在媒体、社区、沟通工具，甚至企业营销等方面的作用。因此，开放平台将为微博运营商和企业都带来新的商业机会。微博基础平台的作用，是产生数据和
+传播数据，但这些数据杂乱而无序，平台的开放，意味着参与微博的各个方面，包括个人用户，企业用户，以及运营商自身，都将可以按照不同的需求来利用
+数据，深入的数据挖掘意味着什么，这里无需多说，这里我唯一希望的是，微博运营商对于微博平台，能做到真正意义上的开放，那微博在未来，才能真正为
+个人用户和企业用户所利用，真正成为杀手级的网络应用。</p>
+
+
+
+
+<p>原文链接：http://www.socialbeta.cn/articles/whats-weibo.html</p>
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2011/04/17/my-understanding-of-micro-blog/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2011-04-17T13:31:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/view/'>View</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/wei-bo/'>微博</a>, <a class='tag' href='/blog/tags/she-jiao-wang-luo/'>社交网络</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2011/04/11/14-theories-of-gaining-profits-in-web-system/" title="Previous Post:
+        14个网站盈利的理论">&laquo; 14个网站盈利的理论</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2011/04/21/about-variable-parameters-in-c-language/"
+        title="Next Post: 浅谈C语言的可变参数">浅谈C语言的可变参数
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2011/04/17/my-understanding-of-micro-blog/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2011/04/17/my-understanding-of-micro-blog/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

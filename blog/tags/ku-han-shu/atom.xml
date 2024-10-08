@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 库函数 | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/ku-han-shu/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[PHP函数`call_user_func`和`call_user_func_array`详解]]></title>
+    <link href="http://ibillxia.github.io/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/"/>
+    <updated>2010-08-04T21:38:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail</id>
+    <content type="html"><![CDATA[<p>`call_user_func`函数类似于一种特别的调用函数的方法，使用方法如下：</p>
+
+
+
+
+<pre><code class="php">function a($b,$c) 
+{
+    echo $b;
+    echo $c;
+}
+call_user_func('a', "111","222");
+call_user_func('a', "333","444");
+//显示 111 222 333 444
+</code></pre>
+
+
+
+<!--more-->
+
+
+<p>调用类内部的方法比较奇怪，居然用的是array，不知道开发者是如何考虑的，当然省去了new，也是满有新意的:</p>
+
+
+
+
+<pre><code class="php">class a {
+    function b($c) 
+    {
+        echo $c;
+    }
+}
+call_user_func(array("a", "b"),"111");
+//显示 111
+</code></pre>
+
+
+
+<p>`call_user_func_array`函数和`call_user_func`很相似，只不过是换了一种方式传递了参数，让参数的结构更清晰:</p>
+
+
+
+
+<pre><code class="php">unction a($b, $c) 
+{
+    echo $b;
+    echo $c;
+}
+call_user_func_array('a', array("111", "222"));
+//显示 111 222
+</code></pre>
+
+
+
+<p>`call_user_func_array`函数也可以调用类内部的方法的</p>
+
+
+
+
+<pre><code class="php">Class ClassA {
+    function bc($b, $c) {
+        $bc = $b + $c;
+        echo $bc;
+    }
+}
+call_user_func_array(array('ClassA','bc'), array("111", "222"));
+//显示 333
+</code></pre>
+
+
+
+<p>`call_user_func`函数和`call_user_func_array`函数都支持引用，这让他们和普通的函数调用更趋于功能一致:</p>
+
+
+
+
+<pre><code class="php">function a(&amp;$b)
+{
+    $b++;
+}
+$c = 0;
+call_user_func('a', &amp;$c);
+echo $c;//显示 1
+call_user_func_array('a', array(&amp;$c));
+echo $c;//显示 2
+</code></pre>
+
+
+
+<p>一个可以用于调试输出的例子：</p>
+
+
+
+
+<pre><code class="php">function debug($var, $val) 
+{
+    echo "***DEBUGGING\nVARIABLE: $var\nVALUE:";
+    if (is_array($val) || is_object($val) || is_resource($val)) {
+        print_r($val);
+    } else {
+        echo "\n$val\n";
+    }
+    echo "***\n";
+}
+
+$c = mysql_connect();
+$host = $_SERVER["SERVER_NAME"];
+
+call_user_func_array('debug', array("host", $host));
+call_user_func_array('debug', array("c", $c));
+call_user_func_array('debug', array("_POST", $_POST));
+</code></pre>
+
+
+
+<p>另外，如果和伪重载结合，还可以这样用：</p>
+
+
+
+
+<pre><code class="php">function otest1 ($a)
+{
+    echo( '一个参数' );
+}
+
+function otest2 ( $a, $b)
+{
+    echo( '二个参数' );
+}
+
+function otest3 ( $a ,$b,$c)
+{
+    echo( '三个啦' );
+}
+
+function otest ()
+{
+    $args = func_get_args();
+    $num = func_num_args();
+    call_user_func_array( 'otest'.$num, $args );
+}
+
+otest(1,2);  //调用第一个函数，输出：一个参数
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

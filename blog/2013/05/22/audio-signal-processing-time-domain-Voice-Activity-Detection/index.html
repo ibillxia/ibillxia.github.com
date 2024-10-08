@@ -1,0 +1,444 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>语音信号处理之时域分析-端点检测及Python实现 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2013/05/22/audio-signal-processing-time-domain-Voice-Activity-Detection">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">语音信号处理之时域分析-端点检测及Python实现</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-05-22T22:22:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>端点检测</h2>
+
+
+<p>端点检测（End-Point Detection，EPD）的目标是要决定信号的语音开始和结束的位置，所以又可以称为Speech Detection或Voice Activity Detection（VAD）。
+端点检测在语音预处理中扮演着一个非常重要的角色。</p>
+
+
+
+
+<p>常见的端点检测方法大致可以分为如下两类：</br>
+（1）时域（Time Domain）的方法：计算量比较小，因此比较容易移植到计算能力较差的嵌入式平台</br>
+（a）音量：只使用音量来进行端检，是最简单的方法，但是容易对清音造成误判。另外，不同的音量计算方法得到的结果也不尽相同，至于那种方法更好也没有定论。</br>
+（b）音量和过零率：以音量为主，过零率为辅，可以对清音进行较精密的检测。</br>
+（2）频域（Frequency Domain）的方法：计算量相对较大。</br>
+（a）频谱的变化性（Variance）：有声音的频谱变化较规律，可以作为一个判断标准。</br>
+（b）频谱的Entropy：有规律的频谱的Entropy一般较小，这也可以作为一个端检的判断标准。
+</p>
+
+
+
+
+<p>下面我们分别从这两个方面来探讨端检的具体方法和过程。</p>
+
+
+
+
+<!--more-->
+
+
+
+
+<h2>时域的端检方法</h2>
+
+
+<p>时域的端检方法分为只用音量的方法和同时使用音量和过零率的方法。只使用音量的方法最简单计算量也最小，我们只需要设定一个音量阈值，任何音量小于该阈值的帧
+被认为是静音（silence）。这种方法的关键在于如何选取这个阈值，一种常用的方法是使用一些带标签的数据来训练得到一个阈值，使得误差最小。</p>
+
+
+
+
+<p>下面我们来看看最简单的、不需要训练的方法，其代码如下：
+``` py3
+import wave
+import numpy as np
+import matplotlib.pyplot as plt
+import Volume as vp
+
+def findIndex(vol,thres):
+    l = len(vol)
+    ii = 0
+    index = np.zeros(4,dtype=np.int16)
+    for i in range(l-1):
+        if((vol[i]-thres)*(vol[i+1]-thres)<0):
+            index[ii]=i
+            ii = ii+1
+    return index[[0,-1]]
+
+fw = wave.open('sunday.wav','r')
+params = fw.getparams()
+nchannels, sampwidth, framerate, nframes = params[:4]
+strData = fw.readframes(nframes)
+waveData = np.fromstring(strData, dtype=np.int16)
+waveData = waveData*1.0/max(abs(waveData))  # normalization
+fw.close()
+
+frameSize = 256
+overLap = 128
+vol = vp.calVolume(waveData,frameSize,overLap)
+threshold1 = max(vol)*0.10
+threshold2 = min(vol)*10.0
+threshold3 = max(vol)*0.05+min(vol)*5.0
+
+time = np.arange(0,nframes) * (1.0/framerate)
+frame = np.arange(0,len(vol)) * (nframes*1.0/len(vol)/framerate)
+index1 = findIndex(vol,threshold1)*(nframes*1.0/len(vol)/framerate)
+index2 = findIndex(vol,threshold2)*(nframes*1.0/len(vol)/framerate)
+index3 = findIndex(vol,threshold3)*(nframes*1.0/len(vol)/framerate)
+end = nframes * (1.0/framerate)
+
+plt.subplot(211)
+plt.plot(time,waveData,color="black")
+plt.plot([index1,index1],[-1,1],'-r')
+plt.plot([index2,index2],[-1,1],'-g')
+plt.plot([index3,index3],[-1,1],'-b')
+plt.ylabel('Amplitude')
+
+plt.subplot(212)
+plt.plot(frame,vol,color="black")
+plt.plot([0,end],[threshold1,threshold1],'-r', label="threshold 1")
+plt.plot([0,end],[threshold2,threshold2],'-g', label="threshold 2")
+plt.plot([0,end],[threshold3,threshold3],'-b', label="threshold 3")
+plt.legend()
+plt.ylabel('Volume(absSum)')
+plt.xlabel('time(seconds)')
+plt.show()
+```
+其中计算音量的函数calVolume参见<a href="http://ibillxia.github.io/blog/2013/05/15/audio-signal-process-time-domain-volume-python-realization/">
+音量及其Python实现</a>一文。程序的运行结果如下图：
+<center><img src="/images/2013/IMAG2013052201.png"></center>
+</p>
+
+
+
+
+<p>这里采用了三种设置阈值的方法，但这几种设置方法对所有的输入都是相同的，对于一些特定的语音数据可能得不到很好的结果，比如杂音较强、清音较多或音量
+变化较大等语音信号，此时单一阈值的方法的效果就不太好了，虽然我们可以通过增加帧与帧之间的重叠部分，但相对而言计算量会比较大。下面我们利用一些更多的
+特征来进行端点加测，例如使用过零率等信息，其过程如下：</br>
+（1）以较高音量阈值($\tau _{u}$)为标准，找到初步的端点；</br>
+（2）将端点前后延伸到低音量阈值($\tau _{l}$)处；</br>
+（3）再将端点前后延伸到过零率阈值($\tau _{zc}$)处，以包含语音中清音的部分。</br>
+这种方法需要确定三个阈值($\tau _{u}$,$\tau _{l}$,$\tau _{zc}$)，可以用各种搜寻方法来调整这三个参数。其示意图(参考[1])如下：
+<center><img src="/images/2013/IMAG2013052202.png"></center>
+我们在同一个图中绘制出音量和过零率的阈值图如下：
+<center><img src="/images/2013/IMAG2013052203.png"></center>
+可以看到我们可以通过过零率的阈值来把错分的清音加入到语音部分来。上图使用到的阈值还是和音量的阈值选取方法相同，比较简单直接。
+</p>
+
+
+
+
+<p>另外，我们还可以连续对波形进行微分，再计算音量，这样就可以凸显清音的部分，从而将其正确划分出来，详见参考[1]。</p>
+
+
+
+
+<h2>频域的端检方法</h2>
+
+
+<p>有声音的信号在频谱上会有重复的谐波结构，因此我们也可以使用频谱的变化性（Variation）或Entropy来进行端点检测，可以参见如下链接：
+http://neural.cs.nthu.edu.tw/jang/books/audiosignalprocessing/paper/endPointDetection/</p>
+
+
+
+
+<p>总之，端点检测是语音预处理的重头戏，其实现方法也是五花八门，本文只给出了最简单最原始也最好理解的几种方法，这些方法要真正做到实用，还需要针对一些
+特殊的情况在做一些精细的设置和处理，但对于一般的应用场景应该还是基本够用的。</p>
+
+
+
+
+<h2>参考（References）</h2>
+
+
+<p>
+[1]EPD in Time Domain: http://neural.cs.nthu.edu.tw/jang/books/audiosignalprocessing/epdTimeDomain.asp?title=6-2%20EPD%20in%20Time%20Domain</br>
+[2]EPD in Frequency Domain: http://neural.cs.nthu.edu.tw/jang/books/audiosignalprocessing/epdFreqDomain.asp?title=6-3%20EPD%20in%20Frequency%20Domain
+</p>
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2013/05/22/audio-signal-processing-time-domain-Voice-Activity-Detection/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2013-05-22T22:22:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/python/'>Python</a>, <a class='tag' href='/blog/tags/speech/'>Speech</a>, <a class='tag' href='/blog/tags/xin-hao-chu-li/'>信号处理</a>, <a class='tag' href='/blog/tags/duan-dian-jian-ce/'>端点检测</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2013/05/18/audio-signal-processing-time-domain-timbre-python-realization/" title="Previous Post:
+        语音信号处理之时域分析-音色及其Python实现">&laquo; 语音信号处理之时域分析-音色及其Python实现</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2013/05/24/cctv-news-rat-understand-what-human-says/"
+        title="Next Post: 大白鼠听人话">大白鼠听人话
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2013/05/22/audio-signal-processing-time-domain-Voice-Activity-Detection/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2013/05/22/audio-signal-processing-time-domain-Voice-Activity-Detection/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 红黑树 | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/hong-hei-shu/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[深入理解STL源码(4.1) 关联式容器之红黑树]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/"/>
+    <updated>2014-08-03T21:30:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree</id>
+    <content type="html"><![CDATA[<p>本文涉及到 SGI STL 源码的文件主要是 <code>stl_tree.h</code> 这个文件。</p>
+
+<h2>0. 关联式容器</h2>
+
+<p>之前几篇文章详细介绍了SGI STL中序列式容器的实现，并提到过STL中还有一类关联式的容器。标准的STL管理师容器分为 set（集合）和map（映射表）两大类，以及这两大类的衍生体multiset（多键集合）和multimap（多键映射表），这些容器的底层机制均以RB-Tree（红黑树）完成。RB-Tree是一种非常高效的数据结构，它本质上是一种平衡的二叉搜索树，因而其查找的平均时间复杂度为元素总个数的对数（即logN）。在STL中RB-Tree是一个独立的容器，但并没有对用户的公开接口，仅提供给STL的set和map使用。<br/>
+SGI STL在标准STL之外，还提供了一类关联式容器——hash table（哈希表），以及以此为低层机制的hash set（散列集合）、hash map（散列映射表）、hash multiset（散列多键集合）和hash multimap（散列多键映射表）。相比于RB-Tree，hash table的时间效率更高，插入、删除、查找的时间复杂度均为常数时间，但需要比元素总个数多得多的空间。<br/>
+本文接下来主要介绍树及RB-Tree相关的内容，后续文章将具体介绍SGI STL中set、map、hash table的实现。</p>
+
+<h2>1. 树与二叉搜索树</h2>
+
+<p>树是一种非常常见而且实用的数据结构，几乎所有的操作系统都将文件存放在树状结构里，几乎所有编译器需要实现一个表达式树（expression tree），文件压缩所用的哈夫曼算法也需要用到树状结构，数据库所使用的B-tree则是一种相当复杂的树状结构。<br/>
+关于树的一些基本概念相信大家都比较熟悉，这里就不赘述了，如果需要可以google或看wikipedia，这里重点重温一下数据结构里的二叉搜索树、平衡二叉搜索树、AVL树。<br/>
+<strong>二叉搜索树</strong>：任何节点的键值大于其<strong>左子树</strong>中<strong>每一个</strong>节点的键值，并小于其<strong>右子树</strong>中的<strong>每一个</strong>节点的键值。根据二叉搜索树的定义可知，按照中序遍历该树可以得到一个有序的序列。平均情况下，二叉搜索树可以提供对数时间的插入和访问。其插入和查找的算法也很简单，每次与根节点的键值进行比较，小于根节点的键值则往根节点的左子树插入或查找，大于则往右子树插入或查找，无论是递归实现还是非递归实现都很简单。<br/>
+<strong>平衡二叉搜索树</strong>：上面提到二叉搜索数的<strong>平均</strong>性能为对数时间，这是因为二叉搜索树的深度与数据插入的顺序有关，如果插入的数据本身就比较有序，那么就会产生一个深度过大的树，甚至会退化为一个链表的结构，这中情况下，其查找的效率就是线性时间了。平衡二叉搜索树就是为了解决这个问题而产生的，“平衡”的意义是，没有任何一个节点过深。不同的平衡条件造就出不同的效率表现，以及不同的实现复杂度，如 <a href="http://en.wikipedia.org/wiki/AVL_tree">AVL-Tree</a>、<a href="http://en.wikipedia.org/wiki/Red%E2%80%93black_tree">RB-Tree</a>、<a href="http://en.wikipedia.org/wiki/AA_tree">AA-Tree</a> _等。他们都比简单的二叉搜索树要复杂，特别是插入和删除操作，但他们可以避免高度不平衡的情况，因而查找时间较快。</p>
+
+<!-- more -->
+
+
+<p><strong>AVL树</strong>：AVL-tree（Adelson-Velskii-Landis tree）是一个加上了“额外平衡条件”的二叉搜索树，是一种高度平衡的二叉搜索树，它的这个额外的条件为：任何节点的左右子树高度相差最多1。该条件能够保证整棵树的高度为logN，但其插入和删除的操作也相对比较复杂，因为这些操作可能导致树的失衡，需要调整（或旋转）树的结构，使其保持平衡。插入时出现失衡的情况有如下四种（其中X为最小失衡子树的根节点）：</p>
+
+<blockquote><ol>
+<li>插入点位于X的左子节点的左子树——左左；</li>
+<li>插入点位于X的左子节点的右子树——左右；</li>
+<li>插入点位于X的右子节点的左子树——右左；</li>
+<li>插入点位于X的右子节点的右子树——右右。</li>
+</ol>
+</blockquote>
+
+<p>情况1和4对称，称为外侧插入，可以采用单旋转操作调整恢复平衡；2和3对称，称为内侧插入，可以采用双旋转操作调整恢复平衡：先经过一次旋转变成左左或右右，然后再经过一次旋转恢复平衡。1和2的实例如下图：<br/>
+<img src="/images/2014/IMAG2014080301.jpg"><br/>
+图中从中间到最右情况1的恢复平衡的旋转方法，只是其中节点3为新插入的元素；而最左到最右是情况2的恢复平衡的旋转方法，其中节点4为新插入的元素。情况3和4分别与2和1对称，其调整方法也很类似，就不赘述了。<br/>
+RB-tree是另一种被广泛使用的平衡二叉搜索树，也是SGI STL唯一实现的一种搜索树，作为关联式容器的底层容器。RB-tree的平衡条件不同于AVL-tree，但同样运用了单旋转和双旋转的恢复平衡的机制，下面我们详细介绍RB-tree的实现。</p>
+
+<h2>2. RB-tree的定义及数据结构</h2>
+
+<p>所谓RB-tree，不仅仅是一个二叉搜索树，而且必须满足以下规则：</p>
+
+<blockquote><ol>
+<li>每个节点不是红色就是黑色；</li>
+<li>根节点为黑色；</li>
+<li>每个叶子节点（NIL）为黑色；</li>
+<li>如果节点为红，其左右子节点必为黑；</li>
+<li>对每个节点，从该节点到其子孙中的叶子节点的所有路径上所包含的黑节点数目相同。</li>
+</ol>
+</blockquote>
+
+<p>上面的这些约束保证了这个树大致上是平衡的，这也决定了红黑树的插入、删除、查询等操作是比较快速的。 根据规则5，新增节点必须为红色；根据规则4，新增节点之父节点必须为黑色。当新增节点根据二叉搜索树的规则到达其插入点时，却未能符合上述条件时，就必须调整颜色并旋转树形。下图是一个典型的RB-tree（来自wiki）：<br/>
+<img src="/images/2014/IMAG2014080302.png"><br/>
+SGI STL中RB-tree的数据结构比较简单，其中每个节点的数据结构如下：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+<span class='line-number'>148</span>
+<span class='line-number'>149</span>
+<span class='line-number'>150</span>
+<span class='line-number'>151</span>
+<span class='line-number'>152</span>
+<span class='line-number'>153</span>
+<span class='line-number'>154</span>
+<span class='line-number'>155</span>
+<span class='line-number'>156</span>
+<span class='line-number'>157</span>
+<span class='line-number'>158</span>
+<span class='line-number'>159</span>
+<span class='line-number'>160</span>
+<span class='line-number'>161</span>
+<span class='line-number'>162</span>
+<span class='line-number'>163</span>
+<span class='line-number'>164</span>
+<span class='line-number'>165</span>
+<span class='line-number'>166</span>
+<span class='line-number'>167</span>
+<span class='line-number'>168</span>
+<span class='line-number'>169</span>
+<span class='line-number'>170</span>
+<span class='line-number'>171</span>
+<span class='line-number'>172</span>
+<span class='line-number'>173</span>
+<span class='line-number'>174</span>
+<span class='line-number'>175</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="k">typedef</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree_Color_type</span><span class="p">;</span>
+</span><span class='line'><span class="k">const</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree_Color_type</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">S_rb_tree_red</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</span><span class='line'><span class="k">const</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree_Color_type</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">S_rb_tree_black</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+</span><span class='line'><span class="c1">//======================================</span>
+</span><span class='line'><span class="k">struct</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree_node_base</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// 节点的定义</span>
+</span><span class='line'><span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree_Color_type</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Color_type</span><span class="p">;</span>
+</span><span class='line'><span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree_node_base</span><span class="o">*</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Base_ptr</span><span class="p">;</span>
+</span><span class='line'><span class="w">  </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Color_type</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">M_color</span><span class="p">;</span><span class="w"> </span><span class="c1">// 节点颜色，实际为一个bool型变量</span>
+</span><span class='line'><span class="w">  </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Base_ptr</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">M_parent</span><span class="p">;</span><span class="w"> </span><span class="c1">// 指向父节点，方便遍历</span>
+</span><span class='line'><span class="w">  </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Base_ptr</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">M_left</span><span class="p">;</span>
+</span><span class='line'><span class="w">  </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Base_ptr</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">M_right</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Base_ptr</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">S_minimum</span><span class="p">(</span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Base_ptr</span><span class="w"> </span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">x</span><span class="o">-&gt;&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">M_left</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">x</span><span class="o">-&gt;&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">M_left</span><span class="p">;</span>
+</span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__x</span><span class="p">;</span>
+</span><span class='line'><span class="w">  </span><span class="p">}</span>
+</span><span class='line'><span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Base_ptr</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">S_maximum</span><span class="p">(</span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Base_ptr</span><span class="w"> </span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">x</span><span class="o">-&gt;&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">M_right</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">x</span><span class="o">-&gt;&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">M_right</span><span class="p">;</span>
+</span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">x</span><span class="p">;</span>
+</span><span class='line'><span class="w">  </span><span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="c1">//======================================</span>
+</span><span class='line'><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">_Value</span><span class="o">&gt;</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree_node</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree_node_base</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// 节点的定义</span>
+</span><span class='line'><span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree_node</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Value</span><span class="o">&gt;&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Link_type</span><span class="p">;</span>
+</span><span class='line'><span class="w">  </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Value</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">M_value_field</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span>
+</span><span class='line'><span class="n">其中每个节点主要包含一个标志颜色的bool变量</span><span class="w"> </span><span class="err">`</span><span class="n">_M_color</span><span class="err">`，</span><span class="mi">3</span><span class="n">个节点指针</span><span class="w"> </span><span class="err">`</span><span class="n">_M_parent</span><span class="err">`</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="err">`</span><span class="n">_M_left</span><span class="err">`</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="err">`</span><span class="n">_M_right</span><span class="err">`，</span><span class="mi">2</span><span class="n">个成员函数</span><span class="w"> </span><span class="err">`</span><span class="n">_S_minimum</span><span class="err">`</span><span class="w"> </span><span class="n">和</span><span class="w"> </span><span class="err">`</span><span class="n">_S_maximum</span><span class="err">`</span><span class="w"> </span><span class="err">（</span><span class="n">分别求取最小</span><span class="err">（</span><span class="n">最左</span><span class="err">）、</span><span class="n">最大</span><span class="err">（</span><span class="n">最右</span><span class="err">）</span><span class="n">节点</span><span class="err">）。</span><span class="w">  </span>
+</span><span class='line'><span class="n">而RB</span><span class="o">-</span><span class="n">tree的定义如下</span><span class="err">：</span><span class="w">  </span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cpp</span>
+</span><span class='line'><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">_Tp</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">_Alloc</span><span class="o">&gt;</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree_base</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// RB-tree的定义</span>
+</span><span class='line'><span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Alloc</span><span class="w"> </span><span class="n">allocator_type</span><span class="p">;</span>
+</span><span class='line'><span class="w">  </span><span class="n">allocator_type</span><span class="w"> </span><span class="nf">get_allocator</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">allocator_type</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+</span><span class='line'><span class="w">  </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree_base</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">allocator_type</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;)</span><span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">M_header</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">M_header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">M_get_node</span><span class="p">();</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// 构造函数</span>
+</span><span class='line'><span class="w">  </span><span class="o">~&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree_base</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">M_put_node</span><span class="p">(</span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">M_header</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// 析构函数</span>
+</span><span class='line'><span class="k">protected</span><span class="o">:</span>
+</span><span class='line'><span class="w">  </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree_node</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Tp</span><span class="o">&gt;&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">M_header</span><span class="p">;</span><span class="w"> </span><span class="c1">// 根节点</span>
+</span><span class='line'><span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">simple_alloc</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree_node</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Tp</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Alloc</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Alloc_type</span><span class="p">;</span><span class="w"> </span><span class="c1">// 空间配置器</span>
+</span><span class='line'><span class="w">  </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree_node</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Tp</span><span class="o">&gt;*</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">M_get_node</span><span class="p">()</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Alloc_type</span><span class="o">::</span><span class="n">allocate</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// 分配一个节点的空间</span>
+</span><span class='line'><span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">M_put_node</span><span class="p">(</span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree_node</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Tp</span><span class="o">&gt;*</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Alloc_type</span><span class="o">::</span><span class="n">deallocate</span><span class="p">(</span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// 释放&lt;/strong&gt;p节点的空间</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="c1">//======================================</span>
+</span><span class='line'><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">_Key</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">_Value</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">_KeyOfValue</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">_Compare</span><span class="p">,</span>
+</span><span class='line'><span class="w">          </span><span class="k">class</span><span class="w"> </span><span class="nc">_Alloc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__STL_DEFAULT_ALLOCATOR</span><span class="p">(</span><span class="n">_Value</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span>
+</span><span class='line'><span class="k">class</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">protected</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree_base</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Value</span><span class="p">,</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Alloc</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree_base</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Value</span><span class="p">,</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Alloc</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Base</span><span class="p">;</span>
+</span><span class='line'><span class="c1">// ...</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="err">``</span>
+</span><span class='line'><span class="n">可以看到RB</span><span class="o">-</span><span class="n">tree的空间配置器是</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="n">simple_alloc</span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">配置器</span><span class="err">，</span><span class="n">按</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Rb_tree_node</span><span class="err">`</span><span class="w"> </span><span class="n">节点大小分配空间</span><span class="err">，</span><span class="n">每次分配或释放一个节点的空间</span><span class="err">。</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h2</span><span class="o">&gt;</span><span class="mf">3.</span><span class="w"> </span><span class="n">RB</span><span class="o">-</span><span class="n">tree的迭代器</span><span class="o">&lt;/</span><span class="n">h2</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">要将RB</span><span class="o">-</span><span class="n">tree实现为一个泛型容器并用作set</span><span class="err">、</span><span class="n">map的低层容器</span><span class="err">，</span><span class="n">迭代器的设计是一个关键</span><span class="err">。</span><span class="n">RB</span><span class="o">-</span><span class="n">tree的迭代器是一个双向迭代器</span><span class="err">，</span><span class="n">但不具备随机访问能力</span><span class="err">，</span><span class="n">其引用</span><span class="err">（</span><span class="n">dereference</span><span class="err">）</span><span class="n">和访问</span><span class="err">（</span><span class="n">access</span><span class="err">）</span><span class="n">操作与list十分类似</span><span class="err">，</span><span class="n">较为特殊的是自增</span><span class="err">（</span><span class="k">operator</span><span class="o">++</span><span class="err">）</span><span class="n">和自减</span><span class="err">（</span><span class="k">operator</span><span class="o">--</span><span class="err">）</span><span class="n">操作</span><span class="err">，</span><span class="n">这里的自增</span><span class="o">/</span><span class="n">自减操作是指将迭代器移动到RB</span><span class="o">-</span><span class="n">tree按键值大小排序后当前节点的下一个</span><span class="o">/</span><span class="n">上一个节点</span><span class="err">，</span><span class="n">也即按中序遍历RB</span><span class="o">-</span><span class="n">tree时当前节点的下一个</span><span class="o">/</span><span class="n">上一个节点</span><span class="err">。</span><span class="n">RB</span><span class="o">-</span><span class="n">tree的迭代器的定义如下</span><span class="err">：</span><span class="w"> </span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">cpp</span>
+</span><span class='line'><span class="k">struct</span><span class="w"> </span><span class="nc">_Rb_tree_base_iterator</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">_Rb_tree_node_base</span><span class="o">::</span><span class="n">_Base_ptr</span><span class="w"> </span><span class="n">_Base_ptr</span><span class="p">;</span>
+</span><span class='line'><span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">bidirectional_iterator_tag</span><span class="w"> </span><span class="n">iterator_category</span><span class="p">;</span>
+</span><span class='line'><span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">_M_increment</span><span class="p">()</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+</span><span class='line'><span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">_M_decrement</span><span class="p">()</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="k">template</span><span class="w"> </span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="k">class</span><span class="w"> </span><span class="nc">_Value</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">_Ref</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">_Ptr</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span>
+</span><span class='line'><span class="k">struct</span><span class="w"> </span><span class="nc">_Rb_tree_iterator</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">_Rb_tree_base_iterator</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">  </span><span class="n">_Self</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="w"> </span><span class="k">operator</span><span class="o">++</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">_M_increment</span><span class="p">();</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span class='line'><span class="w">  </span><span class="n">_Self</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="w"> </span><span class="k">operator</span><span class="o">--</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">_M_decrement</span><span class="p">();</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span>
+</span><span class='line'><span class="n">可以看到RB</span><span class="o">-</span><span class="n">tree的自增和自减操作是使用基迭代器的increment和decrement来实现的</span><span class="err">，</span><span class="n">这里仅分析自增操作的实现</span><span class="err">（</span><span class="n">自减操作类似的</span><span class="err">）。</span><span class="n">RB</span><span class="o">-</span><span class="n">tree的自增操作实际上是寻找中序遍历下当前节点的后一个节点</span><span class="err">，</span><span class="n">其代码如下</span><span class="err">：</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">cpp</span>
+</span><span class='line'><span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_M_increment</span><span class="p">()</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="c1">// 自增操作，中序遍历的下一个节点</span>
+</span><span class='line'><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_M_node</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">_M_right</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// 当前节点有右子树</span>
+</span><span class='line'><span class="w">      </span><span class="n">_M_node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_M_node</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">_M_right</span><span class="p">;</span>
+</span><span class='line'><span class="w">      </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">_M_node</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">_M_left</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="c1">// 右子树的最左节点即为所求</span>
+</span><span class='line'><span class="w">        </span><span class="n">_M_node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_M_node</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">_M_left</span><span class="p">;</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// 当前节点没有右子树，找父节点且父节点的右子树不包含当前节点的祖先节点</span>
+</span><span class='line'><span class="w">      </span><span class="n">_Base_ptr</span><span class="w"> </span><span class="n">__y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_M_node</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">_M_parent</span><span class="p">;</span>
+</span><span class='line'><span class="w">      </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">_M_node</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">__y</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">_M_right</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// 当前节点在父节点的右子树中就继续往父节点的父节点找</span>
+</span><span class='line'><span class="w">        </span><span class="n">_M_node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__y</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="n">__y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__y</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">_M_parent</span><span class="p">;</span>
+</span><span class='line'><span class="w">      </span><span class="p">}</span>
+</span><span class='line'><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_M_node</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">_M_right</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">__y</span><span class="p">)</span>
+</span><span class='line'><span class="w">        </span><span class="n">_M_node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__y</span><span class="p">;</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="w">  </span><span class="p">}</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="n">下面几节主要介绍一下RB</span><span class="o">-</span><span class="n">tree的基本操作</span><span class="err">。</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h2</span><span class="o">&gt;</span><span class="mf">4.</span><span class="w"> </span><span class="n">RB</span><span class="o">-</span><span class="n">tree的插入操作</span><span class="o">&lt;/</span><span class="n">h2</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h4</span><span class="o">&gt;</span><span class="mf">4.1</span><span class="w"> </span><span class="n">基本插入操作</span><span class="o">&lt;/</span><span class="n">h4</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">RB</span><span class="o">-</span><span class="n">tree提供两种插入操作</span><span class="err">，</span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">insert_unique</span><span class="p">()</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="w"> </span><span class="n">和</span><span class="w"> </span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">insert_equal</span><span class="p">()</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="err">，</span><span class="n">顾名思义</span><span class="err">，</span><span class="n">前者表示被插入的节点的键值在树中是唯一的</span><span class="err">（</span><span class="n">如果已经存在</span><span class="err">，</span><span class="n">就不需要插入了</span><span class="err">），</span><span class="n">后者表示可以存在键值相同的节点</span><span class="err">。</span><span class="n">这两个函数都有多个版本</span><span class="err">，</span><span class="n">下面以后者的最简单版本</span><span class="err">（</span><span class="n">单一参数</span><span class="err">：</span><span class="n">被插入的节点的键值</span><span class="err">）</span><span class="n">为实例进行介绍</span><span class="err">。</span><span class="n">下面是</span><span class="w"> </span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">insert_equal</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="w"> </span><span class="n">的实现</span><span class="err">：</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">cpp</span>
+</span><span class='line'><span class="n">_Rb_tree</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">_Key</span><span class="p">,</span><span class="n">_Value</span><span class="p">,</span><span class="n">_KeyOfValue</span><span class="p">,</span><span class="n">_Compare</span><span class="p">,</span><span class="n">_Alloc</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="w"> </span><span class="o">::</span><span class="n">insert_equal</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">_Value</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="w"> </span><span class="n">__v</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">  </span><span class="n">_Link_type</span><span class="w"> </span><span class="n">__y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_M_header</span><span class="p">;</span>
+</span><span class='line'><span class="w">  </span><span class="n">_Link_type</span><span class="w"> </span><span class="n">__x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_M_root</span><span class="p">();</span><span class="w"> </span><span class="c1">// 从根节点开始</span>
+</span><span class='line'><span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">__x</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// 往下寻找插入点</span>
+</span><span class='line'><span class="w">    </span><span class="n">__y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__x</span><span class="p">;</span>
+</span><span class='line'><span class="w">    </span><span class="c1">// 比较，当前节点的键值比插入值大往左子树找，否则往右子树找</span>
+</span><span class='line'><span class="w">    </span><span class="n">__x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_M_key_compare</span><span class="p">(</span><span class="n">_KeyOfValue</span><span class="p">()(</span><span class="n">__v</span><span class="p">),</span><span class="w"> </span><span class="n">_S_key</span><span class="p">(</span><span class="n">__x</span><span class="p">))</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">_S_left</span><span class="p">(</span><span class="n">__x</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">_S_right</span><span class="p">(</span><span class="n">__x</span><span class="p">);</span>
+</span><span class='line'><span class="w">  </span><span class="p">}</span>
+</span><span class='line'><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">_M_insert</span><span class="p">(</span><span class="n">__x</span><span class="p">,</span><span class="w"> </span><span class="n">__y</span><span class="p">,</span><span class="w"> </span><span class="n">__v</span><span class="p">);</span><span class="w"> </span><span class="c1">// 真正的插入操作，x为新插入节点，y为x的父节点，v为新值</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="c1">//真正的插入操作，主要是对RB-tree及新节点的成员变量的设置</span>
+</span><span class='line'><span class="n">_Rb_tree</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">_Key</span><span class="p">,</span><span class="n">_Value</span><span class="p">,</span><span class="n">_KeyOfValue</span><span class="p">,</span><span class="n">_Compare</span><span class="p">,</span><span class="n">_Alloc</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="w"> </span><span class="o">::</span><span class="n">_M_insert</span><span class="p">(</span><span class="n">_Base_ptr</span><span class="w"> </span><span class="n">__x_</span><span class="p">,</span><span class="w"> </span><span class="n">_Base_ptr</span><span class="w"> </span><span class="n">__y_</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">_Value</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="w"> </span><span class="n">__v</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">  </span><span class="n">_Link_type</span><span class="w"> </span><span class="n">__x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">_Link_type</span><span class="p">)</span><span class="w"> </span><span class="n">__x_</span><span class="p">;</span>
+</span><span class='line'><span class="w">  </span><span class="n">_Link_type</span><span class="w"> </span><span class="n">__y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">_Link_type</span><span class="p">)</span><span class="w"> </span><span class="n">__y_</span><span class="p">;</span>
+</span><span class='line'><span class="w">  </span><span class="n">_Link_type</span><span class="w"> </span><span class="n">__z</span><span class="p">;</span>
+</span><span class='line'><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">__y</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">_M_header</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">__x</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">_M_key_compare</span><span class="p">(</span><span class="n">_KeyOfValue</span><span class="p">()(</span><span class="n">__v</span><span class="p">),</span><span class="w"> </span><span class="n">_S_key</span><span class="p">(</span><span class="n">__y</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="n">__z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_M_create_node</span><span class="p">(</span><span class="n">__v</span><span class="p">);</span><span class="w"> </span><span class="c1">// 创建新节点</span>
+</span><span class='line'><span class="w">    </span><span class="n">_S_left</span><span class="p">(</span><span class="n">__y</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__z</span><span class="p">;</span><span class="w">     </span><span class="c1">// makes _M_leftmost() = __z, when __y == _M_header</span>
+</span><span class='line'><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">__y</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">_M_header</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// y为header</span>
+</span><span class='line'><span class="w">      </span><span class="n">_M_root</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__z</span><span class="p">;</span>
+</span><span class='line'><span class="w">      </span><span class="n">_M_rightmost</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__z</span><span class="p">;</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">__y</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">_M_leftmost</span><span class="p">())</span><span class="w"> </span><span class="c1">// y为最左节点</span>
+</span><span class='line'><span class="w">      </span><span class="n">_M_leftmost</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__z</span><span class="p">;</span><span class="w">  </span><span class="c1">// maintain _M_leftmost() pointing to min node</span>
+</span><span class='line'><span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="n">__z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_M_create_node</span><span class="p">(</span><span class="n">__v</span><span class="p">);</span><span class="w"> </span><span class="c1">// 创建新节点。???为什么不放到if-else上面???</span>
+</span><span class='line'><span class="w">    </span><span class="n">_S_right</span><span class="p">(</span><span class="n">__y</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__z</span><span class="p">;</span><span class="w"> </span><span class="c1">// 新节点为y的右孩子</span>
+</span><span class='line'><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">__y</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">_M_rightmost</span><span class="p">())</span><span class="w"> </span><span class="c1">// y为最右节点</span>
+</span><span class='line'><span class="w">      </span><span class="n">_M_rightmost</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__z</span><span class="p">;</span><span class="w"> </span><span class="c1">// maintain _M_rightmost() pointing to max node</span>
+</span><span class='line'><span class="w">  </span><span class="p">}</span>
+</span><span class='line'><span class="w">  </span><span class="n">_S_parent</span><span class="p">(</span><span class="n">__z</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">__y</span><span class="p">;</span><span class="w"> </span><span class="c1">// 设定新节点的父节点</span>
+</span><span class='line'><span class="w">  </span><span class="n">_S_left</span><span class="p">(</span><span class="n">__z</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="w">  </span><span class="n">_S_right</span><span class="p">(</span><span class="n">__z</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="w">  </span><span class="n">_Rb_tree_rebalance</span><span class="p">(</span><span class="n">__z</span><span class="p">,</span><span class="w"> </span><span class="n">_M_header</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">_M_parent</span><span class="p">);</span><span class="w"> </span><span class="c1">// 调整RB-tree使之恢复平衡</span>
+</span><span class='line'><span class="w">  </span><span class="o">++</span><span class="n">_M_node_count</span><span class="p">;</span>
+</span><span class='line'><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">iterator</span><span class="p">(</span><span class="n">__z</span><span class="p">);</span><span class="w"> </span><span class="c1">// 返回指向新节点的迭代器</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span>
+</span><span class='line'><span class="n">至此新节点插入完成</span><span class="err">。</span><span class="n">然而</span><span class="err">，</span><span class="n">由于新节点的插入</span><span class="err">，</span><span class="n">可能会引起RB</span><span class="o">-</span><span class="n">tree的性质4</span><span class="p">,</span><span class="mi">5</span><span class="n">的破坏</span><span class="err">，</span><span class="n">需要对RB</span><span class="o">-</span><span class="n">tree进行旋转并对相关节点重新着色</span><span class="err">，</span><span class="n">这都是在</span><span class="w"> </span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">_Rb_tree_rebalance</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="w"> </span><span class="n">这个函数中实现的</span><span class="err">，</span><span class="n">下面就主要介绍RB</span><span class="o">-</span><span class="n">tree是如何恢复平衡</span><span class="err">。</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h4</span><span class="o">&gt;</span><span class="mf">4.2</span><span class="w"> </span><span class="n">调整RB</span><span class="o">-</span><span class="n">tree使之恢复平衡</span><span class="o">&lt;/</span><span class="n">h4</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">RB</span><span class="o">-</span><span class="n">tree的调整与AVL</span><span class="o">-</span><span class="n">tree类似但更复杂</span><span class="err">，</span><span class="n">因为不仅仅需要旋转</span><span class="err">，</span><span class="n">还需要考虑节点的颜色是否符合要求</span><span class="err">。</span><span class="n">破坏RB</span><span class="o">-</span><span class="n">tree性质4的可能起因是插入了一个红色节点</span><span class="err">、</span><span class="n">将一个黑色节点变为红色或者是旋转</span><span class="err">，</span><span class="n">而破坏性质5的可能原因是插入一个黑色的节点</span><span class="err">、</span><span class="n">节点颜色的改变</span><span class="err">（</span><span class="n">红变黑或黑变红</span><span class="err">）</span><span class="n">或者是旋转</span><span class="err">。</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="n">在讨论</span><span class="w"> </span><span class="n">RB</span><span class="o">-</span><span class="n">tree</span><span class="w"> </span><span class="n">插入操作之前必须明白一点</span><span class="err">，</span><span class="n">那就是新插入的节点的颜色必为红色</span><span class="err">（</span><span class="n">调整前</span><span class="err">），</span><span class="n">因为插入黑点会增加某条路径上黑结点的数目</span><span class="err">，</span><span class="n">从而导致整棵树黑高度的不平衡</span><span class="err">。</span><span class="n">但如果新结点的父结点为红色时</span><span class="err">（</span><span class="n">如下图所示</span><span class="err">），</span><span class="n">将会违反红黑树的性质</span><span class="err">：</span><span class="n">一条路径上不能出现父子同为红色结点</span><span class="err">。</span><span class="n">这时就需要通过一系列操作来使红黑树保持平衡</span><span class="err">。</span><span class="n">为了清楚地表示插入操作以下在结点中使用</span><span class="err">“</span><span class="n">N</span><span class="err">”</span><span class="n">字表示一个新插入的结点</span><span class="err">，</span><span class="n">使用</span><span class="err">“</span><span class="n">P</span><span class="err">”</span><span class="n">字表示新插入点的父结点</span><span class="err">，</span><span class="n">使用</span><span class="err">“</span><span class="n">U</span><span class="err">”</span><span class="n">字表示</span><span class="err">“</span><span class="n">P</span><span class="err">”</span><span class="n">结点的兄弟结点</span><span class="err">，</span><span class="n">使用</span><span class="err">“</span><span class="n">G</span><span class="err">”</span><span class="n">字表示</span><span class="err">“</span><span class="n">P</span><span class="err">”</span><span class="n">结点的父结点</span><span class="err">。</span><span class="n">插入操作分为以下几种情况</span><span class="err">：</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="mi">1</span><span class="err">）、</span><span class="n">树为空</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="n">此时</span><span class="err">，</span><span class="n">新插入节点为根节点</span><span class="err">，</span><span class="n">上面说过新插入节点均为红色</span><span class="err">，</span><span class="n">这不符合RB</span><span class="o">-</span><span class="n">tree的性质2</span><span class="err">，</span><span class="n">只需要将新节点重新改为黑色即可</span><span class="err">。</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="mi">2</span><span class="err">）、</span><span class="n">黑父</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="n">如果新节点的父结点为黑色结点</span><span class="err">，</span><span class="n">那么插入一个红点将不会影响红黑树的平衡</span><span class="err">，</span><span class="n">此时插入操作完成</span><span class="err">。</span><span class="n">红黑树比AVL树优秀的地方之一在于黑父的情况比较常见</span><span class="err">，</span><span class="n">从而使红黑树需要旋转的几率相对AVL树来说会少一些</span><span class="err">。</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="mi">3</span><span class="err">）、</span><span class="n">红父</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="n">这种情况就比较复杂</span><span class="err">。</span><span class="n">由于父节点为红</span><span class="err">，</span><span class="n">所以祖父节点必为黑色</span><span class="err">。</span><span class="n">由于新节点和父节点均为红</span><span class="err">，</span><span class="n">所以需要重新着色或进行旋转</span><span class="err">，</span><span class="n">此时就需要考虑叔父节点的颜色</span><span class="err">，</span><span class="n">进而可能需要考虑祖父</span><span class="err">、</span><span class="n">祖先节点的颜色</span><span class="err">。</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="mf">3.1</span><span class="err">）、</span><span class="n">叔父为红</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span>
+</span><span class='line'><span class="n">只要将父和叔结点变为黑色</span><span class="err">，</span><span class="n">将祖父结点变为红色即可</span><span class="err">，</span><span class="n">如下图所示</span><span class="err">：</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="p">{</span><span class="o">%</span><span class="w"> </span><span class="n">img</span><span class="w"> </span><span class="o">/</span><span class="n">images</span><span class="o">/</span><span class="mi">2014</span><span class="o">/</span><span class="n">IMAG2014080303</span><span class="p">.</span><span class="n">png</span><span class="o">%</span><span class="p">}</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="n">但由于祖父结点的父结点有可能为红色</span><span class="err">，</span><span class="n">从而违反红黑树性质</span><span class="err">。</span><span class="n">此时必须将祖父结点作为新的判定点</span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">继续向上</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="err">（</span><span class="n">迭代</span><span class="err">）</span><span class="n">进行平衡操作</span><span class="err">。</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="mf">3.2</span><span class="err">）、</span><span class="n">叔父为黑</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="n">当叔父结点为黑色时</span><span class="err">，</span><span class="n">需要进行旋转</span><span class="err">，</span><span class="n">有4中情况</span><span class="err">（</span><span class="n">类似AVL</span><span class="err">），</span><span class="n">以下图示了所有的旋转可能</span><span class="err">：</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="p">{</span><span class="o">%</span><span class="w"> </span><span class="n">img</span><span class="w"> </span><span class="o">/</span><span class="n">images</span><span class="o">/</span><span class="mi">2014</span><span class="o">/</span><span class="n">IMAG2014080304</span><span class="p">.</span><span class="n">png</span><span class="o">%</span><span class="p">}</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="n">可以观察到</span><span class="err">，</span><span class="n">当旋转完成后</span><span class="err">，</span><span class="n">新的旋转根全部为黑色</span><span class="err">，</span><span class="n">此时不需要再向上回溯进行平衡操作</span><span class="err">，</span><span class="n">插入操作完成</span><span class="err">。</span><span class="n">篇幅原因</span><span class="err">，</span><span class="n">相关代码这里就不粘贴出来了</span><span class="err">，</span><span class="n">要注意的一点就是case1和case2的变色方案是一样的</span><span class="err">，</span><span class="n">虽然从上图中看一个是P由红变黑</span><span class="err">，</span><span class="n">一个是N由红变黑</span><span class="err">，</span><span class="n">但实际上在case2中</span><span class="err">，</span><span class="n">经过一次旋转后</span><span class="err">，</span><span class="n">迭代器所指向的节点已经发生改变</span><span class="err">，</span><span class="n">这样刚好使得这两个case的变色方案相同</span><span class="err">，</span><span class="n">均为P由红变黑而G由黑变红</span><span class="err">。</span><span class="n">case3与case4的变色方案也是类似的</span><span class="err">。</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h2</span><span class="o">&gt;</span><span class="mf">5.</span><span class="w"> </span><span class="n">RB</span><span class="o">-</span><span class="n">tree的删除操作</span><span class="o">&lt;/</span><span class="n">h2</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">相比于插入操作</span><span class="err">，</span><span class="n">RB</span><span class="o">-</span><span class="n">tree的删除操作更加复杂</span><span class="err">。</span><span class="n">在侯捷的书上并没有讲删除操作</span><span class="err">，</span><span class="n">而在算法导论上是有专门的一节内容的</span><span class="err">，</span><span class="n">wiki上也有详细的讲述</span><span class="err">。</span><span class="n">限于篇幅</span><span class="err">，</span><span class="n">这里指讲解一个大概的思路</span><span class="err">，</span><span class="n">更详细的介绍请参见wiki或算法导论</span><span class="err">。</span><span class="n">RB</span><span class="o">-</span><span class="n">tree删除操作的基本思路是这样的</span><span class="err">，</span><span class="n">首先按照一般的二叉搜索树进行节点的删除</span><span class="err">，</span><span class="n">然后对RB</span><span class="o">-</span><span class="n">tree相关节点进行变色或旋转</span><span class="err">。</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="n">一般的二叉搜索树删除节点的基本思路是</span><span class="err">：</span><span class="n">首先找到待删除节点位置</span><span class="err">，</span><span class="n">设为D</span><span class="err">。</span><span class="n">如果D同时有左右子树</span><span class="err">，</span><span class="n">那么用D的后继</span><span class="err">（</span><span class="n">右孩子的最左子节点</span><span class="err">，</span><span class="n">该后继最多有一个子节点</span><span class="err">——</span><span class="n">右孩子</span><span class="err">）</span><span class="n">替代D</span><span class="err">（</span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">注意</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="err">：</span><span class="n">这里的替代是只key的替代</span><span class="err">，</span><span class="n">color不变</span><span class="err">，</span><span class="n">仍为D的color</span><span class="err">），</span><span class="n">从而将删除位置转移到该后继节点</span><span class="err">（</span><span class="n">成为新的D</span><span class="err">，</span><span class="n">为叶子节点或只有右孩子</span><span class="err">）。</span><span class="n">于是</span><span class="err">，</span><span class="n">我们只需要讨论删除只有一个儿子的节点的情况</span><span class="p">(</span><span class="n">如果它两个儿子都为空</span><span class="err">，</span><span class="n">即均为叶子</span><span class="err">，</span><span class="n">我们任意将其中一个看作它的儿子</span><span class="p">)</span><span class="err">，</span><span class="n">设这个儿子节点为N</span><span class="err">，</span><span class="n">这仍然需要分三种情况</span><span class="err">：</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="mi">1</span><span class="err">）</span><span class="n">D为红</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="n">这种情况比较简单</span><span class="err">。</span><span class="n">由于D为红色</span><span class="err">，</span><span class="n">所以它的父亲和儿子一定是黑色的</span><span class="err">，</span><span class="n">我们可以简单的用它的黑色儿子替换它</span><span class="err">，</span><span class="n">并不会破坏性质3和性质4</span><span class="err">。</span><span class="n">通过被删除节点的所有路径只是少了一个红色节点</span><span class="err">，</span><span class="n">这样可以继续保证性质5</span><span class="err">。</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="w">  </span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="mi">2</span><span class="err">）</span><span class="n">D为黑且N为红</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="n">如果只是去除这个黑色节点</span><span class="err">，</span><span class="n">用它的红色儿子顶替上来的话</span><span class="err">，</span><span class="n">会破坏性质5</span><span class="err">，</span><span class="n">可能会破坏性质4</span><span class="err">，</span><span class="n">但是如果我们重绘它的儿子为黑色</span><span class="err">，</span><span class="n">则曾经通过它的所有路径将通过它的黑色儿子</span><span class="err">，</span><span class="n">这样可以继续保持性质5</span><span class="err">，</span><span class="n">同时也满足性质4</span><span class="err">。</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="mi">3</span><span class="err">）</span><span class="n">D为黑且N为黑</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="n">这是一种复杂的情况</span><span class="err">。</span><span class="n">我们首先把要删除的节点D替换为它的</span><span class="err">（</span><span class="n">右</span><span class="err">）</span><span class="n">儿子N</span><span class="err">，</span><span class="n">在新树中</span><span class="err">（</span><span class="n">D被N覆盖</span><span class="err">），</span><span class="n">设N的父节点为P</span><span class="err">，</span><span class="n">兄弟为S</span><span class="err">，</span><span class="n">SL为S的左儿子</span><span class="err">，</span><span class="n">SR为S的右儿子</span><span class="err">。</span><span class="n">此时</span><span class="err">，</span><span class="n">以N为根节点的子树的黑高度减少了一</span><span class="err">，</span><span class="n">与S为根节点的子树的黑高度不一致</span><span class="err">，</span><span class="n">破坏了性质5</span><span class="err">。</span><span class="n">为了恢复</span><span class="err">，</span><span class="n">可以分为如下情形</span><span class="err">：</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="mf">3.1</span><span class="err">）</span><span class="n">N为根节点</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="n">已经满足所有性质</span><span class="err">，</span><span class="n">不需要调整</span><span class="err">。</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="mf">3.2</span><span class="err">）</span><span class="w"> </span><span class="n">N是它父亲P的左儿子</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">case1</span><span class="err">、</span><span class="n">S为红色</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="err">：</span><span class="n">将P改为红色</span><span class="err">，</span><span class="n">S改为黑色</span><span class="err">，</span><span class="n">以P为中心左旋</span><span class="err">，</span><span class="n">旋转后</span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">SL为新的S</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="err">，</span><span class="n">SL和SR是新的S的左右孩子</span><span class="err">，</span><span class="n">此时case1就转化为了case2或case3或case4</span><span class="err">；</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="n">注</span><span class="err">：</span><span class="n">case2</span><span class="o">~</span><span class="mi">4</span><span class="n">中S均为黑色</span><span class="err">（</span><span class="n">否则是case1</span><span class="err">）。</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">case2</span><span class="err">、</span><span class="n">SL</span><span class="err">、</span><span class="n">SR同为黑色</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="err">：</span><span class="n">将S改为红色</span><span class="err">，</span><span class="n">这样黑高度失衡的节点变为P</span><span class="err">，</span><span class="n">转到3</span><span class="mf">.1</span><span class="err">）</span><span class="n">重新开始判断和调整</span><span class="err">；</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">case3</span><span class="err">、</span><span class="n">SR为黑</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="err">：</span><span class="n">此时SL为红</span><span class="err">（</span><span class="n">否则是case2</span><span class="err">）。</span><span class="n">将S改为红色</span><span class="err">，</span><span class="n">SL改为黑色</span><span class="err">，</span><span class="n">然后以S为中心右旋</span><span class="err">，</span><span class="n">旋转后SL为新的S</span><span class="err">，</span><span class="n">而原S成为SR且为红色</span><span class="err">，</span><span class="n">这就将case3变成了case4</span><span class="err">；</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">case4</span><span class="err">、</span><span class="n">SR为红</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="err">：</span><span class="n">以P为中心左旋</span><span class="err">，</span><span class="n">然后交换P和S的颜色</span><span class="err">，</span><span class="n">最后将SR改为黑色</span><span class="err">，</span><span class="n">即可完成调整</span><span class="err">。</span><span class="n">可以看到调整过程与SL的颜色无关</span><span class="err">。</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="mf">3.3</span><span class="err">）</span><span class="n">N是它父亲P的右儿子</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="n">与3</span><span class="mf">.2</span><span class="err">）</span><span class="n">类似</span><span class="err">，</span><span class="n">这里就不详细展开了</span><span class="err">。</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h2</span><span class="o">&gt;</span><span class="mf">6.</span><span class="w"> </span><span class="n">RB</span><span class="o">-</span><span class="n">tree的查询操作</span><span class="o">&lt;/</span><span class="n">h2</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">RB</span><span class="o">-</span><span class="n">tree是一个二叉搜索树</span><span class="err">，</span><span class="n">元素的查询是其拿手项目</span><span class="err">，</span><span class="n">非常简单</span><span class="err">，</span><span class="n">以下是RB</span><span class="o">-</span><span class="n">tree提供的查询操作</span><span class="err">：</span>
+</span></code></pre></td></tr></table></div></figure> cpp
+template <class _Key, class _Value, class _KeyOfValue, class _Compare, class _Alloc>
+typename <em>Rb_tree&lt;</em>Key,<em>Value,</em>KeyOfValue,<em>Compare,</em>Alloc>::iterator
+<em>Rb_tree&lt;</em>Key,<em>Value,</em>KeyOfValue,<em>Compare,</em>Alloc>::find(const <em>Key&amp; __k) {
+  </em>Link_type <strong>y = _M_header;      // Last node which is not less than </strong>k.
+  <em>Link_type __x = </em>M_root();      // Current node.</p>
+
+<p>  while (<strong>x != 0) // x为NIL时推出循环
+    if (!<em>M_key_compare(</em>S_key(</strong>x), <strong>k))
+      </strong>y = <strong>x, </strong>x = <em>S_left(<strong>x); // 往左子树找（赋值运算优先于逗号运算，y是x的父节点）
+    else
+      </strong>x = </em>S_right(__x); // 往右子树找</p>
+
+<p>  iterator <strong>j = iterator(</strong>y); <br/>
+  return (<strong>j == end() || _M_key_compare(</strong>k, <em>S_key(__j.</em>M_node))) ?
+     end() : __j; // 没找到返回end()，否则返回相应节点的指针（迭代器）
+}
+```</p>
+
+<h2>小结</h2>
+
+<p>关于RB-tree基本就介绍到这里了，主要是RB-tree的定义、数据结构、插入删除和查找等基本操作，其中最主要也最困难的就是插入和删除操作中恢复平衡的方法。另外，还介绍了二叉搜索树的基本概念和高度平衡的AVL树，可以看到，AVL树保持平衡的方法非常简单易懂，而RB-tree由于引入了节点的颜色属性，使得理解起来相对比较困难，那么问题就来了，为什么不用AVL-tree而用RB-tree作为set和map的低层容器呢？<br/>
+这个问题要问STL的实现者了，其实AVL-tree和RB-tree的平均性能在 <a href="http://en.wikipedia.org/wiki/AVL_tree">AVL-tree的wiki</a> _上是有严格的数学公式的，AVL的平均高度为 $1.44logN$ ，而RB-tree的平均高度为 $2logN$ ，这些数据的来历也有相关的论文，感兴趣的可以更深入的看看。</p>
+]]></content>
+  </entry>
+  
+</feed>

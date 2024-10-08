@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 性能优化 | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/xing-neng-you-hua/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[C++ 应用程序性能优化之 new/delete 操作符]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/05/11/cpp-program-optimization-new-delete-operator/"/>
+    <updated>2014-05-11T20:33:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/05/11/cpp-program-optimization-new-delete-operator</id>
+    <content type="html"><![CDATA[<h2>1.概述</h2>
+
+<p>C++ 程序的存储空间可以分为静态/全局存储区、栈区和堆区。下图展示了一个典型的Linux C/C++ 程序内存空间布局：</p>
+
+<center><img src="/images/2014/IMAG2014051101.png"></center>
+
+
+<p>其中，每一部分的具体涵义如下：<br/>
+- <strong>代码段（.text）</strong>：这里存放的是CPU要执行的指令。代码段是可共享的，相同的代码在内存中只会有一个拷贝，同时这个段是<strong>只读</strong>的，防止程序由于错误而修改自身的指令。<br/>
+- <strong>初始化数据段（.data）</strong>：这里存放的是程序中需要明确赋初始值的变量，例如位于所有函数之外的全局变量：<code>int val=100;</code> 。 需要强调的是，以上两段都是位于程序的可执行文件中，内核在调用 exec 函数启动该程序时从源程序文件中读入。<br/>
+- <strong>未初始化数据段（.bss）</strong>：位于这一段中的数据，内核在执行该程序前，将其初始化为0或者null。例如出现在任何函数之外的全局变量：<code>int sum;</code><br/>
+- <strong>堆（Heap）</strong>：这个段用于在程序中进行动态内存申请，例如经常用到的 malloc，new 系列函数就是从这个段中申请内存。<br/>
+- <strong>栈（Stack）</strong>：函数中的局部变量以及在函数调用过程中产生的临时变量都保存在此段中。<br/>
+静态/全局存储区和栈区一般在程序编译阶段决定；而堆区则随着程序的运行而动态变化，每一次程序运行都会有不同的行为，因此动态内存管理对于一个程序在运行过程中占用的内存大小及程序运行性能有非常重要的影响。 本文主要探讨在C++中如何管理动态内存，以及如何使用 C++ 的语言特性来提高动态内存的管理效率，减少错误的发生。</p>
+
+<!-- more -->
+
+
+<h2>2. new/delete 操作符</h2>
+
+<h4>2.1 C++内置new/delete的原型</h4>
+
+<p>一般来说 C++ 的运行库提供了默认的全局 <code>new/new[]</code> 和 <code>delete/delete[]</code> 的实现，程序也可以用自定义的实现来取代运行库的实现。 下面是 C++ 标准中定义的 <code>new/new[]</code> 和 <code>delete/delete[]</code> 的声明（位于 <code>include/c++/new</code> 文件中）：</p>
+
+<pre><code class="cpp">namespace std {
+  class bad_alloc : public exception {
+    public:
+      bad_alloc() throw() { }
+      virtual ~bad_alloc() throw();
+      virtual const char* what() const throw();
+  };
+  struct nothrow_t { };
+  extern const nothrow_t nothrow;
+  typedef void (*new_handler)();
+  new_handler set_new_handler(new_handler) throw();
+} // namespace std
+
+void* operator new(std::size_t) throw (std::bad_alloc);  // (1)
+void* operator new[](std::size_t) throw (std::bad_alloc);
+void operator delete(void*) throw();
+void operator delete[](void*) throw();
+void* operator new(std::size_t, const std::nothrow_t&amp;) throw();  // (2)
+void* operator new[](std::size_t, const std::nothrow_t&amp;) throw();
+void operator delete(void*, const std::nothrow_t&amp;) throw();
+void operator delete[](void*, const std::nothrow_t&amp;) throw();
+// Default placement versions of operator new.
+inline void* operator new(std::size_t, void* __p) throw() { return __p; }  // (3)
+inline void* operator new[](std::size_t, void* __p) throw() { return __p; }
+// Default placement versions of operator delete.
+inline void  operator delete  (void*, void*) throw() { }
+inline void  operator delete[](void*, void*) throw() { }
+</code></pre>
+
+<p>其中最后的 <code>inline</code> 函数是 <code>placement</code> 版本的 new/delete 操作，其特点在于分配的内存块的起始地址由用户给定（通过参数 <code>void* __p</code>）。 而前面两种 <code>new/delete</code> （(1)和(2)处）是系统决定待分配内存块的起始地址，区别在于：第一个在分配失败是会抛出 <code>bad_alloc</code> 异常（这是C++标准要求的）；而第二个则不抛出异常，返回0。 很多应用程序都没有处理内存分配的失败情况，但相对于一个需要长期稳定运行的系统来说，这种处理是必不可少的。 应用程序可以通过捕获 <code>bad_alloc</code> 异常或者检查返回值来检查内存分配是否成功，而更好的方法是使用C++中的 <code>new_handler()</code> 函数。 C++规定 <code>new_handler</code> 要执行如下操作中的一种：</p>
+
+<ul>
+<li>使 <code>new</code> 有更多的内存可用，然后返回</li>
+<li>抛出一个 <code>bad_alloc</code> 或其派生类的异常</li>
+<li>调用 <code>abort()</code> 或者 <code>exit()</code> 退出</li>
+</ul>
+
+
+<h4>2.2 使用 <code>new_handler</code> 自定义异常处理</h4>
+
+<p>下面看一个例子，看看如何使用 <code>new_handler</code> 处理内存分配失败的情况：</p>
+
+<pre><code class="cpp">#include&lt;new&gt;
+#include&lt;cstdio&gt;
+#include&lt;Windows.h&gt;
+using namespace std;
+char *gPool = NULL;
+void my_new_handler();
+
+int main(){
+    set_new_handler(my_new_handler);
+    gPool = new char[512*1024*1024];
+    if(gPool!=NULL){
+        printf("Preserve 512MB memory at %x.\n",gPool);
+    }
+    char *p = NULL;
+    for(int i=0;i&lt;4;i++){
+        p = new char[512*1024*1024];
+        printf("%d * 512M, p = %x\n",i+1,p);
+        Sleep(5000); // 休眠5s
+    }
+    printf("Done.\n");
+    return 0;
+}
+
+void my_new_handler(){
+    if(gPool!=NULL){
+        printf("try to get more memory...\n");
+        delete[] gPool; // 释放512MB内存空间
+        gPool = NULL;
+        return;
+    }else{
+        printf("I can not help...\n");
+        throw bad_alloc();  // 分配失败，抛出异常
+    }
+    return;
+}
+</code></pre>
+
+<p>在 Windows 上编译并运行（使用Code::Blocks 13.12 IDE），得到如下输出：</p>
+
+<pre><code>Preserve 512MB memory at 7e0020.
+1 * 512M, p = 207f0020
+2 * 512M, p = 40800020
+try to get more memory...
+3 * 512M, p = 7e0020
+I can not help...
+terminate called after throwing an instance of 'std::bad_alloc'
+  what():  std::bad_alloc
+
+This application has requested the Runtime to terminate it in an unusual way.
+Please contact the application's support team for more information.
+</code></pre>
+
+<p>在 Windows 的 win32 程序中，一个进程可以访问的内存空间是 4GB，但可以用来动态分配的最大内存是 2GB，因而上面的程序执行到第3次（为神马不是第4次？）动态内存分配时由于内存不够，调用了 <code>my_new_handler</code> 获得了内存（可以看到第3次分配的内存的地址和Preserve的内存地址是一样的），而当执行第4次内存分配时，<code>gPool</code> 已被分配，于是 <code>my_new_handler</code> 中抛出了 <code>bad_alloc</code> 异常，导致程序退出。 另外，在程序实际运行过程当中，会发现任务管理器中内存占用不会往上飙，这可能是因为操作系统的动态内存管理策略在作怪，不会说你一申请就立马全部给你，只是建立了一个映射表，只有当你真正用的时候才会给你。</p>
+
+<h4>2.3 使用 placement new</h4>
+
+<p>在 C++ 内置 <code>new/delete</code> 中最后的一种是 placement 形式的 <code>new/delete</code> ，即分配的内存地址有用户给定。下面是一个最简单的实例：</p>
+
+<pre><code class="cpp">#include &lt;cstdio&gt;
+#include &lt;new&gt;
+using namespace std;
+
+int main()
+{
+    char buffer[100];
+    char *p = new(buffer) char[20]; // call placement new
+    printf("Address of buffer: %x, and p: %x.\n",buffer,p);
+    return 0;
+}
+// output: Address of buffer: 28feb8, and p: 28feb8.
+</code></pre>
+
+<p>可以看到 <code>buffer</code> 和 <code>p</code> 的地址是一样的。在大型应用程序中，我们可以充分利用 <code>placement new</code> 的特性，实现自己管理（分配、释放等）本应用的内存空间，基本思路就是： 首先申请一大片内存，然后对每个小的动态内存分配都使用 <code>placement new</code> 的方式进行申请。</p>
+
+<h4>2.4 重载 placement new</h4>
+
+<p>在 <code>new</code> 操作符中，除了可以使用自定义申请的内存的大小及位置，我们还可以通过重载系统的 <code>new/delete</code> 操作符来加入其它一些附加参数，但仍称之为 <code>placement new</code> 。例如：</p>
+
+<pre><code class="cpp">#include&lt;cstdio&gt;
+#include&lt;new&gt;
+using namespace std;
+#define DEBUG
+#ifdef DEBUG
+// 自定义 new 操作符
+void *operator new[](unsigned int n, const char* file, int line){
+    printf("Alloc size: %d at file %s, in line %d\n",n,file,line);
+    return ::operator new(n);
+}
+// 自定义 delete 操作符
+// void operator delete(void *p,const char *file, int line){
+void operator delete[](void *p,const char *file, int line){
+    printf("delete at file %s, in line %d\n",file,line);
+    ::operator delete(p);
+    return;
+}
+// 宏定义，必须放在重载函数之后
+#define new new(__FILE__, __LINE__)
+#define delete delete(__FILE__, __LINE__)
+#endif
+int main(){
+    char *p = new char[10];
+    //delete p;  // delete 的重载还有问题 "error: type 'int' argument given to 'delete', expected pointer"
+    delete[] p;  // 直接报语法错误，"error: expected primary-expression before ']' token"
+    return 0;
+}
+// output: Alloc size: 10 at file D:\Programs\test\main.cpp, in line 22
+</code></pre>
+
+<p>这在 <code>DEBUG</code> 模式下非常好使。</p>
+
+<p>更新：关于 <code>placement new</code> 的 demo 改为如下代码后就没问题了：</p>
+
+<pre><code class="cpp">#include&lt;cstdio&gt;
+#include&lt;new&gt;
+using namespace std;
+#define DEBUG
+#ifdef DEBUG
+// 自定义 new 操作符
+void *operator new[](unsigned int n, const char* file, int line){
+    printf("Alloc size: %d at file %s, in line %d\n",n,file,line);
+    return ::operator new(n);
+}
+// 自定义 delete 操作符
+void operator delete(void *p,char *file, int line){
+    printf("Delete at file %s, in line %d\n",file,line);
+    ::operator delete(p);
+    return;
+}
+// 宏定义，必须放在重载函数之后
+#define new new(__FILE__, __LINE__)
+#define delete(ptr) delete(ptr,__FILE__, __LINE__)
+#endif
+int main(){
+    char *p = new char[10];
+    operator delete(p);
+    return 0;
+}
+</code></pre>
+
+<p>但是还是不知道之前的代码为什么会出现这个错误，已在 <a href="http://stackoverflow.com/questions/23614215/destructor-error-in-c-type-int-argument-given-to-delete-expected-pointer">StackOverFlow上提问</a>，希望能得到满意的答案。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Matlab代码优化方法几则]]></title>
+    <link href="http://ibillxia.github.io/blog/2012/04/25/matlab-code-optimization/"/>
+    <updated>2012-04-25T20:07:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2012/04/25/matlab-code-optimization</id>
+    <content type="html"><![CDATA[<p>1.计算向量、矩阵化，尽量减少for循环</br>
+因为MATLAB本来就是矩阵实验室的意思，他提供了极其强大而灵活的矩阵运算能力，你就没必要自己再用自己编写的for循环去实现矩阵运算的功能了。
+另外由于matlab是一种解释性语言，所以最忌讳直接使用循环语句。但在有些情况下，使用for循环可以提高程序的易读性，在效率提高不是很明显的
+情况下可以选择使用for循环。</p>
+
+
+
+
+<p>2.循环内大数组预先定义--预先分配空间</br>
+这一点原则是极其重要的，以至于在编写m程序时编辑器会给出提示“'ver' might be growing inside a loop.Consider prealloacting for speed.”</p>
+
+
+
+
+<p>3.尽可能利用matlab内部提供的函数</br>
+因为matlab内部提供的函数绝对是各种问题的最优算法，那写程序都是他们大师级人物写出来的，程序应该说相当高效，有现成的为什么不用那！
+这个原则就不用实际的程序测试了。</p>
+
+
+
+
+<p>4. 利用内置函数自动记录运行结果</br>
+matlab生成的结果变量只贮存在内存空间中，一旦matlab关闭则会丢失，很多时候需要手工将这些结果存储到我们需要的文件中。事实上，matlab提供
+了很多函数可以自动记录结果，如fprintf可以将数据写入txt文件，xlswrite可以将数据写入excel文件等等。这样自动化的命令可以缩减大量时间，
+从而提高效率。</p>
+
+
+
+
+<p>5. 在迫不得已要使用较多循环而每一步都很耗时的时候，可以将每一步的结果保存成mat文件，然后在循环的开头用if语句与exist函数进行判断，
+如果该文件存在的话，就直接进入下一次循环。这样做的好处是不会因为断电、电脑死机或误操作等原因而重头从第一个循环再次运行。</p>
+
+
+
+
+<p>6. 同时运行多的matlab进程。现在的电脑一般都是多核，一般一个matlab进程会占用一个cpu，因此可以在多核电脑上同时打开多个matlab窗口，
+从而执行不同的命令。如四核电脑上可以打开三个matlab窗口分别运行不同的程序，cpu的占用率约为80%，这样既加快了进度，又不会影响电脑的使用。</p>
+
+
+
+]]></content>
+  </entry>
+  
+</feed>

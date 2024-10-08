@@ -1,0 +1,124 @@
+/**
+* custom style by myself
+* @copyright Bill Xia
+*/
+/* tag_box */
+.tag_box {
+  list-style:none;
+  margin:0;
+  padding:2px 0 ;
+  overflow:hidden;
+}
+.tag_box li {
+  line-height:20px;
+  margin:0;
+}
+.tag_box.inline li {
+  float:left;
+  padding:2px 0 ;
+}
+.tag_box a {
+  padding: 2px;
+  margin: 2px;
+  background: #eee;
+  color:#005F6B;
+  border-radius: 3px;
+  text-decoration:none;
+}
+.tag_box a span{
+  vertical-align:super;
+  font-size:0.8em;
+}
+.tag_box a.active {
+  background:#57A957;
+  border:1px solid #4C964D;
+  color:#FFF;
+}
+/* tag_box end */
+
+/* back_to_top style */
+#back-top {
+	position: fixed;
+	bottom: 60px;
+	right: 10px;
+}
+
+#back-top a {
+	width: 80px;
+	display: block;
+	text-align: center;
+	font: 11px/100% Arial, Helvetica, sans-serif;
+	text-transform: uppercase;
+	text-decoration: none;
+	color: #888;
+
+	/* transition */
+	-webkit-transition: 1s;
+	-moz-transition: 1s;
+	transition: 1s;
+}
+#back-top a:hover {
+	color: #fff;
+}
+
+/* arrow icon (span tag) */
+#back-top span {
+	width: 80px;
+	height: 80px;
+	display: block;
+	margin-bottom: 7px;
+	background: #ddd url(../../images/up-arrow.png) no-repeat center center;
+
+	/* rounded corners */
+	-webkit-border-radius: 15px;
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+
+	/* transition */
+	-webkit-transition: 1s;
+	-moz-transition: 1s;
+	transition: 1s;
+}
+/*
+code ::selection {
+  background-color: #f5f5f5; 
+}
+#back-top a:hover span {
+	background-color: #888;
+}
+*/
+
+.navbar{
+	background-color: #ffffff;
+}
+
+.navbar .navbar-inner .container a:hover {
+	color: black;
+	background: #eee;
+}
+
+body {
+	padding-bottom: 0px;
+	background-color: #222222;
+	background-image: url(../../images/octicons-bg1.png);
+	background-repeat: repeat;
+	background-position: top center;
+	background-attachment: fixed;
+	font-family: "Microsoft YaHei",Helvetica,Arial,sans-serif;
+}
+
+.container {
+	background-color: #ffffff;
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+footer.page-footer {
+	min-height: 60px;
+	background-color: #ffffff;
+}
+
+.line-numbers {
+	font-size: 14px;
+}
+

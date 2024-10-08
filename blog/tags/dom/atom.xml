@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: DOM | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/dom/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[超好的HTML解析工具PHP Simple HTML DOM Parser]]></title>
+    <link href="http://ibillxia.github.io/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/"/>
+    <updated>2010-08-28T20:49:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser</id>
+    <content type="html"><![CDATA[<p>采用PHP5+ 开发的一个简单的 PHP HTML DOM 分析，支持 invalid HTML 并提供非常简单的方式来操作 HTML 元素。在 HMTL 页面
+上查找标签所使用的语法与 jQuery （一个轻量级，实用的 javascript 框架） 相似，从页面中抽取内容只需要一行代码。开源代码：
+<a href="http://sourceforge.net/projects/simplehtmldom/">http://sourceforge.net/projects/simplehtmldom/</a> </p>
+
+
+
+
+<p>它具有以下几个特点：</br>
+1. 只支援 PHP5 以上. </br>
+2. 可以分析不严谨 (invalid) 的 HTML. </br>
+3. 支援简单的 CSS Selector. </br>
+4. 简单的 DOM 操作. </br>
+5. 会维持 HTML 中的原始格式 .</br>
+下面是使用手册上举的几个简单的使用示例。</p>
+
+
+<!--more-->
+
+
+<p>如何读取 HTML 元素 </p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;?
+</span><span class='line'>include('html_dom_parser.php');
+</span><span class='line'>$dom = file_get_dom('http://www.google.com/');
+</span><span class='line'>// 找出所有网页连结
+</span><span class='line'>$result = $dom->find('a');
+</span><span class='line'>foreach($result as $v) {echo $v->href . '&lt;br>';}
+</span><span class='line'>// 找出所有网页图片
+</span><span class='line'>$result = $dom->find('img');
+</span><span class='line'>foreach($result as $v) {echo $v->src . '&lt;br>';}
+</span><span class='line'>// 找出所有网页中所有 id=gbar 的 div 标签
+</span><span class='line'>$result = $dom->find('div#gbar');
+</span><span class='line'>foreach($result as $v) {echo $v->innertext . '&lt;br>';}
+</span><span class='line'>// 找出所有网页中所有 calss=gb1 的 span 标签
+</span><span class='line'>$result = $dom->find('span.gb1');
+</span><span class='line'>foreach($result as $v) {echo $v->outertext . '&lt;br>';}
+</span><span class='line'>// 找出所有网页中所有 align=center 的 'td 标签
+</span><span class='line'>$result = $dom->find('td[align=center]');
+</span><span class='line'>foreach($result as $v) {echo $v->outertext . '&lt;br>';}
+</span><span class='line'>?></span></code></pre></td></tr></table></div></figure></p>
+
+<p>如何修改 HTML 元素 </p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span></span><span class="o">&lt;?</span>
+</span><span class='line'><span class="k">include</span><span class="p">(</span><span class="s1">&#39;html_dom_parser.php&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$dom</span> <span class="o">=</span> <span class="nx">file_get_dom</span><span class="p">(</span><span class="s1">&#39;http://www.google.com/&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// 移除网页中所有图片</span>
+</span><span class='line'><span class="nv">$ret</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="s1">&#39;img&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="k">foreach</span><span class="p">(</span><span class="nv">$ret</span> <span class="k">as</span> <span class="nv">$v</span><span class="p">)</span> <span class="p">{</span><span class="nv">$v</span><span class="o">-&gt;</span><span class="na">outertext</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;}</span>
+</span><span class='line'><span class="c1">// 修改网页中所有 input 标签</span>
+</span><span class='line'><span class="nv">$ret</span> <span class="o">=</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="k">foreach</span><span class="p">(</span><span class="nv">$ret</span> <span class="k">as</span> <span class="nv">$v</span><span class="p">)</span> <span class="p">{</span><span class="nv">$v</span><span class="o">-&gt;</span><span class="na">outertext</span> <span class="o">=</span> <span class="s1">&#39;[INPUT]&#39;</span><span class="p">;}</span>
+</span><span class='line'><span class="c1">// 显示修改后的网页</span>
+</span><span class='line'><span class="k">echo</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span>
+</span><span class='line'><span class="cp">?&gt;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Slashdot网站内容抓取</p>
+
+
+<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span></span><span class="c1">// Create DOM from URL</span>
+</span><span class='line'><span class="nv">$html</span> <span class="o">=</span> <span class="nx">file_get_html</span><span class="p">(</span><span class="s1">&#39;http://slashdot.org/&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// Find all article blocks</span>
+</span><span class='line'><span class="k">foreach</span><span class="p">(</span><span class="nv">$html</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="s1">&#39;div.article&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="nv">$article</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nv">$item</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span>     <span class="o">=</span> <span class="nv">$article</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="s1">&#39;div.title&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">plaintext</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$item</span><span class="p">[</span><span class="s1">&#39;intro&#39;</span><span class="p">]</span>    <span class="o">=</span> <span class="nv">$article</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="s1">&#39;div.intro&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">plaintext</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$item</span><span class="p">[</span><span class="s1">&#39;details&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$article</span><span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="s1">&#39;div.details&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">plaintext</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$articles</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$item</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="nb">print_r</span><span class="p">(</span><span class="nv">$articles</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></p>
+]]></content>
+  </entry>
+  
+</feed>

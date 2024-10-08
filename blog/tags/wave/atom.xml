@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: wave | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/wave/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[PCM WAVE格式详解及用C语言实现wave文件的读取]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/07/20/details-of-wave-format-and-reading-wave-files-in-C-language/"/>
+    <updated>2013-07-20T20:07:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/07/20/details-of-wave-format-and-reading-wave-files-in-C-language</id>
+    <content type="html"><![CDATA[<h2>1.PCM Wave格式详解</h2>
+
+
+<p>WAVE文件格式是微软RIFF(Resource Interchange File Format,资源交换文件标准)的一种，是针对于多媒体文件存储的一种文件格式和标准。
+一般而言，RIFF文件由文件头和数据两部分组成，一个WAVE文件由一个“WAVE”数据块组成，这个“WAVE”块又由一个"fmt"子数据块和一个“data”子
+数据块组成，也称这种格式为“Canonical form”（权威/牧师格式），如下图所示：
+<center><img src="/images/2013/IMAG2013072001.gif"></center>
+</p>
+
+
+<!--more-->
+
+
+<p>每个字段的涵义如下：
+ChunkID: 占4个字节，内容为“RIFF”的ASCII码(0x52494646)，以大端（big endian）存储。</br>
+ChunkSize: 4字节，存储整个文件的字节数（不包含ChunkID和ChunkSize这8个字节），以小端（little endian）方式存储。</br>
+Format: 4字节，内容为“WAVE”的ASCII码(0x57415645)，以大端存储。</br>
+</p>
+
+
+
+
+<p>
+其中bigendian 主要有一个特征，在内存中对操作数的存储方式和从高字节到低字节。例如：0x1234，这样一个数，存储为:</br>
+0x4000:   0x12</br>
+0x4001:   0x34</br>
+而小尾端littleendian是：</br>
+0x4000:   0x34</br>
+0x4001:   0x12</br>
+用程序在区别的话，可以考虑：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="w">       </span><span class="k">union</span><span class="w"> </span><span class="nc">w</span>
+</span><span class='line'><span class="w">      </span><span class="p">{</span>
+</span><span class='line'><span class="w">       </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+</span><span class='line'><span class="w">       </span><span class="kt">char</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+</span><span class='line'><span class="w">      </span><span class="p">}</span><span class="n">c</span><span class="p">;</span>
+</span><span class='line'><span class="w">      </span><span class="n">c</span><span class="p">.</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="w">      </span><span class="k">if</span><span class="p">(</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">b</span><span class="o">==</span><span class="mi">1</span><span class="w"> </span><span class="p">)</span><span class="w">  </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;little endian</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="w">      </span><span class="k">else</span><span class="w"> </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;big endian</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="w">      </span><span class="n">system</span><span class="p">(</span><span class="s">&quot;PAUSE&quot;</span><span class="p">);</span><span class="w"> </span>
+</span><span class='line'><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+</p>
+
+
+
+
+<p>"WAVE"格式由两个子数据块构成：“fmt”块和“data”块，其中“fmt”块的详细解释如下：
+Subchunk1ID: 占4个字节，内容为“fmt ”的ASCII码(0x666d7420)，以大端存储。</br>
+Subchunk1Size: 占4个字节，存储该子块的字节数（不含前面的Subchunk1ID和Subchunk1Size这8个字节），以小端方式存储。</br>
+AudioFormat：占2个字节，以小端方式存储，存储音频文件的编码格式，例如若为PCM则其存储值为1，若为其他非PCM格式的则有一定的压缩。</br>
+NumChannels: 占2个字节，以小端方式存储，通道数，单通道(Mono)值为1，双通道(Stereo)值为2，等等。</br>
+SampleRate: 占4个字节，以小端方式存储，采样率，如8k，44.1k等。</br>
+ByteRate: 占4个字节，以小端方式存储，每秒存储的bit数，其值=SampleRate * NumChannels * BitsPerSample/8</br>
+BlockAlign: 占2个字节，以小端方式存储，块对齐大小，其值=NumChannels * BitsPerSample/8</br>
+BitsPerSample: 占2个字节，以小端方式存储，每个采样点的bit数，一般为8,16,32等。</br>
+接下来是两个可选的扩展参数：</br>
+ExtraParamSize: 占2个字节，表示扩展段的大小。</br>
+ExtraParams: 扩展段其他自定义的一些参数的具体内容，大小由前一个字段给定。
+</p>
+
+
+
+
+<p>其中，对于每个采样点的bit数，不同的bit数读取数据的方式不同：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="c1">// data 为读取到的采样点的值，speech为原始数据流，</span>
+</span><span class='line'><span class="c1">//对应于下面的&quot;WAVE&quot;格式文件的第二个子数据块“data”块的“Data”部分。</span>
+</span><span class='line'><span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">NumSample</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+</span><span class='line'><span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">BitsPerSample</span><span class="o">==</span><span class="mi">8</span><span class="p">)</span>
+</span><span class='line'><span class="w">        </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="n">speech</span><span class="o">+</span><span class="n">i</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">BitsPerSample</span><span class="o">==</span><span class="mi">16</span><span class="p">)</span>
+</span><span class='line'><span class="w">        </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="kt">short</span><span class="o">*</span><span class="p">)</span><span class="n">speech</span><span class="o">+</span><span class="n">i</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">BitsPerSample</span><span class="o">==</span><span class="mi">32</span><span class="p">)</span>
+</span><span class='line'><span class="w">        </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="kt">int</span><span class="o">*</span><span class="p">)</span><span class="n">speech</span><span class="o">+</span><span class="n">i</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+</p>
+
+
+
+
+<p>"WAVE"格式文件的第二个子数据块是“data”，其个字段的详细解释如下：</br>
+Subchunk2ID: 占4个字节，内容为“data”的ASCII码(0x64617461)，以大端存储。</br>
+Subchunk2Size: 占4个字节，内容为接下来的正式的数据部分的字节数，其值=NumSamples * NumChannels * BitsPerSample/8</br>
+Data: 真正的语音数据部分。</br>
+</p>
+
+
+
+
+<h2>一个Wave文件头的实例</h2>
+
+
+<p>设一个wave文件的前72个字节的十六进制内容如下(可以使用Ultra Edit等工具查看wave文件头)：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="mi">52</span><span class="w"> </span><span class="mi">49</span><span class="w"> </span><span class="mi">46</span><span class="w"> </span><span class="mi">46</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="mi">08</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">57</span><span class="w"> </span><span class="mi">41</span><span class="w"> </span><span class="mi">56</span><span class="w"> </span><span class="mi">45</span><span class="w"> </span><span class="mi">66</span><span class="w"> </span><span class="mi">6</span><span class="n">d</span><span class="w"> </span><span class="mi">74</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">01</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">02</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span>
+</span><span class='line'><span class="mi">22</span><span class="w"> </span><span class="mi">56</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">88</span><span class="w"> </span><span class="mi">58</span><span class="w"> </span><span class="mo">01</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">04</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">64</span><span class="w"> </span><span class="mi">61</span><span class="w"> </span><span class="mi">74</span><span class="w"> </span><span class="mi">61</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">08</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span>
+</span><span class='line'><span class="mi">24</span><span class="w"> </span><span class="mi">17</span><span class="w"> </span><span class="mi">1</span><span class="n">e</span><span class="w"> </span><span class="n">f3</span><span class="w"> </span><span class="mi">3</span><span class="n">c</span><span class="w"> </span><span class="mi">13</span><span class="w"> </span><span class="mi">3</span><span class="n">c</span><span class="w"> </span><span class="mi">14</span><span class="w"> </span><span class="mi">16</span><span class="w"> </span><span class="n">f9</span><span class="w"> </span><span class="mi">18</span><span class="w"> </span><span class="n">f9</span><span class="w"> </span><span class="mi">34</span><span class="w"> </span><span class="n">e7</span><span class="w"> </span><span class="mi">23</span><span class="w"> </span><span class="n">a6</span><span class="w"> </span><span class="mi">3</span><span class="n">c</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="mi">11</span><span class="w"> </span><span class="n">ce</span><span class="w"> </span><span class="mi">1</span><span class="n">a</span><span class="w"> </span><span class="mi">0</span><span class="n">d</span><span class="w"> </span>
+</span></code></pre></td></tr></table></div></figure>
+则其个字段的解析如下图：
+<center><img src="/images/2013/IMAG2013072002.gif"></center>
+</p>
+
+
+
+
+<h2>C语言实现wave文件的读取</h2>
+
+
+<p>这里给出一个用基本的C语言文件操作库函数实现的Wave文件读取的实例代码，可以跨Windows和Linux平台。</p>
+
+
+<pre><code class="c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+// define Wave format structure
+typedef struct tWAVEFORMATEX
+{
+    short wFormatTag;         /* format type */
+    short nChannels;          /* number of channels (i.e. mono, stereo...) */
+    unsigned int nSamplesPerSec;     /* sample rate */
+    unsigned int nAvgBytesPerSec;    /* for buffer estimation */
+    short nBlockAlign;        /* block size of data */
+    short wBitsPerSample;     /* number of bits per sample of mono data */
+    short cbSize;             /* the count in bytes of the size of */
+                                    /* extra information (after cbSize) */
+} WAVEFORMATEX, *PWAVEFORMATEX;
+
+char* wavread(char *fname, WAVEFORMATEX *wf);
+
+int main(){
+    char fname[] = "test.wav";
+    char *speech;
+    WAVEFORMATEX wf;
+
+    speech = wavread(fname, &amp;wf);
+    // afterward processing...
+
+    return 0;
+}
+
+// read wave file
+char* wavread(char *fname, WAVEFORMATEX *wf){
+    FILE* fp;
+    char str[32];
+    char *speech;
+    unsigned int subchunk1size; // head size
+    unsigned int subchunk2size; // speech data size
+
+    // check format type
+    fp = fopen(fname,"r");
+    if(!fp){
+        fprintf(stderr,"Can not open the wave file: %s.\n",fname);
+        return NULL;
+    }
+    fseek(fp, 8, SEEK_SET);
+    fread(str, sizeof(char), 7, fp);
+    str[7] = '\0';
+    if(strcmp(str,"WAVEfmt")){
+        fprintf(stderr,"The file is not in WAVE format!\n");
+        return NULL;
+    }
+
+    // read format header
+    fseek(fp, 16, SEEK_SET);
+    fread((unsigned int*)(&amp;subchunk1size),4,1,fp);
+    fseek(fp, 20, SEEK_SET);
+    fread(wf, subchunk1size, 1, fp);
+
+    // read wave data
+    fseek(fp, 20+subchunk1size, SEEK_SET);
+    fread(str, 1, 4, fp);
+    str[4] = '\0';
+    if(strcmp(str,"data")){
+        fprintf(stderr,"Locating data start point failed!\n");
+        return NULL;
+    }
+    fseek(fp, 20+subchunk1size+4, SEEK_SET);
+    fread((unsigned int*)(&amp;subchunk2size), 4, 1, fp);
+    speech = (char*)malloc(sizeof(char)*subchunk2size);
+    if(!speech){
+        fprintf(stderr, "Memory alloc failed!\n");
+        return NULL;
+    }
+    fseek(fp, 20+subchunk1size+8, SEEK_SET);
+    fread(speech, 1, subchunk2size, fp);
+
+    fclose(fp);
+    return speech;
+}
+</code></pre>
+
+
+
+<h2>参考</h2>
+
+
+<p>
+[1]WAVE PCM soundfile format: https://ccrma.stanford.edu/courses/422/projects/WaveFormat/ </br>
+[2]Resource Interchange File Format: http://en.wikipedia.org/wiki/Resource_Interchange_File_Format </br>
+[3]基于Visual C++6.0的声音文件操作: http://www.yesky.com/20030414/1663116_1.shtml
+</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[用Windows API实现一个简单的录音程序]]></title>
+    <link href="http://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api/"/>
+    <updated>2013-06-04T23:59:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api</id>
+    <content type="html"><![CDATA[<p>本文介绍如何使用Windows API来录制语音信号兵保存到wave文件中，主要用到三个结构体和几个wave开头的API函数（在Winmm.lib文件中）。其中三个结构体是WAVEFORMATEX、WAVEHDR、MMTIME，其详细定义都在MMSystem.h中定义，
+可以转到定义看其详细内容及每一项的英文注释。用到的API函数的详细用法可以参见MSDN： http://msdn.microsoft.com/en-us/library/windows/desktop/dd743847(v=vs.85).aspx
+详细的使用过程请看下文的源代码，这是一个Win32 Application，需要手动添加Winmm.lib的依赖。</p>
+
+
+
+
+<!--more-->
+
+
+
+
+<p>实例程序</p>
+
+
+<pre><code class="c">// ******************* FileName: WinMain.cpp *****************************
+// 该源程序需要加入到 VC6 的 Win32 Application 的 empty Project 中
+// 对于工程的 Link 选项，至少要包含以下库: msvcrt.lib Winmm.lib
+
+#include &lt;stdio.h&gt;
+#include &lt;atlstr.h&gt;
+#include &lt;windows.h&gt;
+#include &lt;Mmsystem.h&gt;
+
+#pragma comment(lib,"Winmm.lib")
+
+char lpTemp[256];
+
+DWORD FCC(LPSTR lpStr)
+{
+    DWORD Number = lpStr[0] + lpStr[1] *0x100 + lpStr[2] *0x10000 + lpStr[3] *0x1000000 ;
+    return Number;
+}
+
+int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow )
+{
+    DWORD datasize = 48000;
+
+    // 设置录音采样参数
+    WAVEFORMATEX waveformat;
+    waveformat.wFormatTag=WAVE_FORMAT_PCM; // 指定录音格式
+    waveformat.nChannels=1;
+    waveformat.nSamplesPerSec=8000;
+    waveformat.nBlockAlign=1;
+    waveformat.wBitsPerSample=8;
+    waveformat.cbSize=0;
+    waveformat.nAvgBytesPerSec=waveformat.nChannels*waveformat.nSamplesPerSec*waveformat.wBitsPerSample/8;
+
+    sprintf(lpTemp,"WAVEFORMATEX size = %lu", sizeof(WAVEFORMATEX));
+    MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
+
+    HWAVEIN m_hWaveIn;
+    if ( !waveInGetNumDevs() )
+    {
+        MessageBox(NULL,CString("没有可以使用的 WaveIn 通道"),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    // 打开录音设备
+    int res = waveInOpen(&amp;m_hWaveIn,WAVE_MAPPER, &amp;waveformat, (DWORD)NULL,0L,CALLBACK_WINDOW); 
+    if ( res != MMSYSERR_NOERROR )
+    {
+       sprintf(lpTemp, "打开 waveIn 通道失败，Error_Code = 0x%x", res );
+       MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
+       return 0;
+    }
+
+    WAVEHDR m_pWaveHdr;
+    m_pWaveHdr.lpData = (char *)GlobalLock( GlobalAlloc(GMEM_MOVEABLE|GMEM_SHARE, datasize) );
+    memset(m_pWaveHdr.lpData, 0, datasize );
+    m_pWaveHdr.dwBufferLength = datasize;
+    m_pWaveHdr.dwBytesRecorded = 0;
+    m_pWaveHdr.dwUser = 0;
+    m_pWaveHdr.dwFlags = 0;
+    m_pWaveHdr.dwLoops = 0;
+    sprintf( lpTemp, "WAVEHDR size = %lu", sizeof(WAVEHDR) );
+    MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
+
+    // 准备内存块录音
+    int resPrepare = waveInPrepareHeader( m_hWaveIn, &amp;m_pWaveHdr, sizeof(WAVEHDR) ); 
+    if ( resPrepare != MMSYSERR_NOERROR) 
+    {
+        sprintf(lpTemp, "不能开辟录音头文件，Error_Code = 0x%03X", resPrepare );
+        MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    resPrepare = waveInAddBuffer( m_hWaveIn, &amp;m_pWaveHdr, sizeof(WAVEHDR) );
+    if ( resPrepare != MMSYSERR_NOERROR) 
+    {
+        sprintf(lpTemp, "不能开辟录音用缓冲，Error_Code = 0x%03X", resPrepare );
+        MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    if (! waveInStart(m_hWaveIn) ) 
+    {
+        MessageBox(NULL,CString("开始录音"),CString("提示"),MB_OK);
+    }
+    else 
+    {
+        MessageBox(NULL,CString("开始录音失败"),CString("提示"),MB_OK);
+        return 0;
+    }
+    Sleep(30000);
+
+    MMTIME mmt;
+    mmt.wType = TIME_BYTES;
+    sprintf( lpTemp, "sizeof(MMTIME) = %d, sizeof(UINT) = %d", sizeof(MMTIME), sizeof(UINT) );
+    MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
+
+    if (! waveInGetPosition(m_hWaveIn, &amp;mmt, sizeof(MMTIME)) )
+    {
+        MessageBox(NULL,CString("取得现在音频位置"),CString("提示"),MB_OK);
+    }
+    else 
+    {
+        MessageBox(NULL,CString("不能取得音频长度"),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    if (mmt.wType != TIME_BYTES) 
+    {
+        MessageBox(NULL,CString("指定的 TIME_BYTES 格式音频长度不支持"),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    if (! waveInStop(m_hWaveIn) ) 
+    {
+        MessageBox(NULL,CString("停止录音"),CString("提示"),MB_OK);
+    }
+    else  
+    {
+        MessageBox(NULL,CString("停止录音失败"),CString("提示"),MB_OK);
+    }
+
+    if ( waveInReset(m_hWaveIn) ) 
+    {
+        MessageBox(NULL,CString("重置内存区失败"),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    m_pWaveHdr.dwBytesRecorded = mmt.u.cb;
+    DWORD NumToWrite=0;
+    DWORD dwNumber = 0;
+    HANDLE FileHandle = CreateFile( CString("myTest.wav"), GENERIC_WRITE, 
+        FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+    // memset(m_pWaveHdr.lpData, 0, datasize);
+    dwNumber = FCC("RIFF");
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    dwNumber = m_pWaveHdr.dwBytesRecorded + 18 + 20;
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    dwNumber = FCC("WAVE");
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    dwNumber = FCC("fmt ");
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    dwNumber = 18L;
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    WriteFile(FileHandle, &amp;waveformat, sizeof(WAVEFORMATEX), &amp;NumToWrite, NULL);
+    dwNumber = FCC("data");
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    dwNumber = m_pWaveHdr.dwBytesRecorded;
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    WriteFile(FileHandle, m_pWaveHdr.lpData, m_pWaveHdr.dwBytesRecorded, &amp;NumToWrite, NULL);
+    SetEndOfFile(FileHandle);
+    CloseHandle( FileHandle );  
+    FileHandle = INVALID_HANDLE_VALUE; // 收尾关闭句柄
+    MessageBox(NULL,CString("应该已生成 myTest.wav 文件"),CString("提示"),MB_OK);
+
+    if ( waveInUnprepareHeader(m_hWaveIn, &amp;m_pWaveHdr, sizeof(WAVEHDR)) ) 
+    {
+        MessageBox(NULL,CString("Un_Prepare Header 失败"),CString("提示"),MB_OK);
+    }
+    else 
+    {
+        MessageBox(NULL,CString("Un_Prepare Header 成功"),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    if ( GlobalFree(GlobalHandle( m_pWaveHdr.lpData )) ) 
+    {
+        MessageBox(NULL,CString("Global Free 失败"),CString("提示"),MB_OK);
+    }
+    else 
+    {
+        MessageBox(NULL,CString("Global Free 成功"),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    if (res == MMSYSERR_NOERROR ) // 关闭录音设备
+    {
+        if (waveInClose(m_hWaveIn)==MMSYSERR_NOERROR)
+        {
+            MessageBox(NULL,CString("正常关闭录音设备"),CString("提示"),MB_OK);
+        }
+        else
+        {
+            MessageBox(NULL,CString("非正常关闭录音设备"),CString("提示"),MB_OK);
+            return 0;
+        }
+    }
+
+    return 0;
+}
+// ******************* End of File ************************
+</code></pre>
+
+
+
+<p>这里提供的代码有点杂乱，现已整理成一个小的接口，并提供了一个简单的示例，放在GitHub上：https://github.com/ibillxia/Demo/tree/master/DemoSpeechRecord</p>
+
+
+
+
+<p>参考：</br>
+[1]MSDN: http://msdn.microsoft.com/en-us/library/windows/desktop/dd743586(v=vs.85).aspx</br>
+[2]基于API的录音机程序: http://www.vckbase.com/index.php/wv/664
+</p>
+
+]]></content>
+  </entry>
+  
+</feed>

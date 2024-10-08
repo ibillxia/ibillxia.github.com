@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: Unix | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/unix/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Linux与BSD之间的10个不同之处]]></title>
+    <link href="http://ibillxia.github.io/blog/2010/10/19/10-difference-between-linux-and-bsd/"/>
+    <updated>2010-10-19T22:30:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2010/10/19/10-difference-between-linux-and-bsd</id>
+    <content type="html"><![CDATA[<p>也许你经常会听到人们把Linux及BSD系统混为一谈，甚至于媒体都这么说。当然，事实上这两者确实有很多相似之处，比如它们都是基于Unix演变而来，
+而且基本上这两类系统都是由非盈利组织及团队开发，另外我更想说的是，这两个系统都有一个共同的目标–那就是创建最有用、最可靠的操作系统。 那么
+这两个系统的区别到底在哪里?国外一位名为 Jack Wallen 的科技 Blogger 发表了一篇名为 10 differences between Linux and BSD 的文章，从许可证、
+代码控制、内核 vs 操作系统、UNIX-Like、基本系统、更多来自于源代码、升级、前沿技术、硬件支持及用户群等10方面描述了 Linux 与 BSD 之间的 10 
+个不同之处。</p>
+
+
+
+
+<h3>1、许可证</h3>
+
+
+<p>正如我们所知道的，Linux 操作系统是基于 GPL 许可证授权下的。该许可证可防止开源软件被转换为封闭源代码软件及确保源代码的可用性。 GPL 许可证的
+目的就是防止二进制包成为唯一的软件发行源。</p>
+
+
+
+
+<p>而 BSD 许可证的限制则要少得多，它甚至允许二进制包成为唯一的发行源。这就是核心差异，可以这样理解：GPL 许可证让您有权拥有任何你想要使用该软件的
+方法，但你必须确保提供源代码给下一个使用它的人(包括你对它的改变部分)。而 BSD 许可证并不是要求你必须那么做。( 译者注：这里分别维基百科上对 BSD 及 GPL 
+许可证的解释)</p>
+
+
+<!--more-->
+
+
+
+
+<h3>2、代码控制</h3>
+
+
+<p>BSD 的代码不是被控制在任何一个人手里，而 Linux 的内核基本上被 Linus Torvalds ( Linux 创始人 ) 所控制，BSD 并没有单一的人来说什么可以或什么不可以进入代码。
+相反，BSD 通过一个核心小组 ” Core Team” 来管理该项目，这个核心小组比非核心小组有更多的发言权来指导 BSD 社区的发展方向，(译者注：而据我所知，FreeBSDD 核心
+小组的成员会每两年选举一次。)</p>
+
+
+
+
+<h3>3、内核 vs 操作系统</h3>
+
+
+<p>BSD 项目维护的是整个操作系统，而 Linux 则只是主要集中在单一的内核上面。这点确实是需要注意的，虽然这两个系统上都运行着许多相同的软件。</p>
+
+
+
+
+<h3>4、UNIX-Like</h3>
+
+
+<p>这里有一个关于 BSD vs Linux 的古老说法：” BSD is what you get when a bunch of UNIX hackers sit down to try to port a UNIX system to the PC. 
+Linux is what you get when a bunch of PC hackers sit down and try to write a UNIX system for the PC “，这里表达了很多。你会发现 BSD 系统更为类似
+于 UNIX ，而事实上它就是传统 UNIX 的直接衍生品。而 Linux ，则是一个松散的基于 UNIX 衍生品 ( Minix ) 而新创建的一个 OS 。</p>
+
+
+
+
+<h3>5、基本系统</h3>
+
+
+<p>这是一个关于 BSD 与 Linux 之间差异的至关重要的理念。 Linux 的”基本系统” 是并不真正存在的，许多人会说，Linux 的基本系统就是内核，但问题是如果没有
+任何可用的应用程序的话，那么这个内核是完全没有价值的。而另一方面，BSD 则有一个包括众多工具的基本系统， 甚至 libc 也是基本系统的一部分。因为这些组件
+都被作为一个基本系统，所以它们都是被一起开发和打包的，许多事实表明这样更能创建出一个更具凝聚力的整体。</p>
+
+
+
+
+<h3>6、更多来自于源代码</h3>
+
+
+<p>由于 BSD 的开发方式(使用 Ports 系统 ) 的关系，所以用户们更多的是从源代码来安装程序，而不是预先编译好的二进制包。这是一个优势还是劣势?这取决于不同的
+用户。如果你更多的想从友好或易用性方面考虑的话，看到这一点后你也许会有放弃的念头，对于新用户更是如此。但一些新的用户也有想要从源代码编译安装，这可能比较
+累人。但是，从源码安装也有一定的优势，比如(库版本控制，通过特殊的包来构建系统等等)。</p>
+
+
+
+
+<h3>7、升级</h3>
+
+
+<p>由于 BSD 的开发方式的原因(见第5项)，你可以利用一条指令就可以升级你的基本系统到最新版本 ( Freebsd 下是用 freebsd-update fetch update 命令)。或者你也
+可以下载整个源代码树，然后通过编译来升级。而在 Linux 中，你也可以通过内置的包管理系统来升级系统。前者 (BSD) 仅更新基本系统，而后者 ( Linux ) 则会升级
+整个系统。不过请记住，BSD 中升级到最新的基本系统并不意味着所有的附加软件包也将会被更新，而 Linux 升级的时候，所有的软件包都会被升级。这是否意味着 Linux 
+处理得更好吗?在我看未必。我经常会看到 Linux 在升级时出现严重错误，从而需要重新安装整个系统，但这个现象基本不太可能发生在 BSD 的升级过程中。</p>
+
+
+
+
+<h3>8、前沿技术</h3>
+
+
+<p>基本上你不太可能会看到 BSD 系统运行着任何非常前沿版本的软件。而在 Linux 这一方面，大量的发行版会分发前沿版本的软件包。如果你是一个 ” If it isn’t broken, 
+don’t fix it” 这样观点的持有者的话，你将会是 BSD 的超级粉丝。但是，如果你很新潮，想要体验一切最新的东西，那么你最好尽快迁移到 Linux 。</p>
+
+
+
+
+<h3>9、硬件支持</h3>
+
+
+<p>你会发现，通常情况下 Linux 的硬件支持要比 BSD 更早一些。但这并不是说 BSD 没有像 Linux 那样支持足够多的硬件，它只是意味着在某些情况下 Linux 会在 BSD 之前
+先支持某些硬件。因此，如果你想要最新的、最好的显卡的话，基本上不用考虑 BSD 了。如果你有一个包含了最新无线芯片的新型笔记本的话，建议你选择 Linux，运气好的话
+也许它会支持。</p>
+
+
+
+
+<h3>10、用户群</h3>
+
+
+<p>在这里我冒险概括一下计算机用户们，但我想先声明一下每一个事物都有例外。下面我要向你展示我对用户分布方面的概括。</p>
+
+
+
+
+<p>Mac –> Windows –> Linux –> BSD –> UNIX</p>
+
+
+
+
+<p>从左边到右边，分别是”使用该 OS 的人里精通电脑的用户群最少”到”使用该 OS 的人里精通电脑的用户群最多”的过渡。我们可以看到，Linux的被放置在了中间，而 BSD 则
+更接近于右边。许多人会对此有争论，也有些人可能会感觉被冒犯了。但是，个人认为这是一个对”哪些用户使用哪些系统”相当准确的概括。</p>
+
+
+
+
+<h3>其他的不同点?</h3>
+
+
+
+
+<p>这个列表并不想表明哪个系统比哪个更好。事实上，BSD 和 Linux 各有着自己的亮点。你认为怎么样?有兴趣的话也请表达出你的观点。</p>
+
+
+
+
+<p>注：本帖转自http://www.builder.com.cn/2010/0806/1839783.shtml</p>
+
+
+
+]]></content>
+  </entry>
+  
+</feed>

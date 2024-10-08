@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 排列组合 | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/pai-lie-zu-he/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[全排列及某排列的后继的求解及其STL实现的分析]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/"/>
+    <updated>2014-04-24T23:24:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation</id>
+    <content type="html"><![CDATA[<p>在Leetcode上有好几道全排列相关的题，一直以来只是会写基于递归的全排列生成算法，遇到这几道题后，搜了下一些非递归的实现方法，发现其实全排列的生成还是很有规律的有木有！这里就总结一下递归和非递归的全排列生成方法，并分析一下 STL 的实现。</p>
+
+<p>递归和非递归实现全排列生成的方法也分别有多种，递归法有基于交换的，有基于链接的，还有回溯，非递归法有排序、回溯、求模等，关于所有这些方法的具体实现参见 <a href="http://mengliao.blog.51cto.com/876134/824079">全排列的六种算法</a>. 本文只实现一种递归和一种非递归算法，并在最后对 STL 的非递归算法进行分析。</p>
+
+<p>本文的全部代码下载：<a href="http://ibillxia.github.io/upload/code/20140424.cpp">code</a>.</p>
+
+<h2>递归法求全排列</h2>
+
+<p>递归法的基本思路是这样的：</p>
+
+<blockquote><p>首先选一个元素排在第一个（有 n 中选法）；
+然后递归的对剩下的所有元素进行全排列；
+直到一个元素的全排列是其本身。</p></blockquote>
+
+<p>假设给定的元素序列为 <e1, e2, ..., en>，其全排列表示为 P(e1, e2, ..., en)，则对递归的第一步展开有：</p>
+
+<blockquote><p>P(e1, e2, ..., en) = {
+<e1, P(e2, e3, ..., en)>,
+<e2, P(e1, e3, ..., en)>,
+... ...
+<en, P(e1, e2, ..., e(n-1))> }</p></blockquote>
+
+<!-- more -->
+
+
+<p> 一个简单的实现如下：</p>
+
+<pre><code class="cpp">void recursive_permute(int A[],int i,int n){
+    if(i==n-1){
+        for(int j=0;j&lt;n;j++)
+            cout&lt;&lt;A[j]&lt;&lt;" ";
+        cout&lt;&lt;endl;
+        return;
+    }
+    for(int j=i;j&lt;n;j++){
+        swap(A[i],A[j]);  // choose A[j] as the ith element
+        recursive_permute(A,i+1,n);
+        swap(A[i],A[j]);  // reset to enter next for
+    }
+}
+</code></pre>
+
+<p>这个实现非常精简易懂，但却存在一个问题，那就是当数组 A 中存在重复元素时，得到的排列是有重复的，这是因为在第8行的循环中，可能会选取重复的 A[j] 值。 为了去掉重复排列，我们可以在选取第 i 个数 A[j] 之前（即交换 A[i] 和 A[j] 之前），判断值为 A[j] 的元素是否选取过，即要判断在 A[i] 到 A[j-1] 中是否存在与 A[j] 相等的元素，如果出现过，说明 A[i] 选 A[j] 这个排列已经生成过了，可以直接跳过当前的 A[j] 看看是否可以选取 A[j+1] 作为 A[i] 了。比如上面的 e1 = e2，那么无重复的全排列应该是：</p>
+
+<blockquote><p>P(e1, e2, ..., en) = {
+<e1, P(e2, e3, ..., en)>,
+<e3, P(e1, e2, e4, ..., en)>,
+... ...
+<en, P(e1, e2, ..., e(n-1))> }</p></blockquote>
+
+<p>添加这个限制的递归实现代码如下：</p>
+
+<pre><code class="cpp">void recursive_permute2(int A[],int i,int n){
+    if(i==n-1){
+        for(int j=0;j&lt;n;j++)
+            cout&lt;&lt;A[j]&lt;&lt;" ";
+        cout&lt;&lt;endl;
+        return;
+    }
+    for(int j=i;j&lt;n;j++){
+        int k;
+        for(k=i;k&lt;j;k++)if(A[k]==A[j])break; // A[j] already used
+        if(k&lt;j)continue;
+        swap(A[i],A[j]);  // choose A[j] as the ith element
+        recursive_permute2(A,i+1,n);
+        swap(A[i],A[j]);  // reset to enter next for
+    }
+}
+</code></pre>
+
+<p>至此，递归法实现全排列的求解就总结到这儿了，下面来看看非递归怎么实现。</p>
+
+<h2>非递归法求全排列</h2>
+
+<p>非递归法求全排列的一种最常用算法是基于字典序的全排列生成算法，其基本思路为，先解决生成一个序列在字典序下的下一个排列这个问题，然后利用这个来一次求解每一个排列。其中求解给定序列在字典序下的下一个排列序列的基本思想如下：</p>
+
+<blockquote><ol>
+<li>对于给定序列 <e1, e2, ..., en> 从右往左找到第一个非递增点，设下标为 i；</li>
+<li>从右往左查找第一个比 e[i] 大的数，设其下标为 j;</li>
+<li>交换 e[i] 和 e[j] 的值；</li>
+<li>将序列 e[i+1..n] 逆置。</li>
+</ol>
+</blockquote>
+
+<p>举个例子，如下图（修改自 <a href="http://fisherlei.blogspot.com/2012/12/leetcode-next-permutation.html">Next Permutation 解题报告</a> ）所示：</p>
+
+<center><img src="/images/2014/IMAG2014042401.png"></center>
+
+
+<p>上面的说明已经很接近伪代码了，具体实现如下：</p>
+
+<pre><code class="cpp">bool next_permute(int A[],int n){
+    int i,j;
+    // step .1
+    if(n&lt;2)return false;
+    for(i=n-2;i&gt;=0;i--){
+        if(A[i]&lt;A[i+1])break;
+    }
+    if(i&lt;0)return false; // A[0] is maximum, no next permute for it
+    // step .2
+    for(j=n-1;j&gt;i;j--){
+        if(A[j]&gt;A[i])break;
+    }
+    // step .3
+    swap(A[i],A[j]);
+    // step .4
+    while(++i &lt; --n){
+        swap(A[i],A[n]);
+    }
+    return true;
+}
+</code></pre>
+
+<p>这里将其返回值定义为 bool 类型，可以方便后面求解全排列时调用：</p>
+
+<pre><code>void non_recursive_permute(int A[],int n){
+    sort(A,A+n);
+    int i;
+    do{
+        for(i=0;i&lt;n;i++)cout&lt;&lt;A[i]&lt;&lt;" ";
+        cout&lt;&lt;endl;
+    }while(next_permute(A,n));
+}
+</code></pre>
+
+<p>上面这个函数即实现了按字典序生成全排列的功能，而且对于输入含有重复值的情况，不会生成重复的排列。对于非递归实现，很容易分析其时间复杂度，next_permute 的时间复杂度为 O(n)，而 non_recursive_permute 的时间复杂度为 O(n*n!)。</p>
+
+<h2>STL 中 next permute 的实现</h2>
+
+<p>下面来分析一下 STL 中是如何实现 next permute 的，在 stl_algo.h 中我们可以找到 next_permutation 的实现，基本思路也是按照上面的四步走来实现的，具体见如下代码及注释：</p>
+
+<pre><code class="cpp">/**
+ *  @brief  Permute range into the next @a dictionary ordering.
+ *  @ingroup sorting_algorithms
+ *  @param  first  Start of range.
+ *  @param  last   End of range.
+ *  @return  False if wrapped to first permutation, true otherwise.
+ *
+ *  Treats all permutations of the range as a set of @a dictionary sorted
+ *  sequences.  Permutes the current sequence into the next one of this set.
+ *  Returns true if there are more sequences to generate.  If the sequence
+ *  is the largest of the set, the smallest is generated and false returned.
+*/
+template&lt;typename _BidirectionalIterator&gt;
+bool
+next_permutation(_BidirectionalIterator __first,
+                 _BidirectionalIterator __last)
+{
+    // concept requirements
+    __glibcxx_function_requires(_BidirectionalIteratorConcept&lt;
+                                _BidirectionalIterator&gt;)
+    __glibcxx_function_requires(_LessThanComparableConcept&lt;
+                                typename iterator_traits&lt;_BidirectionalIterator&gt;::value_type&gt;)
+    __glibcxx_requires_valid_range(__first, __last);
+
+    if (__first == __last)  // 容器中没有元素，没有 next permute
+        return false;
+    _BidirectionalIterator __i = __first;
+    ++__i;
+    if (__i == __last)  // 容器中只有一个元素，同没有
+        return false;
+    __i = __last;
+    --__i;  // 将 __i 指向最后一个元素
+
+    for(;;) {
+        _BidirectionalIterator __ii = __i;  
+        --__i;
+        if (*__i &lt; *__ii) {  // step .1, 这里的 __i 就相当于上面step 1中的i
+            _BidirectionalIterator __j = __last;
+            while (!(*__i &lt; *--__j)) {  // step .2, 这里的 __j 就相当上面 step 2中的j
+            }
+            std::iter_swap(__i, __j);  // step .3 交换
+            std::reverse(__ii, __last);  // step .4 逆置
+            return true;
+        }
+        if (__i == __first) {  // 直到 __i = __first 还是没有 *__i &lt; *__ii ，说明序列是递减排列的
+            std::reverse(__first, __last); // 本应该没有下一个排列，但这里将字典序中第一个排列作为最后一个排列的 next permute
+            return false; // 这里返回 false 而不是 true
+        }
+    }
+}
+</code></pre>
+
+<p>这里是用双向迭代器对容器中的元素进行操作的，一个调用的实例如下：</p>
+
+<pre><code class="cpp">vector&lt;vector&lt;int&gt; &gt; permute(vector&lt;int&gt; &amp;num) {
+    vector&lt;vector&lt;int&gt; &gt; ans;
+    sort(num.begin(),num.end());
+    do{
+        ans.push_back(num);
+    }while(next_permutation(num.begin(),num.end()));
+    return ans;
+}
+</code></pre>
+
+<p>可以看到，其实 STL 的 next permute 的实现跟我们的非递归算法是一致的。但这里有两个问题：一是，这里看似有二重循环（在 for 中套 while ），但实际上复杂度是 n+n =》 O(n) 的（可以为什么要写成这种二重循环的形式捏？不解）；二是，我们可以看到在 for 循环中，对 __ii 这个变量进行了多次声明，为什么不将其声明放在 for 外面捏？（虽然待排列的元素数 n 不会很大，但这样多次声明一个迭代器变量，虽不会占用过多内存，但在声明时调用构造函数和析构函数也是有一定的时间开销的吧，虽然相对于求全排列的复杂度 O(n*n!) 几乎可以忽略不计）</p>
+]]></content>
+  </entry>
+  
+</feed>

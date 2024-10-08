@@ -1,0 +1,831 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: C++ | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/c-plus-plus/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[深入理解STL源码系列文章归档]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/11/26/insight-into-stl-archive/"/>
+    <updated>2014-11-26T18:19:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/11/26/insight-into-stl-archive</id>
+    <content type="html"><![CDATA[<p>前后花了大概快六个月的时间（从6月8日到11月23），终于把侯捷的《STL 源码剖析》看完了，同时也把 SGI 实现 STL 的最新版本看完了。在这段时间里，几乎是每个周末花大约一天的时间来看书和代码，并将相应内容在博客中加以归纳和总结。由于基本上都是在周末抽时间看的，所以周期拉得比较长，但收获还是挺多的，其中印象比较深刻的是 STL 中的迭代器与型别萃取、空间配置与内存池的实现、双端队列 (deque)  的实现、红黑树的实现、排序等算法的实现、类与函数的偏特化、函数对象与适配器等等，对 STL 的整体架构也有了比较深入的认识。这段时间也经历了很多事情，看书和代码的过程中也遇到了很多问题，有些经过反复琢磨自己解决了，还有些仍未完全弄清楚，需要再回过头去看一遍。另外，在看书和代码的过程中，基本没有去写代码、去实践，只停留在理论上，再看一遍的时候可以写些测试的代码或自己实现一个相应的模块或功能。</p>
+
+<p>这里再把之前写的深入理解 STL 源码的系列文章进行一个归档：</p>
+
+<h4>STL 简介</h4>
+
+<ol>
+<li><a href="http://ibillxia.github.io/blog/2014/06/08/stl-source-insight-0-stl-overview/">深入理解STL源码(0) STL简介</a></li>
+</ol>
+
+
+<h4>STL 空间配置器</h4>
+
+<ol>
+<li><a href="http://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/">深入理解STL源码(1) 空间配置器(allocator)</a></li>
+</ol>
+
+
+<h4>STL 迭代器</h4>
+
+<ol>
+<li><a href="http://ibillxia.github.io/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/">深入理解STL源码(2) 迭代器(Iterators)和Traits</a></li>
+</ol>
+
+
+<!-- more -->
+
+
+<h4>STL 容器</h4>
+
+<ol>
+<li><a href="http://ibillxia.github.io/blog/2014/06/29/stl-source-insight-3-sequential-containers-1-vector/">深入理解STL源码(3.1) 序列式容器之vector</a></li>
+<li><a href="http://ibillxia.github.io/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/">深入理解STL源码(3.2) 序列式容器之list</a></li>
+<li><a href="http://ibillxia.github.io/blog/2014/07/13/stl-source-insight-3-sequential-containers-3-deque-and-stack-queue/">深入理解STL源码(3.3) 序列式容器之deque和stack、queue</a></li>
+<li><a href="http://ibillxia.github.io/blog/2014/07/27/stl-source-insight-3-sequential-containers-4-heap-and-priority-queue/">深入理解STL源码(3.4) 序列式容器之heap和priority queue</a></li>
+<li><a href="http://ibillxia.github.io/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/">深入理解STL源码(4.1) 关联式容器之红黑树</a></li>
+<li><a href="http://ibillxia.github.io/blog/2014/08/17/insight-into-stl-4-associative-containers-2-set-and-multiset/">深入理解STL源码(4.2) 关联式容器之set和multiset</a></li>
+<li><a href="http://ibillxia.github.io/blog/2014/08/31/insight-into-stl-4-associative-containers-3-map-and-multimap/">深入理解STL源码(4.3) 关联式容器之map和multimap</a></li>
+<li><a href="http://ibillxia.github.io/blog/2014/09/13/insight-into-stl-4-associative-containers-4-hashtable/">深入理解STL源码(4.4) 关联式容器之hashtable</a></li>
+<li><a href="http://ibillxia.github.io/blog/2014/09/27/insight-into-stl-4-associative-containers-5-hashset-and-hashmap/">深入理解STL源码(4.5) 关联式容器之hashset和hashmap</a></li>
+</ol>
+
+
+<h4>STL 算法</h4>
+
+<ol>
+<li><a href="http://ibillxia.github.io/blog/2014/10/12/insight-into-stl-5-algorithm-1-overview/">深入理解STL源码(5.1) 算法</a></li>
+<li><a href="http://ibillxia.github.io/blog/2014/10/19/insight-into-stl-5-algorithm-2-numeric-algorithms/">深入理解STL源码(5.2) 算法之数值算法</a></li>
+<li><a href="http://ibillxia.github.io/blog/2014/10/25/insight-into-stl-5-algorithm-3-base-algorithms-algobase/">深入理解STL源码(5.3) 算法之基本算法algobase</a></li>
+<li><a href="http://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms/">深入理解STL源码(5.4) 算法之复杂算法algorithm</a></li>
+</ol>
+
+
+<h4>STL 函数对象</h4>
+
+<ol>
+<li><a href="http://ibillxia.github.io/blog/2014/11/15/insight-into-stl-6-functor-or-function-objects/">深入理解STL源码(6) 仿函数|函数对象</a></li>
+</ol>
+
+
+<h4>STL 适配器</h4>
+
+<ol>
+<li><a href="http://ibillxia.github.io/blog/2014/11/23/insight-into-stl-7-adaptor/">深入理解STL源码(7) 配接器adaptor</a></li>
+</ol>
+
+
+<p>接下来，还需要花大量时间来重温一遍，对之前文章中的一些遗留问题进行梳理和解答。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[深入理解STL源码(7) 配接器adaptor]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/11/23/insight-into-stl-7-adaptor/"/>
+    <updated>2014-11-23T20:21:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/11/23/insight-into-stl-7-adaptor</id>
+    <content type="html"><![CDATA[<h2>1. 概述</h2>
+
+<p>适配器（adaptor/adapter）在STL组件的灵活运用功能上，扮演着轴承、转换器的角色，将一种容器或迭代器装换或封装成另一种容器或迭代器，例如基于deque容器的stack和queue。Adaptor这个概念，实际上是一种设计模式（design pattern），是《Design Pattern》一书中提及到的23个设计模式之一，其中对adaptor的定义如下：</p>
+
+<blockquote><p>将一个class的接口转换为另一个class的接口，使原本因接口不兼容而不能合作的classes，可以一起运作。</p></blockquote>
+
+<p>在STL中，除了上面提到的容器或迭代器的适配器之外，还可以对函数或更广义的仿函数使用适配器，改变其接口，这种称为function adaptor，相应的针对容器或迭代器的适配器则分别称为container adaptor，iterator adaptor，下面将分别介绍这三种适配器。</p>
+
+<h2>2. 容器适配器</h2>
+
+<p>容器适配器相对而言比较简单，比较典型的就是上面提到的低层由deque构成的stack和queue，其基本实现原理是，在 stack 和 queue 内部定义一个 protected 的 deque 类型的成员变量，然后只对外提供 deque 的部分功能或其异构，如 stack 的 push 和 pop 都是从 deque 的尾部进行插入和删除，而 queue 的 push 和 pop 分别是从尾部和头部进行插入和删除，这样 stack 和 queue 都可以看做是适配器，作用于容器 deque 之上的适配器。关于 stack 和 queue 的具体内容请参见之前将容器的文章 <a href="http://ibillxia.github.io/blog/2014/07/13/stl-source-insight-3-sequential-containers-3-deque-and-stack-queue/">深入理解STL源码(3.3) 序列式容器之deque和stack、queue</a>。</p>
+
+<!-- more -->
+
+
+<h2>3. 迭代器适配器</h2>
+
+<p>STL提供了许多作用于迭代器之上的适配器，如 insert iterator，reverse iterator，iostream iterator等，相关源代码主要在 <code>stl_iterator.h</code> 文件中。</p>
+
+<h4>3.1 insert iterator</h4>
+
+<p>其中 insert iterator 是将一般的迭代器的赋值（assign）操作变为插入（insert）操作，而其他的自增和自减操作则不做任何处理的返回当前迭代器本身，包括从尾部插入的 <code>back_insert_iterator</code> 和从头部插入的 <code>front_insert_iterator</code> ，尾部插入的 insert iterator 的定义主要内容如下：</p>
+
+<pre><code class="cpp">template &lt;class _Container&gt; 
+class back_insert_iterator {
+public:
+  back_insert_iterator&lt;_Container&gt;&amp;
+  operator=(const typename _Container::value_type&amp; __value) { // 赋值变为尾部插入
+    container-&gt;push_back(__value);
+    return *this;
+  }
+  back_insert_iterator&lt;_Container&gt;&amp; operator*() { return *this; } // 一下操作均返回迭代器本身
+  back_insert_iterator&lt;_Container&gt;&amp; operator++() { return *this; }
+  back_insert_iterator&lt;_Container&gt;&amp; operator++(int) { return *this; }
+};
+</code></pre>
+
+<h4>3.2 reverse iterator</h4>
+
+<p>reverse iterator 则将一般的迭代器的行进方向逆转，是原本应该前进的 <code>operator++</code> 变为后退操作，而 <code>operator--</code> 变为前进操作，这样做对于需要从尾部开始遍历的算法非常有用。该迭代器的主要定义如下：</p>
+
+<pre><code>template &lt;class _Iterator&gt;
+class reverse_iterator {
+protected:
+  _Iterator current;
+public:
+  typedef _Iterator iterator_type;
+  typedef reverse_iterator&lt;_Iterator&gt; _Self;
+public:
+  _Self&amp; operator++() { --current; return *this; } // 前置自增变为自减
+  _Self operator++(int) { _Self __tmp = *this; --current; return __tmp; }
+  _Self&amp; operator--() { ++current; return *this; } // 前置自减变为自增
+  _Self operator--(int) { _Self __tmp = *this; ++current; return __tmp; }
+  _Self operator+(difference_type __n) const { return _Self(current - __n); }
+  _Self&amp; operator+=(difference_type __n) { current -= __n; return *this; }
+  _Self operator-(difference_type __n) const { return _Self(current + __n); }
+  _Self&amp; operator-=(difference_type __n) { current += __n; return *this; }
+  reference operator[](difference_type __n) const { return *(*this + __n); }  
+}; 
+</code></pre>
+
+<p>这种逆向的迭代器只用于那些具有双向迭代器的容器（如vector，list，deque等，而slist，stack，queue，priority queue等则不行）或需要逆向遍历的算法（如copy backward等）。</p>
+
+<h4>3.3  iostream iterator</h4>
+
+<p>iostream iterator 则将迭代器绑定到某个 iostream 对象上，有 <code>istream_iterator</code> 和 <code>ostream_iterator</code> ，分别拥有输入和输出功能。</p>
+
+<p>以 istream iterator 为例，它将迭代器绑定到一个输入数据流对象（istream object）上，其实就是在 istream iterator 内部维护一个 istream member，用户对这个 istream iterator 所做的 <code>operator++</code> 操作会被该迭代器变为这个 istream member 的输入操作 <code>operator&gt;&gt;</code>，这个迭代器是一个 input iterator，没有 <code>operator--</code> 操作，核心实现如下：</p>
+
+<pre><code>template &lt;class _Tp, class _CharT = char, class _Traits = char_traits&lt;_CharT&gt;,
+          class _Dist = ptrdiff_t&gt; 
+class istream_iterator {
+public:
+  typedef _CharT                         char_type;
+  typedef _Traits                        traits_type;
+  typedef basic_istream&lt;_CharT, _Traits&gt; istream_type;
+  reference operator*() const { return _M_value; }
+  pointer operator-&gt;() const { return &amp;(operator*()); }
+  istream_iterator&amp; operator++() { _M_read(); return *this; } // ++ 变为 &gt;&gt;
+  istream_iterator operator++(int)  { istream_iterator __tmp = *this; _M_read(); return __tmp; }
+  bool _M_equal(const istream_iterator&amp; __x) const
+    { return (_M_ok == __x._M_ok) &amp;&amp; (!_M_ok || _M_stream == __x._M_stream); }
+private:
+  istream_type* _M_stream;
+  _Tp _M_value;
+  bool _M_ok;
+  void _M_read() {
+    _M_ok = (_M_stream &amp;&amp; *_M_stream) ? true : false;
+    if (_M_ok) {
+      *_M_stream &gt;&gt; _M_value; // 转变为输入操作（&gt;&gt;）
+      _M_ok = *_M_stream ? true : false;
+    }
+  }
+};
+</code></pre>
+
+<p>可以看到以上的迭代器均非一般意义上的迭代器了，而是一个经过适配了的特殊的迭代器。</p>
+
+<h2>4. 仿函数适配器</h2>
+
+<p>从上文中我们看到，container adaptor 内含一个container 的成员，iterator 内含一个 iterator 或 iostream 成员，然后对这些成员的标准接口进行了一定的改造，从而使之变成一个新的 container 或 iterator，满足新的应用环境的要求。而仿函数的适配器也是类似的，其实就是在 function adaptor 内部定义了一个成员变量，它是原始 functor 的一个对象，相关源代码主要在 <code>stl_function.h</code> 文件中。</p>
+
+<p>STL中标准的 functor adaptor 包括对返回值进行逻辑否定的 <code>not1</code>，<code>not2</code>；对参数进行绑定的 <code>bind1st</code>，<code>bind2nd</code>；用于函数合成的 <code>compose1</code>，<code>compose2</code> （非STL标准，SGI私有）；用于函数指针的 <code>ptr_fun</code>；用于成员函数指针的 <code>mem_fun</code>，<code>mem_fun_ref</code> 等。其中逻辑否定、参数绑定、函数合成的比较简单，如下：</p>
+
+<pre><code>// not1其实是对unary_negate函数的一个简单的封装，定义了一个unary_negate类型匿名对象（函数）
+inline unary_negate&lt;_Predicate&gt; // 实际效果：!pred(param)
+not1(const _Predicate&amp; __pred){ return unary_negate&lt;_Predicate&gt;(__pred);} 
+inline binary_negate&lt;_Predicate&gt; // 实际效果：!pred(param1,param2)
+not2(const _Predicate&amp; __pred){ return binary_negate&lt;_Predicate&gt;(__pred); }
+inline binder1st&lt;_Operation&gt; // 实际效果：op(x,param)
+bind1st(const _Operation&amp; __fn, const _Tp&amp; __x) {
+  return binder1st&lt;_Operation&gt;(__fn, _Arg1_type(__x));
+}
+inline binder2nd&lt;_Operation&gt; // 实际效果：op(param,x)
+bind2nd(const _Operation&amp; __fn, const _Tp&amp; __x) { 
+  return binder2nd&lt;_Operation&gt;(__fn, _Arg2_type(__x));
+}
+inline unary_compose&lt;_Operation1,_Operation2&gt; // 实际效果：op1(op2(param))
+compose1(const _Operation1&amp; __fn1, const _Operation2&amp; __fn2) {
+  return unary_compose&lt;_Operation1,_Operation2&gt;(__fn1, __fn2);
+}
+inline binary_compose&lt;_Operation1, _Operation2, _Operation3&gt; // 实际效果：op1(op2(param),op3(param))
+compose2(const _Operation1&amp; __fn1, const _Operation2&amp; __fn2, const _Operation3&amp; __fn3) {
+  return binary_compose&lt;_Operation1,_Operation2,_Operation3&gt;
+    (__fn1, __fn2, __fn3);
+}
+</code></pre>
+
+<p>用于函数指针的 <code>ptr_fun</code> 适配器使得我们可以将一般函数当做仿函数使用，就像原生指针可以当做迭代器传给STL算法一样，它的实际效果相当如 <code>fp(param)</code> 或 <code>fp(param1,param2)</code> ，前者定义如下：</p>
+
+<pre><code>template &lt;class _Arg, class _Result&gt;
+class pointer_to_unary_function : public unary_function&lt;_Arg, _Result&gt; {
+protected:
+  _Result (*_M_ptr)(_Arg);
+public:
+  pointer_to_unary_function() {}
+  explicit pointer_to_unary_function(_Result (*__x)(_Arg)) : _M_ptr(__x) {}
+  _Result operator()(_Arg __x) const { return _M_ptr(__x); }
+};
+template &lt;class _Arg, class _Result&gt;
+inline pointer_to_unary_function&lt;_Arg, _Result&gt; // 返回值型别
+ptr_fun(_Result (*__x)(_Arg)) { // 对pointer_to_unary_function 的封装
+  return pointer_to_unary_function&lt;_Arg, _Result&gt;(__x);
+}
+</code></pre>
+
+<p>用于成员函数指针的 <code>mem_fun</code> 适配器使得我们可以将成员函数当做仿函数使用，于是成员函数可以搭配各种泛型算法，而当使用父类的虚拟成员函数作为仿函数时，还可以使用泛型算法完成所谓的多态调用（polymorphic function call），这是泛型（genericity）与多态（polymorphism）之间的结合。另外需要注意的是，虽然多态可以对指针或引用起作用，但STL容器只支持“实值语意”，不支持“引用语意”，及容器的内容应该为实值而非引用（类似于<code>vecotr&lt;X&amp;&gt; vc</code> 这种）。一下是 <code>mem_fun</code> 的具体定义（还有很多个版本，这里只是最简单的一个）：</p>
+
+<pre><code>// 无任何参数，通过pointer调用，non-const成员函数
+template &lt;class _Ret, class _Tp&gt;
+class mem_fun_t : public unary_function&lt;_Tp*,_Ret&gt; {
+public:
+  explicit mem_fun_t(_Ret (_Tp::*__pf)()) : _M_f(__pf) {}
+  _Ret operator()(_Tp* __p) const { return (__p-&gt;*_M_f)(); }
+private:
+  _Ret (_Tp::*_M_f)();
+};
+template &lt;class _Ret, class _Tp&gt;
+inline mem_fun_t&lt;_Ret,_Tp&gt; // 返回类型
+mem_fun(_Ret (_Tp::*__f)()) { return mem_fun_t&lt;_Ret,_Tp&gt;(__f); } // mem_fun_t的匿名对象
+</code></pre>
+
+<h2>推荐阅读：</h2>
+
+<p><a href="http://sourcemaking.com/design_patterns/adapter">Adapter Design Pattern</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[深入理解STL源码(6) 仿函数|函数对象]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/11/15/insight-into-stl-6-functor-or-function-objects/"/>
+    <updated>2014-11-15T10:06:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/11/15/insight-into-stl-6-functor-or-function-objects</id>
+    <content type="html"><![CDATA[<h2>1. 仿函数|函数对象概述</h2>
+
+<p>在STL的六大组件中，仿函数可说是体积最小、观念最简单、实现最容易的一个，但小兵也能立大功——他扮演一种“策略”角色，可以让STL算法具有更加灵活的“演出”。</p>
+
+<p>在STL的历史上，仿函数(functor)是早期的命名，C++标准规格定下来后采用了新的名称——函数对象(function object)。就实际意义而言，函数对象的称谓更加贴切：一种具有函数特质的对象。函数对象对调用者而言可以向函数调用一样地被调用，而对被调用者而言则是以对象所定义的函数调用操作符(function call operator)。</p>
+
+<p>在C++中，函数调用操作符是指左右小括弧 <code>()</code> ，该操作符是可以重载的。许多 STL 算法都提供了两个版本，一个用于一般情况（例如排序时使用 <code>operator&lt;</code> 以递增方式排列），一个用于特殊情况（例如排序时按照使用者自定义的大小关系进行排序）。这有点类似于C语言中的函数指针，但函数指针无法满足STL对抽象性的要求，也不能和STL其他组件（如配接器adaptor）搭配，产生更灵活的变化，关于这一点下一节将详细介绍。</p>
+
+<h2>2. 可适配(Adaptable)的关键</h2>
+
+<p>STL算法非常灵活的一个关键因素之一在于STL仿函数的可配接性(adaptability)，即函数可以被配接器修饰，彼此相积木一样地串接。为了拥有配接能力，每一个仿函数必须定义自己的相应型别(associate types)，就像迭代器如果要融入整个STL大家庭，也必须依照规定定义自己的5个相应型别一样。这样做是为了让配接器能够获得函数的一些特性。相应型别都只是一些 typedef，所有必要操作在编译期就就全部完成了，对程序的执行效率没有任何影响，不带来任何额外负担。</p>
+
+<p>仿函数相应型别主要用来表示函数的参数型别和返回值型别，为了方便，<code>stl_function.h</code> 中定义了两个基类，分别是 <code>unary_function</code> 和 <code>binary_function</code>，分别表示一元函数和二元函数，其中都是一些型别的定义，仿函数只需要继承其中一个类，就可以拥有配接能力了。</p>
+
+<!-- more -->
+
+
+<h4>2.1 unary_function</h4>
+
+<p>该类用来封装一元函数的参数型别和返回值型别，其定义非常简单：</p>
+
+<pre><code class="cpp">template &lt;class _Arg, class _Result&gt;
+struct unary_function {
+  typedef _Arg argument_type; // 参数型别
+  typedef _Result result_type; // 返回值型别
+};
+</code></pre>
+
+<p>仿函数可以继承该类，这样用户就可以取得该仿函数的参数型别，并以相同方法获得其返回值：</p>
+
+<pre><code class="cpp">template &lt;class _Tp&gt;
+struct negate : public unary_function&lt;_Tp,_Tp&gt; { // 仿函数 negate 继承 unary_function
+  _Tp operator()(const _Tp&amp; __x) const { return -__x; }
+};
+template &lt;class _Predicate&gt;
+class unary_negate : public unary_function&lt;typename _Predicate::argument_type, bool&gt; {
+protected:
+  _Predicate _M_pred;
+public:
+  explicit unary_negate(const _Predicate&amp; __x) : _M_pred(__x) {}
+  bool operator()(const typename _Predicate::argument_type&amp; __x) const { // 获取参数的型别argument_type
+    return !_M_pred(__x);
+  }
+};
+</code></pre>
+
+<h4>2.2 binary_function</h4>
+
+<p>该类用来封装二元函数的参数一、参数二型别和返回值类型，仅比一元函数多了一个输入参数型别的定义而已，其定义如下：</p>
+
+<pre><code class="cpp">template &lt;class _Arg1, class _Arg2, class _Result&gt;
+struct binary_function {
+  typedef _Arg1 first_argument_type; // 参数一型别
+  typedef _Arg2 second_argument_type; // 参数二型别
+  typedef _Result result_type; // 返回值型别
+}; 
+template &lt;class _Tp&gt;
+struct plus : public binary_function&lt;_Tp,_Tp,_Tp&gt; { // 仿函数 plus 继承 binary_function
+  _Tp operator()(const _Tp&amp; __x, const _Tp&amp; __y) const { return __x + __y; }
+};
+</code></pre>
+
+<h2>3. STL 内建仿函数</h2>
+
+<p>STL 仿函数的分类，若以操作数的个数划分，可以分为一元和二元仿函数，若以功能划分，可以分为算术运算、关系运算、逻辑运算三大类，任何应用程序欲使用STL内建的仿函数，需要包含 <code>&lt;functional&gt;</code> 头文件，而这些仿函数的实际实现都在 <code>stl_function.h</code> 中。以下按功能分别介绍。</p>
+
+<h4>3.1 算术类(Arithmetic)仿函数</h4>
+
+<p>主要包括加法(plus)、减法(minus)、乘法(multiplies)、除法(divides)、取模(modulus)、否定(negation)等运算，除了否定以一元运算其他均为二元运算，如下：</p>
+
+<pre><code class="cpp">template &lt;class _Tp&gt;
+struct plus : public binary_function&lt;_Tp,_Tp,_Tp&gt; {
+  _Tp operator()(const _Tp&amp; __x, const _Tp&amp; __y) const { return __x + __y; } // 加法，减、乘、除、取模类似
+};
+template &lt;class _Tp&gt;
+struct negate : public unary_function&lt;_Tp,_Tp&gt; {
+  _Tp operator()(const _Tp&amp; __x) const { return -__x; }
+};
+</code></pre>
+
+<p>仿函数搭配STL算法可以很灵活，例如对vector的每个元素求连乘如下：</p>
+
+<pre><code class="cpp">accumulate(vct.begin(),vct.end(),1,multiplies&lt;int&gt;());
+</code></pre>
+
+<h4>3.2 关系运算类(Relational)仿函数</h4>
+
+<p>主要有等于(equal_to)、不等于(not_equal_to)、大于(greater)、大于等于(greater_equal)、小于(less)、小于等于(less_equal)等六种运算，每一个都是二元运算，如下：</p>
+
+<pre><code class="cpp">template &lt;class _Tp&gt;
+struct equal_to : public binary_function&lt;_Tp,_Tp,bool&gt; {
+  bool operator()(const _Tp&amp; __x, const _Tp&amp; __y) const { return __x == __y; } // 相等，其他类似 !=, &gt;, &lt;, &gt;=, &lt;=
+};
+</code></pre>
+
+<p>例如，对vector进行递减顺序排序：</p>
+
+<pre><code class="cpp">sort(vct.begin(),vct.end(),less&lt;int&gt;());
+</code></pre>
+
+<h4>3.3 逻辑运算类(Logical)仿函数</h4>
+
+<p>主要是与(logical_and)、或(logical_or)、非(logical_not)三种逻辑运算，前两者为二元运算，后者为一元运算，如下：</p>
+
+<pre><code class="cpp">template &lt;class _Tp&gt;
+struct logical_and : public binary_function&lt;_Tp,_Tp,bool&gt; {
+  bool operator()(const _Tp&amp; __x, const _Tp&amp; __y) const { return __x &amp;&amp; __y; } // 与，或(||)类似
+};
+template &lt;class _Tp&gt;
+struct logical_not : public unary_function&lt;_Tp,bool&gt;{
+  bool operator()(const _Tp&amp; __x) const { return !__x; } // 非
+};
+</code></pre>
+
+<h4>3.4 证同(identity)、选择(select)、投射(project)等非标准仿函数</h4>
+
+<p>这类仿函数都只是将参数原封不动的返回，其中某些仿函数对传回的参数有刻意的选择，或是刻意的忽略。之所以不在STL或其他泛型程序设计中直接使用原本及其简单的identity，project，select等操作，而要再划分一层出来，完全是为了间接性——间接性是抽象化的重要方法。另外，需要说明的是，这些仿函数并非C++标准，只是在SGI STL的实现中作为内部使用，一下是相关部分代码：</p>
+
+<pre><code class="cpp">// 证同函数(identity)，任何数值通过此函数后不会有任何改变，它用于set实现中，用来指定RB-tree所需的
+// KeyOfValue op，因为set元素的键值即实值，所以采用identity
+template &lt;class _Tp&gt;
+struct _Identity : public unary_function&lt;_Tp,_Tp&gt; {
+  const _Tp&amp; operator()(const _Tp&amp; __x) const { return __x; }
+};
+// 选择函数(select)，接受一个pair返回其第一个元素，用于map实现中，用来指定RB-tree所需KeyOfValue op，
+// 因为map以pair的第一个元素作为键值
+template &lt;class _Pair&gt;
+struct _Select1st : public unary_function&lt;_Pair, typename _Pair::first_type&gt; {
+  const typename _Pair::first_type&amp; operator()(const _Pair&amp; __x) const {
+    return __x.first;
+  }
+};
+// 类似与select1st，接受pair返回第二个参数，SGI STL内部并未用到该函数
+template &lt;class _Pair&gt;
+struct _Select2nd : public unary_function&lt;_Pair, typename _Pair::second_type&gt;{
+  const typename _Pair::second_type&amp; operator()(const _Pair&amp; __x) const {
+    return __x.second;
+  }
+};
+// 投射函数(project)，传回第一参数，忽略第二参数，SGI STL内部并未用到该函数
+template &lt;class _Arg1, class _Arg2&gt;
+struct _Project1st : public binary_function&lt;_Arg1, _Arg2, _Arg1&gt; {
+  _Arg1 operator()(const _Arg1&amp; __x, const _Arg2&amp;) const { return __x; }
+};
+// 投射函数(project)，传回第二参数，忽略第一参数，SGI STL内部并未用到该函数
+template &lt;class _Arg1, class _Arg2&gt;
+struct _Project2nd : public binary_function&lt;_Arg1, _Arg2, _Arg2&gt; {
+  _Arg2 operator()(const _Arg1&amp;, const _Arg2&amp; __y) const { return __y; }
+};
+</code></pre>
+
+<p>除此之外，SGI STL实现中还有 <code>constant_void_fun</code>，<code>constant_unary_fun</code>， <code>constant_binary_fun</code>， <code>subtractive_rng</code>， <code>mem_fun_t</code> 等等，想深入详细了解的可以去看看源代码，还是很好理解的。</p>
+
+<p>相关文章：<br/>
+<a href="http://ibillxia.github.io/blog/2014/05/24/function-pointer-in-c-and-function-call-operator-in-cpp/">C语言函数指针与C++函数调用操作符</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[深入理解STL源码(5.4) 算法之复杂算法algorithm]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms/"/>
+    <updated>2014-11-01T10:33:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms</id>
+    <content type="html"><![CDATA[<p>本文主要介绍STL中的稍微复杂的算法，主要涉及到的源码文件有 <code>stl_algo.h</code> 等。</p>
+
+<p>在文件 <code>stl_algo.h</code> 中有很多常用的算法，包括查找、计数、旋转、删除、排序、合并、集合的交并等运算、求极值、排列组合等等，本文将按源码中各算法的实现顺序来介绍其具体实现细节。由于本文涉及到的算法和相关代码太多，在文中就尽量不贴出代码了，详细的代码及相关注释请参见 <a href="http://ibillxia.github.io/upload/code/stl_algo.h">stl_algo.h</a>。</p>
+
+<p><strong>1. 求三个数的中值 median</strong><br/>
+该算法比较简单，几个if-else语句就解决了。该函数只提供内部算法使用，并不对外提供接口，也不是STL标准中的算法，限于篇幅这里就不贴代码了。另外，该算法有两个版本，一个是使用默认的大小比较，另一个是可以指定比较函数。</p>
+
+<p><strong>2. for_each</strong><br/>
+也很简单，就是对区间 [first, last) 中的每一个元素执行一个给定函数的运算，就一行语句：</p>
+
+<pre><code class="cpp">for ( ; __first != __last; ++__first) __f(*__first);
+</code></pre>
+
+<p>其中 <code>__f</code> 为用户传入的一个指定的仿函数。该算法的返回值仍为传入的仿函数 <code>__f</code> 。</p>
+
+<!--more-->
+
+
+<p><strong>3. 查找 find</strong><br/>
+函数 <code>find</code> 查找特定值的元素，函数 <code>find_if</code> 查找经过用户的指定函数 func（STL中的pred函数） 运算后结果为 true 的元素。主要代码也只有一行：</p>
+
+<pre><code class="cpp">while (__first != __last &amp;&amp; !(*__first == __val)) ++__first;
+</code></pre>
+
+<p>另外，关于find，考虑偏特化特性，还有在迭代器为随机存取迭代器时，每次循环进行4次判断和自增，这是所谓的 <a href="http://en.wikipedia.org/wiki/Loop_unrolling">loop unrolling</a>，在StackOverflow 上也有相关解释 <a href="http://stackoverflow.com/questions/24295972/">questions-24295972</a>。如果学过体系结构，应该也会提及循环展开的加速方法。</p>
+
+<p>还有一个称为 <code>adjacent_find</code> 的查找算法，它查找序列区间中连续相等的两个元素的位置，返回其中第一个元素的迭代器。这个算法就没有做过多的优化和加速考虑了。</p>
+
+<p>初次之外，在algo文件的最后部分，还有 <code>find_first_of</code>、<code>find_end</code>、`` 的算法，后面会按顺序介绍到。</p>
+
+<p><strong>4. 计数 count</strong><br/>
+该算法查找序列中值与给定值相等的元素的个数，即进行计数，返回为void，计数结果通过传入的引用参数 <code>_Size&amp; __n</code> 来返回给用户，主要代码如下：</p>
+
+<pre><code class="cpp">for ( ; __first != __last; ++__first)
+    if (*__first == __value) ++__n;
+</code></pre>
+
+<p>以上这个是非STL标准的，另外还有一个版本返回值为迭代器的 <code>difference_type</code> 的偏特化版本，这个才是STL标准。</p>
+
+<p><strong>5. 搜索search</strong><br/>
+该算法实现的功能是在区间 [first1, last1) 中搜索是否存在与区间 [first2, last2) 中元素都对应相等的子序列，存在则返回区间1中与区间2匹配的起始位置，否则返回last1。基本思路也很简单，详见源码中我的注释。还有一个版本，可以指定判断条件，而不一定是对应相等这个条件。</p>
+
+<p>另外，还有一个 <code>search_n</code> 的算法与之相似，只是这个算法搜索区间中是否存在长度为count且值均为val的子序列，存在则返回该子序列的起始位置，否则返回last。同样，它也有一个可以指定判断条件的重载版本。</p>
+
+<p><strong>6. 区间置换 swap_ranges</strong><br/>
+交换两个长度相等的区间：</p>
+
+<pre><code class="cpp">for ( ; __first1 != __last1; ++__first1, ++__first2)
+    iter_swap(__first1, __first2); // 迭代器的交换，使用iter_swap
+</code></pre>
+
+<p><strong>7. 区间变换运算 transform</strong><br/>
+对区间的每个元素进行opr运算，结果放在result中，仅这一点与 <code>for_each</code> 不同：</p>
+
+<pre><code class="cpp">for ( ; __first != __last; ++__first, ++__result)
+    *__result = __opr(*__first);
+</code></pre>
+
+<p>还有一个版本是两个等长序列的运算，结果放在result中：</p>
+
+<pre><code class="cpp">for ( ; __first1 != __last1; ++__first1, ++__first2, ++__result)
+    *__result = __binary_op(*__first1, *__first2);
+</code></pre>
+
+<p>注意该算法不需要传入第二个区间的last迭代器。</p>
+
+<p><strong>8. 替换 replace</strong><br/>
+将序列中所有值为oldval的元素值都改为newval：</p>
+
+<pre><code class="cpp">for ( ; __first != __last; ++__first)
+   if (*__first == __old_value) *__first = __new_value;
+</code></pre>
+
+<p>另外还有三个版本的替换： <code>replace_if</code>，判断条件可以自己指定，而不一定是相等；<code>replace_copy</code>，将修改后的结果存到一个新的序列中；<code>replace_copy_if</code> 是前两者的合体。</p>
+
+<p><strong>9.生成 generate</strong><br/>
+将序列中的元素的值按给定函数赋值：</p>
+
+<pre><code class="cpp">for ( ; __first != __last; ++__first) *__first = __gen();
+</code></pre>
+
+<p>还有一个 <code>generate_n</code> 将序列中的前n个元素的值按给定函数赋值。</p>
+
+<p><strong>10.移除 remove</strong><br/>
+移除序列中值为val的元素，与 replace 算法类似，有4个版本，其中 <code>remove</code> 和 <code>remove_if</code> 分别通过 <code>remove_copy</code>、<code>remove_copy_if</code> 实现，只需将后者中的result参数设为该序列的起点first。</p>
+
+<pre><code class="cpp">__first = find(__first, __last, __value);
+_ForwardIter __i = __first;
+return __first == __last ? __first 
+                   : remove_copy(++__i, __last, __first, __value);
+</code></pre>
+
+<p><strong>11.unique和unique_copy</strong><br/>
+将区间的元素的值唯一化，即去掉相邻的重复的项。由于判断时是针对相邻的元素，所以一般需要结合sort使用，如果序列无序需要先对序列排序再进行唯一化。<code>unique</code> 的实现是调用 <code>unique_copy</code> 来实现的，只是将参数中result仍设为输入序列的first。</p>
+
+<p>这个算法实现的过程中，有很多函数的调用，其中还有个问题没有解决（见代码中注释关于func4什么时候调用func3，func8什么时候调用func7的问题）。</p>
+
+<p><strong>12.反转 reverse</strong><br/>
+将区间中元素进行反转，一下是迭代器为随机存取迭代器时的实现：</p>
+
+<pre><code class="cpp">while (__first &lt; __last) iter_swap(__first++, --__last);
+</code></pre>
+
+<p>还有迭代器为双向迭代器的版本和非质变算法版本 <code>reverse_copy</code>。</p>
+
+<p><strong>13.旋转 rotate</strong><br/>
+该算法将区间 [first, last) 内的数据以 middle 为分界前后对调，即将[first,middle)+[middle,last) 变为 [middle,last)+[first,middle)。具体实施过程分为两步：首先将middle之后的元素全部调到middle之前，然后对middle之后的元素进行调整，使之按在middle之前时的顺序排列。具体步骤见源码注释，可以结合实例进行理解。该算法的时间复杂度为 $O(n)$，总体上只对序列进行了一次遍历。</p>
+
+<p>另外，除了迭代器为前向迭代器的版本之外，还有迭代器为双向迭代器、随机访问迭代器的版本，分别对算法进行了特化和优化，详见源码注释。其中迭代器为随机访问迭代器时，算法稍微复杂些，但可以通过实例来简化理解。关于旋转算法的几种实现及其效率，可以参见这个 【<a href="http://www.cs.bell-labs.com/cm/cs/pearls/s02b.pdf">Vector Rotation</a>】，其中三种算法分别对应于STL中的随机迭代器版、前向迭代器版、双向迭代器版。虽然三种算法的复杂度均为线性的，但对于大量数据的旋转，还是会存在一些明显的效率区别的。</p>
+
+<p><strong>14.随机相关算法 random</strong><br/>
+<code>random_shuffle</code> 算法将序列随机重排，具体实现是对序列中每个位置的元素与序列中一个随机的元素进行对调：</p>
+
+<pre><code class="cpp">for (_RandomAccessIter __i = __first + 1; __i != __last; ++__i)
+    iter_swap(__i, __first + __random_number((__i - __first) + 1));
+</code></pre>
+
+<p>除了这个版本采用STL的random函数生成随机数的版本外，还有一个版本可以自己指定随机数生成函数。</p>
+
+<p><code>random_sample_n</code> 和 <code>random_sample</code> 都是从序列中随机选取n个样本，不同的是输入参数的形式、返回序列的有序性等，均非STL标准。</p>
+
+<p><strong>15.分割 partition</strong><br/>
+该算法的功能是将序列按条件分割成两个子序列（实际还是一个序列，只是按分割点分成了满足条件的部分和不满足条件的部分），返回分割点的位置。有迭代器为前向迭代器、双向迭代器的版本，保证稳定性的版本 <code>stable_partition</code>。</p>
+
+<p><strong>16. 排序 sort</strong><br/>
+排序算法是STL中最重要也最复杂的算法，总代码量大概是600行（实际上还不止，因为还有调用其他函数，如partition、merge等），占整个文件的1/5。该算法接受两个随机存取迭代器参数，将区间内的元素以渐增的顺序排列，重载版本则允许用户指定一个仿函数作为排序标准。STL的所有关系型容器都拥有自动排序功能（因为底层是RB-tree，属于有序搜索树），不需要用到这个sort算法，而序列式容器中的stack、queue和priority-queue都有特定的出入限制，不允许排序，剩下vector、deque和list、slist，前两者的迭代器都是随机存取迭代器，可以使用sort算法，而list是双向迭代器，slist是前向迭代器，都不适合使用sort算法，如果要对list或slist排序，需要使用list或slist自己实现的sort函数。</p>
+
+<p><code>insert_sort</code> 插入排序：在序列长度较小时（STL中设置的是长度小于16时），使用线性（而不是二分）插入排序。</p>
+
+<p><code>sort</code> 排序：在序列较长时，将序列分割为一个个小的区间，使得区间与区间之间整体上有序，然后使用线性插入排序对整体进行排序。（这与我们通常所理解的快速排序还是有很大区别的，最后整体上进行直接插入排序，实际效果与对每个子区间分别进行插入排序的效果是一样的，效率依然是非常高的）</p>
+
+<p><code>stable_sort</code> 稳定排序：实际上为归并排序，或称为merge sort，时间复杂度仍为 $O(nlogn)$。当子区间长度小于15时，让然是直接用插入排序；当子能够申请到O(n)的buffer时，借助buffer进行merge sort，否则使用inplace merge进行stable sort。而关于两种（with buffer和inplace的）merge的算法的内容，在后文中介绍。</p>
+
+<p><code>partial_sort</code> 部分排序：使用堆进行排序，功能是将序列 <code>[first, last)</code> 中的较小的 middle-first 个元素排序并放在区间 <code>[first, middle)</code> 中，而其余的 last-middle 个元素仍然是无序的。整个算法分为两个大的步骤，首先是将middle前的元素构建一个max-heap，将middle及之后的元素中比max-heap堆顶小的元素与堆顶对调并调整堆，从而得到middle前的元素都比middle后的元素小；然后使用heap sort对middle之前的元素进行排序。</p>
+
+<p><strong>17. 第n大的数 nth_element</strong><br/>
+该算法的功能是求一个序列中排行第n大的元素，具体实现时是使用 partition 将搜索范围逐步缩小，直到不足3个元素的区间后，进行insert-sort，最后第n大的元素就位于序列的第n个位置（该算法的迭代器也要求是随机存取的迭代器）。</p>
+
+<p><strong>18. 二分查找 binary_search</strong><br/>
+该系列算法的前提条件是序列已经<strong>有序</strong>，迭代器至少是ForwardIterators。</p>
+
+<p><code>lower_bound</code> ：二分查找 val，存在则返回指向该元素的迭代器，否则返回最小的不小于 val 的元素的迭代器，即在不破坏次序的情况下val可插入的第一个位置。</p>
+
+<p><code>upper_bound</code> ： 二分查找 val，存在则返回该元素的下一个元素的迭代器，否则返回最小的不小于 val的元素的迭代器，及在不破坏次序的前提下，val可插入的最后一个位置。</p>
+
+<p><code>equal_range</code> ：二分查找 val，返回值为 val 的区间 <code>[i,j)</code>，其中 i 是 <code>lower_bound</code>，而 j 是 <code>upper_bound</code>。</p>
+
+<p><code>binary_search</code> ：二分查找，找到返回true，否则返回false。实际上使用的是 <code>lower_bound</code> 来实现的。</p>
+
+<p><strong>19. 合并 merge</strong><br/>
+<code>merge</code> ：两个<strong>有序</strong>序列合并为一个有序序列，输入为5个参数，分别为两个序列的首尾迭代器、结果的首迭代器，算法返回结果序列的尾迭代器。基本思路是同时访问两个序列，取较小者放入结果序列并后移，最后必然是一个序列结束而另一个序列还有剩余元素，只需要将剩余部分copy的结果序列的尾部即可。</p>
+
+<p><code>inplace_merge</code>：原地将一个序列的两个有序子序列合并，实际上并不一定是原地进行，当可以申请到 O(n)的内存时借助buffer来进行merge，否则进行原地合并。原地合并的基本思路如下：先比较两个有序子序列的长度，将其中较长的序列分成两等分，取该序列的中间元素 <code>first_cut</code> 作为基准，然后得到第二个子序列以该基准分割的位置 <code>second_cut</code>，再然后进行原地旋转，将两个cut之间大于基准的数据旋转到两个cut之间小于基准的数据的后面，这样两个序列就被分成了两对有序子序列，最后分别将小于和大于基准的每对有序子序列进行merge。</p>
+
+<p><strong>20. 集合算法 set</strong><br/>
+由于集合的低层容器是红黑树，因此集合中的元素是有序的，这样在遍历两个集合时，复杂度不是O(mn)，而是O(m+n)。</p>
+
+<p><code>includes</code>：判断集合1是否包含集合2. 基本思想是，遍历两个集合，依次判断集合2中的元素是否均在集合1中出现了。</p>
+
+<p><code>set_union</code>：求两个集合的并集，如果两个集合中出现了相同的元素，则只算一次。</p>
+
+<p><code>set_intersection</code>：求两个集合的交集，即只保留两个集合中都存在的元素。</p>
+
+<p><code>set_difference</code>：两个集合的差集，即集合1中存在而集合2中不存在的元素。</p>
+
+<p><code>set_symmetric_difference</code>：两个集合的对称差，即集合1中存在而2中不存在的元素或集合2中存在而集合1中不存在的元素。</p>
+
+<p><strong>21. 求极值 max/min element</strong><br/>
+遍历整个区间，找到其中最大/小的元素的值，返回的是指向最大/小值的迭代器。</p>
+
+<p><strong>22. 排列的后继和前驱 next/pre permutation</strong><br/>
+关于该算法在之前的一篇文章中有详细介绍，请参见 <a href="http://ibillxia.github.io/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/">全排列及某排列的后继的求解及其STL实现的分析</a> .</p>
+
+<p><strong>23. 找第一次出现的位置 find first of</strong><br/>
+在第一个序列中依次查找第二个序列中某个元素第一次出现的位置，使用一个双重循环，外循环遍历第一个序列，内循环遍历第二个序列，只要找到一个就立即返回在序列1中的位置，没有找到则返回序列1的尾迭代器。</p>
+
+<p><strong>24. 查找序列中的子序列 find end</strong><br/>
+在序列1中查找是否存在序列2这样的子序列，返回最后一次查找结果。还有一个版本是针对双向迭代器的类偏特化版本。</p>
+
+<p><strong>25. 判断序列是否为堆 is heap</strong><br/>
+判断一个序列是否为堆，即不断地判断父节点是否大于其孩子节点，如果不大于则返回false，否则返回true。</p>
+
+<p><strong>26. 判断序列是否有序 is sorted</strong><br/>
+判断一个序列是否有序，只需要遍历序列并判断相邻的两个元素的大小关系是否一致即可。</p>
+
+<p>Well Done！终于看完了这些算法了！其中旋转、排序、查找、合并算法是稍微复杂的，且做了一些优化，是需要仔细阅读和体会的。
+2014.11.09 更新。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[深入理解STL源码(5.3) 算法之基本算法algobase]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/10/25/insight-into-stl-5-algorithm-3-base-algorithms-algobase/"/>
+    <updated>2014-10-25T21:13:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/10/25/insight-into-stl-5-algorithm-3-base-algorithms-algobase</id>
+    <content type="html"><![CDATA[<p>本文主要介绍STL中的基本算法，主要涉及到的源码文件有 <code>stl_algobase.h</code> 等。</p>
+
+<p>在 <code>stl_algobase.h</code> 中定义的算法都比较简单基础，主要涉及区间相等判断、区间填充、求极值、交换、拷贝、字典序比较等算法，而其他诸如查找、计数、排序、旋转等算法则在文件 <code>stl_algo.h</code> 中实现。在algobase基本算法中，除了字典序比较、复制/拷贝算法外，其他都比较简单，这里先依次介绍这些简单的算法，然后再介绍字典序比较和拷贝算法。</p>
+
+<h2>1. 交换、填充等简单算法</h2>
+
+<p>由于这里很多算法比较简单（基本都在10行以内，甚至很多就一行代码），就不一一粘贴代码了。</p>
+
+<p><strong>iter_swap</strong> ：将两个 ForwardIterators 所指的对象对调，通过申请一个临时变量、三次赋值，就完成了。</p>
+
+<p><strong>min/max</strong> ：求两个数中的小、大者，还有一个版本可以指定的比较方法（仿函数）。</p>
+
+<p><strong>fill</strong> ：将 <code>[first, last)</code> 内的所有元素改填为新值 value。</p>
+
+<p><strong>fill_n</strong> ：将 <code>[first, last)</code> 内的前n个元素改填为新值 value，返回迭代器指向被填入的最后一个元素的下一位置。</p>
+
+<p><strong>mismatch</strong> ：用来平行比较两个序列，指出两者之间的第一个不匹配点，返回一对迭代器（Iterators Pair），分别指向两序列中的不匹配点。</p>
+
+<p><strong>equal</strong> ：判断两个序列在 <code>[first, last)</code> 区间内相等，如果第二个序列元素较多，将不予考虑，只有两个序列在各自区间内对应相等才返回true，否则返回false。</p>
+
+<!-- more -->
+
+
+<h2>2. 字典序比较</h2>
+
+<p><code>lexicographical_compare</code> 以“字典序排列方式”对两个序列 <code>[first, last)</code> 和 <code>[first2, last2)</code> 进行比较。比较操作针对两个序列中的对应位置上的元素进行，直到某一对不相等或同时到达尾部或仁义序列到达尾部。该算法其实并不复杂，但有一点值得注意，那就当且仅当第一个序列字典序小于第二个序列时才返回true，以下是各种情况下的返回值：</p>
+
+<ul>
+<li>发现不相等，如果<strong>第一序列元素较小，返回true</strong>，否则返回false；</li>
+<li>到达last1而尚未到达last2，返回true；</li>
+<li>到达last2而尚未到达last1，返回false；</li>
+<li>同时到达last1和last2，返回false。</li>
+</ul>
+
+
+<p>源码如下：
+<code>cpp
+template &lt;class _InputIter1, class _InputIter2&gt;
+bool lexicographical_compare(_InputIter1 __first1, _InputIter1 __last1, _InputIter2 __first2, _InputIter2 __last2) {
+  for ( ; __first1 != __last1 &amp;&amp; __first2 != __last2; ++__first1, ++__first2) {
+    if (*__first1 &lt; *__first2)
+      return true;
+    if (*__first2 &lt; *__first1)
+      return false;
+  }
+  return __first1 == __last1 &amp;&amp; __first2 != __last2;
+}
+</code></p>
+
+<p>除了这个默认的版本外，还有一个版本提供比较方法（仿函数）的参数。另外，对于纯字符串的比较，SGI STL还做了进一步优化，使用原生指针和C标准函数 <code>memcmp()</code> 进行比较，如下：</p>
+
+<pre><code class="cpp">inline bool 
+lexicographical_compare(const unsigned char* __first1, const unsigned char* __last1,
+                        const unsigned char* __first2,const unsigned char* __last2) {
+  const size_t __len1 = __last1 - __first1;
+  const size_t __len2 = __last2 - __first2;
+  const int __result = memcmp(__first1, __first2, min(__len1, __len2));
+  return __result != 0 ? __result &lt; 0 : __len1 &lt; __len2;
+}
+</code></pre>
+
+<h2>3. 复制/拷贝算法</h2>
+
+<p>在很多应用程序中，复制copy是一个很常见的操作，特别是在赋值的时候。对于稍微复杂的对象，在不同的语言中赋值时会有一些差别，有的编程语言赋值仅仅是对等号右边的对象的一个引用，而并没有正真的产生一个新的对象，更不用说对象中可能包含的对象成员，例如Python当中的赋值、浅拷贝copy和深拷贝deepcopy等。</p>
+
+<p>而STL 中的copy，除了简单的单一对象的拷贝之外，还有序列区间的拷贝等，这里就涉及到空间分配和时间效率问题。在C++中，复制操作主要是运用assignment operator（复制运算符） 或 copy constructor（拷贝构造函数），在STL的copy算法中使用的是前者，而对于某些具有trivial assignment operator的数据，则可以使用内存直接复制行为（例如C标准库函数memmove、memcpy等），就能极大的节省时间。SGI STL用尽各种办法，包括函数重载、型别特性、偏特化（partial specialization）等技巧（关于偏特化请参见 <a href="http://www.jellythink.com/archives/410">C++模板特化与偏特化</a>），无所不用其极地加强效率。</p>
+
+<p>除了上面提到的元素型别、偏特化等问题，还有元素复制顺序的问题。copy 算法是将原始区间 <code>[first, last)</code> 内的元素复制到目标区间 <code>[result, result+last-first)</code> 区间内，复制时既可以从 first 开始往 last 复制，但也可以从 last-1开始向 first 复制，后者在 STL 另取名为 copy_backward_。从后往前复制的好处在于，不用担心目标区间与原始区间有重叠，因为如果有重叠区域，那么简单的 copy 时，对于原始数据而言 <code>[result, last)</code> 区间的数据在被复制前被修改了，从而得不到预期的结果。当然，有一种情况使用 copy 不用担心这个问题，那就是对于迭代器为原生指针，使用 memmove （而不是 memcpy，关于二者的区别参见 <a href="http://stackoverflow.com/questions/4415910/memcpy-vs-memmove">memcpy() vs memmove()</a>）进行复制，此时 memmove 会先将整个区间复制下来，没有被覆盖的危险。</p>
+
+<p>在介绍 copy 算法的源码具体实现前，根据源码及其注释再做一个简单的小结：copy 算法中的一些辅助函数有两个目的，其一是对于简单的数据类型尽量使用 memmove，其二是对于具有 RandomAccessIterators 的对象使用一个计数器来进行循环；除此之外，SGI STL针对编译器是否具有函数模板偏特化、类模板偏特化等进行了适配。下面是 copy 的源码，其中添加了比较详细具体的注释：</p>
+
+<pre><code class="cpp">// 首先是几个与偏特化无关的公用的3个函数
+template &lt;class _InputIter, class _OutputIter, class _Distance&gt;
+inline _OutputIter 
+__copy(_InputIter __first, _InputIter __last,
+       _OutputIter __result,input_iterator_tag, _Distance*){
+  for ( ; __first != __last; ++__result, ++__first) // 使用迭代器遍历和复制
+    *__result = *__first;
+  return __result;
+}
+template &lt;class _RandomAccessIter, class _OutputIter, class _Distance&gt;
+inline _OutputIter
+__copy(_RandomAccessIter __first, _RandomAccessIter __last,
+       _OutputIter __result, random_access_iterator_tag, _Distance*){
+  for (_Distance __n = __last - __first; __n &gt; 0; --__n) { //对于随机访问迭代器，使用一个计数器n
+    *__result = *__first;
+    ++__first;
+    ++__result;
+  }
+  return __result;
+}
+template &lt;class _Tp&gt;
+inline _Tp*
+__copy_trivial(const _Tp* __first, const _Tp* __last, _Tp* __result) {
+  memmove(__result, __first, sizeof(_Tp) * (__last - __first)); // 直接使用 memmove
+  return __result + (__last - __first);
+}
+//============== __STL_FUNCTION_TMPL_PARTIAL_ORDER 对于具有函数模板偏特性的编译器
+#if defined(__STL_FUNCTION_TMPL_PARTIAL_ORDER)
+template &lt;class _InputIter, class _OutputIter&gt;
+inline _OutputIter 
+__copy_aux2(_InputIter __first, _InputIter __last, _OutputIter __result, __false_type) { // false_type 的重载版
+  return __copy(__first, __last, __result, __ITERATOR_CATEGORY(__first), __DISTANCE_TYPE(__first));
+}
+template &lt;class _InputIter, class _OutputIter&gt;
+inline _OutputIter 
+__copy_aux2(_InputIter __first, _InputIter __last, _OutputIter __result, __true_type) { // true_type 的重载版
+  return __copy(__first, __last, __result, __ITERATOR_CATEGORY(__first), __DISTANCE_TYPE(__first));
+}
+#ifndef __USLC__
+template &lt;class _Tp&gt;
+inline _Tp* 
+__copy_aux2(_Tp* __first, _Tp* __last, _Tp* __result, __true_type) { // 原生指针的重载版
+  return __copy_trivial(__first, __last, __result);
+}
+#endif /* __USLC__ */
+template &lt;class _Tp&gt;
+inline _Tp* 
+__copy_aux2(const _Tp* __first, const _Tp* __last, _Tp* __result, __true_type) { // 常量指针的重载版
+  return __copy_trivial(__first, __last, __result);
+}
+template &lt;class _InputIter, class _OutputIter, class _Tp&gt;
+inline _OutputIter 
+__copy_aux(_InputIter __first, _InputIter __last, _OutputIter __result, _Tp*) {
+  typedef typename __type_traits&lt;_Tp&gt;::has_trivial_assignment_operator _Trivial;
+  return __copy_aux2(__first, __last, __result, _Trivial());
+}
+template &lt;class _InputIter, class _OutputIter&gt;
+inline _OutputIter 
+copy(_InputIter __first, _InputIter __last, _OutputIter __result) { //最终的对外接口
+  return __copy_aux(__first, __last, __result, __VALUE_TYPE(__first));
+}
+//============== __STL_CLASS_PARTIAL_SPECIALIZATION 对于具有类模板偏特性的编译器
+#elif defined(__STL_CLASS_PARTIAL_SPECIALIZATION)
+template &lt;class _InputIter, class _OutputIter, class _BoolType&gt;
+struct __copy_dispatch { // 类1，泛化版
+  static _OutputIter copy(_InputIter __first, _InputIter __last, _OutputIter __result) {
+    typedef typename iterator_traits&lt;_InputIter&gt;::iterator_category _Category;
+    typedef typename iterator_traits&lt;_InputIter&gt;::difference_type _Distance;
+    return __copy(__first, __last, __result, _Category(), (_Distance*) 0);
+  }
+};
+template &lt;class _Tp&gt;
+struct __copy_dispatch&lt;_Tp*, _Tp*, __true_type&gt;{ // 类2，特化版
+  static _Tp* copy(const _Tp* __first, const _Tp* __last, _Tp* __result) {
+    return __copy_trivial(__first, __last, __result);
+  }
+};
+template &lt;class _Tp&gt;
+struct __copy_dispatch&lt;const _Tp*, _Tp*, __true_type&gt;{ // 类3，特化版
+  static _Tp* copy(const _Tp* __first, const _Tp* __last, _Tp* __result) {
+    return __copy_trivial(__first, __last, __result);
+  }
+};
+template &lt;class _InputIter, class _OutputIter&gt;
+inline _OutputIter 
+copy(_InputIter __first, _InputIter __last, _OutputIter __result) { // 对外接口
+  typedef typename iterator_traits&lt;_InputIter&gt;::value_type _Tp;
+  typedef typename __type_traits&lt;_Tp&gt;::has_trivial_assignment_operator _Trivial;
+  return __copy_dispatch&lt;_InputIter, _OutputIter, _Trivial&gt;
+    ::copy(__first, __last, __result);
+}
+//============== 其他，完全不具有偏特化特性的情况
+#else /* __STL_CLASS_PARTIAL_SPECIALIZATION */
+template &lt;class _InputIter, class _OutputIter&gt;
+inline _OutputIter 
+copy(_InputIter __first, _InputIter __last, _OutputIter __result){ // 对外接口，泛化版
+  return __copy(__first, __last, __result, __ITERATOR_CATEGORY(__first), __DISTANCE_TYPE(__first));
+}
+
+#define __SGI_STL_DECLARE_COPY_TRIVIAL(_Tp)                                \
+  inline _Tp* copy(const _Tp* __first, const _Tp* __last, _Tp* __result) { \ // 对外接口，特化版
+    memmove(__result, __first, sizeof(_Tp) * (__last - __first));          \
+    return __result + (__last - __first);                                  \
+  }
+
+__SGI_STL_DECLARE_COPY_TRIVIAL(char)
+__SGI_STL_DECLARE_COPY_TRIVIAL(signed char)
+__SGI_STL_DECLARE_COPY_TRIVIAL(unsigned char)
+__SGI_STL_DECLARE_COPY_TRIVIAL(short)
+__SGI_STL_DECLARE_COPY_TRIVIAL(unsigned short)
+__SGI_STL_DECLARE_COPY_TRIVIAL(int)
+__SGI_STL_DECLARE_COPY_TRIVIAL(unsigned int)
+__SGI_STL_DECLARE_COPY_TRIVIAL(long)
+__SGI_STL_DECLARE_COPY_TRIVIAL(unsigned long)
+#ifdef __STL_HAS_WCHAR_T
+__SGI_STL_DECLARE_COPY_TRIVIAL(wchar_t)
+#endif
+#ifdef _STL_LONG_LONG
+__SGI_STL_DECLARE_COPY_TRIVIAL(long long)
+__SGI_STL_DECLARE_COPY_TRIVIAL(unsigned long long)
+#endif
+__SGI_STL_DECLARE_COPY_TRIVIAL(float)
+__SGI_STL_DECLARE_COPY_TRIVIAL(double)
+__SGI_STL_DECLARE_COPY_TRIVIAL(long double)
+#undef __SGI_STL_DECLARE_COPY_TRIVIAL
+#endif /* __STL_CLASS_PARTIAL_SPECIALIZATION */
+</code></pre>
+
+<p>以上是 copy 的完整代码，关于复制还有两个接口，一个是 <code>copy_n</code>，另一个是 <code>copy_backward</code>，前者复制区间 <code>[first, last)</code> 中前 n 个元素，后者从last-1 往 first 复制，这里就不详细展开了。</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 内联函数 | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/nei-lian-han-shu/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[深入理解C语言的define和内联函数]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/05/17/insight-into-define-and-inline-function-in-c/"/>
+    <updated>2014-05-17T22:43:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/05/17/insight-into-define-and-inline-function-in-c</id>
+    <content type="html"><![CDATA[<h2>概述</h2>
+
+<p>在 <code>Robert C.Searcord</code> 的 <em>The</em> <em>Cert</em> <em>C</em> <em>Secure</em> <em>Coding</em> <em>Standard</em> 一书中，关于宏定义的规范中第一条就是</p>
+
+<blockquote><p>用内联函数或静态函数替代与函数相似的宏</p></blockquote>
+
+<p>这个规范非常实用。内联函数是C99标准中新增的，当宏定义和内联函数可以互换时，应该优先考虑选择内联函数，这也是为什么在C++标准库函数中 <code>max</code>, <code>min</code>, <code>swap</code> 等都是通过内联函数来实现的原因。 宏定义是完全原封不动的很SB的替换，而内联函数则并非简单的文本替换，而是按函数调用的方式展开。关于内联函数相对于宏替换的优点，在wiki有如下几点的总结：</p>
+
+<ul>
+<li>宏调用并不执行类型检查，甚至连正常参数也不检查，但是函数调用却要检查。</li>
+<li>C语言的宏使用的是文本替换，可能导致无法预料的后果，因为需要重新计算参数和操作顺序。</li>
+<li>在宏中的编译错误很难发现，因为它们引用的是扩展的代码，而不是程序员键入的。</li>
+<li>许多结构体使用宏或者使用不同的语法来表达很难理解。内联函数使用与普通函数相同的语言，可以随意的内联和不内联。</li>
+<li>内联代码的调试信息通常比扩展的宏代码更有用。</li>
+</ul>
+
+
+<p>其中前面两条很好理解，相信大家应该不陌生，这里主要通过具体讨论一个该书中提到的一个程序实例来感受一下后面几点。</p>
+
+<!-- more -->
+
+
+<h2>宏定义引起的运行时错误</h2>
+
+<p>下面我们看一个稍微复杂的例子，这个例子是在运行时才出现另我们感到意外的错误（这里的运行时错误并不是指 <code>Runtime Error</code>，么么哒）。</p>
+
+<pre><code class="c">#include &lt;stdio.h&gt;
+
+int count=0;
+
+void g(void){
+    printf("Called g, count=%d.\n",count);
+}
+
+#define EXEC_BUMP(func) (func(),++count)
+typedef void(*exec_func)(void);  // 定义函数指针类型
+inline void exec_bump(exec_func f){
+    f();
+    ++count;
+}
+
+int main(void)
+{
+    int count=0;
+    while(count++&lt;10){
+        //EXEC_BUMP(g);  // (1) 宏定义实现
+        exec_bump(g);    // (2) 内联实现
+    }
+    return 0;
+}
+</code></pre>
+
+<p>使用宏定义的实现得到输出如下：</p>
+
+<pre><code>Called g, count=0.
+Called g, count=0.
+Called g, count=0.
+Called g, count=0.
+Called g, count=0.
+</code></pre>
+
+<p>这并不是我们想要的结果。而使用内联函数实现得到的输出如下：</p>
+
+<pre><code>Called g, count=0.
+Called g, count=1.
+Called g, count=2.
+Called g, count=3.
+Called g, count=4.
+Called g, count=5.
+Called g, count=6.
+Called g, count=7.
+Called g, count=8.
+Called g, count=9.
+</code></pre>
+
+<p>这才是我们想要的结果。根据这两个输出结果，我们可以分析宏定义和内联的区别。通过宏定义时，直接使用 <code>(g(),++count);</code> 替换 <code>EXEC_BUMP(g);</code> 即可，这样每次调用 <code>g()</code> 函数时输出的 <code>count</code> 是全局的变量，所以都是0；而调用完 <code>g()</code> 函数之后，对局部变量 <code>count</code> 进行了自加操作，所以循环了5次。然而使用内联函数实现时，是按照函数调用的方式展开的，首先将全局变量和内联函数的传入参数压栈，然后是执行函数体，最后参数出栈；因此，内联函数中调用 <code>g()</code> 函数时输出的 <code>count</code> 也是全局变量，而且在内联函数中的 <code>++count</code> 也是对全局变量的操作，因此每次调用时输出的计数变量是递增的。  由此，我们可以更清楚的理解内联函数的替换原理了，它是由编译器显式地将函数调用中的压栈、函数体、出栈等步骤生成到可执行文件中，而不是像普通函数那样，函数体与调用该函数的代码部分是分离的，在调用内联函数时不需要跳转，因而执行效率会比普通的函数要高。（然而，如果函数本身代码较多，如果使用内联，就会在可执行文件中多个地方有该内联函数的函数体，这样可执行文件的大小就会比不使用内联的大。因此，一般不会将函数体复杂的函数定义为内联函数，除非特殊情况下，为了运行时间性能的考虑）</p>
+
+<h2>宏定义的典型应用场景</h2>
+
+<p>上面主要是对宏定义的贬低和歧视，其实宏定义也并非毫无用武之地，下面几种情况下宏定义还是不可替代的：</p>
+
+<p>（1）用于实现局部函数 <br/>
+此时无法用内联函数替代宏定义。因为宏定义代码块中的自动变量可以和引用宏的前后代码块互为使用，即宏引用前的代码快中的自动变量可以在宏中直接使用，而宏中定义的自动变量可以在宏引用的代码块之后使用。例如，比较常见是：</p>
+
+<pre><code class="c">#include &lt;stdio.h&gt;
+#define FOR(i,n) for(int i=0;i&lt;n;i++)  // 宏定义部分
+
+int main(){
+    int a[]={1,2,3,4,5};
+    FOR(j,5) // 宏引用，这里j是在宏中才定义的自动变量
+        printf("%d ",a[j]);  // 但是可以在宏引用之后的代码中使用
+    return 0;
+}
+</code></pre>
+
+<p>其中对临时变量 <code>j</code> 的声明是在宏中定义的，可以在宏调用完后使用这个变量。同样的，也可以在宏定义前声明临时变量，而直接在宏中使用（不需要作为参数传递给宏）。</p>
+
+<p>（2）宏可以支持某种形式的惰式计算<br/>
+例如：</p>
+
+<pre><code class="c">#define SELECT(s,v1,v2) ((s)?(v1):(v2))
+</code></pre>
+
+<p>这个是无法用内联实现的。</p>
+
+<p>(3)宏定义可以产生编译时常量<br/>
+例如：</p>
+
+<pre><code class="c">#define ADD(a,b) ((a)+(b))
+</code></pre>
+
+<p>调用 <code>ADD(3,4)</code> 会产生一个常量表达式 <code>3+4</code> ，而内联无此效果。</p>
+
+<p>（4）实现类型通用的函数<br/>
+如果不借助C++模板这样的机制，C语言内联是无法实现这样的功能的，而只能针对不同的数据类型定义不同名的函数。</p>
+]]></content>
+  </entry>
+  
+</feed>

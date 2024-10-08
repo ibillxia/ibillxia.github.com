@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: map | Bill's Blog]]></title>
+  <link href="http://ibillxia.github.io/blog/tags/map/atom.xml" rel="self"/>
+  <link href="http://ibillxia.github.io/"/>
+  <updated>2024-10-08T22:19:30+08:00</updated>
+  <id>http://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[深入理解STL源码(4.3) 关联式容器之map和multimap]]></title>
+    <link href="http://ibillxia.github.io/blog/2014/08/31/insight-into-stl-4-associative-containers-3-map-and-multimap/"/>
+    <updated>2014-08-31T21:30:00+08:00</updated>
+    <id>http://ibillxia.github.io/blog/2014/08/31/insight-into-stl-4-associative-containers-3-map-and-multimap</id>
+    <content type="html"><![CDATA[<p>本文涉及到 SGI STL 源码的文件主要是 <code>stl_map.h</code>、<code>stl_multimap.h</code>、<code>stl_pair.h</code>、<code>map.h</code>、 <code>multimap.h</code>、 <code>map</code>  等文件。</p>
+
+<h2>1. map 简介</h2>
+
+<p>map 的特性是，所有元素都是键值对，用一个 pair 表示，pair 的第一个元素是键值（key），第二个元素是实值（value），map 不允许两个元素的键值相同。<br/>
+与 set 类似的，map 也不允许修改 key 的值，但不同的是可以修改 value 的值，因此 map 的迭代器既不是一种 constant iterators，也不是一种 mutable iterators。同样的，map的插入和删除操作不影响操作之前定义的迭代器的使用（被删除的那个元素除外）。<br/>
+与 set 不同的是，map 没有交、并、差等运算，只有插入、删除、查找、比较等基本操作。</p>
+
+<h2>2. map 的实现</h2>
+
+<p>由于 map 的元素是键值对，用 pair 表示，下面是它的定义：<br/>
+<code>cpp
+template &lt;class _T1, class _T2&gt;
+struct pair {
+  typedef _T1 first_type;
+  typedef _T2 second_type;
+  _T1 first; // 两个成员 first 和 second
+  _T2 second;
+  pair() : first(_T1()), second(_T2()) {} // 构造函数
+  pair(const _T1&amp; __a, const _T2&amp; __b) : first(__a), second(__b) {} // 拷贝构造函数
+};
+template &lt;class _T1, class _T2&gt;
+inline bool operator==(const pair&lt;_T1, _T2&gt;&amp; __x, const pair&lt;_T1, _T2&gt;&amp; __y) { // 相等比较
+  return __x.first == __y.first &amp;&amp; __x.second == __y.second;
+}
+template &lt;class _T1, class _T2&gt;
+inline bool operator&lt;(const pair&lt;_T1, _T2&gt;&amp; __x, const pair&lt;_T1, _T2&gt;&amp; __y) { // 大小比较
+  return __x.first &lt; __y.first || (!(__y.first &lt; __x.first) &amp;&amp; __x.second &lt; __y.second);
+}
+template &lt;class _T1, class _T2&gt;
+inline pair&lt;_T1, _T2&gt; make_pair(const _T1&amp; __x, const _T2&amp; __y) { // 创建一个 pair
+  return pair&lt;_T1, _T2&gt;(__x, __y);
+}
+</code></p>
+
+<!-- more -->
+
+
+<p>然后是 map 的定义，大体上和 set 差不多，只是在使用 RB-tree 作为容器时，传入的模板参数是一个 pair，主要代码如下：<br/>
+<code>cpp
+template &lt;class _Key, class _Tp, class _Compare, class _Alloc&gt;
+class map {
+public:
+  typedef _Key                  key_type;
+  typedef _Tp                   data_type;
+  typedef _Tp                   mapped_type;
+  typedef pair&lt;const _Key, _Tp&gt; value_type;
+  typedef _Compare              key_compare;
+  // 一个用于键值比较的内部类
+  class value_compare : public binary_function&lt;value_type, value_type, bool&gt; {
+  friend class map&lt;_Key,_Tp,_Compare,_Alloc&gt;;
+  protected :
+    _Compare comp;
+    value_compare(_Compare __c) : comp(__c) {}
+  public:
+    bool operator()(const value_type&amp; __x, const value_type&amp; __y) const {
+      return comp(__x.first, __y.first);
+    }
+  };
+private:
+  typedef _Rb_tree&lt;key_type, value_type, _Select1st&lt;value_type&gt;,
+    key_compare, _Alloc&gt; _Rep_type; // 这里的value_type是一个pair&lt;const _Key, _Tp&gt;
+  _Rep_type _M_t;  // 用红黑树作为底层容器
+public:
+  map() : _M_t(_Compare(), allocator_type()) {} // 默认构造函数
+  bool empty() const { return _M_t.empty(); } // 判断是否为空
+  size_type size() const { return _M_t.size(); } // 获取元素个数
+  map(const value_type* __first, const value_type* __last)
+    : _M_t(_Compare(), allocator_type())
+    { _M_t.insert_unique(__first, __last); } // 构造函数，使用insert_unique，键值不允许重复
+  void insert(const value_type* __first, const value_type* __last) { // 插入操作
+    _M_t.insert_unique(__first, __last);
+  }
+  void erase(iterator __position) { _M_t.erase(__position); } // 删除操作
+  iterator find(const key_type&amp; __x) { return _M_t.find(__x); } // 查找操作
+};
+</code>
+可以看到，基本也是对底层容器 RB-tree 的一个简单的封装。</p>
+
+<h2>3. multimap</h2>
+
+<p>multimap 与 map 的关系和 multiset 与 set 的关系一样，即 multimap 允许键值（key）重复，插入操作使用 RB-tree 的 <code>insert_equal</code> ，其他都和 map 一样，这里就不贴源代码了。</p>
+]]></content>
+  </entry>
+  
+</feed>

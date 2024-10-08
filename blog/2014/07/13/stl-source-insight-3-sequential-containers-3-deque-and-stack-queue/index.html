@@ -1,0 +1,537 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>深入理解STL源码(3.3) 序列式容器之deque和stack、queue - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ibillxia.github.io/blog/2014/07/13/stl-source-insight-3-sequential-containers-3-deque-and-stack-queue">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(document).bind('DOMNodeInserted', function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">深入理解STL源码(3.3) 序列式容器之deque和stack、queue</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-07-13T20:46:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>本文涉及到 SGI STL 源码的文件有<code>deque</code>、<code>stl_deque.h</code>、<code>deque.h</code>、<code>stack</code>、<code>stl_stack.h</code>、<code>queue</code>、<code>stl_queue.h</code> 等几个文件。</p>
+
+<h2>1. deque 概述</h2>
+
+<p>前面分别介绍了连续式存储的序列容器vector和以节点为单位链接起来的非连续存储的序列容器list，这两者各有优缺点，而且刚好是优缺互补的，那么何不将二者结合利用对方的优点来弥补己方的不足呢，于是这就有了强大的deque。</p>
+
+<p>没错，与我们在数据结构中学到的固定连续空间的双端队列不同，STL中的deque是分段连续的空间通过list链接而成的序列容器，它结合了vector与list的存储特性，但与vector和list都不同的是deque只能在首部或尾部进行插入和删除操作，这个限制在一定程度上简化了deque实现的难度。由于使用分段连续空间链接的方式，所以deque不存在vector那样“因旧空间不足而重新配置新的更大的空间，然后复制元素，再释放原空间”的情形，也不会有list那样每次都只配置一个元素的空间而导致时间性能和空间的利用率低下。</p>
+
+<h2>2. deque 的数据结构</h2>
+
+<p>deque由一段一段连续空间串接而成，一旦有必要在deque的头部或尾端增加新的空间，便配置一段定量连续的空间，串接在deque的头部或尾端。deque的最大任务，就是在这些分段连续的空间上维护其整体连续的假象，并提供随机存取的接口。deque采用一块所谓的map（注意：不是STL中map容器，而是类似于vector）作为主控（为什么不使用list呢？），这块map是一个连续空间，其中每个元素都是一个指针，指向一段连续的空间，称为缓冲区，它才是deque的真正存储空间。SGI中允许指定缓冲区的大小，默认是512字节。除此之外，还有start和finish两个指针，分别指向第一个缓冲区的第一个元素和最后一个缓冲区的最后一个元素。其数据结构如下：<br/>
+<code>cpp
+inline size_t __deque_buf_size(size_t __size) { // 计算缓冲区的大小
+  return __size &lt; 512 ? size_t(512 / __size) : size_t(1);
+}
+template &lt;class _Tp, class _Alloc&gt; class _Deque_base {
+protected:
+  _Tp** _M_map; // 指向缓冲区的指针数组首地址
+  size_t _M_map_size;  // 指向缓冲区的指针数组的大小
+  iterator _M_start; // 指向第一个缓冲区的第一个元素
+  iterator _M_finish; // 指向最后一个缓冲区的最后一个元素
+};
+class deque : protected _Deque_base&lt;_Tp, _Alloc&gt; {
+protected:  // Internal typedefs
+  typedef pointer* _Map_pointer;
+  static size_t _S_buffer_size() { return __deque_buf_size(sizeof(_Tp)); }
+};
+</code></p>
+
+<!-- more -->
+
+
+<h2>3. deque 的配置器</h2>
+
+<p>由于deque涉及到两种类型（map和buffer）数据的空间配置，因此deque定义了两个专属的配置器 <code>_Map_alloc_type</code> 和 <code>_Node_alloc_type</code>:<br/>
+<code>cpp
+template &lt;class _Tp, class _Alloc&gt; class _Deque_base {
+protected:
+  typedef simple_alloc&lt;_Tp, _Alloc&gt;  _Node_alloc_type;
+  typedef simple_alloc&lt;_Tp*, _Alloc&gt; _Map_alloc_type;
+};
+template &lt;class _Tp, class _Alloc = __STL_DEFAULT_ALLOCATOR(_Tp) &gt;
+class deque : protected _Deque_base&lt;_Tp, _Alloc&gt; { };
+</code>
+而这里的 <code>_Alloc</code> 使用的都是STL默认的 <code>alloc</code> 这个配置器，因此这两个配置器实际上都是 <code>alloc</code> 类型的配置器，即SGI的第二级配置器。<br/>
+在定义一个deque时，默认调用基类的构造函数，产生一个map大小为0的空的deque，随着第一次插入元素，由于map大小不够，需要调用<code>_M_push_back_aux</code> 进而调用 <code>_M_reallocate_map</code> 进行map的空间配置，如果初始的map不为空，还需要对map进行“分配新空间，复制，释放元空间”的操作，如果从头部插入同样的道理，这是就是map的配置逻辑（实际中，还有一种情况，就是map的前后剩余的node数不同，例如前部分都空着，而后面插入后溢出了，这时可以考虑在map内部移动，即将后半部分整体往前移动一定距离）。其中<code>_M_reallocate_map</code>的实现如下：<br/>
+<code>cpp
+template &lt;class _Tp, class _Alloc&gt;
+void deque&lt;_Tp,_Alloc&gt;::_M_reallocate_map(size_type __nodes_to_add, bool __add_at_front){
+  size_type __old_num_nodes = _M_finish._M_node - _M_start._M_node + 1;
+  size_type __new_num_nodes = __old_num_nodes + __nodes_to_add;
+  _Map_pointer __new_nstart;
+  if (_M_map_size &gt; 2 * __new_num_nodes) { // map的size足够，在map内部移动
+    __new_nstart = _M_map + (_M_map_size - __new_num_nodes) / 2 + (__add_at_front ? __nodes_to_add : 0);
+    if (__new_nstart &lt; _M_start._M_node)
+      copy(_M_start._M_node, _M_finish._M_node + 1, __new_nstart);
+    else
+      copy_backward(_M_start._M_node, _M_finish._M_node + 1, __new_nstart + __old_num_nodes);
+  } else { // map的size不够，重新分配
+    size_type __new_map_size = _M_map_size + max(_M_map_size, __nodes_to_add) + 2;
+    _Map_pointer __new_map = _M_allocate_map(__new_map_size); // 重新分配map
+    __new_nstart = __new_map + (__new_map_size - __new_num_nodes) / 2 + (__add_at_front ? __nodes_to_add : 0);
+    copy(_M_start._M_node, _M_finish._M_node + 1, __new_nstart); // 复制原map到新的map中
+    _M_deallocate_map(_M_map, _M_map_size); // 释放原map
+    _M_map = __new_map;
+    _M_map_size = __new_map_size;
+  }
+  _M_start._M_set_node(__new_nstart);
+  _M_finish._M_set_node(__new_nstart + __old_num_nodes - 1);
+}
+</code>
+那么每个连续的缓冲区buffer（或node）是在什么时候配置呢？它是在map中实际使用到的最后一个node不够用时但map还可以继续在这个node后面加入node时（即map非满而node满时），在 <code>_M_push_back_aux</code> 中调用 <code>_M_allocate_node</code> 来分配，相关函数都比较简单，这里就不贴了。<br/>
+以上主要是空间分配相关的，那么在 <code>pop</code> 的时候，空间的释放又是怎样的呢？这里也需要判断是否当前node全部被 <code>pop</code> 了，如果是的则需要释放这个node所占用的空间。如下：<br/>
+<code>cpp
+void pop_back() { // deque内部实现的成员函数，inline的
+    if (_M_finish._M_cur != _M_finish._M_first) { // 整个node还没有pop完
+      --_M_finish._M_cur;
+      destroy(_M_finish._M_cur); // 析构当前元素
+    } else  _M_pop_back_aux();
+}
+template &lt;class _Tp, class _Alloc&gt;
+void deque&lt;_Tp,_Alloc&gt;::_M_pop_back_aux() { // 整个node被pop完了的情况
+  _M_deallocate_node(_M_finish._M_first); // 释放整个node的空间
+  _M_finish._M_set_node(_M_finish._M_node - 1); // node前移
+  _M_finish._M_cur = _M_finish._M_last - 1; // 当前元素为最后一个node的最后一个元素
+  destroy(_M_finish._M_cur); // 释放当前元素
+}
+</code></p>
+
+<h2>4. deque 的迭代器</h2>
+
+<p>deque是分段连续空间，前面也提到了deque使用的是Bidirectional Iterators，因此deque的迭代器主要需要实现<code>operator++</code>和<code>operator--</code>。要实现这两个操作，需要考虑当前指针是否处于buffer的头/尾，如果在buffer的头部而需要前移（或尾部需要后移），就需要将buffer往前/后移一个，在SGI中是通过调用 <code>_M_set_node</code> 来实现的。具体代码如下：<br/>
+<code>cpp
+template &lt;class _Tp, class _Ref, class _Ptr&gt; struct _Deque_iterator {
+  typedef _Tp** _Map_pointer;
+  _Tp* _M_cur; // 几个成员变量
+  _Tp* _M_first;
+  _Tp* _M_last;
+  _Map_pointer _M_node;
+  _Self&amp; operator++() { // ++ 操作符重载，后移
+    ++_M_cur;
+    if (_M_cur == _M_last) { // 到了buffer的最后一个
+      _M_set_node(_M_node + 1); // 将当前node指针_M_node指向下一个node
+      _M_cur = _M_first; // 当前指针指向新node的第一个元素
+    }
+    return *this;
+  }
+  void _M_set_node(_Map_pointer __new_node) {
+    _M_node = __new_node; // map pointer后移
+    _M_first = *__new_node; // first指向新node
+    _M_last = _M_first + difference_type(_S_buffer_size()); // last指向下一个node
+  }
+};
+</code>
+使用 <code>--</code> 操作符向前移动的同理，这里就不赘述了。</p>
+
+<h2>5. deque 的常用操作</h2>
+
+<p>deque中最常用的莫过于 <code>push</code> 和 <code>pop</code> 操作了，这些操作在前面的空间配置中基本已经介绍了，这里就主要介绍一下 <code>clear</code>、 <code>erase</code> 和 <code>insert</code> 操作吧。<br/>
+<strong>（1）clear</strong><br/>
+该函数的作用是清除整个deque，释放所有空间而只保留一个缓冲区：<br/>
+<code>cpp
+template &lt;class _Tp, class _Alloc&gt; void deque&lt;_Tp,_Alloc&gt;::clear() {
+  for (_Map_pointer __node = _M_start._M_node + 1; __node &lt; _M_finish._M_node; ++__node) { // 从第二个node开始，遍历每个缓冲区（node）
+    destroy(*__node, *__node + _S_buffer_size()); // 析构每个元素
+    _M_deallocate_node(*__node); // 释放缓冲区
+  }
+  if (_M_start._M_node != _M_finish._M_node) { // 还剩下头尾两个node
+    destroy(_M_start._M_cur, _M_start._M_last); // 析构头node中的每个元素
+    destroy(_M_finish._M_first, _M_finish._M_cur); // 析构尾node中的每个元素
+    _M_deallocate_node(_M_finish._M_first); // 释放尾node的空间
+  } else destroy(_M_start._M_cur, _M_finish._M_cur); // 只有一个node，析构这个node中的所有元素
+  _M_finish = _M_start;
+}
+</code>
+<strong>（2）erase</strong><br/>
+该函数的作用是清除 [first,last) 间的所有元素：<br/>
+<code>cpp
+typename deque&lt;_Tp,_Alloc&gt;::iterator
+deque&lt;_Tp,_Alloc&gt;::erase(iterator __first, iterator __last) {
+  if (__first == _M_start &amp;&amp; __last == _M_finish) { // erase 所有元素，直接调用clear
+    clear();
+    return _M_finish;
+  } else { // erase 部分元素
+    difference_type __n = __last - __first; // 待擦出的区间长度
+    difference_type __elems_before = __first - _M_start; // 擦出区间前的元素个数
+    if (__elems_before &lt; difference_type((this-&gt;size() - __n) / 2)) { // 前面的元素个个数小于擦除后剩余总数的一半，将这部分后移
+      copy_backward(_M_start, __first, __last); // 后移
+      iterator __new_start = _M_start + __n;
+      destroy(_M_start, __new_start);
+      _M_destroy_nodes(__new_start._M_node, _M_start._M_node);
+      _M_start = __new_start;
+    } else { // 前面剩余的元素较多，将后面的前移
+      copy(__last, _M_finish, __first); // 前移
+      iterator __new_finish = _M_finish - __n;
+      destroy(__new_finish, _M_finish);
+      _M_destroy_nodes(__new_finish._M_node + 1, _M_finish._M_node + 1);
+      _M_finish = __new_finish;
+    }
+    return _M_start + __elems_before;
+  }
+}
+</code>
+<strong>（3）insert</strong><br/>
+该函数的作用是在某个位置插入一个元素：<br/>
+<code>cpp
+iterator insert(iterator position, const value_type&amp; __x) {
+  if (position._M_cur == _M_start._M_cur) { // 在头部插入，用push_front
+    push_front(__x);
+    return _M_start;
+  } else if (position._M_cur == _M_finish._M_cur) { // 在尾部插入
+    push_back(__x);
+    iterator __tmp = _M_finish;
+    --__tmp;
+    return __tmp; // 返回插入位置
+  } else { // 在中间插入
+    return _M_insert_aux(position, __x);
+  }
+}
+deque&lt;_Tp,_Alloc&gt;::_M_insert_aux(iterator __pos, const value_type&amp; __x) {
+  difference_type __index = __pos - _M_start; // 插入点之前的元素个数
+  value_type __x_copy = __x;
+  if (size_type(__index) &lt; this-&gt;size() / 2) { // 前面的元素个数较小
+    push_front(front()); // 在头部插入与头部相同的元素，然后从第二个元素开始到插入位置整体前移一步
+    iterator __front1 = _M_start; ++__front1;
+    iterator __front2 = __front1; ++__front2;
+    __pos = _M_start + __index;
+    iterator __pos1 = __pos; ++__pos1;
+    copy(__front2, __pos1, __front1);
+  } else { // 插入点后面的元素较少，从后面插入，然后插入点到尾部整体往后移一步
+    push_back(back());
+    iterator __back1 = _M_finish; --__back1;
+    iterator __back2 = __back1;  --__back2;
+    __pos = _M_start + __index;
+    copy_backward(__pos, __back2, __back1);
+  }
+  *__pos = __x_copy;
+  return __pos;
+}
+</code>
+deque原本只能在头部或尾部插入元素的，提供了insert之后，就可以任何位置插入元素了。</p>
+
+<h2>6. 基于deque 的 stack 和 queue</h2>
+
+<p>由于deque可以从首位两端插入或剔除元素，所以只需要对其进行简单的封装就可以分别实现先进先出（FIFO）的stack和先进后出（FILO）的queue了。stack和queue中都有一个deque类型的成员，用做数据存储的容器，然后对deque的部分接口进行简单的封装，例如stack只提供从末端插入和删除的接口以及获取末端元素的接口，而queue则只提供从尾部插入而从头部删除的接口以及获取首位元素的接口。像这样具有“修改某物接口，形成另一种风貌”的性质的，称为配接器（adapter），因此STL中stack和queue往往不被归类为容器（container），而被归类为容器配接器（container adapter）。（关于配接器后面文章还会具体介绍）<br/>
+下面只给出stack的基本实现，并加以注解。<br/>
+<code>cpp
+template &lt;class _Tp, class _Sequence __STL_DEPENDENT_DEFAULT_TMPL(deque&lt;_Tp&gt;) &gt;
+class stack; // 原型声明
+template &lt;class _Tp, class _Sequence&gt; class stack {
+protected:
+  _Sequence c; // _Sequence为deque&lt;_Tp&gt;，c为实际存储数据的容器
+public: // 向外部提供的接口，都是调用deque的接口来实现的
+  stack() : c() {}
+  explicit stack(const _Sequence&amp; __s) : c(__s) {}
+  bool empty() const { return c.empty(); }
+  size_type size() const { return c.size(); }
+  reference top() { return c.back(); }
+  const_reference top() const { return c.back(); }
+  void push(const value_type&amp; __x) { c.push_back(__x); }
+  void pop() { c.pop_back(); }
+};
+</code>
+值得一提的是，stack和queue都没有迭代器，因此不能对stack或queue进行遍历。但他们提供了 <code>operator ==</code> 和 <code>operator&lt;</code> 这两个比较大小的操作符：<br/>
+<code>cpp
+template &lt;class _Tp, class _Seq&gt;
+bool operator==(const stack&lt;_Tp,_Seq&gt;&amp; __x, const stack&lt;_Tp,_Seq&gt;&amp; __y) {
+  return __x.c == __y.c;
+}
+template &lt;class _Tp, class _Seq&gt;
+bool operator&lt;(const stack&lt;_Tp,_Seq&gt;&amp; __x, const stack&lt;_Tp,_Seq&gt;&amp; __y) {
+  return __x.c &lt; __y.c;
+}
+</code>
+另外，除了使用默认的deque作为stack和queue的容器之外，我们还可以使用list或其他自定义的容器，只需要实现了stack或queue需要的接口，使用方法很简单：<br/>
+<code>cpp
+stack&lt;int,vector&lt;int&gt; &gt; ist;
+queue&lt;char,list&lt;char&gt; &gt; cq;
+</code>
+即只需要指定模板中第二个参数即可。<br/>
+关于deque的内容就介绍到这里了。</p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2014/07/13/stl-source-insight-3-sequential-containers-3-deque-and-stack-queue/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2014-07-13T20:46:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/c-plus-plus/'>C++</a>, <a class='tag' href='/blog/tags/stl/'>STL</a>, <a class='tag' href='/blog/tags/rong-qi/'>容器</a>, <a class='tag' href='/blog/tags/zhan/'>栈</a>, <a class='tag' href='/blog/tags/dui-lie/'>队列</a></span>
+		
+    </p>
+    
+      
+         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/" title="Previous Post:
+        深入理解STL源码(3.2) 序列式容器之list">&laquo; 深入理解STL源码(3.2) 序列式容器之list</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2014/07/27/stl-source-insight-3-sequential-containers-4-heap-and-priority-queue/"
+        title="Next Post: 深入理解STL源码(3.4) 序列式容器之heap和priority queue">深入理解STL源码(3.4) 序列式容器之heap和priority queue
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2024 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ibillxia.github.io/blog/2014/07/13/stl-source-insight-3-sequential-containers-3-deque-and-stack-queue/';
+        var disqus_url = 'http://ibillxia.github.io/blog/2014/07/13/stl-source-insight-3-sequential-containers-3-deque-and-stack-queue/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
