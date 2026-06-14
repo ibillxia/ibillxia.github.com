@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 动态规划 | Bill's Blog]]></title>
   <link href="http://ibillxia.github.io/blog/tags/dong-tai-gui-hua/atom.xml" rel="self"/>
   <link href="http://ibillxia.github.io/"/>
-  <updated>2025-06-01T13:56:45+08:00</updated>
+  <updated>2026-06-14T19:17:47+08:00</updated>
   <id>http://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -31,7 +31,7 @@
 <p>水题，直接上代码：</p>
 
 
-<p><figure class='code'><figcaption><span>Problem A </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem A </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -80,7 +80,7 @@
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <!-- more -->
 
@@ -92,7 +92,7 @@
 对于有向图，存在欧拉回路的条件是：图强连通，顶点的入度等于出度。代码如下：</p>
 
 
-<p><figure class='code'><figcaption><span>Problem B </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem B </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -167,7 +167,7 @@
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h3>C题：继续畅通工程（hdoj1879）（九度1028）</h3>
 
@@ -175,7 +175,7 @@
 <p>模板题，prim算法</p>
 
 
-<p><figure class='code'><figcaption><span>Problem C </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem C </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -258,7 +258,7 @@
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h3>D题：魔咒词典（hdoj1880）（九度1029）</h3>
 
@@ -266,7 +266,7 @@
 <p>水题，字符串处理，注意不需要排序，不然会超时。</p>
 
 
-<p><figure class='code'><figcaption><span>Problem D </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem D </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -355,7 +355,7 @@
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h3>E题：毕业bg（hdoj1881）（九度1030）</h3>
 
@@ -363,7 +363,7 @@
 <p>可看做背包问题，将截止时间看做背包的容量，将bg看做重物，构建DP状态方程。代码如下：</p>
 
 
-<p><figure class='code'><figcaption><span>Problem E </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem E </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -442,7 +442,7 @@
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>小结：个人感觉毕业bg有点小难，主要是以前做过的背包问题太少，思维没有转换过来。
 其余的题基本都很水。</p>
@@ -470,7 +470,7 @@
 <p>水题，不解释，代码如下：</p>
 
 
-<p><figure class='code'><figcaption><span>Problem A </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem A </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -519,7 +519,7 @@
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <!-- more -->
 
@@ -530,7 +530,7 @@
 <p>继续水题，代码如下：</p>
 
 
-<p><figure class='code'><figcaption><span>Problem B </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem B </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -585,7 +585,7 @@
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h3>C题：游船出租（hdoj1861）（九度1022）</h3>
 
@@ -593,7 +593,7 @@
 <p>模拟题，水题。代码如下：</p>
 
 
-<p><figure class='code'><figcaption><span>Problem C </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem C </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -662,7 +662,7 @@
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h3>D题：Excel排序（hdoj1862）（九度1023）</h3>
 
@@ -670,7 +670,7 @@
 <p>排序题，水题，直接上代码：</p>
 
 
-<p><figure class='code'><figcaption><span>Problem D </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem D </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -767,7 +767,7 @@
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h3>E题：畅通工程（hdoj1863）（九度1024）</h3>
 
@@ -775,7 +775,7 @@
 <p>模板题，prim算法</p>
 
 
-<p><figure class='code'><figcaption><span>Problem E </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem E </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -870,7 +870,7 @@
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h3>F题：最大报销额（hdoj1864）（九度1025）</h3>
 
@@ -878,7 +878,7 @@
 <p>典型的背包问题，DP</p>
 
 
-<p><figure class='code'><figcaption><span>Problem F </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem F </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -975,7 +975,7 @@
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>小结：07年水题也比较多，题目基本都比较基础，除了水题剩下的就都是模板题。</p>
 

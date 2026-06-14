@@ -166,7 +166,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2012/03/05/09-zju-program-test-solution/">09年浙大复试机试题解</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/08/31/insight-into-stl-4-associative-containers-3-map-and-multimap/">深入理解STL源码(4.3) 关联式容器之map和multimap</a></h1>
     
     
       <p class="meta">
@@ -180,73 +180,55 @@ $(document).bind('DOMNodeInserted', function(event) {
 
 
 
-<time datetime="2012-03-05T16:48:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-08-31T21:30:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2012/03/05/09-zju-program-test-solution/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/08/31/insight-into-stl-4-associative-containers-3-map-and-multimap/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>
-09年浙大研究生复试机试题解
-</p>
+  <div class="entry-content"><p>本文涉及到 SGI STL 源码的文件主要是 <code>stl_map.h</code>、<code>stl_multimap.h</code>、<code>stl_pair.h</code>、<code>map.h</code>、 <code>multimap.h</code>、 <code>map</code>  等文件。</p>
 
+<h2>1. map 简介</h2>
 
+<p>map 的特性是，所有元素都是键值对，用一个 pair 表示，pair 的第一个元素是键值（key），第二个元素是实值（value），map 不允许两个元素的键值相同。<br/>
+与 set 类似的，map 也不允许修改 key 的值，但不同的是可以修改 value 的值，因此 map 的迭代器既不是一种 constant iterators，也不是一种 mutable iterators。同样的，map的插入和删除操作不影响操作之前定义的迭代器的使用（被删除的那个元素除外）。<br/>
+与 set 不同的是，map 没有交、并、差等运算，只有插入、删除、查找、比较等基本操作。</p>
 
+<h2>2. map 的实现</h2>
 
-<h3>A题：xxx定律（hdoj3782）（九度1031）</h3>
-
-
-<p>水题，直接上代码：</p>
-
-
-
-
-<figure class='code'><figcaption><span>Problem A </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
-</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="n">cnt</span><span class="p">;</span>
-</span><span class='line'><span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">n</span><span class="p">)</span><span class="o">&amp;&amp;</span><span class="n">n</span><span class="o">!=</span><span class="mi">0</span><span class="p">){</span>
-</span><span class='line'><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">n</span><span class="o">==</span><span class="mi">1</span><span class="p">){</span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;0</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span><span class="k">continue</span><span class="p">;}</span>
-</span><span class='line'><span class="w">        </span><span class="n">cnt</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="n">n</span><span class="o">!=</span><span class="mi">1</span><span class="p">){</span>
-</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">n</span><span class="o">%</span><span class="mi">2</span><span class="p">)</span><span class="n">n</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="mi">1</span><span class="p">;</span>
-</span><span class='line'><span class="w">            </span><span class="k">else</span><span class="w"> </span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="o">&gt;&gt;</span><span class="mi">1</span><span class="p">;</span>
-</span><span class='line'><span class="w">            </span><span class="n">cnt</span><span class="o">++</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="p">}</span>
-</span><span class='line'><span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">cnt</span><span class="p">);</span>
-</span><span class='line'><span class="w">    </span><span class="p">}</span>
-</span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
+<p>由于 map 的元素是键值对，用 pair 表示，下面是它的定义：<br/>
+<code>cpp
+template &lt;class _T1, class _T2&gt;
+struct pair {
+  typedef _T1 first_type;
+  typedef _T2 second_type;
+  _T1 first; // 两个成员 first 和 second
+  _T2 second;
+  pair() : first(_T1()), second(_T2()) {} // 构造函数
+  pair(const _T1&amp; __a, const _T2&amp; __b) : first(__a), second(__b) {} // 拷贝构造函数
+};
+template &lt;class _T1, class _T2&gt;
+inline bool operator==(const pair&lt;_T1, _T2&gt;&amp; __x, const pair&lt;_T1, _T2&gt;&amp; __y) { // 相等比较
+  return __x.first == __y.first &amp;&amp; __x.second == __y.second;
+}
+template &lt;class _T1, class _T2&gt;
+inline bool operator&lt;(const pair&lt;_T1, _T2&gt;&amp; __x, const pair&lt;_T1, _T2&gt;&amp; __y) { // 大小比较
+  return __x.first &lt; __y.first || (!(__y.first &lt; __x.first) &amp;&amp; __x.second &lt; __y.second);
+}
+template &lt;class _T1, class _T2&gt;
+inline pair&lt;_T1, _T2&gt; make_pair(const _T1&amp; __x, const _T2&amp; __y) { // 创建一个 pair
+  return pair&lt;_T1, _T2&gt;(__x, __y);
+}
+</code></p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2012/03/05/09-zju-program-test-solution/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/08/31/insight-into-stl-4-associative-containers-3-map-and-multimap/">Read on &rarr;</a>
     </footer>
   
 
@@ -258,7 +240,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2012/03/04/08-zju-program-test-solution/">08年浙大复试机试题解</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/08/17/insight-into-stl-4-associative-containers-2-set-and-multiset/">深入理解STL源码(4.2) 关联式容器之set和multiset</a></h1>
     
     
       <p class="meta">
@@ -272,83 +254,32 @@ $(document).bind('DOMNodeInserted', function(event) {
 
 
 
-<time datetime="2012-03-04T22:42:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-08-17T21:30:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2012/03/04/08-zju-program-test-solution/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/08/17/insight-into-stl-4-associative-containers-2-set-and-multiset/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>
-08年浙大研究生复试机试题解
-</p>
+  <div class="entry-content"><p>本文涉及到 SGI STL 源码的文件主要有 <code>stl_set.h</code>、 <code>stl_multiset.h</code>、 <code>set.h</code>、 <code>multiset.h</code>、 <code>set</code> 等文件。</p>
 
+<h2>1. set 简介</h2>
 
+<p>set 即集合，相比于其他容器有些特别。首先是它的每个元素是唯一的，即不允许有相同的值出现。其次，作为一种关联容器，set 的元素不像 map 那样可以同时拥有实值（value）和键值（key），set 元素的键值就是实值，实值就是键值。<br/>
+由于 set 的实质和键值相同，共用同一个内存空间，而 set 的底层容器为红黑树（中序遍历有序），因此不能对其键值进行修改，否则会破坏其有序特性。为避免非法修改操作，在SGI STL的实现中，<code>set&lt;T&gt;::iterator</code> 被定义为 RB-tree 底层的 const_iterator，_杜绝写入操作。set 与 list 有一个相似的地方是，元素插入、删除后，之前的迭代器依然有效（被删除的那个元素的迭代器除外）。<br/>
+我们知道集合有一些特殊的操作，诸如并、交、差等，在STL的 set 中，默认也提供了这些操作，如交集 <code>set_intersection</code> 、联集 <code>set_union</code> 、差集 <code>set_difference</code> 和对称差集 <code>set_symmetric_difference</code> 等。与之前那些线性容器不同的是，这些 set 的操作并不是在 set 内部实现的，而是放在了算法模块（algorithm）中，其具体实现在后面的算法章节中会具体介绍。</p>
 
+<h2>2. set 的实现</h2>
 
-<h3>A题：又一版A+B（hdoj1877）（九度1026）</h3>
-
-
-<p>水题，直接上代码：</p>
-
-
-
-
-<figure class='code'><figcaption><span>Problem A </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
-</span><span class='line'><span class="kt">char</span><span class="w"> </span><span class="n">out</span><span class="p">[</span><span class="mi">34</span><span class="p">];</span>
-</span><span class='line'><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">;</span>
-</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
-</span><span class='line'><span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">m</span><span class="p">)</span><span class="o">&amp;&amp;</span><span class="n">m</span><span class="o">!=</span><span class="mi">0</span><span class="p">){</span>
-</span><span class='line'><span class="w">        </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d %d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="o">&amp;</span><span class="n">b</span><span class="p">);</span>
-</span><span class='line'><span class="w">        </span><span class="n">c</span><span class="o">=</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">c</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;0</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span><span class="k">continue</span><span class="p">;}</span>
-</span><span class='line'><span class="w">        </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="n">c</span><span class="p">){</span>
-</span><span class='line'><span class="w">            </span><span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span><span class="o">=</span><span class="n">c</span><span class="o">%</span><span class="n">m</span><span class="p">;</span>
-</span><span class='line'><span class="w">            </span><span class="n">c</span><span class="o">/=</span><span class="n">m</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="p">}</span>
-</span><span class='line'><span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-</span><span class='line'><span class="w">            </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="n">out</span><span class="p">[</span><span class="o">--</span><span class="n">i</span><span class="p">]);</span>
-</span><span class='line'><span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="w">    </span><span class="p">}</span>
-</span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
+<p>前面多次提到 set 的底层采用 RB-tree 容器，这是因为 RB-tree 是一种比较高效的平衡二叉搜索树，能够很好的满足元素值唯一的条件，而且查找效率高。由于 RB-tree 已实现了很多操作，因此 set 基本上只是对 RB-tree 进行了一层简单的封装。下面是其实现的主要代码：</p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2012/03/04/08-zju-program-test-solution/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/08/17/insight-into-stl-4-associative-containers-2-set-and-multiset/">Read on &rarr;</a>
     </footer>
   
 
@@ -360,7 +291,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2012/03/03/07-zju-program-test-solution/">07年浙大复试机试题解</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/">深入理解STL源码(4.1) 关联式容器之红黑树</a></h1>
     
     
       <p class="meta">
@@ -374,81 +305,35 @@ $(document).bind('DOMNodeInserted', function(event) {
 
 
 
-<time datetime="2012-03-03T22:05:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-08-03T21:30:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2012/03/03/07-zju-program-test-solution/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>
-07年浙大研究生复试机试题解
-</p>
+  <div class="entry-content"><p>本文涉及到 SGI STL 源码的文件主要是 <code>stl_tree.h</code> 这个文件。</p>
 
+<h2>0. 关联式容器</h2>
 
+<p>之前几篇文章详细介绍了SGI STL中序列式容器的实现，并提到过STL中还有一类关联式的容器。标准的STL管理师容器分为 set（集合）和map（映射表）两大类，以及这两大类的衍生体multiset（多键集合）和multimap（多键映射表），这些容器的底层机制均以RB-Tree（红黑树）完成。RB-Tree是一种非常高效的数据结构，它本质上是一种平衡的二叉搜索树，因而其查找的平均时间复杂度为元素总个数的对数（即logN）。在STL中RB-Tree是一个独立的容器，但并没有对用户的公开接口，仅提供给STL的set和map使用。<br/>
+SGI STL在标准STL之外，还提供了一类关联式容器——hash table（哈希表），以及以此为低层机制的hash set（散列集合）、hash map（散列映射表）、hash multiset（散列多键集合）和hash multimap（散列多键映射表）。相比于RB-Tree，hash table的时间效率更高，插入、删除、查找的时间复杂度均为常数时间，但需要比元素总个数多得多的空间。<br/>
+本文接下来主要介绍树及RB-Tree相关的内容，后续文章将具体介绍SGI STL中set、map、hash table的实现。</p>
 
+<h2>1. 树与二叉搜索树</h2>
 
-<h3>A题：最小长方形（hdoj1859）（九度1020）</h3>
-
-
-<p>水题，不解释，代码如下：</p>
-
-
-<figure class='code'><figcaption><span>Problem A </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
-</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">lx</span><span class="p">,</span><span class="n">ly</span><span class="p">,</span><span class="n">rx</span><span class="p">,</span><span class="n">ry</span><span class="p">,</span><span class="n">tx</span><span class="p">,</span><span class="n">ty</span><span class="p">;</span>
-</span><span class='line'><span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
-</span><span class='line'><span class="w">        </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d %d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">tx</span><span class="p">,</span><span class="o">&amp;</span><span class="n">ty</span><span class="p">);</span>
-</span><span class='line'><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">tx</span><span class="o">==</span><span class="mi">0</span><span class="o">&amp;&amp;</span><span class="n">ty</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span><span class="k">break</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="n">lx</span><span class="o">=</span><span class="n">rx</span><span class="o">=</span><span class="n">tx</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="n">ly</span><span class="o">=</span><span class="n">ry</span><span class="o">=</span><span class="n">ty</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
-</span><span class='line'><span class="w">            </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d %d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">tx</span><span class="p">,</span><span class="o">&amp;</span><span class="n">ty</span><span class="p">);</span>
-</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">tx</span><span class="o">==</span><span class="mi">0</span><span class="o">&amp;&amp;</span><span class="n">ty</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span><span class="k">break</span><span class="p">;</span>
-</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">tx</span><span class="o">&lt;</span><span class="n">lx</span><span class="p">)</span><span class="n">lx</span><span class="o">=</span><span class="n">tx</span><span class="p">;</span>
-</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">ty</span><span class="o">&lt;</span><span class="n">ly</span><span class="p">)</span><span class="n">ly</span><span class="o">=</span><span class="n">ty</span><span class="p">;</span>
-</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">tx</span><span class="o">&gt;</span><span class="n">rx</span><span class="p">)</span><span class="n">rx</span><span class="o">=</span><span class="n">tx</span><span class="p">;</span>
-</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">ty</span><span class="o">&gt;</span><span class="n">ry</span><span class="p">)</span><span class="n">ry</span><span class="o">=</span><span class="n">ty</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="p">}</span>
-</span><span class='line'><span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d %d %d %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">lx</span><span class="p">,</span><span class="n">ly</span><span class="p">,</span><span class="n">rx</span><span class="p">,</span><span class="n">ry</span><span class="p">);</span>
-</span><span class='line'><span class="w">    </span><span class="p">}</span>
-</span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
+<p>树是一种非常常见而且实用的数据结构，几乎所有的操作系统都将文件存放在树状结构里，几乎所有编译器需要实现一个表达式树（expression tree），文件压缩所用的哈夫曼算法也需要用到树状结构，数据库所使用的B-tree则是一种相当复杂的树状结构。<br/>
+关于树的一些基本概念相信大家都比较熟悉，这里就不赘述了，如果需要可以google或看wikipedia，这里重点重温一下数据结构里的二叉搜索树、平衡二叉搜索树、AVL树。<br/>
+<strong>二叉搜索树</strong>：任何节点的键值大于其<strong>左子树</strong>中<strong>每一个</strong>节点的键值，并小于其<strong>右子树</strong>中的<strong>每一个</strong>节点的键值。根据二叉搜索树的定义可知，按照中序遍历该树可以得到一个有序的序列。平均情况下，二叉搜索树可以提供对数时间的插入和访问。其插入和查找的算法也很简单，每次与根节点的键值进行比较，小于根节点的键值则往根节点的左子树插入或查找，大于则往右子树插入或查找，无论是递归实现还是非递归实现都很简单。<br/>
+<strong>平衡二叉搜索树</strong>：上面提到二叉搜索数的<strong>平均</strong>性能为对数时间，这是因为二叉搜索树的深度与数据插入的顺序有关，如果插入的数据本身就比较有序，那么就会产生一个深度过大的树，甚至会退化为一个链表的结构，这中情况下，其查找的效率就是线性时间了。平衡二叉搜索树就是为了解决这个问题而产生的，“平衡”的意义是，没有任何一个节点过深。不同的平衡条件造就出不同的效率表现，以及不同的实现复杂度，如 <a href="http://en.wikipedia.org/wiki/AVL_tree">AVL-Tree</a>、<a href="http://en.wikipedia.org/wiki/Red%E2%80%93black_tree">RB-Tree</a>、<a href="http://en.wikipedia.org/wiki/AA_tree">AA-Tree</a> _等。他们都比简单的二叉搜索树要复杂，特别是插入和删除操作，但他们可以避免高度不平衡的情况，因而查找时间较快。</p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2012/03/03/07-zju-program-test-solution/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/">Read on &rarr;</a>
     </footer>
   
 
@@ -460,7 +345,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2012/03/02/06-zju-program-test-solution/">06年浙大复试机试题解</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/07/27/stl-source-insight-3-sequential-containers-4-heap-and-priority-queue/">深入理解STL源码(3.4) 序列式容器之heap和priority Queue</a></h1>
     
     
       <p class="meta">
@@ -474,67 +359,40 @@ $(document).bind('DOMNodeInserted', function(event) {
 
 
 
-<time datetime="2012-03-02T12:12:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-07-27T21:31:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2012/03/02/06-zju-program-test-solution/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/07/27/stl-source-insight-3-sequential-containers-4-heap-and-priority-queue/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>
-06年浙大研究生复试机试题解
-</p>
+  <div class="entry-content"><p>本文涉及到 SGI STL 源码的文件有<code>heap</code>、<code>stl_heap.h</code>、<code>heap.h</code>、<code>stl_queue.h</code>、<code>queue</code> 等几个文件。</p>
 
+<h2>1. 概述</h2>
 
+<p>前面分别介绍了三种各具特色的序列式容器 —— vector、list和deque，他们几乎可以涵盖所有类型的序列式容器了，但本文要介绍的heap则是一种比较特殊的容器。其实，在STL中heap并没有被定义为一个容器，而只是一组算法，提供给priority queue（优先队列）。故名思议，priority queue 允许用户以任何次序将元素放入容器内，但取出时一定是从优先权最高的元素开始取，binary max heap（二元大根堆）即具有这样的特性，因此如果学过max-heap再看STL中heap的算法和priority queue 的实现就会比较简单。</p>
 
+<h2>2. priority queue 的数据结构</h2>
 
-<h3>A题：还是A+B（hdoj1229）（九度1015）</h3>
-
-
-<p>水题，简直水得不能再水</p>
-
-
-<figure class='code'><figcaption><span>Problem A </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
-</span><span class='line'><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string.h&gt;</span>
-</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">t</span><span class="p">;</span>
-</span><span class='line'><span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
-</span><span class='line'><span class="w">        </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d %d %d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="o">&amp;</span><span class="n">b</span><span class="p">,</span><span class="o">&amp;</span><span class="n">k</span><span class="p">);</span>
-</span><span class='line'><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">a</span><span class="o">==</span><span class="mi">0</span><span class="o">&amp;&amp;</span><span class="n">b</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="n">t</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="n">k</span><span class="o">--</span><span class="p">)</span><span class="n">t</span><span class="o">*=</span><span class="mi">10</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">a</span><span class="o">%</span><span class="n">t</span><span class="o">==</span><span class="n">b</span><span class="o">%</span><span class="n">t</span><span class="p">)</span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="mi">-1</span><span class="p">);</span>
-</span><span class='line'><span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">);</span>
-</span><span class='line'><span class="w">    </span><span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
+<p>要实现priority queue的功能，binary search tree（BST）也可以作为其底层机制，但这样的话元素的插入就需要O(logN)的平均复杂度，而且要求元素的大小比较随机，才能使树比较平衡。而binary heap是一种完全二叉树的结构，而且可以使用vector来存储：<br/>
+<code>cpp
+template &lt;class _Tp, class _Sequence __STL_DEPENDENT_DEFAULT_TMPL(vector&lt;_Tp&gt;),
+            class _Compare __STL_DEPENDENT_DEFAULT_TMPL(less&lt;typename _Sequence::value_type&gt;) &gt;
+class priority_queue { // in stl_queue.h 文件中
+protected:
+  _Sequence c; // 使用vector作为数据存储的容器
+  _Compare comp;
+};
+</code><br/>
+另外只需要提供一组heap算法，即元素插入和删除、获取堆顶元素等操作即可。</p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2012/03/02/06-zju-program-test-solution/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/07/27/stl-source-insight-3-sequential-containers-4-heap-and-priority-queue/">Read on &rarr;</a>
     </footer>
   
 
@@ -546,7 +404,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2012/03/01/05-zju-program-test-solution/">05年浙大复试机试题解</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/07/13/stl-source-insight-3-sequential-containers-3-deque-and-stack-queue/">深入理解STL源码(3.3) 序列式容器之deque和stack、queue</a></h1>
     
     
       <p class="meta">
@@ -560,93 +418,49 @@ $(document).bind('DOMNodeInserted', function(event) {
 
 
 
-<time datetime="2012-03-01T11:41:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-07-13T20:46:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2012/03/01/05-zju-program-test-solution/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/07/13/stl-source-insight-3-sequential-containers-3-deque-and-stack-queue/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>
-以下是05年浙大研究生复试机试题解，感觉题目与ACM题相比，难度还相差很远，
-基本上直接贴上代码了（后续年度的题解同上），
-而且将整年的5道题的代码在一篇文章中贴出来。
-</p>
+  <div class="entry-content"><p>本文涉及到 SGI STL 源码的文件有<code>deque</code>、<code>stl_deque.h</code>、<code>deque.h</code>、<code>stack</code>、<code>stl_stack.h</code>、<code>queue</code>、<code>stl_queue.h</code> 等几个文件。</p>
 
+<h2>1. deque 概述</h2>
 
+<p>前面分别介绍了连续式存储的序列容器vector和以节点为单位链接起来的非连续存储的序列容器list，这两者各有优缺点，而且刚好是优缺互补的，那么何不将二者结合利用对方的优点来弥补己方的不足呢，于是这就有了强大的deque。</p>
 
+<p>没错，与我们在数据结构中学到的固定连续空间的双端队列不同，STL中的deque是分段连续的空间通过list链接而成的序列容器，它结合了vector与list的存储特性，但与vector和list都不同的是deque只能在首部或尾部进行插入和删除操作，这个限制在一定程度上简化了deque实现的难度。由于使用分段连续空间链接的方式，所以deque不存在vector那样“因旧空间不足而重新配置新的更大的空间，然后复制元素，再释放原空间”的情形，也不会有list那样每次都只配置一个元素的空间而导致时间性能和空间的利用率低下。</p>
 
-<h3>A题：A+B （hdoj1228）（ 九度1010）</h3>
+<h2>2. deque 的数据结构</h2>
 
-
-<p>水题，不解释，直接上代码：</p>
-
-
-<figure class='code'><figcaption><span>Problem A </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span><span class="c1"> </span>
-</span><span class='line'><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string.h&gt;</span><span class="c1"> </span>
-</span><span class='line'><span class="kt">char</span><span class="w"> </span><span class="n">map</span><span class="p">[][</span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;zero&quot;</span><span class="p">,</span><span class="s">&quot;one&quot;</span><span class="p">,</span><span class="s">&quot;two&quot;</span><span class="p">,</span><span class="s">&quot;three&quot;</span><span class="p">,</span><span class="s">&quot;four&quot;</span><span class="p">,</span><span class="s">&quot;five&quot;</span><span class="p">,</span><span class="s">&quot;six&quot;</span><span class="p">,</span><span class="s">&quot;seven&quot;</span><span class="p">,</span><span class="s">&quot;eight&quot;</span><span class="p">,</span><span class="s">&quot;nine&quot;</span><span class="p">};</span>
-</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="nf">cmp</span><span class="p">(</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">s</span><span class="p">[]</span><span class="w"> </span><span class="p">)</span><span class="w"> </span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="w">  </span><span class="k">for</span><span class="p">(</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">9</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="w"> </span><span class="p">)</span>
-</span><span class='line'><span class="w">      </span><span class="k">if</span><span class="p">(</span><span class="w"> </span><span class="n">strcmp</span><span class="p">(</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="n">map</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">)</span>
-</span><span class='line'><span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="w">  </span><span class="kt">char</span><span class="w"> </span><span class="n">s</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span>
-</span><span class='line'><span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">;</span>
-</span><span class='line'><span class="w">  </span><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span>
-</span><span class='line'><span class="w">  </span><span class="p">{</span>
-</span><span class='line'><span class="w">      </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="w">      </span><span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span><span class="n">s</span><span class="p">)</span><span class="o">&amp;&amp;</span><span class="n">strcmp</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="s">&quot;+&quot;</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span>
-</span><span class='line'><span class="w">          </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="o">*</span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">cmp</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
-</span><span class='line'><span class="w">      </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="w">      </span><span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span><span class="n">s</span><span class="p">)</span><span class="o">&amp;&amp;</span><span class="n">strcmp</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="s">&quot;=&quot;</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span>
-</span><span class='line'><span class="w">          </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="o">*</span><span class="n">b</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">cmp</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
-</span><span class='line'><span class="w">      </span><span class="k">if</span><span class="p">(</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="k">break</span><span class="p">;</span>
-</span><span class='line'><span class="w">      </span><span class="n">printf</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="w"> </span><span class="p">);</span>
-</span><span class='line'><span class="w">  </span><span class="p">}</span>
-</span><span class='line'><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
+<p>deque由一段一段连续空间串接而成，一旦有必要在deque的头部或尾端增加新的空间，便配置一段定量连续的空间，串接在deque的头部或尾端。deque的最大任务，就是在这些分段连续的空间上维护其整体连续的假象，并提供随机存取的接口。deque采用一块所谓的map（注意：不是STL中map容器，而是类似于vector）作为主控（为什么不使用list呢？），这块map是一个连续空间，其中每个元素都是一个指针，指向一段连续的空间，称为缓冲区，它才是deque的真正存储空间。SGI中允许指定缓冲区的大小，默认是512字节。除此之外，还有start和finish两个指针，分别指向第一个缓冲区的第一个元素和最后一个缓冲区的最后一个元素。其数据结构如下：<br/>
+<code>cpp
+inline size_t __deque_buf_size(size_t __size) { // 计算缓冲区的大小
+  return __size &lt; 512 ? size_t(512 / __size) : size_t(1);
+}
+template &lt;class _Tp, class _Alloc&gt; class _Deque_base {
+protected:
+  _Tp** _M_map; // 指向缓冲区的指针数组首地址
+  size_t _M_map_size;  // 指向缓冲区的指针数组的大小
+  iterator _M_start; // 指向第一个缓冲区的第一个元素
+  iterator _M_finish; // 指向最后一个缓冲区的最后一个元素
+};
+class deque : protected _Deque_base&lt;_Tp, _Alloc&gt; {
+protected:  // Internal typedefs
+  typedef pointer* _Map_pointer;
+  static size_t _S_buffer_size() { return __deque_buf_size(sizeof(_Tp)); }
+};
+</code></p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2012/03/01/05-zju-program-test-solution/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/07/13/stl-source-insight-3-sequential-containers-3-deque-and-stack-queue/">Read on &rarr;</a>
     </footer>
   
 
@@ -658,7 +472,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2012/02/19/beatiful-sentences-in-bi-ye-shi-ke/">“毕业时刻”中的经典台词</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/">深入理解STL源码(3.2) 序列式容器之list</a></h1>
     
     
       <p class="meta">
@@ -672,42 +486,50 @@ $(document).bind('DOMNodeInserted', function(event) {
 
 
 
-<time datetime="2012-02-19T22:32:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-07-06T22:03:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2012/02/19/beatiful-sentences-in-bi-ye-shi-ke/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><h2>励志</h2>
+  <div class="entry-content"><p>本文涉及到 SGI STL 源码的文件有<code>list</code>、<code>stl_list.h</code>、<code>list.h</code> 等几个文件。</p>
 
+<h2>1. list 和 slist</h2>
 
-<p>1、既然我们向往光明，那就要同时学会拥抱黑夜。</br>
-2、鱼说：“我时时睁着眼睛是为了守护你，不忍离开。”水说：“我终日流淌是为了环绕你，不忍放弃，不离不弃！”</br>
-3、应该做的事跟想做的事是两码事。</br>
-4、没有方向的船，什么风也不是顺风。</br>
-5、机会永远是留给有准备的人。</br>
-6、你说这种人出了学校大门，她也能算大学生？</br>
-7、我相信友谊的真挚，爱情的美好，人心的善良，未来的光明。一分耕耘，一分收获。</br>
-8、我们终归会长大成人，接过父辈的旗帜，成为这个社会的中流砥柱，我们该用什么样的人生态度去经营这个世界呢？</br>
-9、这钱呢对我们每个人来说都很重要，但是如果它能使一个人重新找回自己的理想，那它会变得更有价值。</br>
-10、请你记住：当所有的大门都向你关闭的时候，还有一扇窗将向你打开。</br>
-11、人生能有几回搏，所谓沧海横流，方显出英雄本色，否则凭什么人跟人之间要拉开距离。</br>
-12、我喜欢这样的竞争，用自己的耕耘检验自己的收获，用自己的实力索要自己的未来。干干净净的公平，胜出的会充满喜悦，失败的也会心服口服。</br>
-13、大学可是个人跟人缩小距离的地方，也是人跟人拉开距离的地方。</br>
-14、大学生就业难，那得看对谁。</br>
-15、贫困并不可怕，可怕的是在贫困中渐渐失去了自尊。</br>
-16、谁说我们这代人自私自利了，你们看看，在竞争这么激烈的时代，当你有困难的时候，不是一样有这么多人向你伸出援助之手！
-</p>
+<p>STL中也实现了链表这种数据结构，list是STL标准的双向链表，而slit是SGI的单链表。相比于vector的连续线性空间而言，list即有有点也有缺点：优点是空间分配更灵活，对任何位置的插入删除操作都是常数时间；缺点是排序不方便。list和vector是比较常用的线性容器，那么什么时候用哪一种容器呢，需要视元素的多少、元素构造的复杂度（是否为POD数据）以及元素存取行为的特性而定。限于篇幅，本文主要介绍list的内容，关于单链表slist可以参见源码和侯捷的书。</p>
 
+<h2>2. list 的数据结构</h2>
+
+<p>在数据结构中，我们知道链表的节点node和链表list本身是不同的数据结构，以下分别是node和list的数据结构：<br/>
+<code>cpp
+struct _List_node_base {
+  _List_node_base* _M_next;
+  _List_node_base* _M_prev;
+};
+template &lt;class _Tp&gt;
+struct _List_node : public _List_node_base {  // node 的定义
+  _Tp _M_data;
+};
+template &lt;class _Tp, class _Alloc&gt;
+class _List_base {
+protected:
+  _List_node&lt;_Tp&gt;* _M_node; // 只要一个指针就可以表示整个双向链表
+};
+template &lt;class _Tp, class _Alloc = __STL_DEFAULT_ALLOCATOR(_Tp) &gt;
+class list : protected _List_base&lt;_Tp, _Alloc&gt; {
+public:
+  typedef _List_node&lt;_Tp&gt; _Node;
+};
+</code></p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2012/02/19/beatiful-sentences-in-bi-ye-shi-ke/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/">Read on &rarr;</a>
     </footer>
   
 
@@ -719,7 +541,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2011/07/19/75-mottos-to-make-you-calm-down/">让你心静的七十五条经典修心格言</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/06/29/stl-source-insight-3-sequential-containers-1-vector/">深入理解STL源码(3.1) 序列式容器之vector</a></h1>
     
     
       <p class="meta">
@@ -733,44 +555,45 @@ $(document).bind('DOMNodeInserted', function(event) {
 
 
 
-<time datetime="2011-07-19T10:07:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-06-29T23:26:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2011/07/19/75-mottos-to-make-you-calm-down/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/06/29/stl-source-insight-3-sequential-containers-1-vector/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>
-<center><img src="/images/2011/IMAG2011071901.jpg"></center>
-1、心外无物，闲看庭前花开花落；去留无意，漫随天外云卷云舒。</br>
+  <div class="entry-content"><p>本文涉及到 SGI STL 源码的文件有<code>vector</code>、<code>stl_vector.h</code>、<code>vector.h</code> 等几个文件。</p>
 
-2、静以修身，俭以养德，非淡泊无以明志，非宁静无以致远。</br>
+<h2>1. 容器</h2>
 
-3、古之立大事者，不惟有超世之才，亦必有坚韧不拔之志。</br>
+<p>在数据结构的课程中，我们主要研究数据的特定排列方式，以利于搜索、排序等算法，几乎可以说，任何特定的数据结构都是为了实现某种特定的算法。STL 容器即由一个个特定的数据结构组成，例如向量（vector），链表（list），堆栈（stack），队列（queue），树（tree），哈希表（hash table），集合（set），映射（map）等，根据数据在容器中的排列特性，这些数据接口分为序列式容器（sequence container）和关联式容器（association container）两种，本文主要解读SGI STL中的序列式容器。</p>
 
-4、小人以己之过为人之过，每怨天而尤人；君子以人之过为己之过，每反躬而责己。</br>
+<p>所谓序列式容器，其中的元素可序（ordered），但未必有序（sorted）。C++ 本身提供了一个序列式容器——数组（array），STL中还提供了向量（vector），链表（list），堆栈（stack），队列（queue），优先队列（priority queue）等，其中stack和queue只是将deque（双端队列）设限而得到的，技术上可以被归为一种配接器（adaptor）。本系列文章将依次解读SGI STL各容器的关键实现细节。</p>
 
-5、千里之行，始于足下。改变将来，从现在开始。改变现在，就是改变未来。</br>
+<h2>2. vector 及其数据结构</h2>
 
-6、没有烦恼不要惹烦恼，有了则尽量解决它。 </br>
-
-7、忏悔心、谦卑心很重要，不过对自己的爱心更重要。</br>
-
-8、最好的改变方式，是我们跟内在力量沟通，然后它会改变我们。</br>
-
-9、如果认为自己很弱小，我们就成为弱小；如果认为自己很伟大，我们就变成伟大。</br>
-
-10、修改自己就是修改世界，天生我材必有用，自己是整个宇宙中很重要的一个程序。要相信自己的潜力。
-</p>
-
+<p>在STL中，vector的空间在物理上就是连续的，而且是可以动态扩展的，这里的动态扩展，不需要用户去处理溢出的问题，而只需要关心上层逻辑。vector连续物理空间的动态扩展技术是该容器的关键，它主要分为三个步骤：配置新空间，数据移动，释放旧空间。这三个步骤执行的次数以及每次执行时的效率是影响最终 vector 效率的关键因素。为了减少执行的次数，就需要未雨绸缪，每次扩充空间时，成倍增长。而每次执行的效率，就主要是数据移动的效率了。下面，我们依次介绍vector的数据结构，使用的空间配置器和迭代器，以及常用操作。<br/>
+<strong>vector 的数据结构</strong><br/>
+vector的数据结构很简单，就是一段连续的物理空间，包含起止地址以及已用到的空间的末尾地址这三个成员：<br/>
+<code>cpp
+template &lt;class _Tp, class _Alloc&gt;
+class _Vector_base {
+protected:
+  _Tp* _M_start;
+  _Tp* _M_finish;
+  _Tp* _M_end_of_storage;
+};
+class vector : protected _Vector_base&lt;_Tp, _Alloc&gt;{
+};
+</code></p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2011/07/19/75-mottos-to-make-you-calm-down/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/06/29/stl-source-insight-3-sequential-containers-1-vector/">Read on &rarr;</a>
     </footer>
   
 
@@ -782,7 +605,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2011/05/07/10-born-at-the-wrong-time-companies-innovation-too-advanced/">盘点10大生不逢时科技创业公司：创意过于超前</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/">深入理解STL源码(2) 迭代器(Iterators)和Traits</a></h1>
     
     
       <p class="meta">
@@ -796,43 +619,38 @@ $(document).bind('DOMNodeInserted', function(event) {
 
 
 
-<time datetime="2011-05-07T18:00:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-06-21T21:46:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2011/05/07/10-born-at-the-wrong-time-companies-innovation-too-advanced/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>据国外媒体报道，有句形容创业公司的老话说，“太早也是个错误。” 这绝对是个事实，在很多伟大的科技公司成立之前，相同的创意已经存在，
-但是因为时机不对，结果没有形成气候。下文将点评10大生不逢时的科技创业公司，这些公司的项目是创新的，但是因为出现得太早，市场尚未做
-好准备，所以最终失败。</p>
+  <div class="entry-content"><p>本文涉及到 SGI STL 源码的文件有 <code>iterator.h</code>, <code>stl_iterator_base.h</code>, <code>concept_checks.h</code>, <code>stl_iterator.h</code>, <code>type_traits.h</code>, <code>stl_construct.h</code>, <code>stl_raw_storage_iter.h</code> 等7个文件。</p>
 
+<h2>1. 迭代器的设计思维</h2>
 
-<center><img src="/images/2011/IMAG2011050701.jpg"></center>
+<p>迭代器（iterators）是一种抽象的设计概念，显示程序中并没有直接对应于这个概念的实体。在 <em>Design Patterns</em> 一书中，对 iterators 模式的定义如下：提供一种方法，使之能够依序遍历某个聚合物（容器）所包含的各个元素，而又无需暴露该聚合物内部的表述方式。</p>
 
+<p>在STL中迭代器扮演着重要的角色。STL的中心思想在于：将数据容器（container）和算法（algorithm）分开，彼此独立设计，最后再通过某种方式将他们衔接在一起。容器和算法的泛型化，从技术的角度来看并不困难，C++ 的 class template 和 function template 可以分别达到目标，难点在于如何设计二者之间的衔接器。</p>
 
-<p>同类型的公司在数年后取得辉煌成绩，产生数亿美元价值，曾经创立这10大创业公司的企业家难免懊恼不已，因为这些创意和产品都是他们曾
-经历的。但是，这就是人生。以下是10大生不逢时的科技创业公司：</p>
+<p>在STL中，起者这种衔接作用的是迭代器，它是一种行为类似指针的对象。指针的各种行为中最常见也最重要的便是内容获取（dereference）和成员访问（member access），因此迭代器最重要的工作就是对 <code>operator*</code> 和 <code>operator-&gt;</code> 进行重载。然而要对这两个操作符进行重载，就需要对容器内部的对象的数据类型和存储结构有所了解，于是在 STL 中迭代器的最终实现都是由容器本身来实现的，每种容器都有自己的迭代器实现，例如我们使用vector容器的迭代器的时候是这样用的 <code>vector&lt;int&gt;::iterator it;</code> 。而本文所讨论的迭代器是不依存于特定容器的迭代器，它在STL中主要有以下两个方面的作用（我自己的理解和总结）：</p>
 
+<blockquote><ul>
+<li>规定容器中需要实现的迭代器的类型及每种迭代器的标准接口</li>
+<li>通过Traits编程技巧实现迭代器相应型别的获取，弥补 C++ 模板参数推导的不足，为配置器提供可以获取容器中对象型别的接口</li>
+</ul>
+</blockquote>
 
-
-
-<h4>1.SixDegrees.com</h4>
-
-
-<p>这是第一个为用户提供社交体验的网站，该网站想揭示的原理是：最多通过6个人你就能够认识世界上任何一个人。在1997年成立以后，该网站
-经历了一段时间的高速增长，但是由于人们对社交网站还不适应，所以最终淡出人们视线。</p>
-
-
-
+<p>其中前一个没啥好解释的。关于第二个，后面第3节会详细介绍，那就是Traits编程技巧。</p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2011/05/07/10-born-at-the-wrong-time-companies-innovation-too-advanced/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/">Read on &rarr;</a>
     </footer>
   
 
@@ -844,7 +662,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2011/05/03/Exception-handling-mechanism-in-c/">C语言中的异常处理机制</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/06/13/stl-source-insight-1-memory-allocator/">深入理解STL源码(1) 空间配置器(allocator)</a></h1>
     
     
       <p class="meta">
@@ -858,52 +676,31 @@ $(document).bind('DOMNodeInserted', function(event) {
 
 
 
-<time datetime="2011-05-03T11:09:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-06-13T22:04:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2011/05/03/Exception-handling-mechanism-in-c/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/06/13/stl-source-insight-1-memory-allocator/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><h2>1.概述</h2>
+  <div class="entry-content"><p>在STL中，Memory Allocator 处于最底层的位置，为一切的 Container 提供存储服务，是一切其他组件的基石。对于一般使用 STL 的用户而言，Allocator 是不可见的，如果需要对 STL 进行扩展，如编写自定义的容器，就需要调用 Allocator 的内存分配函数进行空间配置。本文涉及到的 SGI STL 源代码文件有 <code>alloc.h</code>, <code>stl_config.h</code>, <code>stl_alloc.h</code>, <code>stl_threads.h</code> 这4个。</p>
 
-
-<p>什么是异常？异常一般指的是程序运行期（Run-Time）发生的非正常情况。异常一般是不可预测的，如：内存不足、打开文件失败、
-范围溢出等。UNIX 使用信号给出异常，并当发生异常时转跳到信号处理过程进行异常处理。DOS下的信号对比UNIX系统而言相对较少。</p>
-
-
-
-
-<p>我们知道，不管是在c++还是在java中，异常都被认为是一种很优雅的处理错误的机制。而如果想在c语言中使用异常就比较麻烦，
-但是我们仍然可以使用c语言中强大的setjmp和longjmp函数实现类似于c++的异常处理机制。</p>
-
-
-
-
-<p>异常处理的核心思想是，把功能模块代码与系统中可能出现错误的处理代码分离开来，以此来达到使我们的代码组织起来更美观、
-逻辑上更清晰，并且同时从根本上来提高我们软件系统长时间稳定运行的可靠性。那么，现在回过头来看，实际上在计算机系统的硬件
-设计中，操作系统的总体设计中，早期的许多面向结构化程序设计语言中(例如C语言)，都有异常处理的机制和方法的广泛运用。</p>
-
-
-
-
-<h2>2.基于goto语句的异常处理</h2>
-
-
-<p>goto语句，程序员朋友们对它太熟悉了，它是C语言中使用最为灵活的一条语句，由它也充分体现出了C语言的许多特点或者说是优点。
-它虽然是一条高级语言中提供的语句，但是它一般却直接对应一条“无条件直接跳转的机器指令”，所以说它非常地特别，它引起过许多
-争议，但是这条语句仍然一直被保留了下来，即便是今天的C++语言中，也有对它的支持(虽然不建议使用它)。</p>
-
-
-
+<p>在C++中，一个对象的内存配置和释放一般都包含两个步骤，对于内存的配置，首先是调用operator new来配置内存，然后调用对象的类的构造函数进行初始化；而对于内存释放，首先是调用析构函数，然后调用 operator delete进行释放。 如以下代码：
+<code>cpp
+class Foo { ... };
+Foo* pf = new Foo;
+...
+delete pf;
+</code>
+Allocator 的作用相当于operator new 和operator delete的功能，只是它考虑得更加细致周全。SGI STL 中考虑到了内存分配失败的异常处理，内置轻量级内存池（主要用于处理小块内存的分配，应对内存碎片问题）实现， 多线程中的内存分配处理（主要是针对内存池的互斥访问）等，本文就主要分析 SGI STL 中在这三个方面是如何处理的。在介绍着三个方面之前，我们先来看看 Allocator的标准接口。</p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2011/05/03/Exception-handling-mechanism-in-c/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/06/13/stl-source-insight-1-memory-allocator/">Read on &rarr;</a>
     </footer>
   
 
@@ -915,7 +712,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2011/05/03/introduce-to-assert-in-c-language/">C语言断言简介</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/06/08/stl-source-insight-0-stl-overview/">深入理解STL源码(0) STL简介</a></h1>
     
     
       <p class="meta">
@@ -929,49 +726,46 @@ $(document).bind('DOMNodeInserted', function(event) {
 
 
 
-<time datetime="2011-05-03T10:31:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-06-08T21:39:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2011/05/03/introduce-to-assert-in-c-language/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/06/08/stl-source-insight-0-stl-overview/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><h2>1.概述</h2>
+  <div class="entry-content"><h2>0. 两个问题</h2>
 
+<p>在介绍 STL 之前，先讨论两个问题：为什么要剖析 STL 源代码？如何剖析 STL 源代码？</p>
 
-<p> 断言是对某种假设条件进行检查（可理解为若条件成立则无动作，否则应报告），它可以快速发现并定位软件问题，
-同时对系统错误进行自动报警。断言可以对在系统中隐藏很深，用其它手段极难发现的问题进行定位，从而缩短软件问题定位时间，
-提高系统的可测性。实际应用时，可根据具体情况灵活地设计断言。</p>
+<p>首先是为什么要剖析 STL 源代码呢？ 有人会说，会使用 STL 不就性了，为什么一定要知道其内部的机制呢？ 对于大多数程序猿来说，确实没有必要去阅读或分析 STL 的源代码，但如果要想提升自己的编程修养，要相让自己编码的思想境界提升一个档次，还是很有必要读读 STL 这样的大师制作。阅读和分析之后，你会明白STL是如何分配和管理内存的（特别是对vector、string、deque等动态数据结构），是如何实现各种数据结构（特别是红黑树等比较复杂的数据结构）和相关算法的，又是如何将这些组件融合起来实现高内聚低耦合的。或许用《洋葱》的几句歌词获取最能表达你的明白这些问题之后的心情：</p>
 
+<blockquote><p>如果你愿意一层一层<br/>
+一层的剥开我的心<br/>
+你会发现<br/>
+你会讶异<br/>
+你是我<br/>
+最压抑<br/>
+最深处的秘密</p>
 
+<p>如果你愿意一层一层<br/>
+一层的剥开我的心<br/>
+你会鼻酸<br/>
+你会流泪<br/>
+只要你能<br/>
+听到我<br/>
+看到我的全心全意</p></blockquote>
 
+<p>那么，如何剖析源代码呢？其实歌词中已经蕴含这答案了，那就是“一层一层一层的剥开”。当然，我这里说的一层一层不是说要一个函数step in 到底，而是说要按层次解读：首先从最外层结构框架着手，从整体上把握；然后从细处着笔，一个组件一个组件的来分析；在分析每个组件时，也是先把握改组件的全貌及其与其他组件的关联关系，然后在深入组件内部，了解其实现。在阅读和分析源码的过程中，首先要理解其功能，然后在看它是如何实现的。切忌纠缠于代码的细节或陷入源码而不能自拔，即坠入“不识庐山真面目，只缘身在此山中”的深渊！</p>
 
-<h2>2.标准断言机制</h2>
-
-
-<p>原型定义：</p>
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;assert.h&gt;</span>
-</span><span class='line'><span class="kt">void</span><span class="w"> </span><span class="nf">assert</span><span class="p">(</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">expression_r_r_r</span><span class="w"> </span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>assert的作用是现计算表达式 expression_r_r_r ，如果其值为假（即为0），
-那么它先向stderr打印一条出错信息，然后通过调用 abort来终止程序运行。</p>
-
-
-
+<p>因此，本文的目的在于，站在STL这座大山的山顶，一窥其全貌。随后的文章则深入每个组件，细细观赏每一处的风景。</p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2011/05/03/introduce-to-assert-in-c-language/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/06/08/stl-source-insight-0-stl-overview/">Read on &rarr;</a>
     </footer>
   
 
@@ -999,7 +793,7 @@ $(document).bind('DOMNodeInserted', function(event) {
   <footer role="contentinfo" class="page-footer">
 <hr>
 <p>
-  Copyright &copy; 2009 - 2025 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
 </p>
 

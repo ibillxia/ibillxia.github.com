@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 信号处理 | Bill's Blog]]></title>
   <link href="http://ibillxia.github.io/blog/tags/xin-hao-chu-li/atom.xml" rel="self"/>
   <link href="http://ibillxia.github.io/"/>
-  <updated>2025-06-01T13:56:45+08:00</updated>
+  <updated>2026-06-14T19:17:47+08:00</updated>
   <id>http://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -48,7 +48,7 @@ Format: 4字节，内容为“WAVE”的ASCII码(0x57415645)，以大端存储�
 0x4000:   0x34</br>
 0x4001:   0x12</br>
 用程序在区别的话，可以考虑：
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -78,7 +78,7 @@ Format: 4字节，内容为“WAVE”的ASCII码(0x57415645)，以大端存储�
 </span><span class='line'><span class="w">      </span><span class="n">system</span><span class="p">(</span><span class="s">&quot;PAUSE&quot;</span><span class="p">);</span><span class="w"> </span>
 </span><span class='line'><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 </p>
 
 
@@ -102,7 +102,7 @@ ExtraParams: 扩展段其他自定义的一些参数的具体内容，大小由�
 
 
 <p>其中，对于每个采样点的bit数，不同的bit数读取数据的方式不同：
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -122,7 +122,7 @@ ExtraParams: 扩展段其他自定义的一些参数的具体内容，大小由�
 </span><span class='line'><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">BitsPerSample</span><span class="o">==</span><span class="mi">32</span><span class="p">)</span>
 </span><span class='line'><span class="w">        </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="kt">int</span><span class="o">*</span><span class="p">)</span><span class="n">speech</span><span class="o">+</span><span class="n">i</span><span class="p">);</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 </p>
 
 
@@ -141,13 +141,13 @@ Data: 真正的语音数据部分。</br>
 
 
 <p>设一个wave文件的前72个字节的十六进制内容如下(可以使用Ultra Edit等工具查看wave文件头)：
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="mi">52</span><span class="w"> </span><span class="mi">49</span><span class="w"> </span><span class="mi">46</span><span class="w"> </span><span class="mi">46</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="mi">08</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">57</span><span class="w"> </span><span class="mi">41</span><span class="w"> </span><span class="mi">56</span><span class="w"> </span><span class="mi">45</span><span class="w"> </span><span class="mi">66</span><span class="w"> </span><span class="mi">6</span><span class="n">d</span><span class="w"> </span><span class="mi">74</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">01</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">02</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span>
 </span><span class='line'><span class="mi">22</span><span class="w"> </span><span class="mi">56</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">88</span><span class="w"> </span><span class="mi">58</span><span class="w"> </span><span class="mo">01</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">04</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">64</span><span class="w"> </span><span class="mi">61</span><span class="w"> </span><span class="mi">74</span><span class="w"> </span><span class="mi">61</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">08</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span>
 </span><span class='line'><span class="mi">24</span><span class="w"> </span><span class="mi">17</span><span class="w"> </span><span class="mi">1</span><span class="n">e</span><span class="w"> </span><span class="n">f3</span><span class="w"> </span><span class="mi">3</span><span class="n">c</span><span class="w"> </span><span class="mi">13</span><span class="w"> </span><span class="mi">3</span><span class="n">c</span><span class="w"> </span><span class="mi">14</span><span class="w"> </span><span class="mi">16</span><span class="w"> </span><span class="n">f9</span><span class="w"> </span><span class="mi">18</span><span class="w"> </span><span class="n">f9</span><span class="w"> </span><span class="mi">34</span><span class="w"> </span><span class="n">e7</span><span class="w"> </span><span class="mi">23</span><span class="w"> </span><span class="n">a6</span><span class="w"> </span><span class="mi">3</span><span class="n">c</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="mi">11</span><span class="w"> </span><span class="n">ce</span><span class="w"> </span><span class="mi">1</span><span class="n">a</span><span class="w"> </span><span class="mi">0</span><span class="n">d</span><span class="w"> </span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 则其个字段的解析如下图：
 <center><img src="/images/2013/IMAG2013072002.gif"></center>
 </p>
@@ -571,7 +571,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 其中$\tau$是一个延迟的时间间隔。在某个区间使得$acf(\tau)$取得最大值的那个$\tau$值就选为pitch的起止点，如下图所示：
 <center><img src="/images/2013/IMAG2013052902.png"></center>
 也就是说，我们将原始语音信号与其平移延迟信号的重叠（时间上重叠）部分进行内积运算，从而得到ACF。下面看一个具体的实例，其代码如下：
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -677,7 +677,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 </span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;index in 1 frame&quot;</span><span class="p">)</span>
 </span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;ACF&quot;</span><span class="p">)</span>
 </span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 程序运行结果如下图所示：
 <center><img src="/images/2013/IMAG2013052903.png"></center>
 </p>
@@ -800,7 +800,7 @@ $40 < \frac{fs}{pp} < 1000$，从而得到pp的范围：$\frac{fs}{1000} < pp < 
 
 
 <p>下面我们来看看最简单的、不需要训练的方法，其代码如下：
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -906,7 +906,7 @@ $40 < \frac{fs}{pp} < 1000$，从而得到pp的范围：$\frac{fs}{1000} < pp < 
 </span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Volume(absSum)&#39;</span><span class="p">)</span>
 </span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time(seconds)&#39;</span><span class="p">)</span>
 </span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 其中计算音量的函数calVolume参见<a href="http://ibillxia.github.io/blog/2013/05/15/audio-signal-process-time-domain-volume-python-realization/">
 音量及其Python实现</a>一文。程序的运行结果如下图：
 <center><img src="/images/2013/IMAG2013052201.png"></center>
@@ -1010,7 +1010,7 @@ import进来，因为ms与numpy的版本有冲突，出现了什么“numpy.dtyp
 
 <p>
 闲话少说了，上代码吧，其实看看这代码也挺简单的，就调一个matplotlib.pyplot.specgram()就可以了。
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -1050,7 +1050,7 @@ import进来，因为ms与numpy的版本有冲突，出现了什么“numpy.dtyp
 </span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Frequency&#39;</span><span class="p">)</span>
 </span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time(seconds)&#39;</span><span class="p">)</span>
 </span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 </p>
 
 

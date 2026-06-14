@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: CNN | Bill's Blog]]></title>
   <link href="http://ibillxia.github.io/blog/tags/cnn/atom.xml" rel="self"/>
   <link href="http://ibillxia.github.io/"/>
-  <updated>2025-06-01T13:56:45+08:00</updated>
+  <updated>2026-06-14T19:17:47+08:00</updated>
   <id>http://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -155,7 +155,7 @@
 <p>卷积层的前馈运算是通过如下算法实现的：</br>
 <center>卷积层的输出= Sigmoid( Sum(卷积) +偏移量) </center>
 其中卷积核和偏移量都是可训练的。下面是其核心代码：
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -193,7 +193,7 @@
 </span><span class='line'><span class="w">    </span><span class="c1">//调用Sigmoid函数</span>
 </span><span class='line'><span class="w">    </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Sigmoid</span><span class="p">(</span><span class="n">sum</span><span class="p">);</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 其中，input是 n1×n2×n3 的矩阵，n1是输入层特征映射的个数，n2是输入层特征映射的宽度，n3是输入层特征映射的高度。output, sum, convolution,
 bias是n1×(n2-kw+1)×(n3-kh+1)的矩阵，kw,kh是卷积核的宽度高度(图中是5×5)。kernel是卷积核矩阵。table是连接表，即如果第a输入和第b个输出之间
 有连接，table里就会有[a,b]这一项，而且每个连接都对应一个卷积核。</p>
@@ -202,7 +202,7 @@ bias是n1×(n2-kw+1)×(n3-kh+1)的矩阵，kw,kh是卷积核的宽度高度(图�
 
 
 <p>卷积层的反馈运算的核心代码如下：
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -238,7 +238,7 @@ bias是n1×(n2-kw+1)×(n3-kh+1)的矩阵，kw,kh是卷积核的宽度高度(图�
 </span><span class='line'><span class="w">        </span><span class="n">kernel_dx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">DConv</span><span class="p">(</span><span class="n">sum_dx</span><span class="p">[</span><span class="n">b</span><span class="p">],</span><span class="n">input</span><span class="p">[</span><span class="n">a</span><span class="p">]);</span>
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 其中in_dx,out_dx 的结构和 input,output 相同，代表的是相应点的梯度。
 </p>
 
@@ -260,7 +260,7 @@ bias是n1×(n2-kw+1)×(n3-kh+1)的矩阵，kw,kh是卷积核的宽度高度(图�
 <p>类似的字采样层的输出的计算式为：</br>
 <center>输出= Sigmoid( 采样*权重 +偏移量)</center>
 其核心代码如下：
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -296,14 +296,14 @@ bias是n1×(n2-kw+1)×(n3-kh+1)的矩阵，kw,kh是卷积核的宽度高度(图�
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Sigmoid</span><span class="p">(</span><span class="n">sum</span><span class="p">);</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 </p>
 
 
 
 
 <p>子采样层的反馈运算的核心代码如下：
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -343,7 +343,7 @@ bias是n1×(n2-kw+1)×(n3-kh+1)的矩阵，kw,kh是卷积核的宽度高度(图�
 </span><span class='line'><span class="w">            </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 </p>
 
 

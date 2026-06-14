@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 红黑树 | Bill's Blog]]></title>
   <link href="http://ibillxia.github.io/blog/tags/hong-hei-shu/atom.xml" rel="self"/>
   <link href="http://ibillxia.github.io/"/>
-  <updated>2025-06-01T13:56:45+08:00</updated>
+  <updated>2026-06-14T19:17:47+08:00</updated>
   <id>http://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -67,7 +67,7 @@ RB-tree是另一种被广泛使用的平衡二叉搜索树，也是SGI STL唯一
 <p>上面的这些约束保证了这个树大致上是平衡的，这也决定了红黑树的插入、删除、查询等操作是比较快速的。 根据规则5，新增节点必须为红色；根据规则4，新增节点之父节点必须为黑色。当新增节点根据二叉搜索树的规则到达其插入点时，却未能符合上述条件时，就必须调整颜色并旋转树形。下图是一个典型的RB-tree（来自wiki）：<br/>
 <img src="/images/2014/IMAG2014080302.png"><br/>
 SGI STL中RB-tree的数据结构比较简单，其中每个节点的数据结构如下：
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -417,7 +417,7 @@ SGI STL中RB-tree的数据结构比较简单，其中每个节点的数据结构
 </span><span class='line'><span class="o">&lt;</span><span class="n">h2</span><span class="o">&gt;</span><span class="mf">6.</span><span class="w"> </span><span class="n">RB</span><span class="o">-</span><span class="n">tree的查询操作</span><span class="o">&lt;/</span><span class="n">h2</span><span class="o">&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">RB</span><span class="o">-</span><span class="n">tree是一个二叉搜索树</span><span class="err">，</span><span class="n">元素的查询是其拿手项目</span><span class="err">，</span><span class="n">非常简单</span><span class="err">，</span><span class="n">以下是RB</span><span class="o">-</span><span class="n">tree提供的查询操作</span><span class="err">：</span>
-</span></code></pre></td></tr></table></div></figure> cpp
+</span></code></pre></td></tr></table></div></figure></notextile></div> cpp
 template <class _Key, class _Value, class _KeyOfValue, class _Compare, class _Alloc>
 typename <em>Rb_tree&lt;</em>Key,<em>Value,</em>KeyOfValue,<em>Compare,</em>Alloc>::iterator
 <em>Rb_tree&lt;</em>Key,<em>Value,</em>KeyOfValue,<em>Compare,</em>Alloc>::find(const <em>Key&amp; __k) {

@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: Snoopy | Bill's Blog]]></title>
   <link href="http://ibillxia.github.io/blog/tags/snoopy/atom.xml" rel="self"/>
   <link href="http://ibillxia.github.io/"/>
-  <updated>2025-06-01T13:56:45+08:00</updated>
+  <updated>2026-06-14T19:17:47+08:00</updated>
   <id>http://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -110,7 +110,7 @@ submitlinks(\$URI) </br>
 <p>Demo 1：抓取百度首页示例</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -154,12 +154,12 @@ submitlinks(\$URI) </br>
 </span><span class='line'><span class="k">else</span> <span class="o">&lt;</span><span class="nx">BR</span><span class="o">&gt;</span>
 </span><span class='line'><span class="k">echo</span> <span class="s2">&quot;error fetching document: &quot;</span><span class="o">.</span><span class="nv">$snoopy</span><span class="o">-&gt;</span><span class="na">error</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
 </span><span class='line'><span class="cp">?&gt;</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>Demo 2: snoopy登录并采集phpchina示例 </p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -521,7 +521,7 @@ submitlinks(\$URI) </br>
 </span><span class='line'>    <span class="k">exit</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
 </span><span class='line'><span class="cp">?&gt;</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 ]]></content>
   </entry>
   

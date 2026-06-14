@@ -166,7 +166,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2011/04/21/about-variable-parameters-in-c-language/">浅谈C语言的可变参数</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/05/24/function-pointer-in-c-and-function-call-operator-in-cpp/">C语言函数指针与C++函数调用操作符</a></h1>
     
     
       <p class="meta">
@@ -180,52 +180,28 @@ $(document).bind('DOMNodeInserted', function(event) {
 
 
 
-<time datetime="2011-04-21T16:50:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-05-24T21:27:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2011/04/21/about-variable-parameters-in-c-language/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/05/24/function-pointer-in-c-and-function-call-operator-in-cpp/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><h2>1.问题引入</h2>
+  <div class="entry-content"><h2>概述</h2>
 
+<p>在编程过程中，一些特殊的时候，我们需要向一个函数传递另一个函数的地址（比如在快速排序中，我们需要传入两个元素大小比较的函数的地址），此时在C语言中一般是通过传递一个函数指针来实现。最近在看《STL源码剖析》一书，上面提到，在C++中其实可以通过另一种方式实现，那就是函数调用操作符<code>()</code> 。本文首先介绍一下C语言中函数指针的用法，然后再介绍C++中函数调用操作符的用法。</p>
 
-<p>
-C语言中有些函数使用可变参数，比如常见的 `int printf( const char *format [, argument]... );`，
-第一个参数format是固定的，其余的参数的个数和类型都不固定。例如：</p>
+<h2>C语言中的函数指针</h2>
 
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Enjoy yourself everyday!/n&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="n">printf</span><span class="p">(</span><span class="s">&quot;The value is %d!/n&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这种可变参数可以说是C语言一个比较难理解的部分，这里会由几个问题引发一些对它的分析。
-注意：在C++中有函数重载（overload）可以用来区别不同函数参数的调用，但它还是不能表示任意数量的函数参数。</p>
-
-
-
-
-<h2>2.printf（）实现原理</h2>
-
-
-<p>
-C语言用va_start等宏来处理这些可变参数。这些宏看起来很复杂，其实原理挺简单，
-就是根据参数入栈的特点从最靠近第一个可变参数的固定参数开始，依次获取每个可变参数的地址。
-下面我们来分析这些宏。</p>
-
-
-
+<p>我们先直接看一个例子吧。这个例子比较全面而且简单，其中的函数指针是带参数且有返回值的函数指针，而且还有把函数指针作为参数来传递的代码。这个例子来自 <a href="http://blog.jobbole.com/44639/">jobbole伯乐在线</a>，代码如下：</p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2011/04/21/about-variable-parameters-in-c-language/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/05/24/function-pointer-in-c-and-function-call-operator-in-cpp/">Read on &rarr;</a>
     </footer>
   
 
@@ -237,7 +213,7 @@ C语言用va_start等宏来处理这些可变参数。这些宏看起来很复�
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2011/04/17/my-understanding-of-micro-blog/">我是如何理解微博的</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/05/21/are-you-smart-enought-to-work-at-google/">读书笔记 - 《谁是谷歌想要的人才》</a></h1>
     
     
       <p class="meta">
@@ -251,35 +227,26 @@ C语言用va_start等宏来处理这些可变参数。这些宏看起来很复�
 
 
 
-<time datetime="2011-04-17T13:31:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-05-21T22:30:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2011/04/17/my-understanding-of-micro-blog/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/05/21/are-you-smart-enought-to-work-at-google/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><h3>微博首先是媒体</h3>
+  <div class="entry-content"><p>《谁是谷歌想要的人才 : 破解世界最顶尖公司的面试密码》</p>
 
+<p><img src="/images/2014/IMAG2014052101.jpg"></p>
 
-<center><img src="/images/2011/IMAG2011041701.jpg"></center>
-
-
-<p>但更确切点说，它是自媒体。它即是名人、权威们的自媒体，也是草根们的自媒体。在中国，草根现在靠着微薄，也有了些话语权，但声音还比较稚嫩，
-分贝也不够大，但无论如何，跟着意见领袖们起起哄是必须地，支持也好，反对也罢，声音还是比从前大多了。要注意的是，一个草根的声音很小，但草根
-们的声音一旦被叠加，再加上从众效应，其力量可能超乎我们想象，这时自媒体会变成众媒体（与传统的公众媒体是有区别的）。众媒体是个双刃剑，其好
-处是，多数时候，这个众媒体可能代表大多数的声音，但另一方面，作为自媒体，微博毕竟是个性化的，即使看不清真相，也能知道看问题有不同的角度。
-而当其成为众媒体时，其声音可能是趋同的，一旦人们形成某种较特殊的群体心理，个性将开始湮没、理性将开始丧失，这就有点危险，尤其在中国。</p>
-
-
-
+<p>解读google极端面试题，完全被这些面试题吓呆了~</p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2011/04/17/my-understanding-of-micro-blog/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/05/21/are-you-smart-enought-to-work-at-google/">Read on &rarr;</a>
     </footer>
   
 
@@ -291,7 +258,7 @@ C语言用va_start等宏来处理这些可变参数。这些宏看起来很复�
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2011/04/11/14-theories-of-gaining-profits-in-web-system/">14个网站盈利的理论</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/05/17/insight-into-define-and-inline-function-in-c/">深入理解C语言的define和内联函数</a></h1>
     
     
       <p class="meta">
@@ -305,60 +272,39 @@ C语言用va_start等宏来处理这些可变参数。这些宏看起来很复�
 
 
 
-<time datetime="2011-04-11T18:27:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-05-17T22:43:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2011/04/11/14-theories-of-gaining-profits-in-web-system/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/05/17/insight-into-define-and-inline-function-in-c/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><h3>1.250定律</h3>
+  <div class="entry-content"><h2>概述</h2>
+
+<p>在 <code>Robert C.Searcord</code> 的 <em>The</em> <em>Cert</em> <em>C</em> <em>Secure</em> <em>Coding</em> <em>Standard</em> 一书中，关于宏定义的规范中第一条就是</p>
+
+<blockquote><p>用内联函数或静态函数替代与函数相似的宏</p></blockquote>
+
+<p>这个规范非常实用。内联函数是C99标准中新增的，当宏定义和内联函数可以互换时，应该优先考虑选择内联函数，这也是为什么在C++标准库函数中 <code>max</code>, <code>min</code>, <code>swap</code> 等都是通过内联函数来实现的原因。 宏定义是完全原封不动的很SB的替换，而内联函数则并非简单的文本替换，而是按函数调用的方式展开。关于内联函数相对于宏替换的优点，在wiki有如下几点的总结：</p>
+
+<ul>
+<li>宏调用并不执行类型检查，甚至连正常参数也不检查，但是函数调用却要检查。</li>
+<li>C语言的宏使用的是文本替换，可能导致无法预料的后果，因为需要重新计算参数和操作顺序。</li>
+<li>在宏中的编译错误很难发现，因为它们引用的是扩展的代码，而不是程序员键入的。</li>
+<li>许多结构体使用宏或者使用不同的语法来表达很难理解。内联函数使用与普通函数相同的语言，可以随意的内联和不内联。</li>
+<li>内联代码的调试信息通常比扩展的宏代码更有用。</li>
+</ul>
 
 
-<p>拉德认为：每一位顾客身后，大体有250名亲朋好友。如果您赢得了一位顾客的好感，就意味着赢得了250个人的好感；反之，如果你得罪了一名顾客，
-也就意味着得罪了250 名顾客。在你的网站访客中，一个访客可能可以带来一群访客，任何网站都有起步和发展的过程，这 个过程中此定律尤其重要。</p>
-
-
-
-
-<h3>2.达维多定律</h3>
-
-
-<p>达维多认为，一个企业要想在市场上总是占据主导地位，那么就要做到第一个开发出新产品，又第一个淘汰自己的老产品。国内网站跟风太严重，比如
-前段时间的格子网，乞讨网，博客网，一个成功了，大家一拥而上。但实际效果是，第一个出名的往往最成功，所以在网站的定位上，要动自己的脑筋，
-不是去捡人家剩下的客户。同理，买人家出售的数据来建站效果是很糟糕的。</p>
-
-
-
-
-<h3>3.木桶定律</h3>
-
-
-<p>水桶定律是指，一只水桶能装多少水，完全取决于它最短的那块木板。这就是说任何一个组 织都可能面临的一个共同问题，即构成组织的各个部分往往
-决定了整个组织的水平。注意审视自己的网站，是速度最糟糕？美工最糟糕？宣传最糟糕？你首先要做的，不是改进你最强的，而应该是你最薄弱的。</p>
-
-
-
-
-<h3>4.马太效应</h3>
-
-
-<p>《新约》中有这样一个故事，一个国王远行前，交给三个仆人每人一锭银子，吩咐他们：“你们去做生意，等我回来时，再来见我。”国王回来时，第一个
-仆人说：“主人，你交给我们的一锭银子，我已赚了10锭。”于是国王奖励他10座城邑。第二个仆人报告说：“主人，你给我的一锭银子，我已赚了5锭。” 于是
-国王例奖励了他5座城邑。第三个仆人报告说：“主人，你给我的一锭银子，我一直包在手巾里存着，我怕丢失，一直没有拿出来。”于是国王命令将第三个仆人
-的一锭银子也赏给第一个仆人，并且说：“凡是少的，就连他所有的也要夺过来。凡是多的，还要给他，叫他多多益善。”这就是马太效应。在同类网站中，马太
-效应是很明显的。一个出名的社区，比一个新建的社区，更容易吸引到新客户。启示是，如果你无法把网站做大，那么你要做专。作专之后再做大就更容易。</p>
-
-
-
+<p>其中前面两条很好理解，相信大家应该不陌生，这里主要通过具体讨论一个该书中提到的一个程序实例来感受一下后面几点。</p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2011/04/11/14-theories-of-gaining-profits-in-web-system/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/05/17/insight-into-define-and-inline-function-in-c/">Read on &rarr;</a>
     </footer>
   
 
@@ -370,7 +316,7 @@ C语言用va_start等宏来处理这些可变参数。这些宏看起来很复�
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2011/03/12/linkedin-10-years-ancestor-of-commercial-sns/">LinkedIn十年来路：低调而沉稳的商业SNS鼻祖</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/05/11/cpp-program-optimization-new-delete-operator/">C++ 应用程序性能优化之 New/delete 操作符</a></h1>
     
     
       <p class="meta">
@@ -384,51 +330,35 @@ C语言用va_start等宏来处理这些可变参数。这些宏看起来很复�
 
 
 
-<time datetime="2011-03-12T22:57:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-05-11T20:33:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2011/03/12/linkedin-10-years-ancestor-of-commercial-sns/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/05/11/cpp-program-optimization-new-delete-operator/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>作为一家商业社交网站，LinkedIn显得低调而沉稳。与Facebook以宽泛社交为宗旨，被各种分享、聚会、礼物以及“动他（她）一下”等好玩的程序渲染的热闹相比，
-LinkedIn有着商业范儿的严肃简洁，只有一些基本的联络和互动功能。但也正是这种专注的定位和扎实的发展路线，让LinkedIn最终成为世界上最大的专业网站之一，
-更在招聘领域独占鳌头。截至2010年年底，LinkedIn已拥有9000万注册用户，这些用户分布在200多个国家和地区，其中每月平均活跃用户占到72%，每天产生4万条
-招聘信息。 </p>
+  <div class="entry-content"><h2>1.概述</h2>
+
+<p>C++ 程序的存储空间可以分为静态/全局存储区、栈区和堆区。下图展示了一个典型的Linux C/C++ 程序内存空间布局：</p>
+
+<center><img src="/images/2014/IMAG2014051101.png"></center>
 
 
-
-
-<p>在这个偏执狂才能生存的时代，专注的 LinkedIn为自己开创了招聘服务、营销服务、付费用户这三种稳定增长的收入渠道。2007年到2010年的近三年中，LinkedIn的线下
-收入实现了从47%到86%的增长。2009年开始更是达到了平均每季18%的增幅，这为LinkedIn首次IPO铺平了道路。</p>
-
-
-
-
-<h3>创业是一种修行</h3>
-
-
-<p>2002年，“连环”创业家雷德·霍夫曼（Reid Hoffman）创建了LinkedIn，他现在担任公司董事会主席。此外，这位活跃的创业投资者还曾经为60多家硅谷新创企业提供
-过咨询和资金，其中包括Facebook。</p>
-
-
-<p>时光倒转到1993年，当美国在线公司（AOL）开始用送软盘来吸引人们上网的时候，霍夫曼意识到互联网变革已经开始了。当时霍夫曼已经从斯坦福大学拿到符号系统学
-的学士学位，正在牛津大学攻读哲学硕士。斯坦福的学习让他了解了软件，而牛津的学习让他意识到自己应该更广阔地接触人们的生活。他发现，软件可以实现和千百万人
-交流沟通的目的，于是决定创建一家软件公司。</p>
-
-
-<p>但当他去向VC求助的时候。他们问他：“你做过软件吗？你要我们为你的公司投上百万美元的资金，你应该做过这个吧？”当霍夫曼回答“没有”的时候，他们让他“先去找份工作”。</p>
-
-
-
+<p>其中，每一部分的具体涵义如下：<br/>
+- <strong>代码段（.text）</strong>：这里存放的是CPU要执行的指令。代码段是可共享的，相同的代码在内存中只会有一个拷贝，同时这个段是<strong>只读</strong>的，防止程序由于错误而修改自身的指令。<br/>
+- <strong>初始化数据段（.data）</strong>：这里存放的是程序中需要明确赋初始值的变量，例如位于所有函数之外的全局变量：<code>int val=100;</code> 。 需要强调的是，以上两段都是位于程序的可执行文件中，内核在调用 exec 函数启动该程序时从源程序文件中读入。<br/>
+- <strong>未初始化数据段（.bss）</strong>：位于这一段中的数据，内核在执行该程序前，将其初始化为0或者null。例如出现在任何函数之外的全局变量：<code>int sum;</code><br/>
+- <strong>堆（Heap）</strong>：这个段用于在程序中进行动态内存申请，例如经常用到的 malloc，new 系列函数就是从这个段中申请内存。<br/>
+- <strong>栈（Stack）</strong>：函数中的局部变量以及在函数调用过程中产生的临时变量都保存在此段中。<br/>
+静态/全局存储区和栈区一般在程序编译阶段决定；而堆区则随着程序的运行而动态变化，每一次程序运行都会有不同的行为，因此动态内存管理对于一个程序在运行过程中占用的内存大小及程序运行性能有非常重要的影响。 本文主要探讨在C++中如何管理动态内存，以及如何使用 C++ 的语言特性来提高动态内存的管理效率，减少错误的发生。</p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2011/03/12/linkedin-10-years-ancestor-of-commercial-sns/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/05/11/cpp-program-optimization-new-delete-operator/">Read on &rarr;</a>
     </footer>
   
 
@@ -440,7 +370,7 @@ LinkedIn有着商业范儿的严肃简洁，只有一些基本的联络和互动
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2010/10/26/UML-model-building-example-for-requirement-analysis/">UML需求分析步骤实例解析</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/05/04/android-ndk-development/">Ubuntu 下 Android NDK 开发入门</a></h1>
     
     
       <p class="meta">
@@ -454,41 +384,31 @@ LinkedIn有着商业范儿的严肃简洁，只有一些基本的联络和互动
 
 
 
-<time datetime="2010-10-26T13:08:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-05-04T23:53:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2010/10/26/UML-model-building-example-for-requirement-analysis/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/05/04/android-ndk-development/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>本节向大家介绍一下UML需求分析的一般步骤，本节用实例向大家介绍，相信通过本节的介绍你对UML需求分析有一定的认识。下面让我们一起来学习具体介绍吧。</p>
+  <div class="entry-content"><p>本文首先介绍一下在 Ubuntu 下如何配置 Android NDK 开发环境，然后用一个简单的 hello-jni 项目来介绍 NDK 开发流程，本文的全部代码下载链接：<a href="https://ibillxia.github.io/upload/code/20140504-HelloJni.tar.gz">HelloJni.tar.gz</a>，也可以在我的 <a href="https://github.com/ibillxia/Demo/tree/master/HelloJni">GitHub</a> 上下载。</p>
+
+<h2>1. 简介</h2>
+
+<p>什么是 Android NDK 呢？ NDK(Native Development Kit) 是一个允许开发者用一些本地语言(C/C++)编写 Android App 的部分功能的工具集。对于一些特定的 App，NDK 非常有利于我们直接使用现成的用 C/C++ 编写的代码库（但对于大多数 App 来说，NDK 是没有必要的）。使用 NDK 进行 C/C++ Android 开发的基本结构和流程如下图（来自<a href="http://shihongzhi.com/ndk/">shihongzhi博客</a> ）：</p>
+
+<center> <img src="/images/2014/IMAG2014050401.jpg"> </center>
 
 
-<h2>基于UML需求分析</h2>
-
-
-<p>在初步的业务需求描述已经形成的前提下，基于UML需求分析大致可分为以下步骤：</br>
-（1）利用用例及用例图表示需求。从业务需求描述出发获取执行者和场景；对场景进行汇总、分类、抽象；形成用例；确定执行者与用例、用例与用例图
-之间的关系，生成用例图。</br>
-（2）利用包图及类图表示目标软件系统的总体框架结构。根据领域知识、业务需求描述和既往经验设计目标软件系统的顶层架构；从业务需求描述中
-提取“关键概念”，形成领域概念模型；从概念模型和用例出发，研究系统中主要的类之间的关系，生成类图。</br>
-上述两个步骤并没有时序关系，它们可以并行展开，如图1所示。</br>
-<center><img src="/images/2010/IMAG2010102601.jpg"></center>
-</p>
-
-
-
-
-<p>本节将依次介绍上述步骤中涉及的UML语言机制，并结合“家庭保安系统”实例说明每步骤中基于UML需求分析方法。</p>
-
+<p>在开始之前，这里要提醒大家：NDK 对大多数 App 而言是不会有太多的好处的，在 Android 上使用原生 C/C++ 代码并不会很明显的提升应用的性能，但却增加了你开发应用的复杂度。所以，仅仅在需要使用 NDK 时才使用它 —— 不要因为你更喜欢用 C/C++。典型的 NDK 应用场景是一些 CPU 操作密集而不需要太多内存的场合，如信号处理、物理模拟等等，很多这些处理过程都已经封装到了 Android 系统内部，所以当你不确定是否要使用本地 C/C++ 代码时，先看看你的需求，以及 Android 框架中的 API 是否已经提供你需要的功能。</p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2010/10/26/UML-model-building-example-for-requirement-analysis/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/05/04/android-ndk-development/">Read on &rarr;</a>
     </footer>
   
 
@@ -500,7 +420,7 @@ LinkedIn有着商业范儿的严肃简洁，只有一些基本的联络和互动
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2010/10/19/10-difference-between-linux-and-bsd/">Linux与BSD之间的10个不同之处</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/04/28/configure-twitter-bootstrap-theme-in-octopress/">给Octopress博客配置Twitter Bootstrap主题</a></h1>
     
     
       <p class="meta">
@@ -514,43 +434,36 @@ LinkedIn有着商业范儿的严肃简洁，只有一些基本的联络和互动
 
 
 
-<time datetime="2010-10-19T22:30:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-04-28T22:37:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2010/10/19/10-difference-between-linux-and-bsd/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/04/28/configure-twitter-bootstrap-theme-in-octopress/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>也许你经常会听到人们把Linux及BSD系统混为一谈，甚至于媒体都这么说。当然，事实上这两者确实有很多相似之处，比如它们都是基于Unix演变而来，
-而且基本上这两类系统都是由非盈利组织及团队开发，另外我更想说的是，这两个系统都有一个共同的目标–那就是创建最有用、最可靠的操作系统。 那么
-这两个系统的区别到底在哪里?国外一位名为 Jack Wallen 的科技 Blogger 发表了一篇名为 10 differences between Linux and BSD 的文章，从许可证、
-代码控制、内核 vs 操作系统、UNIX-Like、基本系统、更多来自于源代码、升级、前沿技术、硬件支持及用户群等10方面描述了 Linux 与 BSD 之间的 10 
-个不同之处。</p>
+  <div class="entry-content"><p>很长一段时间以来就看到各种基于 Twitter Bootstrap 主题的博客很清爽，而且对 Tag 的归档也做得很赞，于是很想将自己的博客也换成 Bootstrap 的主题，随着看到的博客越来越多，自己的 Octopress 主题先得越来越臃肿，而 Tags 归档功能也相形见绌，更换主题的欲望越来越强烈了。于是乎，趁这个周末捣鼓了一番，最终大功告成，在这里分享一下具体过程。</p>
 
+<h2>Bootstrap 主题的安装</h2>
 
+<p>首先下载适用于 Octopress 的 <a href="https://github.com/bkutil/bootstrap-theme">Bootstrap主题</a> 并解压缩到博客的 .theme 目录，然后安装：</p>
 
+<pre><code class="sh">rake install['bootstrap']
+</code></pre>
 
-<h3>1、许可证</h3>
+<p>安装的过程中可能会提示有 sass 或其他依赖库的语法错误神马的，这是因为 sass 的版本过低，可以通过如下命令来跟新：</p>
 
+<pre><code class="sh">bundle update sass
+</code></pre>
 
-<p>正如我们所知道的，Linux 操作系统是基于 GPL 许可证授权下的。该许可证可防止开源软件被转换为封闭源代码软件及确保源代码的可用性。 GPL 许可证的
-目的就是防止二进制包成为唯一的软件发行源。</p>
-
-
-
-
-<p>而 BSD 许可证的限制则要少得多，它甚至允许二进制包成为唯一的发行源。这就是核心差异，可以这样理解：GPL 许可证让您有权拥有任何你想要使用该软件的
-方法，但你必须确保提供源代码给下一个使用它的人(包括你对它的改变部分)。而 BSD 许可证并不是要求你必须那么做。( 译者注：这里分别维基百科上对 BSD 及 GPL 
-许可证的解释)</p>
 
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2010/10/19/10-difference-between-linux-and-bsd/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/04/28/configure-twitter-bootstrap-theme-in-octopress/">Read on &rarr;</a>
     </footer>
   
 
@@ -562,7 +475,7 @@ LinkedIn有着商业范儿的严肃简洁，只有一些基本的联络和互动
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2010/10/16/something-about-idle-in-linux-kernel-analysis/">分析linux内核的idle的知识</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/">全排列及某排列的后继的求解及其STL实现的分析</a></h1>
     
     
       <p class="meta">
@@ -576,36 +489,42 @@ LinkedIn有着商业范儿的严肃简洁，只有一些基本的联络和互动
 
 
 
-<time datetime="2010-10-16T14:24:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-04-24T23:24:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2010/10/16/something-about-idle-in-linux-kernel-analysis/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>Linux系统越来越受到电脑用户的欢迎，于是很多人开始学习Linux时，学习linux，你可能会遇到linux内核问题，这里将介绍linux内核中idle知识，
-在这里拿出来和大家分享一下。</p>
+  <div class="entry-content"><p>在Leetcode上有好几道全排列相关的题，一直以来只是会写基于递归的全排列生成算法，遇到这几道题后，搜了下一些非递归的实现方法，发现其实全排列的生成还是很有规律的有木有！这里就总结一下递归和非递归的全排列生成方法，并分析一下 STL 的实现。</p>
 
+<p>递归和非递归实现全排列生成的方法也分别有多种，递归法有基于交换的，有基于链接的，还有回溯，非递归法有排序、回溯、求模等，关于所有这些方法的具体实现参见 <a href="http://mengliao.blog.51cto.com/876134/824079">全排列的六种算法</a>. 本文只实现一种递归和一种非递归算法，并在最后对 STL 的非递归算法进行分析。</p>
 
+<p>本文的全部代码下载：<a href="http://ibillxia.github.io/upload/code/20140424.cpp">code</a>.</p>
 
+<h2>递归法求全排列</h2>
 
-<h2>1. idle是什么</h2>
+<p>递归法的基本思路是这样的：</p>
 
+<blockquote><p>首先选一个元素排在第一个（有 n 中选法）；
+然后递归的对剩下的所有元素进行全排列；
+直到一个元素的全排列是其本身。</p></blockquote>
 
-<p>简单的说idle是一个进程，其pid号为 0。其前身是系统创建的第一个进程，也是唯一一个没有通过fork()产生的进程。在smp系统中，每个处理器单元有
-独立的一个运行队列，而每个运行队列上又有一个idle进程，即有多少处理器单元，就有多少idle进程。系统的空闲时间，其实就是指idle进程的"运行时间"。
-既然是idle是进程，那我们来看看idle是如何被创建，又具体做了哪些事情?</p>
+<p>假设给定的元素序列为 <e1, e2, ..., en>，其全排列表示为 P(e1, e2, ..., en)，则对递归的第一步展开有：</p>
 
-
-
+<blockquote><p>P(e1, e2, ..., en) = {
+<e1, P(e2, e3, ..., en)>,
+<e2, P(e1, e3, ..., en)>,
+... ...
+<en, P(e1, e2, ..., e(n-1))> }</p></blockquote>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2010/10/16/something-about-idle-in-linux-kernel-analysis/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/">Read on &rarr;</a>
     </footer>
   
 
@@ -617,7 +536,7 @@ LinkedIn有着商业范儿的严肃简洁，只有一些基本的联络和互动
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2010/09/24/PHP-string-filter-methods-for-safety/">PHP字符串安全过滤全攻略</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/04/11/swap-two-variables-in-place/">原地交换两个变量的值</a></h1>
     
     
       <p class="meta">
@@ -631,39 +550,43 @@ LinkedIn有着商业范儿的严肃简洁，只有一些基本的联络和互动
 
 
 
-<time datetime="2010-09-24T13:28:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-04-11T22:27:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2010/09/24/PHP-string-filter-methods-for-safety/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/04/11/swap-two-variables-in-place/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>php安全过滤是防止注入的第一道防线，不得大意。提到PHP的安全过滤，不得不提的两个东西是`set_magic_quotes_runtime` 和 `magic_quotes_gpc`。</p>
+  <div class="entry-content"><h2>引子</h2>
 
+<p>在码代码的过程中，不经意间就会遇到需要交换两个变量的情况，一般情况下都是通过新定义一个同类型的变量来中转，但自己也知道可以不用定义新变量直接原地交换，但具体如何原地交换以及其中可能隐藏的bug却了解得不是很清楚，于是乎google了一下，发现这里面还真是有很多学问呢，这里整理和总结一下。</p>
 
+<p>原地交换两个变量，最主要有加减法和异或法。</p>
 
+<p>本文完整代码链接：<a href="../upload/code/20140411.cpp">20140411.cpp</a></p>
 
-<p>`set_magic_quotes_runtime()` 可以让程序员在代码中动态开启或关闭 `magic_quotes_runtime`，`set_magic_quotes_runtime(1)` 表示开启，
-`set_magic_quotes_runtime(0)` 则表示关闭。当`set_magic_quotes_runtime(1)`时，从数据库或通过`fread`之类的函数读取的文本，将自动对' "和\自动
-加上反斜杠\进行转义，防止溢出。这在对数据库的数据进行转移的时候非常有用。但在一般情况下，应当将其关闭，否则从数据库读取出来的数据单引
-号、双引号和反斜杠都会被加上\，导致显示不正常。像Discuz，PHPWind都在公共文件的头部加上一句 `set_magic_quotes_runtime(0);` 强制关闭 
-`magic_quotes_runtime` 。</p>
+<h2>加减法</h2>
 
+<p>加减法最简单、最好理解了，设待交换的两个变量分别为 a 和 b ，首先将两者的和赋给 a ；然后将 a 与 b的差赋给 b ，这样 b 就是 a 原来的值了；最后再将 a 与 b 的差赋给 a ，这样 a 就是 b 原来的值了。具体代码如下：</p>
 
+<pre><code class="cpp">inline template &lt;class T&gt;
+void xswap(T &amp;a,T &amp;b){
+    a=a+b;
+    //printf("a=%u\n",a);
+    b=a-b;
+    a=a-b;
+}
+</code></pre>
 
-
-<p>`magic_quotes_gpc` 和 `magic_quotes_runtime` 的区别在于，`magic_quotes_gpc` 是对通过GET、POST、COOKIE传递的数据进行转义，一般在数据入库前
-要先进行转义，`magic_quotes_gpc`不能在代码中动态开启或关 闭，需要到`php.ini`将`magic_quotes_gpc`设置为on或off，代码中可以用`get_magic_quotes_gpc`
-获取 `magic_quotes_gpc`的状态。当`magic_quotes_gpc`为off时，需要手工对数据进行addslashes，代码如下：</p>
 
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2010/09/24/PHP-string-filter-methods-for-safety/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/04/11/swap-two-variables-in-place/">Read on &rarr;</a>
     </footer>
   
 
@@ -675,7 +598,7 @@ LinkedIn有着商业范儿的严肃简洁，只有一些基本的联络和互动
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2010/08/31/the-elements-of-ip-faking/">伪造IP地址的原理</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/03/16/go-concurrent-programming-first-try/">Go并发编程初探</a></h1>
     
     
       <p class="meta">
@@ -689,43 +612,31 @@ LinkedIn有着商业范儿的严肃简洁，只有一些基本的联络和互动
 
 
 
-<time datetime="2010-08-31T09:41:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-03-16T23:35:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2010/08/31/the-elements-of-ip-faking/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/03/16/go-concurrent-programming-first-try/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>入侵者使用假IP地址发送包，利用基于IP地址证实的应用程序。其结果是未授权的远端用户进入带有防火墙的主机系统。</p>
+  <div class="entry-content"><h2>概述</h2>
+
+<p>最近在做的一个项目，需要对大量数据进行一些基本的统计和处理，整个程序的思路很简单，但处理起来却很慢，特别是有二重循环的地方，龟速前进，眼看着16核32线程
+的服务器只有一个线程被利用，束手无策。之前一直听说Go是一门对并发编程有很好的支持的语言，七牛的许牛大力推崇Go语言，于是就开始了对Go并行编程的探索之旅。</p>
 
 
+<center><img src="/images/2014/IMAG2014031601.jpg"></center>
 
 
-<p>假设有两台主机A、B和入侵者控制的主机X。假设B授予A某些特权，使得A能够获得B所执行的一些操作。X的目标就是得到与B相同的权利。
-为了实现该目标，X必须执行两步操作：首先，与B建立一个虚假连接；然后，阻止A向B报告网络证实系统的问题。主机X必须假造A的IP地址，
-从而使B相信从X发来的包的确是从A发来的。</p>
-
-
-
-
-<p>我们同时假设主机A和B之间的通信遵守TCP／IP的三次握手机制。握手方法是：</p>
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>A->：SYN（序列号=M）
-</span><span class='line'>B->A：SYN（序列号＝N），ACK（应答序号=M+1）
-</span><span class='line'>A->B：ACK（应答序号＝N+1）</span></code></pre></td></tr></table></div></figure>
 
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2010/08/31/the-elements-of-ip-faking/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/03/16/go-concurrent-programming-first-try/">Read on &rarr;</a>
     </footer>
   
 
@@ -737,7 +648,7 @@ LinkedIn有着商业范儿的严肃简洁，只有一些基本的联络和互动
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/">超好的HTML解析工具PHP Simple HTML DOM Parser</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/03/10/top-10-open-source-recommendation-systems/">TOP 10开源的推荐系统简介</a></h1>
     
     
       <p class="meta">
@@ -751,36 +662,39 @@ LinkedIn有着商业范儿的严肃简洁，只有一些基本的联络和互动
 
 
 
-<time datetime="2010-08-28T20:49:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2014-03-10T22:29:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/#disqus_thread">Comments</a>
+         | <a href="/blog/2014/03/10/top-10-open-source-recommendation-systems/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>采用PHP5+ 开发的一个简单的 PHP HTML DOM 分析，支持 invalid HTML 并提供非常简单的方式来操作 HTML 元素。在 HMTL 页面
-上查找标签所使用的语法与 jQuery （一个轻量级，实用的 javascript 框架） 相似，从页面中抽取内容只需要一行代码。开源代码：
-<a href="http://sourceforge.net/projects/simplehtmldom/">http://sourceforge.net/projects/simplehtmldom/</a> </p>
+  <div class="entry-content"><p>最近这两年推荐系统特别火，本文搜集整理了一些比较好的开源推荐系统，即有轻量级的适用于做研究的SVDFeature、LibMF、LibFM等，也有重量级的适用于工业系统的
+Mahout、Oryx、EasyRecd等，供大家参考。PS：这里的top 10仅代表个人观点。</p>
 
 
+<h2>#1.SVDFeature</h2>
 
 
-<p>它具有以下几个特点：</br>
-1. 只支援 PHP5 以上. </br>
-2. 可以分析不严谨 (invalid) 的 HTML. </br>
-3. 支援简单的 CSS Selector. </br>
-4. 简单的 DOM 操作. </br>
-5. 会维持 HTML 中的原始格式 .</br>
-下面是使用手册上举的几个简单的使用示例。</p>
+<center><img src="/images/2014/IMAG2014031001.png"></center>
+
+
+<p>主页：<a href="http://svdfeature.apexlab.org/wiki/Main_Page">http://svdfeature.apexlab.org/wiki/Main_Page</a> 语言：C++</br>
+一个feature-based协同过滤和排序工具，由上海交大Apex实验室开发，代码质量较高。在KDD Cup 2012中获得第一名，KDD Cup 2011中获得第三名，相关论文
+发表在2012的JMLR中，这足以说明它的高大上。</br>
+SVDFeature包含一个很灵活的Matrix Factorization推荐框架，能方便的实现SVD、SVD++等方法, 是单模型推荐算法中精度最高的一种。SVDFeature代码精炼，可以用
+相对较少的内存实现较大规模的单机版矩阵分解运算。另外含有Logistic regression的model，可以很方便的用来进行ensemble。</p>
+
+
 
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2014/03/10/top-10-open-source-recommendation-systems/">Read on &rarr;</a>
     </footer>
   
 
@@ -808,7 +722,7 @@ LinkedIn有着商业范儿的严肃简洁，只有一些基本的联络和互动
   <footer role="contentinfo" class="page-footer">
 <hr>
 <p>
-  Copyright &copy; 2009 - 2025 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
 </p>
 

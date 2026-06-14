@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 云端开发 | Bill's Blog]]></title>
   <link href="http://ibillxia.github.io/blog/tags/yun-duan-kai-fa/atom.xml" rel="self"/>
   <link href="http://ibillxia.github.io/"/>
-  <updated>2025-06-01T13:56:45+08:00</updated>
+  <updated>2026-06-14T19:17:47+08:00</updated>
   <id>http://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -56,7 +56,7 @@
 
 
 <p>硬件信息概要，要加sudo使用根权限并输入密码，不加short参数可以查看详细信息
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -358,7 +358,7 @@
 </span><span class='line'>---<span class="w"> </span>star.c10r.facebook.com<span class="w"> </span>ping<span class="w"> </span>statistics<span class="w"> </span>---
 </span><span class='line'><span class="m">6</span><span class="w"> </span>packets<span class="w"> </span>transmitted,<span class="w"> </span><span class="m">5</span><span class="w"> </span>received,<span class="w"> </span><span class="m">16</span>%<span class="w"> </span>packet<span class="w"> </span>loss,<span class="w"> </span><span class="nb">time</span><span class="w"> </span>5006ms
 </span><span class='line'>rtt<span class="w"> </span>min/avg/max/mdev<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">153</span>.577/153.740/153.951/0.449<span class="w"> </span>ms
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>再来看看一些系统和软件信息。</p>
 
@@ -376,7 +376,7 @@ Server version: Apache/2.2.22 (Ubuntu)
 Server built:   Jul 12 2013 13:18:14
 </code>
 常用编程语言版本
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -454,7 +454,7 @@ Server built:   Jul 12 2013 13:18:14
 </span><span class='line'>&lt;p&gt;Complete<span class="w"> </span>documentation<span class="w"> </span><span class="k">for</span><span class="w"> </span>Perl,<span class="w"> </span>including<span class="w"> </span>FAQ<span class="w"> </span>lists,<span class="w"> </span>should<span class="w"> </span>be<span class="w"> </span>found<span class="w"> </span>on
 </span><span class='line'>this<span class="w"> </span>system<span class="w"> </span>using<span class="w"> </span><span class="s2">&quot;man perl&quot;</span><span class="w"> </span>or<span class="w"> </span><span class="s2">&quot;perldoc perl&quot;</span>.<span class="w">  </span>If<span class="w"> </span>you<span class="w"> </span>have<span class="w"> </span>access<span class="w"> </span>to<span class="w"> </span>the
 </span><span class='line'>Internet,<span class="w"> </span>point<span class="w"> </span>your<span class="w"> </span>browser<span class="w"> </span>at<span class="w"> </span>http://www.perl.org/,<span class="w"> </span>the<span class="w"> </span>Perl<span class="w"> </span>Home<span class="w"> </span>Page.
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h2>Installing and Using KDApps</h2>
 

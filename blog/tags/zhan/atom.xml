@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 栈 | Bill's Blog]]></title>
   <link href="http://ibillxia.github.io/blog/tags/zhan/atom.xml" rel="self"/>
   <link href="http://ibillxia.github.io/"/>
-  <updated>2025-06-01T13:56:45+08:00</updated>
+  <updated>2026-06-14T19:17:47+08:00</updated>
   <id>http://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -280,7 +280,7 @@ queue&lt;char,list&lt;char&gt; &gt; cq;
 <p>水题，简直水得不能再水</p>
 
 
-<p><figure class='code'><figcaption><span>Problem A </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem A </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -317,7 +317,7 @@ queue&lt;char,list&lt;char&gt; &gt; cq;
 </span><span class='line'><span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">);</span>
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <!-- more -->
 
@@ -331,7 +331,7 @@ queue&lt;char,list&lt;char&gt; &gt; cq;
 </p>
 
 
-<p><figure class='code'><figcaption><span>Problem B </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem B </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -410,7 +410,7 @@ queue&lt;char,list&lt;char&gt; &gt; cq;
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h3>C题：还是畅通工程（hdoj1233）（九度1017）</h3>
 
@@ -418,7 +418,7 @@ queue&lt;char,list&lt;char&gt; &gt; cq;
 <p>模板题，prim算法，代码如下：</p>
 
 
-<p><figure class='code'><figcaption><span>Problem C </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem C </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -515,7 +515,7 @@ queue&lt;char,list&lt;char&gt; &gt; cq;
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h3>D题：统计同成绩学生人数（hdoj1235）（九度1018）</h3>
 
@@ -523,7 +523,7 @@ queue&lt;char,list&lt;char&gt; &gt; cq;
 <p>水题，同样很水，代码如下：</p>
 
 
-<p><figure class='code'><figcaption><span>Problem D </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem D </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -566,7 +566,7 @@ queue&lt;char,list&lt;char&gt; &gt; cq;
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h3>E题：简单计算器（hdoj1237）（九度1019）</h3>
 
@@ -575,7 +575,7 @@ queue&lt;char,list&lt;char&gt; &gt; cq;
 主要思路是利用栈，得到表达式的逆波兰式，再进行计算，代码如下：</p>
 
 
-<p><figure class='code'><figcaption><span>Problem E </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem E </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -752,7 +752,7 @@ queue&lt;char,list&lt;char&gt; &gt; cq;
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>小结：总体而言不是很难，主要是水题很水，而难点的题也不是很难，稍微耐心、细心点，就能AC了。</p>
 
@@ -774,11 +774,11 @@ C语言中有些函数使用可变参数，比如常见的 `int printf( const ch
 第一个参数format是固定的，其余的参数的个数和类型都不固定。例如：</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 </pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Enjoy yourself everyday!/n&quot;</span><span class="p">);</span>
 </span><span class='line'><span class="n">printf</span><span class="p">(</span><span class="s">&quot;The value is %d!/n&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>这种可变参数可以说是C语言一个比较难理解的部分，这里会由几个问题引发一些对它的分析。
 注意：在C++中有函数重载（overload）可以用来区别不同函数参数的调用，但它还是不能表示任意数量的函数参数。</p>
@@ -803,7 +803,7 @@ C语言用va_start等宏来处理这些可变参数。这些宏看起来很复�
 <p>在`stdarg.h`头文件中，针对不同平台有不同的宏定义，我们选取X86平台下的宏定义：</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -825,7 +825,7 @@ C语言用va_start等宏来处理这些可变参数。这些宏看起来很复�
 </span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">define</span><span class="w"> </span><span class="n">va_end</span><span class="p">(</span><span class="n">ap</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">ap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">va_list</span><span class="p">)</span><span class="mi">0</span><span class="w"> </span><span class="p">)</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>_INTSIZEOF(n)宏是为了考虑那些内存地址需要对齐的系统，从宏的名字来应该是跟sizeof(int)对齐。
 一般的`sizeof(int)=4`，也就是参数在内存中的地址都为4的倍数。比如，如果sizeof(n)在1－4之间，
@@ -879,7 +879,7 @@ C语言用va_start等宏来处理这些可变参数。这些宏看起来很复�
 系统提供了`vprintf`系列格式化字符串的函数，用于编程人员封装自己的I/O函数。</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -911,7 +911,7 @@ C语言用va_start等宏来处理这些可变参数。这些宏看起来很复�
 </span><span class='line'><span class="p">...</span>
 </span><span class='line'><span class="c1">// 调用时，与使用printf()没有区别。</span>
 </span><span class='line'><span class="n">WriteLog</span><span class="p">(</span><span class="s">&quot;%04d-%02d-%02d %02d:%02d:%02d %s/%04d logged out.&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">nYear</span><span class="p">,</span><span class="w"> </span><span class="n">nMonth</span><span class="p">,</span><span class="w"> </span><span class="n">nDay</span><span class="p">,</span><span class="w"> </span><span class="n">nHour</span><span class="p">,</span><span class="w"> </span><span class="n">nMinute</span><span class="p">,</span><span class="w"> </span><span class="n">szUserName</span><span class="p">,</span><span class="w"> </span><span class="n">nUserID</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>同理，也可以从文件中执行格式化输入；或者对标准输入输出，字符串执行格式化。</br>
 在上面的例1中，`WriteLog()`函数可以接受参数个数可变的输入，本质上，它的实现需要`vprintf()`的支持。
@@ -935,7 +935,7 @@ C语言用va_start等宏来处理这些可变参数。这些宏看起来很复�
 <p>ANSI C标准下，`va`的宏定义在`stdarg.h`中，它们有：`va_list`，`va_start()`，`va_arg()`，`va_end()`。</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -967,14 +967,14 @@ C语言用va_start等宏来处理这些可变参数。这些宏看起来很复�
 </span><span class='line'><span class="p">}</span>
 </span><span class='line'><span class="c1">// 调用时</span>
 </span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="n">nSqSum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SqSum</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>可变参数函数的原型声明格式为：</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="n">type</span><span class="w"> </span><span class="nf">VAFunction</span><span class="p">(</span><span class="n">type</span><span class="w"> </span><span class="n">arg1</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="n">arg2</span><span class="p">,</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>参数可以分为两部分：个数确定的固定参数和个数可变的可选参数。函数至少需要一个固定参数，
 固定参数的声明和普通函数一样；可选参数由于个数不确定，声明时用"..."表示。固定参数和可选

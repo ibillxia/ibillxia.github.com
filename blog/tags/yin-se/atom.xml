@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 音色 | Bill's Blog]]></title>
   <link href="http://ibillxia.github.io/blog/tags/yin-se/atom.xml" rel="self"/>
   <link href="http://ibillxia.github.io/"/>
-  <updated>2025-06-01T13:56:45+08:00</updated>
+  <updated>2026-06-14T19:17:47+08:00</updated>
   <id>http://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -61,7 +61,7 @@ import进来，因为ms与numpy的版本有冲突，出现了什么“numpy.dtyp
 
 <p>
 闲话少说了，上代码吧，其实看看这代码也挺简单的，就调一个matplotlib.pyplot.specgram()就可以了。
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -101,7 +101,7 @@ import进来，因为ms与numpy的版本有冲突，出现了什么“numpy.dtyp
 </span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Frequency&#39;</span><span class="p">)</span>
 </span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time(seconds)&#39;</span><span class="p">)</span>
 </span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 </p>
 
 

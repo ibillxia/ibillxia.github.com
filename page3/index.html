@@ -166,7 +166,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2014/06/13/stl-source-insight-1-memory-allocator/">深入理解STL源码(1) 空间配置器(allocator)</a></h1>
+      <h1 class="entry-title"><a href="/blog/2022/10/06/maven-settings-configuration/">Maven中settings配置文件详解</a></h1>
     
     
       <p class="meta">
@@ -180,31 +180,30 @@ $(document).bind('DOMNodeInserted', function(event) {
 
 
 
-<time datetime="2014-06-13T22:04:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2022-10-06T19:07:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2014/06/13/stl-source-insight-1-memory-allocator/#disqus_thread">Comments</a>
+         | <a href="/blog/2022/10/06/maven-settings-configuration/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>在STL中，Memory Allocator 处于最底层的位置，为一切的 Container 提供存储服务，是一切其他组件的基石。对于一般使用 STL 的用户而言，Allocator 是不可见的，如果需要对 STL 进行扩展，如编写自定义的容器，就需要调用 Allocator 的内存分配函数进行空间配置。本文涉及到的 SGI STL 源代码文件有 <code>alloc.h</code>, <code>stl_config.h</code>, <code>stl_alloc.h</code>, <code>stl_threads.h</code> 这4个。</p>
+  <div class="entry-content"><p>一、简介</p>
 
-<p>在C++中，一个对象的内存配置和释放一般都包含两个步骤，对于内存的配置，首先是调用operator new来配置内存，然后调用对象的类的构造函数进行初始化；而对于内存释放，首先是调用析构函数，然后调用 operator delete进行释放。 如以下代码：
-<code>cpp
-class Foo { ... };
-Foo* pf = new Foo;
-...
-delete pf;
-</code>
-Allocator 的作用相当于operator new 和operator delete的功能，只是它考虑得更加细致周全。SGI STL 中考虑到了内存分配失败的异常处理，内置轻量级内存池（主要用于处理小块内存的分配，应对内存碎片问题）实现， 多线程中的内存分配处理（主要是针对内存池的互斥访问）等，本文就主要分析 SGI STL 中在这三个方面是如何处理的。在介绍着三个方面之前，我们先来看看 Allocator的标准接口。</p>
+<p>Maven 翻译为"专家"、"内行"，是 Apache 下的一个纯 Java 开发的开源项目。基于项目对象模型（缩写：POM）概念，Maven利用一个中央信息片断能管理一个项目的构建、报告和文档等步骤。</p>
+
+<p>Maven 是一个项目管理工具，可以对 Java 项目进行构建、依赖管理。</p>
+
+<p>Maven 也可被用于构建和管理各种项目，例如 C#，Ruby，Scala 和其他语言编写的项目。Maven 曾是 Jakarta 项目的子项目，现为由 Apache 软件基金会主持的独立 Apache 项目。</p>
+
+<p>基本介绍可见<a href="%E2%80%8Bwww.runoob.com/maven/maven-tutorial.html">菜鸟教程Maven 教程 | 菜鸟教程</a></p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2014/06/13/stl-source-insight-1-memory-allocator/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2022/10/06/maven-settings-configuration/">Read on &rarr;</a>
     </footer>
   
 
@@ -216,7 +215,7 @@ Allocator 的作用相当于operator new 和operator delete的功能，只是它
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2014/06/08/stl-source-insight-0-stl-overview/">深入理解STL源码(0) STL简介</a></h1>
+      <h1 class="entry-title"><a href="/blog/2022/06/01/flink-state-management/">Apache Flink漫谈系列：State状态管理</a></h1>
     
     
       <p class="meta">
@@ -230,46 +229,28 @@ Allocator 的作用相当于operator new 和operator delete的功能，只是它
 
 
 
-<time datetime="2014-06-08T21:39:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2022-06-01T11:28:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2014/06/08/stl-source-insight-0-stl-overview/#disqus_thread">Comments</a>
+         | <a href="/blog/2022/06/01/flink-state-management/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><h2>0. 两个问题</h2>
+  <div class="entry-content"><p>原文链接：<a href="https://developer.aliyun.com/article/667562">阿里云开发者社区：Apache Flink 漫谈系列(04) - State</a></p>
 
-<p>在介绍 STL 之前，先讨论两个问题：为什么要剖析 STL 源代码？如何剖析 STL 源代码？</p>
+<h1>实际问题</h1>
 
-<p>首先是为什么要剖析 STL 源代码呢？ 有人会说，会使用 STL 不就性了，为什么一定要知道其内部的机制呢？ 对于大多数程序猿来说，确实没有必要去阅读或分析 STL 的源代码，但如果要想提升自己的编程修养，要相让自己编码的思想境界提升一个档次，还是很有必要读读 STL 这样的大师制作。阅读和分析之后，你会明白STL是如何分配和管理内存的（特别是对vector、string、deque等动态数据结构），是如何实现各种数据结构（特别是红黑树等比较复杂的数据结构）和相关算法的，又是如何将这些组件融合起来实现高内聚低耦合的。或许用《洋葱》的几句歌词获取最能表达你的明白这些问题之后的心情：</p>
+<p>在流计算场景中，数据会源源不断的流入Apache Flink系统，每条数据进入Apache Flink系统都会触发计算。如果我们想进行一个Count聚合计算，那么每次触发计算是将历史上所有流入的数据重新新计算一次，还是每次计算都是在上一次计算结果之上进行增量计算呢？答案是肯定的，Apache Flink是基于上一次的计算结果进行增量计算的。那么问题来了: “上一次的计算结果保存在哪里，保存在内存可以吗？”，</p>
 
-<blockquote><p>如果你愿意一层一层<br/>
-一层的剥开我的心<br/>
-你会发现<br/>
-你会讶异<br/>
-你是我<br/>
-最压抑<br/>
-最深处的秘密</p>
-
-<p>如果你愿意一层一层<br/>
-一层的剥开我的心<br/>
-你会鼻酸<br/>
-你会流泪<br/>
-只要你能<br/>
-听到我<br/>
-看到我的全心全意</p></blockquote>
-
-<p>那么，如何剖析源代码呢？其实歌词中已经蕴含这答案了，那就是“一层一层一层的剥开”。当然，我这里说的一层一层不是说要一个函数step in 到底，而是说要按层次解读：首先从最外层结构框架着手，从整体上把握；然后从细处着笔，一个组件一个组件的来分析；在分析每个组件时，也是先把握改组件的全貌及其与其他组件的关联关系，然后在深入组件内部，了解其实现。在阅读和分析源码的过程中，首先要理解其功能，然后在看它是如何实现的。切忌纠缠于代码的细节或陷入源码而不能自拔，即坠入“不识庐山真面目，只缘身在此山中”的深渊！</p>
-
-<p>因此，本文的目的在于，站在STL这座大山的山顶，一窥其全貌。随后的文章则深入每个组件，细细观赏每一处的风景。</p>
+<p>答案是否定的，如果保存在内存，在由于网络，硬件等原因造成某个计算节点失败的情况下，上一次计算结果会丢失，在节点恢复的时候，就需要将历史上所有数据（可能十几天，上百天的数据）重新计算一次，所以为了避免这种灾难性的问题发生，Apache Flink 会利用State存储计算结果。本篇将会为大家介绍Apache Flink State的相关内容。</p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2014/06/08/stl-source-insight-0-stl-overview/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2022/06/01/flink-state-management/">Read on &rarr;</a>
     </footer>
   
 
@@ -281,7 +262,7 @@ Allocator 的作用相当于operator new 和operator delete的功能，只是它
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2014/05/24/function-pointer-in-c-and-function-call-operator-in-cpp/">C语言函数指针与C++函数调用操作符</a></h1>
+      <h1 class="entry-title"><a href="/blog/2022/05/16/google-long-term-ab-testing/">Google长期AB测试：避免短期收益陷阱</a></h1>
     
     
       <p class="meta">
@@ -295,86 +276,42 @@ Allocator 的作用相当于operator new 和operator delete的功能，只是它
 
 
 
-<time datetime="2014-05-24T21:27:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2022-05-16T14:57:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2014/05/24/function-pointer-in-c-and-function-call-operator-in-cpp/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>概述</h2>
-
-<p>在编程过程中，一些特殊的时候，我们需要向一个函数传递另一个函数的地址（比如在快速排序中，我们需要传入两个元素大小比较的函数的地址），此时在C语言中一般是通过传递一个函数指针来实现。最近在看《STL源码剖析》一书，上面提到，在C++中其实可以通过另一种方式实现，那就是函数调用操作符<code>()</code> 。本文首先介绍一下C语言中函数指针的用法，然后再介绍C++中函数调用操作符的用法。</p>
-
-<h2>C语言中的函数指针</h2>
-
-<p>我们先直接看一个例子吧。这个例子比较全面而且简单，其中的函数指针是带参数且有返回值的函数指针，而且还有把函数指针作为参数来传递的代码。这个例子来自 <a href="http://blog.jobbole.com/44639/">jobbole伯乐在线</a>，代码如下：</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/05/24/function-pointer-in-c-and-function-call-operator-in-cpp/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2014/05/17/insight-into-define-and-inline-function-in-c/">深入理解C语言的define和内联函数</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-05-17T22:43:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2014/05/17/insight-into-define-and-inline-function-in-c/#disqus_thread">Comments</a>
+         | <a href="/blog/2022/05/16/google-long-term-ab-testing/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><h2>概述</h2>
-
-<p>在 <code>Robert C.Searcord</code> 的 <em>The</em> <em>Cert</em> <em>C</em> <em>Secure</em> <em>Coding</em> <em>Standard</em> 一书中，关于宏定义的规范中第一条就是</p>
-
-<blockquote><p>用内联函数或静态函数替代与函数相似的宏</p></blockquote>
-
-<p>这个规范非常实用。内联函数是C99标准中新增的，当宏定义和内联函数可以互换时，应该优先考虑选择内联函数，这也是为什么在C++标准库函数中 <code>max</code>, <code>min</code>, <code>swap</code> 等都是通过内联函数来实现的原因。 宏定义是完全原封不动的很SB的替换，而内联函数则并非简单的文本替换，而是按函数调用的方式展开。关于内联函数相对于宏替换的优点，在wiki有如下几点的总结：</p>
+  <div class="entry-content"><p>在AB测试中，我们一般会关注某个变化带来的短期影响。比如：</p>
 
 <ul>
-<li>宏调用并不执行类型检查，甚至连正常参数也不检查，但是函数调用却要检查。</li>
-<li>C语言的宏使用的是文本替换，可能导致无法预料的后果，因为需要重新计算参数和操作顺序。</li>
-<li>在宏中的编译错误很难发现，因为它们引用的是扩展的代码，而不是程序员键入的。</li>
-<li>许多结构体使用宏或者使用不同的语法来表达很难理解。内联函数使用与普通函数相同的语言，可以随意的内联和不内联。</li>
-<li>内联代码的调试信息通常比扩展的宏代码更有用。</li>
+<li><p> 新功能会给我们带来更高转换率吗？</p></li>
+<li><p> 改变设计是否会让更多的用户参与到特定功能？</p></li>
 </ul>
 
 
-<p>其中前面两条很好理解，相信大家应该不陌生，这里主要通过具体讨论一个该书中提到的一个程序实例来感受一下后面几点。</p>
+<p>如果答案是肯定的，就开始把改动全面推向所有用户。</p>
+
+<p>但是，短期目标可能会与企业更关键的长期目标发生冲突。比如，一家超市突然提高价格，可能会在短期带来更高利润。但长远看，如果更多的顾客改从竞争对手那里购买商品，那么这家店的收入就会减少。</p>
+
+<center><img src="/images/2022/IMAG2022051601.jpg"></center>
+
+
+<p><br></p>
+
+<center>(图源：Unsplash)</center>
+
+
+
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2014/05/17/insight-into-define-and-inline-function-in-c/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2022/05/16/google-long-term-ab-testing/">Read on &rarr;</a>
     </footer>
   
 
@@ -386,7 +323,7 @@ Allocator 的作用相当于operator new 和operator delete的功能，只是它
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2014/05/11/cpp-program-optimization-new-delete-operator/">C++ 应用程序性能优化之 New/delete 操作符</a></h1>
+      <h1 class="entry-title"><a href="/blog/2021/11/14/qqmusic-content-understanding-and-refined-operations-of-recsys/">【DataFunTalk】QQ音乐内容理解与精细化运营——推荐系统的精细化调控</a></h1>
     
     
       <p class="meta">
@@ -400,36 +337,33 @@ Allocator 的作用相当于operator new 和operator delete的功能，只是它
 
 
 
-<time datetime="2014-05-11T20:33:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2021-11-14T21:43:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2014/05/11/cpp-program-optimization-new-delete-operator/#disqus_thread">Comments</a>
+         | <a href="/blog/2021/11/14/qqmusic-content-understanding-and-refined-operations-of-recsys/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><h2>1.概述</h2>
-
-<p>C++ 程序的存储空间可以分为静态/全局存储区、栈区和堆区。下图展示了一个典型的Linux C/C++ 程序内存空间布局：</p>
-
-<center><img src="/images/2014/IMAG2014051101.png"></center>
+  <div class="entry-content"><p>以下是上月底我在DataFunTalk上的分享材料：</p>
 
 
-<p>其中，每一部分的具体涵义如下：<br/>
-- <strong>代码段（.text）</strong>：这里存放的是CPU要执行的指令。代码段是可共享的，相同的代码在内存中只会有一个拷贝，同时这个段是<strong>只读</strong>的，防止程序由于错误而修改自身的指令。<br/>
-- <strong>初始化数据段（.data）</strong>：这里存放的是程序中需要明确赋初始值的变量，例如位于所有函数之外的全局变量：<code>int val=100;</code> 。 需要强调的是，以上两段都是位于程序的可执行文件中，内核在调用 exec 函数启动该程序时从源程序文件中读入。<br/>
-- <strong>未初始化数据段（.bss）</strong>：位于这一段中的数据，内核在执行该程序前，将其初始化为0或者null。例如出现在任何函数之外的全局变量：<code>int sum;</code><br/>
-- <strong>堆（Heap）</strong>：这个段用于在程序中进行动态内存申请，例如经常用到的 malloc，new 系列函数就是从这个段中申请内存。<br/>
-- <strong>栈（Stack）</strong>：函数中的局部变量以及在函数调用过程中产生的临时变量都保存在此段中。<br/>
-静态/全局存储区和栈区一般在程序编译阶段决定；而堆区则随着程序的运行而动态变化，每一次程序运行都会有不同的行为，因此动态内存管理对于一个程序在运行过程中占用的内存大小及程序运行性能有非常重要的影响。 本文主要探讨在C++中如何管理动态内存，以及如何使用 C++ 的语言特性来提高动态内存的管理效率，减少错误的发生。</p>
+<p><center>
+<embed width="780"
+    height="574"
+    name="plugin"
+    src="/upload/DataFun-QQmusic-content-understanding-and-refined-operations–of-recsys.pdf"
+    type="application/pdf"
+/>
+</center></p>
 
+
+<p>详细文字版见公众号文章：</p>
+
+<p><a href="https://mp.weixin.qq.com/s/SaJcVARQzUSpPj2uugXypA">QQ音乐内容理解与精细化运营</a></p>
 </div>
   
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/05/11/cpp-program-optimization-new-delete-operator/">Read on &rarr;</a>
-    </footer>
   
 
 
@@ -440,7 +374,7 @@ Allocator 的作用相当于operator new 和operator delete的功能，只是它
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2014/05/04/android-ndk-development/">Ubuntu 下 Android NDK 开发入门</a></h1>
+      <h1 class="entry-title"><a href="/blog/2020/10/16/spark-word2vec-source-analysis/">Spark Word2Vec源码详细解析</a></h1>
     
     
       <p class="meta">
@@ -454,31 +388,30 @@ Allocator 的作用相当于operator new 和operator delete的功能，只是它
 
 
 
-<time datetime="2014-05-04T23:53:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2020-10-16T18:40:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2014/05/04/android-ndk-development/#disqus_thread">Comments</a>
+         | <a href="/blog/2020/10/16/spark-word2vec-source-analysis/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>本文首先介绍一下在 Ubuntu 下如何配置 Android NDK 开发环境，然后用一个简单的 hello-jni 项目来介绍 NDK 开发流程，本文的全部代码下载链接：<a href="https://ibillxia.github.io/upload/code/20140504-HelloJni.tar.gz">HelloJni.tar.gz</a>，也可以在我的 <a href="https://github.com/ibillxia/Demo/tree/master/HelloJni">GitHub</a> 上下载。</p>
+  <div class="entry-content"><p>目录：</p>
 
-<h2>1. 简介</h2>
+<p>1.简单介绍spark word2vec</p>
 
-<p>什么是 Android NDK 呢？ NDK(Native Development Kit) 是一个允许开发者用一些本地语言(C/C++)编写 Android App 的部分功能的工具集。对于一些特定的 App，NDK 非常有利于我们直接使用现成的用 C/C++ 编写的代码库（但对于大多数 App 来说，NDK 是没有必要的）。使用 NDK 进行 C/C++ Android 开发的基本结构和流程如下图（来自<a href="http://shihongzhi.com/ndk/">shihongzhi博客</a> ）：</p>
+<p>2.skip-gram 层次softmax版本的源码解析</p>
 
-<center> <img src="/images/2014/IMAG2014050401.jpg"> </center>
+<p>3.word2vec 的原理 只需要看层次哈弗曼树skip-gram那部分</p>
 
-
-<p>在开始之前，这里要提醒大家：NDK 对大多数 App 而言是不会有太多的好处的，在 Android 上使用原生 C/C++ 代码并不会很明显的提升应用的性能，但却增加了你开发应用的复杂度。所以，仅仅在需要使用 NDK 时才使用它 —— 不要因为你更喜欢用 C/C++。典型的 NDK 应用场景是一些 CPU 操作密集而不需要太多内存的场合，如信号处理、物理模拟等等，很多这些处理过程都已经封装到了 Android 系统内部，所以当你不确定是否要使用本地 C/C++ 代码时，先看看你的需求，以及 Android 框架中的 API 是否已经提供你需要的功能。</p>
+<p>4.skip-gram negetive sample 的版本源码解析</p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2014/05/04/android-ndk-development/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2020/10/16/spark-word2vec-source-analysis/">Read on &rarr;</a>
     </footer>
   
 
@@ -490,7 +423,7 @@ Allocator 的作用相当于operator new 和operator delete的功能，只是它
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2014/04/28/configure-twitter-bootstrap-theme-in-octopress/">给Octopress博客配置Twitter Bootstrap主题</a></h1>
+      <h1 class="entry-title"><a href="/blog/2020/05/31/spark-vs-flink-comparison/">Spark与Flink：下一代大数据计算引擎之争</a></h1>
     
     
       <p class="meta">
@@ -504,36 +437,36 @@ Allocator 的作用相当于operator new 和operator delete的功能，只是它
 
 
 
-<time datetime="2014-04-28T22:37:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2020-05-31T16:37:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2014/04/28/configure-twitter-bootstrap-theme-in-octopress/#disqus_thread">Comments</a>
+         | <a href="/blog/2020/05/31/spark-vs-flink-comparison/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>很长一段时间以来就看到各种基于 Twitter Bootstrap 主题的博客很清爽，而且对 Tag 的归档也做得很赞，于是很想将自己的博客也换成 Bootstrap 的主题，随着看到的博客越来越多，自己的 Octopress 主题先得越来越臃肿，而 Tags 归档功能也相形见绌，更换主题的欲望越来越强烈了。于是乎，趁这个周末捣鼓了一番，最终大功告成，在这里分享一下具体过程。</p>
+  <div class="entry-content"><h1>一、下一代大数据计算引擎</h1>
 
-<h2>Bootstrap 主题的安装</h2>
+<p>自从数据处理需求超过了传统数据库能有效处理的数据量之后，Hadoop 等各种基于 MapReduce 的海量数据处理系统应运而生。从 2004 年 Google 发表 MapReduce 论文开始，经过近 10 年的发展，基于 Hadoop 开源生态或者其它相应系统的海量数据处理已经成为业界的基本需求。</p>
 
-<p>首先下载适用于 Octopress 的 <a href="https://github.com/bkutil/bootstrap-theme">Bootstrap主题</a> 并解压缩到博客的 .theme 目录，然后安装：</p>
+<p>但是，很多机构在开发自己的数据处理系统时都会发现需要面临一系列的问题。从数据中获取价值需要的投入远远超过预期。常见的问题包括：</p>
 
-<pre><code class="sh">rake install['bootstrap']
-</code></pre>
-
-<p>安装的过程中可能会提示有 sass 或其他依赖库的语法错误神马的，这是因为 sass 的版本过低，可以通过如下命令来跟新：</p>
-
-<pre><code class="sh">bundle update sass
-</code></pre>
+<ul>
+<li>非常陡峭的学习曲线。刚接触这个领域的人经常会被需要学习的技术的数量砸晕。不像经过几十年发展的数据库一个系统可以解决大部分数据处理需求， Hadoop 等大数据生态里的一个系统往往在一些数据处理场景上比较擅长，另一些场景凑合能用，还有一些场景完全无法满足需求。结果就是需要好几个系统来处理不同的场景。</li>
+</ul>
 
 
+<center><img src="/images/2020/IMAG2020053101.png"></center>
+
+
+<p>（来源： https://mapr.com/developercentral/lambda-architecture/ ）</p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2014/04/28/configure-twitter-bootstrap-theme-in-octopress/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2020/05/31/spark-vs-flink-comparison/">Read on &rarr;</a>
     </footer>
   
 
@@ -545,7 +478,7 @@ Allocator 的作用相当于operator new 和operator delete的功能，只是它
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/">全排列及某排列的后继的求解及其STL实现的分析</a></h1>
+      <h1 class="entry-title"><a href="/blog/2020/04/20/multi-objective-recommendation/">工业界推荐系统多目标预估的两种范式</a></h1>
     
     
       <p class="meta">
@@ -559,42 +492,36 @@ Allocator 的作用相当于operator new 和operator delete的功能，只是它
 
 
 
-<time datetime="2014-04-24T23:24:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2020-04-20T20:39:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/#disqus_thread">Comments</a>
+         | <a href="/blog/2020/04/20/multi-objective-recommendation/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>在Leetcode上有好几道全排列相关的题，一直以来只是会写基于递归的全排列生成算法，遇到这几道题后，搜了下一些非递归的实现方法，发现其实全排列的生成还是很有规律的有木有！这里就总结一下递归和非递归的全排列生成方法，并分析一下 STL 的实现。</p>
+  <div class="entry-content"><p>转载自知乎，原文链接：<a href="https://zhuanlan.zhihu.com/p/125507748">从谷歌到阿里，谈谈工业界推荐系统多目标预估的两种范式</a></p>
 
-<p>递归和非递归实现全排列生成的方法也分别有多种，递归法有基于交换的，有基于链接的，还有回溯，非递归法有排序、回溯、求模等，关于所有这些方法的具体实现参见 <a href="http://mengliao.blog.51cto.com/876134/824079">全排列的六种算法</a>. 本文只实现一种递归和一种非递归算法，并在最后对 STL 的非递归算法进行分析。</p>
+<h1>多目标是什么？为什么要多目标？</h1>
 
-<p>本文的全部代码下载：<a href="http://ibillxia.github.io/upload/code/20140424.cpp">code</a>.</p>
+<p>我们的大脑会同时学习多种不同的任务，无论我们是想将英文翻译成中文，还是想将中文翻译成德语，我们都是使用相同的大脑架构，也就是我们自己的脑袋。同理在我们的模型中，如果我们采用的是同一个网络来同时完成这两个任务，那么我们就可以把这个任务称为 多目标学习。</p>
 
-<h2>递归法求全排列</h2>
+<p>在推荐系统中，即使在同一个场景中，常常也有不只一个的业务目标。在Youtube的视频推荐中，推荐排序任务不仅需要考虑到用户点击率，完播率，也需要考虑到一些满意度指标，例如，对视频是否喜欢，用户观看后对视频的评分；在淘宝的信息流商品推荐中，需要考虑到点击率，也需要考虑转化率；而在一些内容场景中，需要考虑到点击和互动、关注、停留时长等指标。</p>
 
-<p>递归法的基本思路是这样的：</p>
+<p>用多个模型分别对这些指标进行一个排序，然后综合起来可以吗？</p>
 
-<blockquote><p>首先选一个元素排在第一个（有 n 中选法）；
-然后递归的对剩下的所有元素进行全排列；
-直到一个元素的全排列是其本身。</p></blockquote>
+<p>可以，但是会面临一些问题。第一，会面临比较大的线上开销，考虑一下你的场景至少可以承受多少rt吧。第二，一些目标的样本比较稀疏，还存在一些问题，例如，单独对CVR进行建模，存在样本选择偏差（Sample Selection Bias,SSB）和数据稀疏性(Data Sparisity,DS)问题，其实不好解决。</p>
 
-<p>假设给定的元素序列为 <e1, e2, ..., en>，其全排列表示为 P(e1, e2, ..., en)，则对递归的第一步展开有：</p>
+<p>什么是SSB问题，什么又是DS问题，我们后面再讲，我们知道的是，多目标预估可以通过同一个模型，解决（或者说缓解）上面的两个问题，甚至带来场景效果上的提升。</p>
 
-<blockquote><p>P(e1, e2, ..., en) = {
-<e1, P(e2, e3, ..., en)>,
-<e2, P(e1, e3, ..., en)>,
-... ...
-<en, P(e1, e2, ..., e(n-1))> }</p></blockquote>
+<p>讲完了必要性，下面进入正题，下面谈谈工业界推荐系统做多目标预估的两种范式。</p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2020/04/20/multi-objective-recommendation/">Read on &rarr;</a>
     </footer>
   
 
@@ -606,7 +533,7 @@ Allocator 的作用相当于operator new 和operator delete的功能，只是它
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2014/04/11/swap-two-variables-in-place/">原地交换两个变量的值</a></h1>
+      <h1 class="entry-title"><a href="/blog/2020/03/01/flink-datastream-types-operations/">Flink原理与实现：数据流上的类型和操作</a></h1>
     
     
       <p class="meta">
@@ -620,43 +547,29 @@ Allocator 的作用相当于operator new 和operator delete的功能，只是它
 
 
 
-<time datetime="2014-04-11T22:27:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2020-03-01T17:50:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2014/04/11/swap-two-variables-in-place/#disqus_thread">Comments</a>
+         | <a href="/blog/2020/03/01/flink-datastream-types-operations/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><h2>引子</h2>
+  <div class="entry-content"><p><a href="https://wuchong.me/blog/2016/05/20/flink-internals-streams-and-operations-on-streams/">原文链接</a>，作者wuchong，阿里花名云邪。</p>
 
-<p>在码代码的过程中，不经意间就会遇到需要交换两个变量的情况，一般情况下都是通过新定义一个同类型的变量来中转，但自己也知道可以不用定义新变量直接原地交换，但具体如何原地交换以及其中可能隐藏的bug却了解得不是很清楚，于是乎google了一下，发现这里面还真是有很多学问呢，这里整理和总结一下。</p>
+<p>Flink 为流处理和批处理分别提供了 DataStream API 和 DataSet API。正是这种高层的抽象和 flunent API 极大地便利了用户编写大数据应用。不过很多初学者在看到官方 Streaming 文档中那一大坨的转换时，常常会蒙了圈，文档中那些只言片语也很难讲清它们之间的关系。所以本文将介绍几种关键的数据流类型，它们之间是如何通过转换关联起来的。下图展示了 Flink 中目前支持的主要几种流的类型，以及它们之间的转换关系。</p>
 
-<p>原地交换两个变量，最主要有加减法和异或法。</p>
-
-<p>本文完整代码链接：<a href="../upload/code/20140411.cpp">20140411.cpp</a></p>
-
-<h2>加减法</h2>
-
-<p>加减法最简单、最好理解了，设待交换的两个变量分别为 a 和 b ，首先将两者的和赋给 a ；然后将 a 与 b的差赋给 b ，这样 b 就是 a 原来的值了；最后再将 a 与 b 的差赋给 a ，这样 a 就是 b 原来的值了。具体代码如下：</p>
-
-<pre><code class="cpp">inline template &lt;class T&gt;
-void xswap(T &amp;a,T &amp;b){
-    a=a+b;
-    //printf("a=%u\n",a);
-    b=a-b;
-    a=a-b;
-}
-</code></pre>
+<center><img src="/images/2020/IMAG2020030101.png"></center>
 
 
+<p><br></p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2014/04/11/swap-two-variables-in-place/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2020/03/01/flink-datastream-types-operations/">Read on &rarr;</a>
     </footer>
   
 
@@ -668,7 +581,7 @@ void xswap(T &amp;a,T &amp;b){
       
   <header class="page-header">
     
-      <h1 class="entry-title"><a href="/blog/2014/03/16/go-concurrent-programming-first-try/">Go并发编程初探</a></h1>
+      <h1 class="entry-title"><a href="/blog/2020/02/21/tree-ensemble-models-comparison/">集成树模型详解：RandomForest、GBDT、XGBoost与LightGBM</a></h1>
     
     
       <p class="meta">
@@ -682,31 +595,81 @@ void xswap(T &amp;a,T &amp;b){
 
 
 
-<time datetime="2014-03-16T23:35:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2020-02-21T20:00:00+08:00" pubdate data-updated="true"></time>
         
-         | <a href="/blog/2014/03/16/go-concurrent-programming-first-try/#disqus_thread">Comments</a>
+         | <a href="/blog/2020/02/21/tree-ensemble-models-comparison/#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><h2>概述</h2>
+  <div class="entry-content"><p>本文主要介绍基于集成学习的决策树，然后对其中重要的、使用广泛的方法进行对比：RF（随机森林））, GBDT（梯度提升决策树）, XGBoost, lightGBM。</p>
 
-<p>最近在做的一个项目，需要对大量数据进行一些基本的统计和处理，整个程序的思路很简单，但处理起来却很慢，特别是有二重循环的地方，龟速前进，眼看着16核32线程
-的服务器只有一个线程被利用，束手无策。之前一直听说Go是一门对并发编程有很好的支持的语言，七牛的许牛大力推崇Go语言，于是就开始了对Go并行编程的探索之旅。</p>
+<h1>一、集成学习</h1>
 
-
-<center><img src="/images/2014/IMAG2014031601.jpg"></center>
+<center><img src="/images/2020/IMAG2020022101.png"></center>
 
 
+<p><br></p>
 
+<p>常见的集成学习框架有三种：Bagging，Boosting 和 Stacking。三种集成学习框架在基学习器的产生和综合结果的方式上会有些区别，我们先做些简单的介绍。</p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2014/03/16/go-concurrent-programming-first-try/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2020/02/21/tree-ensemble-models-comparison/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2019/10/08/clickhouse-basics/">ClickHouse基础知识与实践</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2019-10-08T16:27:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2019/10/08/clickhouse-basics/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><center><img src="/images/2019/IMAG2019100801.png"></center>
+
+
+<p><br></p>
+
+<h1>一、简介</h1>
+
+<p>Clickhouse是一个用于联机分析处理（OLAP）的列式数据库管理系统（columnar DBMS）。</p>
+
+<p>传统数据库在数据大小比较小，索引大小适合内存，数据缓存命中率足够高的情形下能正常提供服务。但残酷的是，这种理想情形最终会随着业务的增长走到尽头，查询会变得越来越慢。你可能通过增加更多的内存，订购更快的磁盘等等来解决问题（纵向扩展），但这只是拖延解决本质问题。如果你的需求是解决怎样快速查询出结果，那么ClickHouse也许可以解决你的问题。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2019/10/08/clickhouse-basics/">Read on &rarr;</a>
     </footer>
   
 
@@ -734,7 +697,7 @@ void xswap(T &amp;a,T &amp;b){
   <footer role="contentinfo" class="page-footer">
 <hr>
 <p>
-  Copyright &copy; 2009 - 2025 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
 </p>
 

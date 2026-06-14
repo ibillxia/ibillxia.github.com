@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: RBM | Bill's Blog]]></title>
   <link href="http://ibillxia.github.io/blog/tags/rbm/atom.xml" rel="self"/>
   <link href="http://ibillxia.github.io/"/>
-  <updated>2025-06-01T13:56:45+08:00</updated>
+  <updated>2026-06-14T19:17:47+08:00</updated>
   <id>http://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -164,7 +164,7 @@ $\theta = \{c, b, W\}$的值。</p>
 
 <p>在RBM中，可见单元一般等于训练数据的特征维数，而隐层单元数需要事先给定，这里设可见单元数和隐单元数分别为$n$和$m$，令$W$表示可见层与隐层间的链接权重
 矩阵(m×n阶)，$a$(n维列向量)和$b$(m维列向量)分别表示可见层与隐层的偏置向量。RBM的基于CD的快速学习算法主要步骤如下：
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -211,7 +211,7 @@ $\theta = \{c, b, W\}$的值。</p>
 </span><span class='line'>    W = W + alpha *(P(h1=1|v1)v1' - P(h2=1|v2)v2');
 </span><span class='line'>    a = a + alpha *(v1-v2);
 </span><span class='line'>    b = b + alpha *(P(h1=1|v1) - P(h2=1|v2));
-</span><span class='line'>EndFor</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'>EndFor</span></code></pre></td></tr></table></div></figure></notextile></div>
 上述基于CD的学习算法是针对RBM的可见单元和隐层单元均为二值变量的情形，我们可以很容易的推广到这些单元为高斯变量的情形。
 </p>
 

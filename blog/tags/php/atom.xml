@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: PHP | Bill's Blog]]></title>
   <link href="http://ibillxia.github.io/blog/tags/php/atom.xml" rel="self"/>
   <link href="http://ibillxia.github.io/"/>
-  <updated>2025-06-01T13:56:45+08:00</updated>
+  <updated>2026-06-14T19:17:47+08:00</updated>
   <id>http://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -40,7 +40,7 @@
 <!--more-->
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -71,12 +71,12 @@
 </span><span class='line'>         $string = addslashes($string);  &lt;br/>
 </span><span class='line'>     }  &lt;br/>
 </span><span class='line'>     return $string;  &lt;br/>
-</span><span class='line'>}&lt;br/></span></code></pre></td></tr></table></div></figure></p>
+</span><span class='line'>}&lt;br/></span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>php防注入函数,字符过滤函数</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -202,7 +202,7 @@
 </span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;cast&quot;</span><span class="p">,</span><span class="s2">&quot;ca&amp;#115;&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
 </span><span class='line'>    <span class="k">return</span> <span class="nv">$str</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 ]]></content>
   </entry>
   
@@ -233,7 +233,7 @@
 <p>如何读取 HTML 元素 </p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -270,12 +270,12 @@
 </span><span class='line'>// 找出所有网页中所有 align=center 的 'td 标签
 </span><span class='line'>$result = $dom->find('td[align=center]');
 </span><span class='line'>foreach($result as $v) {echo $v->outertext . '&lt;br>';}
-</span><span class='line'>?></span></code></pre></td></tr></table></div></figure></p>
+</span><span class='line'>?></span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>如何修改 HTML 元素 </p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -299,12 +299,12 @@
 </span><span class='line'><span class="c1">// 显示修改后的网页</span>
 </span><span class='line'><span class="k">echo</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span>
 </span><span class='line'><span class="cp">?&gt;</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>Slashdot网站内容抓取</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -324,7 +324,7 @@
 </span><span class='line'>    <span class="nv">$articles</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$item</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
 </span><span class='line'><span class="nb">print_r</span><span class="p">(</span><span class="nv">$articles</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 ]]></content>
   </entry>
   
@@ -336,7 +336,7 @@
     <content type="html"><![CDATA[<p>以下是从FleaPHP上挖来的，感谢FleaPHP的开发者们。</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -386,7 +386,7 @@
 </span><span class='line'>    <span class="k">echo</span> <span class="nv">$content</span><span class="p">;</span>
 </span><span class='line'>    <span class="k">return</span> <span class="k">null</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <!--more-->
 
@@ -493,7 +493,7 @@ submitlinks(\$URI) </br>
 <p>Demo 1：抓取百度首页示例</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -537,12 +537,12 @@ submitlinks(\$URI) </br>
 </span><span class='line'><span class="k">else</span> <span class="o">&lt;</span><span class="nx">BR</span><span class="o">&gt;</span>
 </span><span class='line'><span class="k">echo</span> <span class="s2">&quot;error fetching document: &quot;</span><span class="o">.</span><span class="nv">$snoopy</span><span class="o">-&gt;</span><span class="na">error</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
 </span><span class='line'><span class="cp">?&gt;</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>Demo 2: snoopy登录并采集phpchina示例 </p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -904,7 +904,7 @@ submitlinks(\$URI) </br>
 </span><span class='line'>    <span class="k">exit</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
 </span><span class='line'><span class="cp">?&gt;</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 ]]></content>
   </entry>
   

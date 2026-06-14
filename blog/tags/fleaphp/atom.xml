@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: FleaPHP | Bill's Blog]]></title>
   <link href="http://ibillxia.github.io/blog/tags/fleaphp/atom.xml" rel="self"/>
   <link href="http://ibillxia.github.io/"/>
-  <updated>2025-06-01T13:56:45+08:00</updated>
+  <updated>2026-06-14T19:17:47+08:00</updated>
   <id>http://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -21,7 +21,7 @@
     <content type="html"><![CDATA[<p>以下是从FleaPHP上挖来的，感谢FleaPHP的开发者们。</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -71,7 +71,7 @@
 </span><span class='line'>    <span class="k">echo</span> <span class="nv">$content</span><span class="p">;</span>
 </span><span class='line'>    <span class="k">return</span> <span class="k">null</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <!--more-->
 

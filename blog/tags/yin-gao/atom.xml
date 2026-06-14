@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 音高 | Bill's Blog]]></title>
   <link href="http://ibillxia.github.io/blog/tags/yin-gao/atom.xml" rel="self"/>
   <link href="http://ibillxia.github.io/"/>
-  <updated>2025-06-01T13:56:45+08:00</updated>
+  <updated>2026-06-14T19:17:47+08:00</updated>
   <id>http://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -34,7 +34,7 @@
 
 
 <p>其代码如下：
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -124,7 +124,7 @@
 </span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;index in 1 frame&quot;</span><span class="p">)</span>
 </span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Amplitude&quot;</span><span class="p">)</span>
 </span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 </p>
 
 

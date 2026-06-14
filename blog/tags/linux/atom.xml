@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: Linux | Bill's Blog]]></title>
   <link href="http://ibillxia.github.io/blog/tags/linux/atom.xml" rel="self"/>
   <link href="http://ibillxia.github.io/"/>
-  <updated>2025-06-01T13:56:45+08:00</updated>
+  <updated>2026-06-14T19:17:47+08:00</updated>
   <id>http://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -365,28 +365,28 @@ don’t fix it” 这样观点的持有者的话，你将会是 BSD 的超级粉
 初始化页表，初始化中断向量表，初始化系统时间等。继而调用 fork(),创建第一个用户进程:</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="w">　　</span><span class="n">kernel_thread</span><span class="p">(</span><span class="n">kernel_init</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="n">CLONE_FS</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">CLONE_SIGHAND</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>这个进程就是着名的pid为1的init进程，它会继续完成剩下的初始化工作，然后execve(/sbin/init), 成为系统中的其他所有进程的祖先。关于init我们这次先不研究，
 回过头来看pid=0的进程，在创建了init进程后，pid=0的进程调用 cpu_idle()演变成了idle进程。</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="w">　　</span><span class="n">current_thread_info</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">status</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="n">TS_POLLING</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>在 smp系统中，除了上面刚才我们讲的主处理器(执行初始化工作的处理器)上idle进程的创建，还有从处理器(被主处理器activate的处理器)上的idle进程，他们又是
 怎么创建的呢?接着看init进程，init在演变成/sbin/init之前，会执行一部分初始化工作，其中一个就是 smp_prepare_cpus()，初始化SMP处理器，在这过程中会在处理
 每个从处理器时调用</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 </pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="w">　　</span><span class="n">task</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">copy_process</span><span class="p">(</span><span class="n">CLONE_VM</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">idle_regs</span><span class="p">(</span><span class="o">?</span><span class="n">s</span><span class="p">),</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
 </span><span class='line'><span class="w">　　</span><span class="n">init_idle</span><span class="p">(</span><span class="n">task</span><span class="p">,</span><span class="w"> </span><span class="n">cpu</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>即从init中复制出一个进程，并把它初始化为idle进程(pid仍然为0)。从处理器上的idle进程会进行一些Activate工作，然后执行cpu_idle()。</p>
 
@@ -425,7 +425,7 @@ don’t fix it” 这样观点的持有者的话，你将会是 BSD 的超级粉
 <p>其核心代码如下：</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -469,7 +469,7 @@ don’t fix it” 这样观点的持有者的话，你将会是 BSD 的超级粉
 </span><span class='line'><span class="w">        </span><span class="n">preempt_disable</span><span class="p">();</span>
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>循环判断need_resched以降低退出延迟，用idle()来节能。</p>
 

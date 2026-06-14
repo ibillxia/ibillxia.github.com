@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 伪造IP | Bill's Blog]]></title>
   <link href="http://ibillxia.github.io/blog/tags/wei-zao-ip/atom.xml" rel="self"/>
   <link href="http://ibillxia.github.io/"/>
-  <updated>2025-06-01T13:56:45+08:00</updated>
+  <updated>2026-06-14T19:17:47+08:00</updated>
   <id>http://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -33,12 +33,12 @@
 <p>我们同时假设主机A和B之间的通信遵守TCP／IP的三次握手机制。握手方法是：</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>A->：SYN（序列号=M）
 </span><span class='line'>B->A：SYN（序列号＝N），ACK（应答序号=M+1）
-</span><span class='line'>A->B：ACK（应答序号＝N+1）</span></code></pre></td></tr></table></div></figure></p>
+</span><span class='line'>A->B：ACK（应答序号＝N+1）</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <!--more-->
 
@@ -53,12 +53,12 @@
 主机X只有算出B的序列号，才能创建TCP连接。其过程描述如下：</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>X->B：SYN（序列号=M），SRC=A
 </span><span class='line'>B->A：SYN（序列号=N），ACK（应答号=M+1）
-</span><span class='line'>X->B：ACK（应答号＝N+1），SRC＝A</span></code></pre></td></tr></table></div></figure></p>
+</span><span class='line'>X->B：ACK（应答号＝N+1），SRC＝A</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>同时，主机X应该阻止主机A响应主机B的包。为此，X可以等到主机A因某种原因终止运行，或者阻塞主机A的操作系统协议部分，使它不能响应主机B。
 一旦主机X完成了以上操作，它就可以向主机B发送命令。主机B将执行这些命令，认为他们是由合法主机A发来的。</p>

@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 过零率 | Bill's Blog]]></title>
   <link href="http://ibillxia.github.io/blog/tags/guo-ling-lu/atom.xml" rel="self"/>
   <link href="http://ibillxia.github.io/"/>
-  <updated>2025-06-01T13:56:45+08:00</updated>
+  <updated>2026-06-14T19:17:47+08:00</updated>
   <id>http://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -54,7 +54,7 @@
 
 
 <p>ZCR的Python实现如下：
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -84,14 +84,14 @@
 </span><span class='line'>        <span class="n">curFrame</span> <span class="o">=</span> <span class="n">curFrame</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">curFrame</span><span class="p">)</span> <span class="c1"># zero-justified</span>
 </span><span class='line'>        <span class="n">zcr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">curFrame</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">curFrame</span><span class="p">[</span><span class="mi">1</span><span class="p">::]</span><span class="o">&lt;=</span><span class="mi">0</span><span class="p">)</span>
 </span><span class='line'>    <span class="k">return</span> <span class="n">zcr</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 </p>
 
 
 
 
 <p>对于给定语音文件aeiou.wav，利用上面的函数计算ZCR的代码如下：
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -157,7 +157,7 @@
 </span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;ZCR&quot;</span><span class="p">)</span>
 </span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;time (seconds)&quot;</span><span class="p">)</span>
 </span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 </p>
 
 

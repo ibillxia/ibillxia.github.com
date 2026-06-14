@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: ZJU | Bill's Blog]]></title>
   <link href="http://ibillxia.github.io/blog/tags/zju/atom.xml" rel="self"/>
   <link href="http://ibillxia.github.io/"/>
-  <updated>2025-06-01T13:56:45+08:00</updated>
+  <updated>2026-06-14T19:17:47+08:00</updated>
   <id>http://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -437,7 +437,7 @@ ZJG大草坪上的求是鹰：</br>
 <p>水题</p>
 
 
-<p><figure class='code'><figcaption><span>Problem A </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem A </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -504,7 +504,7 @@ ZJG大草坪上的求是鹰：</br>
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <!-- more -->
 
@@ -515,7 +515,7 @@ ZJG大草坪上的求是鹰：</br>
 <p>继续水题！</p>
 
 
-<p><figure class='code'><figcaption><span>Problem B </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem B </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -562,7 +562,7 @@ ZJG大草坪上的求是鹰：</br>
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h3>C题：Median（ 九度 1004）</h3>
 
@@ -570,7 +570,7 @@ ZJG大草坪上的求是鹰：</br>
 <p>再继续水题！</p>
 
 
-<p><figure class='code'><figcaption><span>Problem C </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem C </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -629,7 +629,7 @@ ZJG大草坪上的求是鹰：</br>
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h3>D题：Graduate Admission（ 九度 1005）</h3>
 
@@ -637,7 +637,7 @@ ZJG大草坪上的求是鹰：</br>
 <p>有点麻烦，要细心！</p>
 
 
-<p><figure class='code'><figcaption><span>Problem D </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem D </span></figcaption>
 <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -782,7 +782,7 @@ ZJG大草坪上的求是鹰：</br>
 </span><span class='line'><span class="w">    </span><span class="p">}</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>总体来说，这套题比较简单！</p>
 

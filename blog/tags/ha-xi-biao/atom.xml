@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 哈希表 | Bill's Blog]]></title>
   <link href="http://ibillxia.github.io/blog/tags/ha-xi-biao/atom.xml" rel="self"/>
   <link href="http://ibillxia.github.io/"/>
-  <updated>2025-06-01T13:56:45+08:00</updated>
+  <updated>2026-06-14T19:17:47+08:00</updated>
   <id>http://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -192,7 +192,7 @@ void hashtable&lt;_Val,_Key,_HF,_Ex,_Eq,_All&gt;::_M_copy_from(const hashtable&a
 <h2>4. hashtable 的迭代器</h2>
 
 <p>hashtable 的迭代器是前向的单向迭代器，遍历的方式是先遍历完一个 list 然后切换到下一个 bucket 指向的 list 进行遍历。以下是 hashtable 的迭代器的定义：<br/>
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -252,7 +252,7 @@ void hashtable&lt;_Val,_Key,_HF,_Ex,_Eq,_All&gt;::_M_copy_from(const hashtable&a
 </span><span class='line'><span class="w">  </span><span class="p">}</span>
 </span><span class='line'><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h2>5. 哈希函数</h2>
 

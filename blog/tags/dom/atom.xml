@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: DOM | Bill's Blog]]></title>
   <link href="http://ibillxia.github.io/blog/tags/dom/atom.xml" rel="self"/>
   <link href="http://ibillxia.github.io/"/>
-  <updated>2025-06-01T13:56:45+08:00</updated>
+  <updated>2026-06-14T19:17:47+08:00</updated>
   <id>http://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -40,7 +40,7 @@
 <p>如何读取 HTML 元素 </p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -77,12 +77,12 @@
 </span><span class='line'>// 找出所有网页中所有 align=center 的 'td 标签
 </span><span class='line'>$result = $dom->find('td[align=center]');
 </span><span class='line'>foreach($result as $v) {echo $v->outertext . '&lt;br>';}
-</span><span class='line'>?></span></code></pre></td></tr></table></div></figure></p>
+</span><span class='line'>?></span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>如何修改 HTML 元素 </p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -106,12 +106,12 @@
 </span><span class='line'><span class="c1">// 显示修改后的网页</span>
 </span><span class='line'><span class="k">echo</span> <span class="nv">$dom</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span>
 </span><span class='line'><span class="cp">?&gt;</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>Slashdot网站内容抓取</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -131,7 +131,7 @@
 </span><span class='line'>    <span class="nv">$articles</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$item</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
 </span><span class='line'><span class="nb">print_r</span><span class="p">(</span><span class="nv">$articles</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 ]]></content>
   </entry>
   

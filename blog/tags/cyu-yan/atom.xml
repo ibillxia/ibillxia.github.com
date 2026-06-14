@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: C语言 | Bill's Blog]]></title>
   <link href="http://ibillxia.github.io/blog/tags/cyu-yan/atom.xml" rel="self"/>
   <link href="http://ibillxia.github.io/"/>
-  <updated>2025-06-01T13:56:45+08:00</updated>
+  <updated>2026-06-14T19:17:47+08:00</updated>
   <id>http://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -464,7 +464,7 @@ Format: 4字节，内容为“WAVE”的ASCII码(0x57415645)，以大端存储�
 0x4000:   0x34</br>
 0x4001:   0x12</br>
 用程序在区别的话，可以考虑：
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -494,7 +494,7 @@ Format: 4字节，内容为“WAVE”的ASCII码(0x57415645)，以大端存储�
 </span><span class='line'><span class="w">      </span><span class="n">system</span><span class="p">(</span><span class="s">&quot;PAUSE&quot;</span><span class="p">);</span><span class="w"> </span>
 </span><span class='line'><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 </p>
 
 
@@ -518,7 +518,7 @@ ExtraParams: 扩展段其他自定义的一些参数的具体内容，大小由�
 
 
 <p>其中，对于每个采样点的bit数，不同的bit数读取数据的方式不同：
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -538,7 +538,7 @@ ExtraParams: 扩展段其他自定义的一些参数的具体内容，大小由�
 </span><span class='line'><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">BitsPerSample</span><span class="o">==</span><span class="mi">32</span><span class="p">)</span>
 </span><span class='line'><span class="w">        </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="kt">int</span><span class="o">*</span><span class="p">)</span><span class="n">speech</span><span class="o">+</span><span class="n">i</span><span class="p">);</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 </p>
 
 
@@ -557,13 +557,13 @@ Data: 真正的语音数据部分。</br>
 
 
 <p>设一个wave文件的前72个字节的十六进制内容如下(可以使用Ultra Edit等工具查看wave文件头)：
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="mi">52</span><span class="w"> </span><span class="mi">49</span><span class="w"> </span><span class="mi">46</span><span class="w"> </span><span class="mi">46</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="mi">08</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">57</span><span class="w"> </span><span class="mi">41</span><span class="w"> </span><span class="mi">56</span><span class="w"> </span><span class="mi">45</span><span class="w"> </span><span class="mi">66</span><span class="w"> </span><span class="mi">6</span><span class="n">d</span><span class="w"> </span><span class="mi">74</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">01</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">02</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span>
 </span><span class='line'><span class="mi">22</span><span class="w"> </span><span class="mi">56</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">88</span><span class="w"> </span><span class="mi">58</span><span class="w"> </span><span class="mo">01</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">04</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">64</span><span class="w"> </span><span class="mi">61</span><span class="w"> </span><span class="mi">74</span><span class="w"> </span><span class="mi">61</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">08</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span>
 </span><span class='line'><span class="mi">24</span><span class="w"> </span><span class="mi">17</span><span class="w"> </span><span class="mi">1</span><span class="n">e</span><span class="w"> </span><span class="n">f3</span><span class="w"> </span><span class="mi">3</span><span class="n">c</span><span class="w"> </span><span class="mi">13</span><span class="w"> </span><span class="mi">3</span><span class="n">c</span><span class="w"> </span><span class="mi">14</span><span class="w"> </span><span class="mi">16</span><span class="w"> </span><span class="n">f9</span><span class="w"> </span><span class="mi">18</span><span class="w"> </span><span class="n">f9</span><span class="w"> </span><span class="mi">34</span><span class="w"> </span><span class="n">e7</span><span class="w"> </span><span class="mi">23</span><span class="w"> </span><span class="n">a6</span><span class="w"> </span><span class="mi">3</span><span class="n">c</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="mi">11</span><span class="w"> </span><span class="n">ce</span><span class="w"> </span><span class="mi">1</span><span class="n">a</span><span class="w"> </span><span class="mi">0</span><span class="n">d</span><span class="w"> </span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 则其个字段的解析如下图：
 <center><img src="/images/2013/IMAG2013072002.gif"></center>
 </p>
@@ -717,7 +717,7 @@ char* wavread(char *fname, WAVEFORMATEX *wf){
 它代码分离开来。例程如下</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -763,7 +763,7 @@ char* wavread(char *fname, WAVEFORMATEX *wf){
 </span><span class='line'><span class="w">　　</span><span class="n">process_error</span><span class="p">();</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
 </span><span class='line'><span class="w">　　</span><span class="n">exit</span><span class="p">();</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>虽然goto 语句能有效地支持异常处理编程的实现。但是没有人却建议使用它，即便是在C语言中。因为：</br>
 (1) goto语句能破坏程序的结构化设计，使代码难于测试，且包含大量goto的代码模块不易理解和阅读。它一直遭结构化程序设计思想所抛弃，强烈建议程序员不易使用它;</br>
@@ -807,7 +807,7 @@ char* wavread(char *fname, WAVEFORMATEX *wf){
 当前需要用到的寄存器的值），jmp_buf 结构在 setjmp.h 文件内声明：</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -833,7 +833,7 @@ char* wavread(char *fname, WAVEFORMATEX *wf){
 </span><span class='line'><span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">j_si</span><span class="p">;</span><span class="w">  </span><span class="c1">// 源变址</span>
 </span><span class='line'><span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">j_ds</span><span class="p">;</span><span class="w"> </span><span class="c1">// 数据段</span>
 </span><span class='line'><span class="p">}</span><span class="w"> </span><span class="kt">jmp_buf</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>jmp_buf 结构存放了程序当前寄存器的值，以确保使用 longjmp() 后可以跳回到该执行点上继续执行。</p>
 
@@ -846,20 +846,20 @@ char* wavread(char *fname, WAVEFORMATEX *wf){
 <p>setjmp() 与 longjmp() 函数原型如下：</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 </pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="kt">void</span><span class="w"> </span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Cdecl</span><span class="w"> </span><span class="n">longjmp</span><span class="p">(</span><span class="kt">jmp_buf</span><span class="w"> </span><span class="n">jmpb</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">retval</span><span class="p">);</span>
 </span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">Cdecl</span><span class="w"> </span><span class="n">setjmp</span><span class="p">(</span><span class="kt">jmp_buf</span><span class="w"> </span><span class="n">jmpb</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>_Cdecl 声明函数的参数使用标准C的进栈方式（由右向左）压栈，_Cdecl 是C语言的一种调用约定，除此以外，PASCAL 也是
 调用约定之一。C标准调用约定（_Cdecl）所声明的函数不自动清除堆栈，这一事务由调用者自行负责——这也是C可以支持不固定
 个数的参数的原因。此外，这一调用约定将在函数名前添加一个下划线字符，如某一函数声明为：</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="kt">int</span><span class="w"> </span><span class="n">cdecl</span><span class="w"> </span><span class="nf">DoSomething</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>编译时将自动为 DoSomething 加上下划线前缀，即函数名变为：_DoSomething。</p>
 
@@ -901,14 +901,14 @@ char* wavread(char *fname, WAVEFORMATEX *wf){
 首先定义一个全局的异常：</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="kt">jmp_buf</span><span class="w"> </span><span class="n">Jump_Buffer</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>因为 setjmp() 第一次调用初始化后返回0，第二次返回非0，可以这样定义一个宏使得它功能接近于 C++ 的 try。</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -917,25 +917,25 @@ char* wavread(char *fname, WAVEFORMATEX *wf){
 </span><span class='line'>
 </span><span class='line'>&lt;h1>define try if(!setjmp(Jump_Buffer))&lt;/h1>
 </span><span class='line'>
-</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></p>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p> 当 setjmp() 函数第一次0 时，取非为真，则执行 try 块内的代码，如：</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="n">try</span><span class="w"> </span><span class="p">{</span>
 </span><span class='line'><span class="w">    </span><span class="n">Test</span><span class="p">();</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>当因为调用 longjmp() 抛出异常而导致 setjmp() 第二次返回时（程序将会转到 setjmp() 函数处返回，这时，这时应该执行
 的是异常处理代码。longjmp() 使 setjmp() 函数返回非0，if(!setjmp(JumpBuffer)) 中将值取非则为假，是以，异常处理放在
 其后应该使用一个 else：</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -945,12 +945,12 @@ char* wavread(char *fname, WAVEFORMATEX *wf){
 </span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">define</span><span class="w"> </span><span class="n">catch</span><span class="w"> </span><span class="k">else</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>如此看起来便跟 C++ 相似了，setjmp() 函数的第二次返回导致 if() 中表达式值为假，刚好使 catch 块得以执行，如：</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -960,12 +960,12 @@ char* wavread(char *fname, WAVEFORMATEX *wf){
 </span><span class='line'><span class="p">}</span><span class="w"> </span><span class="n">catch</span><span class="w"> </span><span class="p">{</span>
 </span><span class='line'><span class="w">    </span><span class="n">puts</span><span class="p">(</span><span class="s">&quot;Error&quot;</span><span class="p">);</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>实现如 C++ 的 throw 语句，事实上以宏替换 longjmp(jmp_buf, int) 的调用：</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -975,12 +975,12 @@ char* wavread(char *fname, WAVEFORMATEX *wf){
 </span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">define</span><span class="w"> </span><span class="n">throw</span><span class="w"> </span><span class="n">longjmp</span><span class="p">(</span><span class="n">Jump_Buffer</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>下面的例程解释如何使用这些宏：</p>
 
 
-<p><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -1066,7 +1066,7 @@ char* wavread(char *fname, WAVEFORMATEX *wf){
 </span><span class='line'><span class="w">    </span><span class="n">getch</span><span class="p">();</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
 </span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 ]]></content>
   </entry>
   
