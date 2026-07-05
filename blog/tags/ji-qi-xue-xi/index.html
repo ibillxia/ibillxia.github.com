@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -175,10 +180,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in DataScience</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/datascience/'>DataScience</a></span>
 		
 		
-		  <span class="tags">Tagged with 数据科学机器学习职业发展趋势</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/shu-ju-ke-xue/'>数据科学</a>, <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/zhi-ye-fa-zhan/'>职业发展</a>, <a class='tag' href='/blog/tags/qu-shi/'>趋势</a></span>
 		
 		</footer>
 		
@@ -202,10 +207,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in DataScience</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/datascience/'>DataScience</a></span>
 		
 		
-		  <span class="tags">Tagged with 机器学习随机森林GBDTXGBoostLightGBM</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/gbdt/'>GBDT</a>, <a class='tag' href='/blog/tags/lightgbm/'>LightGBM</a>, <a class='tag' href='/blog/tags/xgboost/'>XGBoost</a>, <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/sui-ji-sen-lin/'>随机森林</a></span>
 		
 		</footer>
 		
@@ -229,10 +234,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Reading</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/reading/'>Reading</a></span>
 		
 		
-		  <span class="tags">Tagged with 机器学习神经网络</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/shen-jing-wang-luo/'>神经网络</a></span>
 		
 		</footer>
 		
@@ -253,10 +258,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in DataScience</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/datascience/'>DataScience</a></span>
 		
 		
-		  <span class="tags">Tagged with 机器学习特征选择sklearn</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/sklearn/'>sklearn</a>, <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/te-zheng-xuan-ze/'>特征选择</a></span>
 		
 		</footer>
 		
@@ -277,10 +282,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in DataScience</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/datascience/'>DataScience</a></span>
 		
 		
-		  <span class="tags">Tagged with 机器学习回归模型评估</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/hui-gui/'>回归</a>, <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/mo-xing-ping-gu/'>模型评估</a></span>
 		
 		</footer>
 		
@@ -301,10 +306,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in DataScience</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/datascience/'>DataScience</a></span>
 		
 		
-		  <span class="tags">Tagged with 机器学习线性回归</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/xian-xing-hui-gui/'>线性回归</a></span>
 		
 		</footer>
 		
@@ -325,10 +330,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in DataScience</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/datascience/'>DataScience</a></span>
 		
 		
-		  <span class="tags">Tagged with 机器学习特征工程</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/te-zheng-gong-cheng/'>特征工程</a></span>
 		
 		</footer>
 		
@@ -352,10 +357,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in DataScience</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/datascience/'>DataScience</a></span>
 		
 		
-		  <span class="tags">Tagged with 机器学习XGBoost梯度提升</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/xgboost/'>XGBoost</a>, <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/ti-du-ti-sheng/'>梯度提升</a></span>
 		
 		</footer>
 		
@@ -376,10 +381,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in RecSys</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/recsys/'>RecSys</a></span>
 		
 		
-		  <span class="tags">Tagged with 机器学习推荐系统CTRFMFFM</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/ctr/'>CTR</a>, <a class='tag' href='/blog/tags/ffm/'>FFM</a>, <a class='tag' href='/blog/tags/fm/'>FM</a>, <a class='tag' href='/blog/tags/tui-jian-xi-tong/'>推荐系统</a>, <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a></span>
 		
 		</footer>
 		
@@ -403,10 +408,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in PRML</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/prml/'>PRML</a></span>
 		
 		
-		  <span class="tags">Tagged with 机器学习神经网络</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/shen-jing-wang-luo/'>神经网络</a></span>
 		
 		</footer>
 		
@@ -430,10 +435,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in PRML</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/prml/'>PRML</a></span>
 		
 		
-		  <span class="tags">Tagged with 机器学习数据挖掘推荐系统矩阵分解</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/tui-jian-xi-tong/'>推荐系统</a>, <a class='tag' href='/blog/tags/shu-ju-wa-jue/'>数据挖掘</a>, <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/ju-zhen-fen-jie/'>矩阵分解</a></span>
 		
 		</footer>
 		
@@ -457,10 +462,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in PRML</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/prml/'>PRML</a></span>
 		
 		
-		  <span class="tags">Tagged with 计算机视觉机器学习深度学习</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/shen-du-xue-xi/'>深度学习</a>, <a class='tag' href='/blog/tags/ji-suan-ji-shi-jue/'>计算机视觉</a></span>
 		
 		</footer>
 		
@@ -481,10 +486,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in PRML</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/prml/'>PRML</a></span>
 		
 		
-		  <span class="tags">Tagged with AudioSpeech深度学习神经网络机器学习</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/audio/'>Audio</a>, <a class='tag' href='/blog/tags/speech/'>Speech</a>, <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/shen-du-xue-xi/'>深度学习</a>, <a class='tag' href='/blog/tags/shen-jing-wang-luo/'>神经网络</a></span>
 		
 		</footer>
 		
@@ -505,10 +510,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in PRML</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/prml/'>PRML</a></span>
 		
 		
-		  <span class="tags">Tagged with CNN神经网络机器学习</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/cnn/'>CNN</a>, <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/shen-jing-wang-luo/'>神经网络</a></span>
 		
 		</footer>
 		
@@ -529,10 +534,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in PRML</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/prml/'>PRML</a></span>
 		
 		
-		  <span class="tags">Tagged with 神经网络机器学习</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/shen-jing-wang-luo/'>神经网络</a></span>
 		
 		</footer>
 		
@@ -553,10 +558,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in PRML</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/prml/'>PRML</a></span>
 		
 		
-		  <span class="tags">Tagged with 机器学习深度学习神经网络AutoEncoderSparseCodingRBM</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/autoencoder/'>AutoEncoder</a>, <a class='tag' href='/blog/tags/rbm/'>RBM</a>, <a class='tag' href='/blog/tags/sparsecoding/'>SparseCoding</a>, <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/shen-du-xue-xi/'>深度学习</a>, <a class='tag' href='/blog/tags/shen-jing-wang-luo/'>神经网络</a></span>
 		
 		</footer>
 		
@@ -580,10 +585,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Math</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/math/'>Math</a></span>
 		
 		
-		  <span class="tags">Tagged with 凸优化机器学习</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/tu-you-hua/'>凸优化</a>, <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a></span>
 		
 		</footer>
 		
@@ -614,7 +619,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

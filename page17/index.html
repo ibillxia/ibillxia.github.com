@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -160,6 +165,278 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2011/05/07/10-born-at-the-wrong-time-companies-innovation-too-advanced/">盘点10大生不逢时科技创业公司：创意过于超前</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2011-05-07T18:00:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2011/05/07/10-born-at-the-wrong-time-companies-innovation-too-advanced/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>据国外媒体报道，有句形容创业公司的老话说，“太早也是个错误。” 这绝对是个事实，在很多伟大的科技公司成立之前，相同的创意已经存在，
+但是因为时机不对，结果没有形成气候。下文将点评10大生不逢时的科技创业公司，这些公司的项目是创新的，但是因为出现得太早，市场尚未做
+好准备，所以最终失败。</p>
+
+
+<center><img src="/images/2011/IMAG2011050701.jpg"></center>
+
+
+<p>同类型的公司在数年后取得辉煌成绩，产生数亿美元价值，曾经创立这10大创业公司的企业家难免懊恼不已，因为这些创意和产品都是他们曾
+经历的。但是，这就是人生。以下是10大生不逢时的科技创业公司：</p>
+
+
+
+
+<h4>1.SixDegrees.com</h4>
+
+
+<p>这是第一个为用户提供社交体验的网站，该网站想揭示的原理是：最多通过6个人你就能够认识世界上任何一个人。在1997年成立以后，该网站
+经历了一段时间的高速增长，但是由于人们对社交网站还不适应，所以最终淡出人们视线。</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2011/05/07/10-born-at-the-wrong-time-companies-innovation-too-advanced/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2011/05/03/Exception-handling-mechanism-in-c/">C语言中的异常处理机制</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2011-05-03T11:09:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2011/05/03/Exception-handling-mechanism-in-c/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>1.概述</h2>
+
+
+<p>什么是异常？异常一般指的是程序运行期（Run-Time）发生的非正常情况。异常一般是不可预测的，如：内存不足、打开文件失败、
+范围溢出等。UNIX 使用信号给出异常，并当发生异常时转跳到信号处理过程进行异常处理。DOS下的信号对比UNIX系统而言相对较少。</p>
+
+
+
+
+<p>我们知道，不管是在c++还是在java中，异常都被认为是一种很优雅的处理错误的机制。而如果想在c语言中使用异常就比较麻烦，
+但是我们仍然可以使用c语言中强大的setjmp和longjmp函数实现类似于c++的异常处理机制。</p>
+
+
+
+
+<p>异常处理的核心思想是，把功能模块代码与系统中可能出现错误的处理代码分离开来，以此来达到使我们的代码组织起来更美观、
+逻辑上更清晰，并且同时从根本上来提高我们软件系统长时间稳定运行的可靠性。那么，现在回过头来看，实际上在计算机系统的硬件
+设计中，操作系统的总体设计中，早期的许多面向结构化程序设计语言中(例如C语言)，都有异常处理的机制和方法的广泛运用。</p>
+
+
+
+
+<h2>2.基于goto语句的异常处理</h2>
+
+
+<p>goto语句，程序员朋友们对它太熟悉了，它是C语言中使用最为灵活的一条语句，由它也充分体现出了C语言的许多特点或者说是优点。
+它虽然是一条高级语言中提供的语句，但是它一般却直接对应一条“无条件直接跳转的机器指令”，所以说它非常地特别，它引起过许多
+争议，但是这条语句仍然一直被保留了下来，即便是今天的C++语言中，也有对它的支持(虽然不建议使用它)。</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2011/05/03/Exception-handling-mechanism-in-c/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2011/05/03/introduce-to-assert-in-c-language/">C语言断言简介</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2011-05-03T10:31:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2011/05/03/introduce-to-assert-in-c-language/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>1.概述</h2>
+
+
+<p> 断言是对某种假设条件进行检查（可理解为若条件成立则无动作，否则应报告），它可以快速发现并定位软件问题，
+同时对系统错误进行自动报警。断言可以对在系统中隐藏很深，用其它手段极难发现的问题进行定位，从而缩短软件问题定位时间，
+提高系统的可测性。实际应用时，可根据具体情况灵活地设计断言。</p>
+
+
+
+
+<h2>2.标准断言机制</h2>
+
+
+<p>原型定义：</p>
+
+
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;assert.h&gt;</span>
+</span><span class='line'><span class="kt">void</span><span class="w"> </span><span class="nf">assert</span><span class="p">(</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">expression_r_r_r</span><span class="w"> </span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+
+<p>assert的作用是现计算表达式 expression_r_r_r ，如果其值为假（即为0），
+那么它先向stderr打印一条出错信息，然后通过调用 abort来终止程序运行。</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2011/05/03/introduce-to-assert-in-c-language/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2011/04/21/about-variable-parameters-in-c-language/">浅谈C语言的可变参数</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2011-04-21T16:50:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2011/04/21/about-variable-parameters-in-c-language/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>1.问题引入</h2>
+
+
+<p>
+C语言中有些函数使用可变参数，比如常见的 `int printf( const char *format [, argument]... );`，
+第一个参数format是固定的，其余的参数的个数和类型都不固定。例如：</p>
+
+
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Enjoy yourself everyday!/n&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="n">printf</span><span class="p">(</span><span class="s">&quot;The value is %d!/n&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+
+<p>这种可变参数可以说是C语言一个比较难理解的部分，这里会由几个问题引发一些对它的分析。
+注意：在C++中有函数重载（overload）可以用来区别不同函数参数的调用，但它还是不能表示任意数量的函数参数。</p>
+
+
+
+
+<h2>2.printf（）实现原理</h2>
+
+
+<p>
+C语言用va_start等宏来处理这些可变参数。这些宏看起来很复杂，其实原理挺简单，
+就是根据参数入栈的特点从最靠近第一个可变参数的固定参数开始，依次获取每个可变参数的地址。
+下面我们来分析这些宏。</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2011/04/21/about-variable-parameters-in-c-language/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -541,276 +818,6 @@ LinkedIn有着商业范儿的严肃简洁，只有一些基本的联络和互动
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2010/09/24/PHP-string-filter-methods-for-safety/">PHP字符串安全过滤全攻略</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2010-09-24T13:28:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2010/09/24/PHP-string-filter-methods-for-safety/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>php安全过滤是防止注入的第一道防线，不得大意。提到PHP的安全过滤，不得不提的两个东西是`set_magic_quotes_runtime` 和 `magic_quotes_gpc`。</p>
-
-
-
-
-<p>`set_magic_quotes_runtime()` 可以让程序员在代码中动态开启或关闭 `magic_quotes_runtime`，`set_magic_quotes_runtime(1)` 表示开启，
-`set_magic_quotes_runtime(0)` 则表示关闭。当`set_magic_quotes_runtime(1)`时，从数据库或通过`fread`之类的函数读取的文本，将自动对' "和\自动
-加上反斜杠\进行转义，防止溢出。这在对数据库的数据进行转移的时候非常有用。但在一般情况下，应当将其关闭，否则从数据库读取出来的数据单引
-号、双引号和反斜杠都会被加上\，导致显示不正常。像Discuz，PHPWind都在公共文件的头部加上一句 `set_magic_quotes_runtime(0);` 强制关闭 
-`magic_quotes_runtime` 。</p>
-
-
-
-
-<p>`magic_quotes_gpc` 和 `magic_quotes_runtime` 的区别在于，`magic_quotes_gpc` 是对通过GET、POST、COOKIE传递的数据进行转义，一般在数据入库前
-要先进行转义，`magic_quotes_gpc`不能在代码中动态开启或关 闭，需要到`php.ini`将`magic_quotes_gpc`设置为on或off，代码中可以用`get_magic_quotes_gpc`
-获取 `magic_quotes_gpc`的状态。当`magic_quotes_gpc`为off时，需要手工对数据进行addslashes，代码如下：</p>
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2010/09/24/PHP-string-filter-methods-for-safety/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2010/08/31/the-elements-of-ip-faking/">伪造IP地址的原理</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2010-08-31T09:41:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2010/08/31/the-elements-of-ip-faking/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>入侵者使用假IP地址发送包，利用基于IP地址证实的应用程序。其结果是未授权的远端用户进入带有防火墙的主机系统。</p>
-
-
-
-
-<p>假设有两台主机A、B和入侵者控制的主机X。假设B授予A某些特权，使得A能够获得B所执行的一些操作。X的目标就是得到与B相同的权利。
-为了实现该目标，X必须执行两步操作：首先，与B建立一个虚假连接；然后，阻止A向B报告网络证实系统的问题。主机X必须假造A的IP地址，
-从而使B相信从X发来的包的确是从A发来的。</p>
-
-
-
-
-<p>我们同时假设主机A和B之间的通信遵守TCP／IP的三次握手机制。握手方法是：</p>
-
-
-<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>A->：SYN（序列号=M）
-</span><span class='line'>B->A：SYN（序列号＝N），ACK（应答序号=M+1）
-</span><span class='line'>A->B：ACK（应答序号＝N+1）</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2010/08/31/the-elements-of-ip-faking/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/">超好的HTML解析工具PHP Simple HTML DOM Parser</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2010-08-28T20:49:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>采用PHP5+ 开发的一个简单的 PHP HTML DOM 分析，支持 invalid HTML 并提供非常简单的方式来操作 HTML 元素。在 HMTL 页面
-上查找标签所使用的语法与 jQuery （一个轻量级，实用的 javascript 框架） 相似，从页面中抽取内容只需要一行代码。开源代码：
-<a href="http://sourceforge.net/projects/simplehtmldom/">http://sourceforge.net/projects/simplehtmldom/</a> </p>
-
-
-
-
-<p>它具有以下几个特点：</br>
-1. 只支援 PHP5 以上. </br>
-2. 可以分析不严谨 (invalid) 的 HTML. </br>
-3. 支援简单的 CSS Selector. </br>
-4. 简单的 DOM 操作. </br>
-5. 会维持 HTML 中的原始格式 .</br>
-下面是使用手册上举的几个简单的使用示例。</p>
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2010/08/25/php-print-in-format-very-useful-in-debuging/">PHP格式化打印数组，调试有用</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2010-08-25T10:08:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2010/08/25/php-print-in-format-very-useful-in-debuging/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>以下是从FleaPHP上挖来的，感谢FleaPHP的开发者们。</p>
-
-
-<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span></span><span class="sd">/**</span>
-</span><span class='line'><span class="sd">* 输出变量的内容，通常用于调试</span>
-</span><span class='line'><span class="sd">*</span>
-</span><span class='line'><span class="sd">* @package Core</span>
-</span><span class='line'><span class="sd">*</span>
-</span><span class='line'><span class="sd">* @param mixed $vars 要输出的变量</span>
-</span><span class='line'><span class="sd">* @param string $label</span>
-</span><span class='line'><span class="sd">* @param boolean $return</span>
-</span><span class='line'><span class="sd">*/</span>
-</span><span class='line'><span class="k">function</span> <span class="nf">dump</span><span class="p">(</span><span class="nv">$vars</span><span class="p">,</span> <span class="nv">$label</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$return</span> <span class="o">=</span> <span class="k">false</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nb">ini_get</span><span class="p">(</span><span class="s1">&#39;html_errors&#39;</span><span class="p">))</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nv">$content</span> <span class="o">=</span> <span class="s2">&quot;&lt;pre&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nv">$label</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>            <span class="nv">$content</span> <span class="o">.=</span> <span class="s2">&quot;&lt;strong&gt;</span><span class="si">{</span><span class="nv">$label</span><span class="si">}</span><span class="s2"> :&lt;/strong&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'>        <span class="nv">$content</span> <span class="o">.=</span> <span class="nb">htmlspecialchars</span><span class="p">(</span><span class="nb">print_r</span><span class="p">(</span><span class="nv">$vars</span><span class="p">,</span> <span class="k">true</span><span class="p">));</span>
-</span><span class='line'>        <span class="nv">$content</span> <span class="o">.=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;/pre&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nv">$content</span> <span class="o">=</span> <span class="nv">$label</span> <span class="o">.</span> <span class="s2">&quot; :</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">.</span> <span class="nb">print_r</span><span class="p">(</span><span class="nv">$vars</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nv">$return</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nv">$content</span><span class="p">;</span> <span class="p">}</span>
-</span><span class='line'>    <span class="k">echo</span> <span class="nv">$content</span><span class="p">;</span>
-</span><span class='line'>    <span class="k">return</span> <span class="k">null</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2010/08/25/php-print-in-format-very-useful-in-debuging/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page18">&larr; Older</a></li>
@@ -847,7 +854,7 @@ LinkedIn有着商业范儿的严肃简洁，只有一些基本的联络和互动
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

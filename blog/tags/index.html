@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -738,6 +743,10 @@ $(document).bind('DOMNodeInserted', function(event) {
      
     	<li><a href="#Attention-ref">Attention <span>1</span></a></li>
      
+    	<li><a href="#音乐生成-ref">音乐生成 <span>1</span></a></li>
+     
+    	<li><a href="#AI翻唱-ref">AI翻唱 <span>1</span></a></li>
+     
     	<li><a href="#GenRec-ref">GenRec <span>1</span></a></li>
      
     	<li><a href="#LLM4Rec-ref">LLM4Rec <span>1</span></a></li>
@@ -748,11 +757,19 @@ $(document).bind('DOMNodeInserted', function(event) {
      
     	<li><a href="#Kaggle-ref">Kaggle <span>1</span></a></li>
      
-    	<li><a href="#Agent-ref">Agent <span>2</span></a></li>
+    	<li><a href="#Agent-ref">Agent <span>5</span></a></li>
      
     	<li><a href="#Anthropic-ref">Anthropic <span>1</span></a></li>
      
     	<li><a href="#VibeCoding-ref">VibeCoding <span>1</span></a></li>
+     
+    	<li><a href="#OpenClaw-ref">OpenClaw <span>1</span></a></li>
+     
+    	<li><a href="#Trigger-ref">Trigger <span>1</span></a></li>
+     
+    	<li><a href="#ClaudeCode-ref">ClaudeCode <span>1</span></a></li>
+     
+    	<li><a href="#FDE-ref">FDE <span>1</span></a></li>
     
   
 
@@ -8622,6 +8639,46 @@ $(document).bind('DOMNodeInserted', function(event) {
 
   </ul>
  
+  <h2 class="my-tags-ref" id="音乐生成-ref"><a href="/blog/tags/音乐生成">音乐生成</a></h2>
+  <ul>
+      
+    
+
+
+  
+    
+      
+      	
+      	<li><a href="/blog/2025/03/16/music-cover-by-so-vits-svc/">基于so-vits-svc的AI翻唱歌曲教程</a></li>
+      	
+      
+    
+  
+
+
+
+  </ul>
+ 
+  <h2 class="my-tags-ref" id="AI翻唱-ref"><a href="/blog/tags/AI翻唱">AI翻唱</a></h2>
+  <ul>
+      
+    
+
+
+  
+    
+      
+      	
+      	<li><a href="/blog/2025/03/16/music-cover-by-so-vits-svc/">基于so-vits-svc的AI翻唱歌曲教程</a></li>
+      	
+      
+    
+  
+
+
+
+  </ul>
+ 
   <h2 class="my-tags-ref" id="GenRec-ref"><a href="/blog/tags/GenRec">GenRec</a></h2>
   <ul>
       
@@ -8732,6 +8789,30 @@ $(document).bind('DOMNodeInserted', function(event) {
     
       
       	
+      	<li><a href="/blog/2026/07/03/FDE-what-why-and-future/">什么是 FDE？从它的爆火看软件研发的职能大洗牌</a></li>
+      	
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/blog/2026/04/26/how-claude-code-works/">Claude Code源码解读</a></li>
+      	
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/blog/2026/03/05/openclaw-trigger-interpretation/">OpenClaw中的Agent Trigger解读</a></li>
+      	
+      
+    
+  
+    
+      
+      	
       	<li><a href="/blog/2026/02/23/anthropic-agentic-coding-report/">Anthropic Agentic Coding最新报告：程序员的核心能力将彻底改变</a></li>
       	
       
@@ -8781,6 +8862,86 @@ $(document).bind('DOMNodeInserted', function(event) {
       
       	
       	<li><a href="/blog/2026/02/23/anthropic-agentic-coding-report/">Anthropic Agentic Coding最新报告：程序员的核心能力将彻底改变</a></li>
+      	
+      
+    
+  
+
+
+
+  </ul>
+ 
+  <h2 class="my-tags-ref" id="OpenClaw-ref"><a href="/blog/tags/OpenClaw">OpenClaw</a></h2>
+  <ul>
+      
+    
+
+
+  
+    
+      
+      	
+      	<li><a href="/blog/2026/03/05/openclaw-trigger-interpretation/">OpenClaw中的Agent Trigger解读</a></li>
+      	
+      
+    
+  
+
+
+
+  </ul>
+ 
+  <h2 class="my-tags-ref" id="Trigger-ref"><a href="/blog/tags/Trigger">Trigger</a></h2>
+  <ul>
+      
+    
+
+
+  
+    
+      
+      	
+      	<li><a href="/blog/2026/03/05/openclaw-trigger-interpretation/">OpenClaw中的Agent Trigger解读</a></li>
+      	
+      
+    
+  
+
+
+
+  </ul>
+ 
+  <h2 class="my-tags-ref" id="ClaudeCode-ref"><a href="/blog/tags/ClaudeCode">ClaudeCode</a></h2>
+  <ul>
+      
+    
+
+
+  
+    
+      
+      	
+      	<li><a href="/blog/2026/04/26/how-claude-code-works/">Claude Code源码解读</a></li>
+      	
+      
+    
+  
+
+
+
+  </ul>
+ 
+  <h2 class="my-tags-ref" id="FDE-ref"><a href="/blog/tags/FDE">FDE</a></h2>
+  <ul>
+      
+    
+
+
+  
+    
+      
+      	
+      	<li><a href="/blog/2026/07/03/FDE-what-why-and-future/">什么是 FDE？从它的爆火看软件研发的职能大洗牌</a></li>
       	
       
     
@@ -8840,7 +9001,7 @@ $(document).ready(function(){
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

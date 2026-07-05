@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -456,15 +461,20 @@ __PRIVATE:
 		
 		
 		
-		  <span class="categories">Posted in Program</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
 		
 		
-		  <span class="tags">Tagged with C++STL内存管理</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/c-plus-plus/'>C++</a>, <a class='tag' href='/blog/tags/stl/'>STL</a>, <a class='tag' href='/blog/tags/nei-cun-guan-li/'>内存管理</a></span>
 		
     </p>
     
       
-         <!-- JiaThis Button BEGIN --><div class="jiathis_style_32x32">	<a class="jiathis_button_weixin"></a>	<a class="jiathis_button_qzone"></a>	<a class="jiathis_button_douban"></a>	<a class="jiathis_button_tsina"></a>	<a class="jiathis_button_renren"></a>	<a class="jiathis_button_tqq"></a>	<a class="jiathis_button_fb"></a>	<a class="jiathis_button_twitter"></a>	<a class="jiathis_button_tumblr"></a>	<a class="jiathis_button_googleplus"></a>	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>	<a class="jiathis_counter_style"></a></div><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1362901762548695" charset="utf-8"></script><!-- JiaThis Button END -->
+         <div class="sharing">
+  
+  
+  
+</div>
+
       
     
 	</br>
@@ -522,7 +532,7 @@ __PRIVATE:
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

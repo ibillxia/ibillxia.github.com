@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -160,6 +165,245 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2018/06/02/tencent-univercity-ceo-comming/">《腾讯大学-CEO来了》笔记</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2018-06-02T22:30:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2018/06/02/tencent-univercity-ceo-comming/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><center><img src="/images/2018/IMAG2018060201.png"></center>
+
+
+<h1>一、每日优鲜 徐正</h1>
+
+<p>15岁上大学，其实保送原因很简单，就是因为数学拿了全国奥林匹克竞赛一等奖 <br/>
+科大少年班 数学+工商管理双学位 <br/>
+01年911，出国三次拒签，初恋在国外，比较失落，就算出国也会回来，大机会在国内 <br/>
+数学是一个研究模型和方法论的学科</p>
+
+<h3>一个CEO的三要素</h3>
+
+<p>一个叫硬件，硬件就像 CPU、内存一样，比如说人的智商、情商、体力、精力等<br/>
+第二叫思维模型，就是操作系统：对一个事务抽离出来，抽象化思考的低层能力，数学是把任何一个事务抽象化的能力，能够想背后的问题 <br/>
+第三是那些软件，它上面装的各种应用，今天怎么融资，明天怎么带队伍等</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2018/06/02/tencent-univercity-ceo-comming/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2018/05/23/sklearn-feature-selection-methods/">【Python机器学习】结合sklearn介绍常用特征选择方法</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2018-05-23T11:29:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2018/05/23/sklearn-feature-selection-methods/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>特征选择(排序)对于数据科学家、机器学习从业者来说非常重要。好的特征选择能够提升模型的性能，更能帮助我们理解数据的特点、底层结构，这对进一步改善模型、算法都有着重要作用。</p>
+
+<p>特征选择主要有两个功能：</p>
+
+<ul>
+<li><p>减少特征数量、降维，使模型泛化能力更强，减少过拟合</p></li>
+<li><p>增强对特征和特征值之间的理解</p></li>
+</ul>
+
+
+<p>拿到数据集，一个特征选择方法，往往很难同时完成这两个目的。通常情况下，我们经常不管三七二十一，选择一种自己最熟悉或者最方便的特征选择方法（往往目的是降维，而忽略了对特征和数据理解的目的）。</p>
+
+<p>在许多机器学习相关的书里，很难找到关于特征选择的内容，因为特征选择要解决的问题往往被视为机器学习的一种副作用，一般不会单独拿出来讨论。</p>
+
+<p>本文将结合Scikit-learn提供的例子介绍几种常用的特征选择方法，它们各自的优缺点和问题。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2018/05/23/sklearn-feature-selection-methods/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2018/05/06/tencent-has-no-dream/">【潘乱】腾讯没有梦想</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2018-05-06T00:45:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2018/05/06/tencent-has-no-dream/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>腾讯没有梦想</h2>
+
+<p>原创 2018-05-05 潘乱 乱翻书</p>
+
+<center><img src="/images/2018/IMAG2018050601.jpeg"></center>
+
+
+<p>腾讯总办，左起：汤道生(SNG)/James（首席战略官）/任宇昕（COO兼IEG MIG OMG）/马化腾（CEO）/刘炽平（总裁）/张小龙（WXG）</p>
+
+<p>腾讯正在丧失产品能力和创业精神，变成一家投资公司。</p>
+
+<p>这家快20岁的公司正在变得功利和短视，他的强项不再是产品业务，而是投资财技 。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2018/05/06/tencent-has-no-dream/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2018/04/18/regression-model-evaluation/">【Python机器学习】回归模型评估方法总结</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2018-04-18T15:42:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2018/04/18/regression-model-evaluation/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>回归模型评估常用的有四种方法，分别是：平均绝对值误差、均方误差、均方根误差和R平方值，如下表所示：</p>
+
+<table>
+<thead>
+<tr>
+<th> 指标 </th>
+<th> 描述 </th>
+<th> metrics方法 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> Mean Absolute Error(MAE) </td>
+<td> 平均绝对误差 </td>
+<td> from sklearn.metrics import mean_absolute_error </td>
+</tr>
+<tr>
+<td> Mean Square Error(MSE) </td>
+<td> 均方误差 </td>
+<td> from sklearn.metrics import mean_squared_error </td>
+</tr>
+<tr>
+<td> Root Mean Square Error(RMSE) </td>
+<td> 均方根误差 </td>
+<td> from sklearn.metrics import root_mean_squared_error </td>
+</tr>
+<tr>
+<td> R-Squared </td>
+<td> R平方值 </td>
+<td> from sklearn.metrics import r2_score </td>
+</tr>
+</tbody>
+</table>
+
+
+<p><br>
+更多评估指标参见 sklearn 官方文档：<a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.mean_absolute_error.html">sklearn.metrics 文档</a>.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2018/04/18/regression-model-evaluation/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -457,200 +701,6 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2016/11/15/sensors-analytics-architecture/">神策分析的技术选型与架构实现</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2016-11-15T21:17:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2016/11/15/sensors-analytics-architecture/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><center><img src="/images/2016/IMAG2016111500.png"></center>
-
-
-<p>很多朋友很想知道神策分析（Sensors Analytics）是如何实现在每天十亿级别数据的情况下可以做到秒级导入和秒级查询，是如何做到不需要预先指定指标和维度就能实现多维查询的。今天正好在这篇文章里面，和大家交流一下我们的技术选型与具体的架构实现，希望能够对大家有所启发。</p>
-
-<p>当然，脱离客户需求谈产品设计，不太现实；而脱离产品设计，纯粹谈技术选型与架构实现，也不现实。因此，我们首先会跟大家探讨一下神策分析从产品角度，是如何从客户需求抽象产品设计的，而产品设计，又是如何确定我们的技术选型。然后，我们则会从产品的整体架构出发，逐步介绍每一个模块和子系统的具体实现。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2016/11/15/sensors-analytics-architecture/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2016/09/22/hive-join-usage-guide/">【简单之美】Hive JOIN使用详解</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2016-09-22T15:55:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2016/09/22/hive-join-usage-guide/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Hive是基于Hadoop平台的，它提供了类似SQL一样的查询语言HQL。有了Hive，如果使用过SQL语言，并且不理解Hadoop MapReduce运行原理，也就无法通过编程来实现MR，但是你仍然可以很容易地编写出特定查询分析的HQL语句，通过使用类似SQL的语法，将HQL查询语句提交Hive系统执行查询分析，最终Hive会帮你转换成底层Hadoop能够理解的MR Job。</p>
-
-<p>对于最基本的HQL查询我们不再累述，这里主要说明Hive中进行统计分析时使用到的JOIN操作。在说明Hive JOIN之前，我们先简单说明一下，Hadoop执行MR Job的基本过程（运行机制），能更好的帮助我们理解HQL转换到底层的MR Job后是如何执行的。我们重点说明MapReduce执行过程中，从Map端到Reduce端这个过程（Shuffle）的执行情况，如图所示（来自《Hadoop: The Definitive Guide》）：</p>
-
-<center><img src="/images/2016/IMAG2016092201.png"></center>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2016/09/22/hive-join-usage-guide/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2016/09/11/data-driven-precision-marketing/">【美团】数据驱动精准化营销在大众点评的实践</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2016-09-11T23:25:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2016/09/11/data-driven-precision-marketing/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>精准化营销一直以来都是互联网营销业务在细分市场下快速获取用户和提高转化的利器。在移动互联网爆发的今天，数据量呈指数增长，如何在移动和大数据场景下用数据驱动进行精准营销，从而提高营销效能，成为营销业务部门的主要挑战之一，同时也是大数据应用的一个重要研究方向。本文通过数据体系架构和技术实现案例，分享美团大众点评数据应用团队在这个方向上的一些尝试和实践经验。</p>
-
-<h2>总体框架</h2>
-
-<p>在介绍数据体系和框架前，为了方便大家理解，先简单阐述一下O2O营销的基本组成：O2O营销是由营销发生的渠道（站内，站外）与营销的主题业务（流量，交易）两个维度组成的，其中产生了多种营销的形态，如精准化用户营销活动、DSP的精准投放、渠道价值排名和反作弊等，数据分析和挖掘在这些环节都能发挥很大的价值。本文主要阐述站内的精准化用户营销活动。</p>
-
-<p>一个站内用户运营活动的生命周期大概可以归纳为：确定目标、选取活动对象、设计活动方案、活动配置与上线、线上精准营销与动态优化以及效果监控与评估六个环节。如下图所示。</p>
-
-<center><img src="/images/2016/IMAG2016091101.png"></center>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2016/09/11/data-driven-precision-marketing/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2016/06/08/neural-network-parameter-settings/">神经网络模型中参数设置的一些经验</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2016-06-08T09:36:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2016/06/08/neural-network-parameter-settings/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><center><img src="/images/2016/IMAG2016060801.png"></center>
-
-
-<h1>一、神经网络中隐层数和隐层节点数问题的讨论</h1>
-
-<h2>1.1 隐层数</h2>
-
-<p>一般认为，增加隐层数可以降低网络误差（也有文献认为不一定能有效降低），提高精度，但也使网络复杂化，从而增加了网络的训练时间和出现“过拟合”的倾向。一般来讲应设计神经网络应优先考虑3层网络（即有1个隐层）。一般地，靠增加隐层节点数来获得较低的误差，其训练效果要比增加隐层数更容易实现。对于没有隐层的神经网络模型，实际上就是一个线性或非线性（取决于输出层采用线性或非线性转换函数型式）回归模型。因此，一般认为，应将不含隐层的网络模型归入回归分析中，技术已很成熟，没有必要在神经网络理论中再讨论之。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2016/06/08/neural-network-parameter-settings/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page7">&larr; Older</a></li>
@@ -687,7 +737,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

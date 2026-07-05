@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -175,10 +180,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in BigData</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/bigdata/'>BigData</a></span>
 		
 		
-		  <span class="tags">Tagged with 大数据HDFS压缩Hadoop</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/hdfs/'>HDFS</a>, <a class='tag' href='/blog/tags/hadoop/'>Hadoop</a>, <a class='tag' href='/blog/tags/ya-suo/'>压缩</a>, <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a></span>
 		
 		</footer>
 		
@@ -202,10 +207,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in BigData</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/bigdata/'>BigData</a></span>
 		
 		
-		  <span class="tags">Tagged with SparkFlink大数据流计算</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/flink/'>Flink</a>, <a class='tag' href='/blog/tags/spark/'>Spark</a>, <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a>, <a class='tag' href='/blog/tags/liu-ji-suan/'>流计算</a></span>
 		
 		</footer>
 		
@@ -229,10 +234,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in BigData</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/bigdata/'>BigData</a></span>
 		
 		
-		  <span class="tags">Tagged with ClickHouseOLAP大数据列式存储</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/clickhouse/'>ClickHouse</a>, <a class='tag' href='/blog/tags/olap/'>OLAP</a>, <a class='tag' href='/blog/tags/lie-shi-cun-chu/'>列式存储</a>, <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a></span>
 		
 		</footer>
 		
@@ -253,10 +258,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in BigData</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/bigdata/'>BigData</a></span>
 		
 		
-		  <span class="tags">Tagged with SparkRDDDataFrameDataset大数据</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/dataframe/'>DataFrame</a>, <a class='tag' href='/blog/tags/dataset/'>Dataset</a>, <a class='tag' href='/blog/tags/rdd/'>RDD</a>, <a class='tag' href='/blog/tags/spark/'>Spark</a>, <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a></span>
 		
 		</footer>
 		
@@ -277,10 +282,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in BigData</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/bigdata/'>BigData</a></span>
 		
 		
-		  <span class="tags">Tagged with Flink流计算大数据</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/flink/'>Flink</a>, <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a>, <a class='tag' href='/blog/tags/liu-ji-suan/'>流计算</a></span>
 		
 		</footer>
 		
@@ -301,10 +306,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in BigData</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/bigdata/'>BigData</a></span>
 		
 		
-		  <span class="tags">Tagged with KylinOLAP大数据</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/kylin/'>Kylin</a>, <a class='tag' href='/blog/tags/olap/'>OLAP</a>, <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a></span>
 		
 		</footer>
 		
@@ -325,10 +330,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in BigData</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/bigdata/'>BigData</a></span>
 		
 		
-		  <span class="tags">Tagged with KylinDruidOLAP大数据</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/druid/'>Druid</a>, <a class='tag' href='/blog/tags/kylin/'>Kylin</a>, <a class='tag' href='/blog/tags/olap/'>OLAP</a>, <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a></span>
 		
 		</footer>
 		
@@ -349,10 +354,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in BigData</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/bigdata/'>BigData</a></span>
 		
 		
-		  <span class="tags">Tagged with Elasticsearch搜索引擎大数据REST</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/elasticsearch/'>Elasticsearch</a>, <a class='tag' href='/blog/tags/rest/'>REST</a>, <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a>, <a class='tag' href='/blog/tags/sou-suo-yin-qing/'>搜索引擎</a></span>
 		
 		</footer>
 		
@@ -373,10 +378,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in BigData</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/bigdata/'>BigData</a></span>
 		
 		
-		  <span class="tags">Tagged with 数据治理元数据大数据</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/yuan-shu-ju/'>元数据</a>, <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a>, <a class='tag' href='/blog/tags/shu-ju-zhi-li/'>数据治理</a></span>
 		
 		</footer>
 		
@@ -397,10 +402,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in BigData</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/bigdata/'>BigData</a></span>
 		
 		
-		  <span class="tags">Tagged with 大数据阿里巴巴数据仓库数据中台</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a>, <a class='tag' href='/blog/tags/shu-ju-zhong-tai/'>数据中台</a>, <a class='tag' href='/blog/tags/shu-ju-cang-ku/'>数据仓库</a>, <a class='tag' href='/blog/tags/a-li-ba-ba/'>阿里巴巴</a></span>
 		
 		</footer>
 		
@@ -424,10 +429,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Engineering</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/engineering/'>Engineering</a></span>
 		
 		
-		  <span class="tags">Tagged with 数据分析架构OLAPImpala大数据</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/impala/'>Impala</a>, <a class='tag' href='/blog/tags/olap/'>OLAP</a>, <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a>, <a class='tag' href='/blog/tags/shu-ju-fen-xi/'>数据分析</a>, <a class='tag' href='/blog/tags/jia-gou/'>架构</a></span>
 		
 		</footer>
 		
@@ -448,10 +453,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in BigData</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/bigdata/'>BigData</a></span>
 		
 		
-		  <span class="tags">Tagged with HiveSQLJOINMapReduce大数据</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/hive/'>Hive</a>, <a class='tag' href='/blog/tags/join/'>JOIN</a>, <a class='tag' href='/blog/tags/mapreduce/'>MapReduce</a>, <a class='tag' href='/blog/tags/sql/'>SQL</a>, <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a></span>
 		
 		</footer>
 		
@@ -472,10 +477,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Engineering</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/engineering/'>Engineering</a></span>
 		
 		
-		  <span class="tags">Tagged with 大数据精准营销数据挖掘美团点评</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a>, <a class='tag' href='/blog/tags/shu-ju-wa-jue/'>数据挖掘</a>, <a class='tag' href='/blog/tags/jing-zhun-ying-xiao/'>精准营销</a>, <a class='tag' href='/blog/tags/mei-tuan-dian-ping/'>美团点评</a></span>
 		
 		</footer>
 		
@@ -499,10 +504,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in BigData</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/bigdata/'>BigData</a></span>
 		
 		
-		  <span class="tags">Tagged with HiveSQLMapReduce大数据</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/hive/'>Hive</a>, <a class='tag' href='/blog/tags/mapreduce/'>MapReduce</a>, <a class='tag' href='/blog/tags/sql/'>SQL</a>, <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a></span>
 		
 		</footer>
 		
@@ -523,10 +528,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in BigData</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/bigdata/'>BigData</a></span>
 		
 		
-		  <span class="tags">Tagged with 大数据数据分析趋势IBM</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/ibm/'>IBM</a>, <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a>, <a class='tag' href='/blog/tags/shu-ju-fen-xi/'>数据分析</a>, <a class='tag' href='/blog/tags/qu-shi/'>趋势</a></span>
 		
 		</footer>
 		
@@ -547,10 +552,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Engineering</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/engineering/'>Engineering</a></span>
 		
 		
-		  <span class="tags">Tagged with 大数据安全用户画像架构</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a>, <a class='tag' href='/blog/tags/an-quan/'>安全</a>, <a class='tag' href='/blog/tags/jia-gou/'>架构</a>, <a class='tag' href='/blog/tags/yong-hu-hua-xiang/'>用户画像</a></span>
 		
 		</footer>
 		
@@ -571,10 +576,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Engineering</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/engineering/'>Engineering</a></span>
 		
 		
-		  <span class="tags">Tagged with 大数据架构实时计算腾讯</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a>, <a class='tag' href='/blog/tags/shi-shi-ji-suan/'>实时计算</a>, <a class='tag' href='/blog/tags/jia-gou/'>架构</a>, <a class='tag' href='/blog/tags/teng-xun/'>腾讯</a></span>
 		
 		</footer>
 		
@@ -605,7 +610,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

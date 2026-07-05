@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -160,6 +165,291 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2012/11/20/why-ache-appears-two-days-after-sports/">为什么酸痛感出现在运动后的两天?</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-11-20T13:00:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2012/11/20/why-ache-appears-two-days-after-sports/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>经常打羽毛球的人可能会很少有肌肉突然剧烈酸疼的感觉，反而是那些平时不太打球，突然打那么一两次的人，常常会出现肌肉酸痛。
+肌肉酸痛往往不是锻炼后即刻出现，而是在第二或第三天出现，持续2-3天后才逐渐缓解。这都是为什么呢？如果说，肌肉酸痛是由于
+运动时乳酸积累所致，那么，应该在运动时或运动后即刻达到高峰，怎么会在第二天以后才出现呢？</p>
+
+
+
+
+<p>在运动医学上，把这种一般在24小时候才出现的肌肉酸痛称之为"延迟性肌肉酸痛症"。锻炼后24-72小时酸痛达到顶点，5-7天后的疼痛基本消失。
+除酸痛外，还有肌肉僵硬，轻者仅有压疼，重者肌肉肿胀，妨碍活动。任何骨骼肌在激烈运动后均可发生延迟性肌肉酸痛，尤其长距离跑后更易
+出现。长跑者可出现髋部、大腿部和小腿部前侧伸肌和后侧屈肌的疼痛，在肌肉远端和肌腱连接处症状更显。在炎热夏天进行极量运动后，除
+肌肉疼痛外，还可出现脱水、低钙、低蛋白等症状。</p>
+
+
+
+
+<p>赛跑是一种反常的运动，就是说肌肉在试图收缩的时候其实是被迫拉长。拉长或不寻常的运动经常会导致肌肉在数小时后甚至数天后出现疼痛，
+而且一碰就痛还变硬。这种现象被称为迟发性肌肉酸痛，发生非常普遍。肌肉肿胀和僵硬的感觉通常出现在运动后大约24小时，在大约2天时达到
+高峰，然后逐渐消退，因为肌肉酸痛是延迟一段时间才发作的，所以不能把它归为是过度运动的结果。事实上，真正的原因是肌肉纤维膜和蛋白
+丝体出现小的撕裂，造成局部的肌肉损伤。</p>
+
+
+
+
+<p>所以，迟发性肌肉酸痛是肌肉产生太多撕裂伤的结果。当我们运动时，为了加快速度，我们需要不断让肌肉接受挑战，希望它们达到我们想要的速度。
+这种渐进的超负荷会导致肌肉纤维的撕裂。在这个过程中，我们会在一天后出现中度的酸痛感。</p>
+
+
+
+
+<p>另外，运动后肌肉血流增加也会导致组织肿胀，这样的肿胀会增加对周围的组织结构的压迫。肌肉中的神经一感觉到压迫，就把疼痛信号传递到大脑，
+这样，你就会在运动完后的第二天早晨感觉到疼痛。</p>
+
+
+
+
+<p>运动过后肌肉纤维在消耗能量后需要补充蛋白质，特别是平时不运动的突然运动后都会出现肌肉酸痛。一定要是酸痛，有酸涨感的，如是疼痛，
+针刺感的是受伤产生的，要休息一旦时间才能好，严重的要去医院。</p>
+
+
+
+
+<p>两个办法缓解：1、休息，酸痛会在一周内缓解并消失。2、继续保持运动，但运动量不要大，一般腿酸就慢跑，每次跑到酸痛感渐渐减弱到很小
+时停止。坚持2-4天就好了。</p>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2012/10/22/BCI-based-animal-robot-summarize/">基于BCI的动物机器人研究分析与展望</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-10-22T23:09:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2012/10/22/BCI-based-animal-robot-summarize/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>摘  要</h3>
+
+
+<p>动物机器人已经成为机器人技术领域的重要研究方向之一，动物运动制导是当今神经、信息和机器人等科学交叉研究的一个热点。
+本文结合基于BCI的大鼠动物机器人的实例来介绍有关动物机器人的研究进展、研究方法，并对其发展前景进行展望。</p>
+
+
+
+
+<h3>关键字</h3>
+
+
+<p>脑机接口；动物机器人；大鼠</p>
+
+
+
+
+<h3>0 前言</h3>
+
+
+<p>在科技日益发达的现代信息社会，我们对机器人已经不再陌生，比如：科幻片中的高级智能化的机器人、自动化生产线上的工业
+机器人、大型展馆里的导航服务机器人、太空中火星上的“勇气号”探险机器人等等。然而，它们的任何一个动作都是由电脑程序来
+完成的，而且所有动作都是程序固定的，不能够灵活，而且一旦能量耗尽将会滞留原地，进退维谷，可谓“出师未捷身先死”，在很多
+方面都不如动物灵活、敏捷，而且所消耗的能量也不能靠自身解决。</p>
+
+
+
+
+<p>回眸历史，人类利用动物来替代自己进行艰苦的工作，甚至人力所不能及的工作，己经有近万年了。在这近万年的历史里，产生了战马、
+耕牛、狩猎犬和信鸽等执行特殊任务的动物。但这些动物所执行的任务较为单一，智力含量较为低下，若是动物能够完全受控于人类，
+将是非常完美的设想。</p>
+
+
+
+
+<p>基于BCI (Brain-Computer Interface，脑-机接口)的动物机器人既很好地解决了微型机器人携带能量不足的问题，同时可以通过
+人工控制来执行一些特殊的、复杂的任务，还具有人类赋予的智能。</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/10/22/BCI-based-animal-robot-summarize/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2012/09/26/convex-optimization-overview/">凸优化简介</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-09-26T23:03:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2012/09/26/convex-optimization-overview/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>在machine learning 的很多问题中，我们最终往往要求解某个函数的最优值。用数学术语表示就是，
+给定一个函数 $f: R^{n} \rightarrow R$，求 $ x \in R^{n} $使得$f(x)$ 取得最小（大）值。例如least-square,
+logistic regression, linear regression, svm, etc. 这类问题统称为优化问题。</p>
+
+<h2>1.引言</h2>
+
+
+<p>在一般情况下，求解任意一个函数的全局最优值是很困难的。但是对于一种特定类型的函数——凸函数（convex function），
+我们可以很有效的求解其全局最优值。这里的“有效”是指在实际问题求解中，能在多项式复杂度的时间里求解。
+人们将这类函数的最值问题称为凸优化问题（Convex Optimal Problem）。下面我从凸集和凸函数讲起，然后
+介绍凸优化的一般描述和典型问题举例。</p>
+
+
+
+
+<h2>2.凸集及其实例</h2>
+
+
+<p><strong>凸集的定义</strong>：一个集合$C$是凸集，当且仅当对任意$x,y\in C$和$\theta \in R$且$0\leq \theta \leq 1$，都有</br>
+<center>$\theta x + (1-\theta)y \in C$.</center>
+其几何意义在于，在集合C中任取两个点，连接两点的直线段上的任一点也在集合C中。下图是凸集和非凸集的例子：</br>
+<center><img src="/images/2012/IMAG2012092601.jpg"></center>   
+</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/09/26/convex-optimization-overview/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2012/09/23/EFI-and-operating-system/">EFI和操作系统</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-09-23T23:03:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2012/09/23/EFI-and-operating-system/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前两天在98上看到一个帖子 windows 8 没法和linux共存？ 里面有一个概念就是EFI</p>
+
+<h2>什么是EFI？</h2>
+
+
+<p>EFI英文全称为Extensible Firmware Interface，中文译为可扩展固件接口，其主要目的是为了提供一组在 OS 加载之前（启动前）在
+所有平台上一致的、正确指定的启动服务。EFI最初由Intel开发，并在2002年12月所发布1.1版，后来在2005年Intel将此规范交由UEFI论坛
+来推广与发展，并更名为Unified EFI(UEFI)。</p>
+
+
+
+
+<p>EFI是一种个人电脑系统规格，用来定义操作系统与系统固件之间的软件界面，为替代BIOS的升级方案。可扩展固件接口（EFI）负责
+加电自检（POST）、连系操作系统以及提供连接操作系统与硬件的接口。UEFI在EFI基础上增加与改进了加密编码（cryptography）、
+网络认证（network authentication）与用户界面架构（User Interface Architecture）等方面的内容。EFI在软件层次中的位置如下图</br>
+<img src="/images/2012/IMAG2012092301.png">
+</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/09/23/EFI-and-operating-system/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -551,405 +841,6 @@ Kernel function examples: <a href="http://www.shamoxia.com/html/y2010/2292.html"
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2012/04/25/matlab-code-optimization/">Matlab代码优化方法几则</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2012-04-25T20:07:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2012/04/25/matlab-code-optimization/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>1.计算向量、矩阵化，尽量减少for循环</br>
-因为MATLAB本来就是矩阵实验室的意思，他提供了极其强大而灵活的矩阵运算能力，你就没必要自己再用自己编写的for循环去实现矩阵运算的功能了。
-另外由于matlab是一种解释性语言，所以最忌讳直接使用循环语句。但在有些情况下，使用for循环可以提高程序的易读性，在效率提高不是很明显的
-情况下可以选择使用for循环。</p>
-
-
-
-
-<p>2.循环内大数组预先定义--预先分配空间</br>
-这一点原则是极其重要的，以至于在编写m程序时编辑器会给出提示“'ver' might be growing inside a loop.Consider prealloacting for speed.”</p>
-
-
-
-
-<p>3.尽可能利用matlab内部提供的函数</br>
-因为matlab内部提供的函数绝对是各种问题的最优算法，那写程序都是他们大师级人物写出来的，程序应该说相当高效，有现成的为什么不用那！
-这个原则就不用实际的程序测试了。</p>
-
-
-
-
-<p>4. 利用内置函数自动记录运行结果</br>
-matlab生成的结果变量只贮存在内存空间中，一旦matlab关闭则会丢失，很多时候需要手工将这些结果存储到我们需要的文件中。事实上，matlab提供
-了很多函数可以自动记录结果，如fprintf可以将数据写入txt文件，xlswrite可以将数据写入excel文件等等。这样自动化的命令可以缩减大量时间，
-从而提高效率。</p>
-
-
-
-
-<p>5. 在迫不得已要使用较多循环而每一步都很耗时的时候，可以将每一步的结果保存成mat文件，然后在循环的开头用if语句与exist函数进行判断，
-如果该文件存在的话，就直接进入下一次循环。这样做的好处是不会因为断电、电脑死机或误操作等原因而重头从第一个循环再次运行。</p>
-
-
-
-
-<p>6. 同时运行多的matlab进程。现在的电脑一般都是多核，一般一个matlab进程会占用一个cpu，因此可以在多核电脑上同时打开多个matlab窗口，
-从而执行不同的命令。如四核电脑上可以打开三个matlab窗口分别运行不同的程序，cpu的占用率约为80%，这样既加快了进度，又不会影响电脑的使用。</p>
-
-
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2012/03/07/11-zju-program-test-solution/">11年浙大复试机试题解</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2012-03-07T19:56:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2012/03/07/11-zju-program-test-solution/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>
-11年浙大研究生复试机试题解
-</p>
-
-
-
-
-<h3>A题：A+B for Matrices （ 九度1001）</h3>
-
-
-<p>水题</p>
-
-
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem A </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
-</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">a</span><span class="p">[</span><span class="mi">10</span><span class="p">][</span><span class="mi">10</span><span class="p">],</span><span class="n">b</span><span class="p">[</span><span class="mi">10</span><span class="p">][</span><span class="mi">10</span><span class="p">];</span>
-</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">cnt</span><span class="p">;</span>
-</span><span class='line'><span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">m</span><span class="p">)</span><span class="o">&amp;&amp;</span><span class="n">m</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">){</span>
-</span><span class='line'><span class="w">        </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">n</span><span class="p">);</span>
-</span><span class='line'><span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">m</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
-</span><span class='line'><span class="w">            </span><span class="k">for</span><span class="p">(</span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">)</span>
-</span><span class='line'><span class="w">                </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">j</span><span class="p">);</span>
-</span><span class='line'><span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">m</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
-</span><span class='line'><span class="w">            </span><span class="k">for</span><span class="p">(</span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
-</span><span class='line'><span class="w">                </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">j</span><span class="p">);</span>
-</span><span class='line'><span class="w">                </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">+=</span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
-</span><span class='line'><span class="w">            </span><span class="p">}</span>
-</span><span class='line'><span class="w">        </span><span class="n">cnt</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">m</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
-</span><span class='line'><span class="w">            </span><span class="k">for</span><span class="p">(</span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">)</span>
-</span><span class='line'><span class="w">                </span><span class="k">if</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">])</span><span class="k">break</span><span class="p">;</span>
-</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">j</span><span class="o">==</span><span class="n">n</span><span class="p">)</span><span class="n">cnt</span><span class="o">++</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="p">}</span>
-</span><span class='line'><span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
-</span><span class='line'><span class="w">            </span><span class="k">for</span><span class="p">(</span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">m</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">)</span>
-</span><span class='line'><span class="w">                </span><span class="k">if</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">])</span><span class="k">break</span><span class="p">;</span>
-</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">j</span><span class="o">==</span><span class="n">m</span><span class="p">)</span><span class="n">cnt</span><span class="o">++</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="p">}</span>
-</span><span class='line'><span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">cnt</span><span class="p">);</span>
-</span><span class='line'><span class="w">    </span><span class="p">}</span>
-</span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/03/07/11-zju-program-test-solution/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2012/03/07/10-zju-program-test-solution/">10年浙大复试机试题解</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2012-03-07T12:08:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2012/03/07/10-zju-program-test-solution/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>
-10年浙大研究生复试机试题解
-</p>
-
-
-
-
-<h3>A题：A+B（hdoj3787）（九度1003）</h3>
-
-
-<p>水题，不解释，直接上代码：</p>
-
-
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem A </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
-</span><span class='line'><span class="kt">long</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">;</span>
-</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="n">f</span><span class="p">;</span>
-</span><span class='line'><span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">s</span><span class="p">[</span><span class="mi">30</span><span class="p">];</span>
-</span><span class='line'><span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span><span class="n">s</span><span class="p">)</span><span class="o">!=</span><span class="n">EOF</span><span class="p">){</span>
-</span><span class='line'><span class="w">        </span><span class="n">a</span><span class="o">=</span><span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="sc">&#39;-&#39;</span><span class="p">){</span><span class="n">f</span><span class="o">=</span><span class="mi">-1</span><span class="p">;</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;}</span>
-</span><span class='line'><span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="n">f</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;}</span>
-</span><span class='line'><span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]){</span>
-</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">!=</span><span class="sc">&#39;,&#39;</span><span class="p">)</span><span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="o">*</span><span class="mi">10</span><span class="o">+</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="w">            </span><span class="n">i</span><span class="o">++</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="p">}</span>
-</span><span class='line'><span class="w">        </span><span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="o">*</span><span class="n">f</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="n">getchar</span><span class="p">();</span>
-</span><span class='line'><span class="w">        </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span><span class="n">s</span><span class="p">);</span>
-</span><span class='line'><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="sc">&#39;-&#39;</span><span class="p">){</span><span class="n">f</span><span class="o">=</span><span class="mi">-1</span><span class="p">;</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;}</span>
-</span><span class='line'><span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="n">f</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;}</span>
-</span><span class='line'><span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]){</span>
-</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">!=</span><span class="sc">&#39;,&#39;</span><span class="p">)</span><span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="o">*</span><span class="mi">10</span><span class="o">+</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="w">            </span><span class="n">i</span><span class="o">++</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="p">}</span>
-</span><span class='line'><span class="w">        </span><span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="o">*</span><span class="n">f</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">);</span>
-</span><span class='line'><span class="w">    </span><span class="p">}</span>
-</span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/03/07/10-zju-program-test-solution/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2012/03/05/09-zju-program-test-solution/">09年浙大复试机试题解</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2012-03-05T16:48:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2012/03/05/09-zju-program-test-solution/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>
-09年浙大研究生复试机试题解
-</p>
-
-
-
-
-<h3>A题：xxx定律（hdoj3782）（九度1031）</h3>
-
-
-<p>水题，直接上代码：</p>
-
-
-
-
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem A </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
-</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="n">cnt</span><span class="p">;</span>
-</span><span class='line'><span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">n</span><span class="p">)</span><span class="o">&amp;&amp;</span><span class="n">n</span><span class="o">!=</span><span class="mi">0</span><span class="p">){</span>
-</span><span class='line'><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">n</span><span class="o">==</span><span class="mi">1</span><span class="p">){</span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;0</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span><span class="k">continue</span><span class="p">;}</span>
-</span><span class='line'><span class="w">        </span><span class="n">cnt</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="n">n</span><span class="o">!=</span><span class="mi">1</span><span class="p">){</span>
-</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">n</span><span class="o">%</span><span class="mi">2</span><span class="p">)</span><span class="n">n</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="mi">1</span><span class="p">;</span>
-</span><span class='line'><span class="w">            </span><span class="k">else</span><span class="w"> </span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="o">&gt;&gt;</span><span class="mi">1</span><span class="p">;</span>
-</span><span class='line'><span class="w">            </span><span class="n">cnt</span><span class="o">++</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="p">}</span>
-</span><span class='line'><span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">cnt</span><span class="p">);</span>
-</span><span class='line'><span class="w">    </span><span class="p">}</span>
-</span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/03/05/09-zju-program-test-solution/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page16">&larr; Older</a></li>
@@ -986,7 +877,7 @@ matlab生成的结果变量只贮存在内存空间中，一旦matlab关闭则�
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

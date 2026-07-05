@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -160,6 +165,264 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/15/audio-signal-process-time-domain-volume-python-realization/">语音信号处理之时域分析-音量及其Python实现</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-05-15T19:36:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/05/15/audio-signal-process-time-domain-volume-python-realization/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>1.概述（Introduction）</h2>
+
+
+<p>本系列文主要介绍语音信号时域的4个基本特征及其Python实现，这4个基本特征是：</br>
+(1)音量（Volume）；</br>
+(2)过零率（Zero-Crossing-Rate）；</br>
+(3)音高（Pitch）；</br>
+(4)音色（Timbre）。
+</p>
+
+
+
+
+<h2>2.音量（Volume）</h2>
+
+
+<p>音量代表声音的强度，可由一个窗口或一帧内信号振幅的大小来衡量，一般有两种度量方法：</br>
+（1）每个帧的振幅的绝对值的总和：
+<center>$volume = \sum_{i=1}^{n}|s_{i}|$.</center>
+其中$s_{i}$为第该帧的$i$个采样点，$n$为该帧总的采样点数。这种度量方法的计算量小，但不太符合人的听觉感受。</br>
+（2）幅值平方和的常数对数的10倍：
+<center>$volume = 10 * log_{10}\sum_{i=1}^{n}s_{i}^{2}$.</center>
+它的单位是分贝（Decibels），是一个对数强度值，比较符合人耳对声音大小的感觉，但计算量稍复杂。
+</p>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/05/15/audio-signal-process-time-domain-volume-python-realization/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/08/speech-processing-in-time-domain/">语音信号处理基础学习笔记之时域处理</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-05-08T23:13:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/05/08/speech-processing-in-time-domain/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>语音信号的分析分为时域、频域、倒谱域等，时域分析简单、运算量小、物理意义明确，但对于语音识别而言，
+更为有效的是频域的分析方法，那么为什么还有进行时域的分析呢？</p>
+
+
+
+
+<p>语音信号具有时变特性，但在短时内可以看做是平稳的，所以语音的时域分析是建立在“短时”的条件下的，经研究统计，
+语音信号在帧长为10ms~30ms内是相对平稳的。</p>
+
+
+
+
+<p>语音信号是模拟信号，在进行处理之前，要进行数字化，模拟信号数字化的一般方法是采样，按照Nyquist采样定理进行
+采样（一般在8K~10KHz）后，在进行量化（一般用8bit，也有16bit等）和编码，变为数字信号。</p>
+
+
+
+
+<p>在语音信号数字化之后，就可以开始对其进行处理了，首先是预处理，由于语音信号的平均功率谱受声门激励和口鼻辐射的影响，
+高频端大约在800Hz以上按6dB/倍频程跌落，为此要在预处理中进行预加重。预加重的目的是提升高频部分，是信号变得平坦，
+以便于进行频谱分析或声道参数分析。预加重可以用具有6dB/倍频程的提升高频特性的预加重数字滤波器实现。预处理的另一
+方面工作是分帧和加窗：分帧的帧长一般在10ms~30ms，分帧既可以是连续的，也可以是有部分over-lap；短时分析的实质是
+对信号加窗，一般采用Hamming窗，其他的还有矩形窗、汉宁窗等，如下图所示。
+<center><img src="/images/2013/IMAG2013050801.png"></center>
+</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/05/08/speech-processing-in-time-domain/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/01/go-hiking-International-Labour-Day/">五一登高远足</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-05-01T22:01:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/05/01/go-hiking-International-Labour-Day/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>五一天晴气爽，登高望远，强身健体！只可惜“不畏浮云遮望眼，只缘身在最高层” 这句诗在空气严重污染的今天已不适用了！</p>
+
+
+
+
+<p><img src="/images/2013/IMAG2013050101.jpg">
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/05/01/go-hiking-International-Labour-Day/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/26/building-speaker-recognition-system-using-alize-etc/">使用Alize等工具构建说话人识别平台</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-04-26T22:07:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/04/26/building-speaker-recognition-system-using-alize-etc/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>前段时间有好几位同学询问如何用Alize实现说话人识别的问题，由于寒假前赶Paper，来不及详细解答，更没时间写Demo。
+开学后不久抽时间写了一个Demo，并上传到了GitHub：<a href="https://github.com/ibillxia/VoicePrintReco/tree/master/Demo">VoicePrintReco-branch-master</a>. 现在新版的 Alize 3.0 已经提供了更多的官方 demo，我也将 GitHub 的源码升级了 <a href="https://github.com/ibillxia/VoicePrintReco">VPR2.0</a>， 其中的Demos文件夹有Alize官方的4个demo和我自己写的这个demo。</p>
+
+<h3>基本流程</h3>
+
+<p>下面将利用Alize+SPro进行简单的GMM-Based的说话人识别的基本流程总结如下：</p>
+
+<h4>1.Features extraction 特征提取</h4>
+
+<p>sfbcep.exe（MFCC）或slpcep.exe（LPCC）</p>
+
+<h4>2.Silence removal 静音检测和去除</h4>
+
+<p>NormFeat.exe 先能量规整<br/>
+EnergyDetector.exe 基于能量检测的静音去除</p>
+
+<h4>3.Features Normalization 特征规整</h4>
+
+<p>NormFeat.exe 再使用这个工具进行特征规整</br></p>
+
+<h4>4.World model training</h4>
+
+<p>TrainWorld.exe 训练UBM</br></p>
+
+<h4>5.Target model training</h4>
+
+<p>TrainTarget.exe 在训练好UBM的基础上训练training set的GMM</br></p>
+
+<h4>6.Testing</h4>
+
+<p>ComputeTest.exe 将testing set在training set的GMM上进行测试和打分</br></p>
+
+<h4>7.Score Normalization</h4>
+
+<p>ComputeNorm.exe 将得分进行规整</br></p>
+
+<h4>8. Compute EER 计算等错误率</h4>
+
+<p>你可以查查计算EER的matlab代码，NIST SRE的官网上有下载<a href="http://www.itl.nist.gov/iad/mig//tools/DETware_v2.1.targz.htm">DETware_v2.1.tar.gz</a> 。_</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/04/26/building-speaker-recognition-system-using-alize-etc/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -546,249 +809,6 @@ Lagrange, 1736-1813)和拉普拉斯(Pierre Simon de Laplace, 1749-1827)，当拉
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2013/03/30/back-propagation-neural-networks/">反向传播(BP)神经网络</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2013-03-30T21:37:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2013/03/30/back-propagation-neural-networks/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前面几篇文章中对神经网络和深度学习进行一些简介，包括神经网络的发展历史、基本概念和常见的几种神经网络以及神经网络的学习方法等，
-本文具体来介绍一下一种非常常见的神经网络模型——反向传播(Back Propagation)神经网络。</p>
-
-
-
-
-<h2>1.概述</h2>
-
-
-<p>BP（Back Propagation）神经网络是1986年由Rumelhart和McCelland为首的科研小组提出，参见他们发表在Nature上的论文
-<em><a href="http://www.cs.toronto.edu/~hinton/absps/naturebp.pdf">Learning representations by back-propagating errors</a></em>
-值得一提的是，该文的第三作者Geoffrey E. Hinton就是在深度学习邻域率先取得突破的神犇。
-</p>
-
-
-
-
-<p>BP神经网络是一种按误差逆传播算法训练的多层前馈网络，是目前应用最广泛的神经网络模型之一。BP网络能学习和存贮大量的
-输入-输出模式映射关系，而无需事前揭示描述这种映射关系的数学方程。它的学习规则是使用最速下降法，通过反向传播来不断
-调整网络的权值和阈值，使网络的误差平方和最小。</p>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/03/30/back-propagation-neural-networks/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2013/03/27/learning-process-of-neural-networks/">神经网络的学习方法概述</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2013-03-27T23:51:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2013/03/27/learning-process-of-neural-networks/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>本文主要讨论一下神经网络的一般学习方法，主要有error-correction learning，memory-based learning， Hebbian learning，competitive learning，
-Boltzmann learning等。然后介绍一些学习的方式，如监督学习、非监督学习、强化学习等。最后是一些具体的应用领域和实际问题。</p>
-
-
-
-
-<h2>1.Knowledge Representation</h2>
-
-
-<p>好的学习方法固然重要，但知识的表示，直接影响到feature的表示，也是非常重要的，因此在正式讨论学习方法之前，我们首先谈谈知识的表示。
-首先一个问题是，什么是知识？在PRML中我们有如下定义：</br>
-<blockquote><p>Knowledge refers to stored information or models used by a person or machine to interpret, predict, and appropriately respond to the outside world.</p><footer><strong>Fischler and Firschein</strong> <cite>Intelligence: The Eye，the Brain and the Computer</cite></footer></blockquote>
-</p>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/03/27/learning-process-of-neural-networks/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2013/03/24/classes-of-neural-networks/">神经网络模型分类</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2013-03-24T23:07:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2013/03/24/classes-of-neural-networks/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>本文主要介绍一下几种不同类型的神经网络模型，主要有前馈神经网络，反馈神经网络，自组织神经网络，随机神经网络</p>
-
-
-
-
-<h2>1.前馈神经网络</h2>
-
-
-<h4>1)自适应线性神经网络(Adaline)</h4>
-
-
-<p>自适应线性神经网络（Adaptive Linear，简称Adaline) 是由威德罗（Widrow）和霍夫（Hoff）首先提出的。它与感知器的主要不同之处在于
-其神经元有一个线性激活函数，这允许输出可以是任意值，而不仅仅只是像感知器中那样只能取0或1。它采用的是W—H学习法则，也称最小均方差(LMS)
-规则对权值进行训练。自适应线性元件的主要用途是线性逼近一个函数式而进行模式联想。</p>
-
-
-
-
-<h4>2)单层感知器</h4>
-
-
-<p>单层感知器（Perceptron）是由美国计算机科学家罗森布拉特（F.Roseblatt）于1957年提出的。它是一个具有单层神经元的网络，由线性阈值
-逻辑单元所组成。它的输入可以是非离散量，而且可以通过学习而得到，这使单层感知器在神经网络研究中有着重要的意义和地位：它提出了自组织、
-自学习的思想，对能够解决的问题，有一个收敛的算法，并从数学上给出了严格的证明。</p>
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/03/24/classes-of-neural-networks/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2013/03/20/basics-of-neural-networks/">神经网络简介</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2013-03-20T23:21:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2013/03/20/basics-of-neural-networks/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Deep Learning的本质是多层的神经网络，因此在深入学习Deep Learning之前，有必要了解一些神经网络的基本知识。
-本文首先对神经网络的发展历史进行简要的介绍，然后给出神经元模型的形式化描述，接着是神经网络模型的定义、特性，
-最后是一些最新的进展等。关于神经网络的分类、学习方法、应用场景等将在后续文章中介绍。</p>
-
-
-
-
-<h2>1.发展简史</h2>
-
-
-<p>1943年，心理学家W.S.McCulloch和数理逻辑学家W.Pitts建立了神经网络和数学模型，称为MP模型。他们通过MP模型提出
-了神经元的形式化数学描述和网络结构方法，证明了单个神经元能执行逻辑功能，从而开创了人工神经网络研究的时代。</br>
-1945年，Von Neumann在成功的试制了存储程序式电子计算机后，他也对人脑的结构与存储式计算机进行的根本区别的比较，还提出了以简单神经元构成的自再生自动机网络结构。</br>
-1949年，心理学家D.O.Heb提出了突触联系强度可变的设想，并据此提出神经元的学习准则——Hebb规则，为神经网络的学习算法奠定了基础。</br>
-1958年，F.Rosenblatt提出了感知模型，该模型是由阈值神经元组成的，它试图模拟动物和人的感知和学习能力。</br>
-1962年Widrow提出了自适应线性元件，这是一种连续的取值的线性网络，主要用于自适应信号处理和自适应控制。</p>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/03/20/basics-of-neural-networks/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page14">&larr; Older</a></li>
@@ -825,7 +845,7 @@ Boltzmann learning等。然后介绍一些学习的方式，如监督学习、�
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

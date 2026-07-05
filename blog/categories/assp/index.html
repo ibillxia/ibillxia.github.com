@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -175,10 +180,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in ASSP</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a></span>
 		
 		
-		  <span class="tags">Tagged with 深度学习语音分析可视化PCAt-SNE</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/pca/'>PCA</a>, <a class='tag' href='/blog/tags/t-sne/'>t-SNE</a>, <a class='tag' href='/blog/tags/ke-shi-hua/'>可视化</a>, <a class='tag' href='/blog/tags/shen-du-xue-xi/'>深度学习</a>, <a class='tag' href='/blog/tags/yu-yin-fen-xi/'>语音分析</a></span>
 		
 		</footer>
 		
@@ -202,10 +207,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in ASSPProgram</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a>, <a class='category' href='/blog/categories/program/'>Program</a></span>
 		
 		
-		  <span class="tags">Tagged with SpeechwaveC语言信号处理</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/cyu-yan/'>C语言</a>, <a class='tag' href='/blog/tags/speech/'>Speech</a>, <a class='tag' href='/blog/tags/wave/'>wave</a>, <a class='tag' href='/blog/tags/xin-hao-chu-li/'>信号处理</a></span>
 		
 		</footer>
 		
@@ -226,10 +231,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in ASSPProgram</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a>, <a class='category' href='/blog/categories/program/'>Program</a></span>
 		
 		
-		  <span class="tags">Tagged with Speech信号处理wave</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/speech/'>Speech</a>, <a class='tag' href='/blog/tags/wave/'>wave</a>, <a class='tag' href='/blog/tags/xin-hao-chu-li/'>信号处理</a></span>
 		
 		</footer>
 		
@@ -250,10 +255,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in ASSP</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a></span>
 		
 		
-		  <span class="tags">Tagged with SpeechPython信号处理音高追踪</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/python/'>Python</a>, <a class='tag' href='/blog/tags/speech/'>Speech</a>, <a class='tag' href='/blog/tags/xin-hao-chu-li/'>信号处理</a>, <a class='tag' href='/blog/tags/yin-gao-zhui-zong/'>音高追踪</a></span>
 		
 		</footer>
 		
@@ -274,10 +279,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in ASSP</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a></span>
 		
 		
-		  <span class="tags">Tagged with SpeechPython信号处理端点检测</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/python/'>Python</a>, <a class='tag' href='/blog/tags/speech/'>Speech</a>, <a class='tag' href='/blog/tags/xin-hao-chu-li/'>信号处理</a>, <a class='tag' href='/blog/tags/duan-dian-jian-ce/'>端点检测</a></span>
 		
 		</footer>
 		
@@ -298,10 +303,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in ASSP</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a></span>
 		
 		
-		  <span class="tags">Tagged with SpeechPython信号处理音色</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/python/'>Python</a>, <a class='tag' href='/blog/tags/speech/'>Speech</a>, <a class='tag' href='/blog/tags/xin-hao-chu-li/'>信号处理</a>, <a class='tag' href='/blog/tags/yin-se/'>音色</a></span>
 		
 		</footer>
 		
@@ -322,10 +327,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in ASSP</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a></span>
 		
 		
-		  <span class="tags">Tagged with SpeechPython信号处理音高</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/python/'>Python</a>, <a class='tag' href='/blog/tags/speech/'>Speech</a>, <a class='tag' href='/blog/tags/xin-hao-chu-li/'>信号处理</a>, <a class='tag' href='/blog/tags/yin-gao/'>音高</a></span>
 		
 		</footer>
 		
@@ -346,10 +351,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in ASSP</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a></span>
 		
 		
-		  <span class="tags">Tagged with SpeechPython信号处理过零率</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/python/'>Python</a>, <a class='tag' href='/blog/tags/speech/'>Speech</a>, <a class='tag' href='/blog/tags/xin-hao-chu-li/'>信号处理</a>, <a class='tag' href='/blog/tags/guo-ling-lu/'>过零率</a></span>
 		
 		</footer>
 		
@@ -370,10 +375,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in ASSP</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a></span>
 		
 		
-		  <span class="tags">Tagged with SpeechPython信号处理音量</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/python/'>Python</a>, <a class='tag' href='/blog/tags/speech/'>Speech</a>, <a class='tag' href='/blog/tags/xin-hao-chu-li/'>信号处理</a>, <a class='tag' href='/blog/tags/yin-liang/'>音量</a></span>
 		
 		</footer>
 		
@@ -394,10 +399,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in ASSP</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a></span>
 		
 		
-		  <span class="tags">Tagged with Speech信号处理</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/speech/'>Speech</a>, <a class='tag' href='/blog/tags/xin-hao-chu-li/'>信号处理</a></span>
 		
 		</footer>
 		
@@ -418,10 +423,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in ASSP</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a></span>
 		
 		
-		  <span class="tags">Tagged with AlizeSProVPR</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/alize/'>Alize</a>, <a class='tag' href='/blog/tags/spro/'>SPro</a>, <a class='tag' href='/blog/tags/vpr/'>VPR</a></span>
 		
 		</footer>
 		
@@ -442,10 +447,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in MathASSP</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a>, <a class='category' href='/blog/categories/math/'>Math</a></span>
 		
 		
-		  <span class="tags">Tagged with FFT</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/fft/'>FFT</a></span>
 		
 		</footer>
 		
@@ -469,10 +474,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in ASSP</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a></span>
 		
 		
-		  <span class="tags">Tagged with 语音识别说话人识别语音合成NuanceSphinxHTK</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/htk/'>HTK</a>, <a class='tag' href='/blog/tags/nuance/'>Nuance</a>, <a class='tag' href='/blog/tags/sphinx/'>Sphinx</a>, <a class='tag' href='/blog/tags/yu-yin-he-cheng/'>语音合成</a>, <a class='tag' href='/blog/tags/yu-yin-shi-bie/'>语音识别</a>, <a class='tag' href='/blog/tags/shuo-hua-ren-shi-bie/'>说话人识别</a></span>
 		
 		</footer>
 		
@@ -493,10 +498,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in ASSP</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a></span>
 		
 		
-		  <span class="tags">Tagged with 说话人识别GMMSVMAlize</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/alize/'>Alize</a>, <a class='tag' href='/blog/tags/gmm/'>GMM</a>, <a class='tag' href='/blog/tags/svm/'>SVM</a>, <a class='tag' href='/blog/tags/shuo-hua-ren-shi-bie/'>说话人识别</a></span>
 		
 		</footer>
 		
@@ -517,10 +522,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in ASSP</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a></span>
 		
 		
-		  <span class="tags">Tagged with PCA说话人识别</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/pca/'>PCA</a>, <a class='tag' href='/blog/tags/shuo-hua-ren-shi-bie/'>说话人识别</a></span>
 		
 		</footer>
 		
@@ -541,10 +546,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in ASSP</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a></span>
 		
 		
-		  <span class="tags">Tagged with AudioSpeechMFCCMatlab信号处理</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/audio/'>Audio</a>, <a class='tag' href='/blog/tags/mfcc/'>MFCC</a>, <a class='tag' href='/blog/tags/matlab/'>Matlab</a>, <a class='tag' href='/blog/tags/speech/'>Speech</a>, <a class='tag' href='/blog/tags/xin-hao-chu-li/'>信号处理</a></span>
 		
 		</footer>
 		
@@ -575,7 +580,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -160,6 +165,209 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2020/04/20/multi-objective-recommendation/">工业界推荐系统多目标预估的两种范式</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2020-04-20T20:39:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2020/04/20/multi-objective-recommendation/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>转载自知乎，原文链接：<a href="https://zhuanlan.zhihu.com/p/125507748">从谷歌到阿里，谈谈工业界推荐系统多目标预估的两种范式</a></p>
+
+<h1>多目标是什么？为什么要多目标？</h1>
+
+<p>我们的大脑会同时学习多种不同的任务，无论我们是想将英文翻译成中文，还是想将中文翻译成德语，我们都是使用相同的大脑架构，也就是我们自己的脑袋。同理在我们的模型中，如果我们采用的是同一个网络来同时完成这两个任务，那么我们就可以把这个任务称为 多目标学习。</p>
+
+<p>在推荐系统中，即使在同一个场景中，常常也有不只一个的业务目标。在Youtube的视频推荐中，推荐排序任务不仅需要考虑到用户点击率，完播率，也需要考虑到一些满意度指标，例如，对视频是否喜欢，用户观看后对视频的评分；在淘宝的信息流商品推荐中，需要考虑到点击率，也需要考虑转化率；而在一些内容场景中，需要考虑到点击和互动、关注、停留时长等指标。</p>
+
+<p>用多个模型分别对这些指标进行一个排序，然后综合起来可以吗？</p>
+
+<p>可以，但是会面临一些问题。第一，会面临比较大的线上开销，考虑一下你的场景至少可以承受多少rt吧。第二，一些目标的样本比较稀疏，还存在一些问题，例如，单独对CVR进行建模，存在样本选择偏差（Sample Selection Bias,SSB）和数据稀疏性(Data Sparisity,DS)问题，其实不好解决。</p>
+
+<p>什么是SSB问题，什么又是DS问题，我们后面再讲，我们知道的是，多目标预估可以通过同一个模型，解决（或者说缓解）上面的两个问题，甚至带来场景效果上的提升。</p>
+
+<p>讲完了必要性，下面进入正题，下面谈谈工业界推荐系统做多目标预估的两种范式。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2020/04/20/multi-objective-recommendation/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2020/03/01/flink-datastream-types-operations/">Flink原理与实现：数据流上的类型和操作</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2020-03-01T17:50:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2020/03/01/flink-datastream-types-operations/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="https://wuchong.me/blog/2016/05/20/flink-internals-streams-and-operations-on-streams/">原文链接</a>，作者wuchong，阿里花名云邪。</p>
+
+<p>Flink 为流处理和批处理分别提供了 DataStream API 和 DataSet API。正是这种高层的抽象和 flunent API 极大地便利了用户编写大数据应用。不过很多初学者在看到官方 Streaming 文档中那一大坨的转换时，常常会蒙了圈，文档中那些只言片语也很难讲清它们之间的关系。所以本文将介绍几种关键的数据流类型，它们之间是如何通过转换关联起来的。下图展示了 Flink 中目前支持的主要几种流的类型，以及它们之间的转换关系。</p>
+
+<center><img src="/images/2020/IMAG2020030101.png"></center>
+
+
+<p><br></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2020/03/01/flink-datastream-types-operations/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2020/02/21/tree-ensemble-models-comparison/">集成树模型详解：RandomForest、GBDT、XGBoost与LightGBM</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2020-02-21T20:00:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2020/02/21/tree-ensemble-models-comparison/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>本文主要介绍基于集成学习的决策树，然后对其中重要的、使用广泛的方法进行对比：RF（随机森林））, GBDT（梯度提升决策树）, XGBoost, lightGBM。</p>
+
+<h1>一、集成学习</h1>
+
+<center><img src="/images/2020/IMAG2020022101.png"></center>
+
+
+<p><br></p>
+
+<p>常见的集成学习框架有三种：Bagging，Boosting 和 Stacking。三种集成学习框架在基学习器的产生和综合结果的方式上会有些区别，我们先做些简单的介绍。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2020/02/21/tree-ensemble-models-comparison/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2019/10/08/clickhouse-basics/">ClickHouse基础知识与实践</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2019-10-08T16:27:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2019/10/08/clickhouse-basics/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><center><img src="/images/2019/IMAG2019100801.png"></center>
+
+
+<p><br></p>
+
+<h1>一、简介</h1>
+
+<p>Clickhouse是一个用于联机分析处理（OLAP）的列式数据库管理系统（columnar DBMS）。</p>
+
+<p>传统数据库在数据大小比较小，索引大小适合内存，数据缓存命中率足够高的情形下能正常提供服务。但残酷的是，这种理想情形最终会随着业务的增长走到尽头，查询会变得越来越慢。你可能通过增加更多的内存，订购更快的磁盘等等来解决问题（纵向扩展），但这只是拖延解决本质问题。如果你的需求是解决怎样快速查询出结果，那么ClickHouse也许可以解决你的问题。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2019/10/08/clickhouse-basics/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -479,212 +687,6 @@ print(data.head())
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2019/05/07/svn-to-git-migration/">SVN迁移到Git的过程与技巧</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2019-05-07T09:49:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2019/05/07/svn-to-git-migration/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>关于在VCS中SVN和Git之间的迁移（Clone）这个部分网上已经有大批的文章介绍，而且都非常不错，能够满足我们的常见的需求，这里介绍的是我自己整理的一些技巧和使用中出现的一些问题和疑问。</p>
-
-<p>阅读本篇文章，请先有一些Git和SVN的使用经验（又是经验，经验到底是什么？我都不知道）。</p>
-
-<h1>一、基础迁移：分支和tags同步</h1>
-
-<p>今天的实验对象是，把 <a href="http://code.google.com/p/jdbcdslog-exp">http://code.google.com/p/jdbcdslog-exp/</a> 这个使用SVN管理的project迁移到 Git上面，Git托管网站选择github。SVN迁移到Git，当然要清楚git svn 命令了。</p>
-
-<p>首先请在github上面创建一个repository，这个简单，就不说了，然后就是使用强大的git了。</p>
-
-<pre><code>$ git svn init https://jdbcdslog-exp.googlecode.com/svn/ -s   
-$ git svn fetch  
-</code></pre>
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2019/05/07/svn-to-git-migration/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2019/05/06/mysql-system-commands/">MySQL常用系统命令</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2019-05-06T22:30:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2019/05/06/mysql-system-commands/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h1>1 show processlist</h1>
-
-<p>SHOW PROCESSLIST显示哪些线程正在运行。您也可以使用mysqladmin processlist语句得到此信息。如果您有SUPER权限，您可以看到所有线程。否则，您只能看到您自己的线程（也就是，与您正在使用的MySQL账户相关的线程）。如果有线程在update或者insert 某个表，此时进程的status为updating 或者 sending data。</p>
-
-<p>如果您得到“too many connections”错误信息，并且想要了解正在发生的情况，本语句是非常有用的。MySQL保留一个额外的连接，让拥有SUPER权限的账户使用，以确保管理员能够随时连接和检查系统（假设您没有把此权限给予所有的用户）。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2019/05/06/mysql-system-commands/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2019/04/24/elasticsearch-guide/">Elasticsearch安装与使用指南</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2019-04-24T17:55:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2019/04/24/elasticsearch-guide/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><center><img src="/images/2019/IMAG2019042401.svg"></center>
-
-
-<p><br></p>
-
-<p>Elasticsearch（简称ES）是一个基于Apache Lucene(TM)的开源搜索引擎，无论在开源还是专有领域，Lucene可以被认为是迄今为止最先进、性能最好的、功能最全的搜索引擎库。</p>
-
-<h1>一、Elasticsearch简介</h1>
-
-<h2>1.1 Elasticsearch是什么</h2>
-
-<p>Elasticsearch是一个基于Apache Lucene(TM)的开源搜索引擎，无论在开源还是专有领域，Lucene可以被认为是迄今为止最先进、性能最好的、功能最全的搜索引擎库。</p>
-
-<p>但是，Lucene只是一个库。想要发挥其强大的作用，你需使用Java并要将其集成到你的应用中。Lucene非常复杂，你需要深入的了解检索相关知识来理解它是如何工作的。</p>
-
-<p>Elasticsearch也是使用Java编写并使用Lucene来建立索引并实现搜索功能，但是它的目的是通过简单连贯的RESTful API让全文搜索变得简单并隐藏Lucene的复杂性。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2019/04/24/elasticsearch-guide/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2019/03/31/tencent-engineer-culture/">腾讯副总裁曾宇揭秘：腾讯的程序员牛在哪</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2019-03-31T23:12:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2019/03/31/tencent-engineer-culture/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>曾宇先生，腾讯公司副总裁。 2002年加入腾讯，曾负责腾讯研发线管理，后续担任互动娱乐事业群研发部总经理，负责游戏、互娱相关的技术研发及管理工作，2012年升任公司VP，16年起主要负责移动互联网事业群技术管理工作，继续参与公司级技术管理工作。</p>
-
-<center><img src="/images/2019/IMAG2019033101.jpeg"></center>
-
-
-<p><br></p>
-
-<h1>技术人员的核心素养</h1>
-
-<p>腾讯的职业发展通道大概有6级，1级是初入者，2级是有经验者，3级是骨干，4级是专家，5级和6级是权威和资深权威。我认为1、2级主要是学习、执行、改进的循环，在这个过程中你的经验不断增长；3级可以对交付负责，交付过程中持续思考和总结，跳出自己做的事情，宏观看待它们在整个战略中的位置，就可以走到4级。以前Tony（编者注：腾讯主要创始人张志东，曾任职公司CTO）对4级的要求就是什么事找这个人，他都能解决，自己解决不了就会主动去找其他资源来解决。我对技术通道4级的定义就是能在组织里起技术掌控的作用。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2019/03/31/tencent-engineer-culture/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page5">&larr; Older</a></li>
@@ -721,7 +723,7 @@ $ git svn fetch
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -160,6 +165,405 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2012/04/25/matlab-code-optimization/">Matlab代码优化方法几则</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-04-25T20:07:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2012/04/25/matlab-code-optimization/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>1.计算向量、矩阵化，尽量减少for循环</br>
+因为MATLAB本来就是矩阵实验室的意思，他提供了极其强大而灵活的矩阵运算能力，你就没必要自己再用自己编写的for循环去实现矩阵运算的功能了。
+另外由于matlab是一种解释性语言，所以最忌讳直接使用循环语句。但在有些情况下，使用for循环可以提高程序的易读性，在效率提高不是很明显的
+情况下可以选择使用for循环。</p>
+
+
+
+
+<p>2.循环内大数组预先定义--预先分配空间</br>
+这一点原则是极其重要的，以至于在编写m程序时编辑器会给出提示“'ver' might be growing inside a loop.Consider prealloacting for speed.”</p>
+
+
+
+
+<p>3.尽可能利用matlab内部提供的函数</br>
+因为matlab内部提供的函数绝对是各种问题的最优算法，那写程序都是他们大师级人物写出来的，程序应该说相当高效，有现成的为什么不用那！
+这个原则就不用实际的程序测试了。</p>
+
+
+
+
+<p>4. 利用内置函数自动记录运行结果</br>
+matlab生成的结果变量只贮存在内存空间中，一旦matlab关闭则会丢失，很多时候需要手工将这些结果存储到我们需要的文件中。事实上，matlab提供
+了很多函数可以自动记录结果，如fprintf可以将数据写入txt文件，xlswrite可以将数据写入excel文件等等。这样自动化的命令可以缩减大量时间，
+从而提高效率。</p>
+
+
+
+
+<p>5. 在迫不得已要使用较多循环而每一步都很耗时的时候，可以将每一步的结果保存成mat文件，然后在循环的开头用if语句与exist函数进行判断，
+如果该文件存在的话，就直接进入下一次循环。这样做的好处是不会因为断电、电脑死机或误操作等原因而重头从第一个循环再次运行。</p>
+
+
+
+
+<p>6. 同时运行多的matlab进程。现在的电脑一般都是多核，一般一个matlab进程会占用一个cpu，因此可以在多核电脑上同时打开多个matlab窗口，
+从而执行不同的命令。如四核电脑上可以打开三个matlab窗口分别运行不同的程序，cpu的占用率约为80%，这样既加快了进度，又不会影响电脑的使用。</p>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2012/03/07/11-zju-program-test-solution/">11年浙大复试机试题解</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-03-07T19:56:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2012/03/07/11-zju-program-test-solution/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>
+11年浙大研究生复试机试题解
+</p>
+
+
+
+
+<h3>A题：A+B for Matrices （ 九度1001）</h3>
+
+
+<p>水题</p>
+
+
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem A </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">a</span><span class="p">[</span><span class="mi">10</span><span class="p">][</span><span class="mi">10</span><span class="p">],</span><span class="n">b</span><span class="p">[</span><span class="mi">10</span><span class="p">][</span><span class="mi">10</span><span class="p">];</span>
+</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">cnt</span><span class="p">;</span>
+</span><span class='line'><span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">m</span><span class="p">)</span><span class="o">&amp;&amp;</span><span class="n">m</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">){</span>
+</span><span class='line'><span class="w">        </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">n</span><span class="p">);</span>
+</span><span class='line'><span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">m</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'><span class="w">            </span><span class="k">for</span><span class="p">(</span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'><span class="w">                </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">j</span><span class="p">);</span>
+</span><span class='line'><span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">m</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'><span class="w">            </span><span class="k">for</span><span class="p">(</span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+</span><span class='line'><span class="w">                </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">j</span><span class="p">);</span>
+</span><span class='line'><span class="w">                </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">+=</span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+</span><span class='line'><span class="w">            </span><span class="p">}</span>
+</span><span class='line'><span class="w">        </span><span class="n">cnt</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">m</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+</span><span class='line'><span class="w">            </span><span class="k">for</span><span class="p">(</span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'><span class="w">                </span><span class="k">if</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">])</span><span class="k">break</span><span class="p">;</span>
+</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">j</span><span class="o">==</span><span class="n">n</span><span class="p">)</span><span class="n">cnt</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="p">}</span>
+</span><span class='line'><span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+</span><span class='line'><span class="w">            </span><span class="k">for</span><span class="p">(</span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">m</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'><span class="w">                </span><span class="k">if</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">])</span><span class="k">break</span><span class="p">;</span>
+</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">j</span><span class="o">==</span><span class="n">m</span><span class="p">)</span><span class="n">cnt</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="p">}</span>
+</span><span class='line'><span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">cnt</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/03/07/11-zju-program-test-solution/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2012/03/07/10-zju-program-test-solution/">10年浙大复试机试题解</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-03-07T12:08:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2012/03/07/10-zju-program-test-solution/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>
+10年浙大研究生复试机试题解
+</p>
+
+
+
+
+<h3>A题：A+B（hdoj3787）（九度1003）</h3>
+
+
+<p>水题，不解释，直接上代码：</p>
+
+
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem A </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+</span><span class='line'><span class="kt">long</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">;</span>
+</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="n">f</span><span class="p">;</span>
+</span><span class='line'><span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">s</span><span class="p">[</span><span class="mi">30</span><span class="p">];</span>
+</span><span class='line'><span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span><span class="n">s</span><span class="p">)</span><span class="o">!=</span><span class="n">EOF</span><span class="p">){</span>
+</span><span class='line'><span class="w">        </span><span class="n">a</span><span class="o">=</span><span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="sc">&#39;-&#39;</span><span class="p">){</span><span class="n">f</span><span class="o">=</span><span class="mi">-1</span><span class="p">;</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;}</span>
+</span><span class='line'><span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="n">f</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;}</span>
+</span><span class='line'><span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]){</span>
+</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">!=</span><span class="sc">&#39;,&#39;</span><span class="p">)</span><span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="o">*</span><span class="mi">10</span><span class="o">+</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="w">            </span><span class="n">i</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="p">}</span>
+</span><span class='line'><span class="w">        </span><span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="o">*</span><span class="n">f</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="n">getchar</span><span class="p">();</span>
+</span><span class='line'><span class="w">        </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span><span class="n">s</span><span class="p">);</span>
+</span><span class='line'><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="sc">&#39;-&#39;</span><span class="p">){</span><span class="n">f</span><span class="o">=</span><span class="mi">-1</span><span class="p">;</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;}</span>
+</span><span class='line'><span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="n">f</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;}</span>
+</span><span class='line'><span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]){</span>
+</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">!=</span><span class="sc">&#39;,&#39;</span><span class="p">)</span><span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="o">*</span><span class="mi">10</span><span class="o">+</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="w">            </span><span class="n">i</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="p">}</span>
+</span><span class='line'><span class="w">        </span><span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="o">*</span><span class="n">f</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/03/07/10-zju-program-test-solution/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2012/03/05/09-zju-program-test-solution/">09年浙大复试机试题解</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-03-05T16:48:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2012/03/05/09-zju-program-test-solution/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>
+09年浙大研究生复试机试题解
+</p>
+
+
+
+
+<h3>A题：xxx定律（hdoj3782）（九度1031）</h3>
+
+
+<p>水题，直接上代码：</p>
+
+
+
+
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem A </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="n">cnt</span><span class="p">;</span>
+</span><span class='line'><span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">n</span><span class="p">)</span><span class="o">&amp;&amp;</span><span class="n">n</span><span class="o">!=</span><span class="mi">0</span><span class="p">){</span>
+</span><span class='line'><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">n</span><span class="o">==</span><span class="mi">1</span><span class="p">){</span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;0</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span><span class="k">continue</span><span class="p">;}</span>
+</span><span class='line'><span class="w">        </span><span class="n">cnt</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="n">n</span><span class="o">!=</span><span class="mi">1</span><span class="p">){</span>
+</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">n</span><span class="o">%</span><span class="mi">2</span><span class="p">)</span><span class="n">n</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="w">            </span><span class="k">else</span><span class="w"> </span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="o">&gt;&gt;</span><span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="w">            </span><span class="n">cnt</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="p">}</span>
+</span><span class='line'><span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">cnt</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/03/05/09-zju-program-test-solution/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -685,278 +1089,6 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2011/05/07/10-born-at-the-wrong-time-companies-innovation-too-advanced/">盘点10大生不逢时科技创业公司：创意过于超前</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2011-05-07T18:00:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2011/05/07/10-born-at-the-wrong-time-companies-innovation-too-advanced/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>据国外媒体报道，有句形容创业公司的老话说，“太早也是个错误。” 这绝对是个事实，在很多伟大的科技公司成立之前，相同的创意已经存在，
-但是因为时机不对，结果没有形成气候。下文将点评10大生不逢时的科技创业公司，这些公司的项目是创新的，但是因为出现得太早，市场尚未做
-好准备，所以最终失败。</p>
-
-
-<center><img src="/images/2011/IMAG2011050701.jpg"></center>
-
-
-<p>同类型的公司在数年后取得辉煌成绩，产生数亿美元价值，曾经创立这10大创业公司的企业家难免懊恼不已，因为这些创意和产品都是他们曾
-经历的。但是，这就是人生。以下是10大生不逢时的科技创业公司：</p>
-
-
-
-
-<h4>1.SixDegrees.com</h4>
-
-
-<p>这是第一个为用户提供社交体验的网站，该网站想揭示的原理是：最多通过6个人你就能够认识世界上任何一个人。在1997年成立以后，该网站
-经历了一段时间的高速增长，但是由于人们对社交网站还不适应，所以最终淡出人们视线。</p>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2011/05/07/10-born-at-the-wrong-time-companies-innovation-too-advanced/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2011/05/03/Exception-handling-mechanism-in-c/">C语言中的异常处理机制</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2011-05-03T11:09:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2011/05/03/Exception-handling-mechanism-in-c/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>1.概述</h2>
-
-
-<p>什么是异常？异常一般指的是程序运行期（Run-Time）发生的非正常情况。异常一般是不可预测的，如：内存不足、打开文件失败、
-范围溢出等。UNIX 使用信号给出异常，并当发生异常时转跳到信号处理过程进行异常处理。DOS下的信号对比UNIX系统而言相对较少。</p>
-
-
-
-
-<p>我们知道，不管是在c++还是在java中，异常都被认为是一种很优雅的处理错误的机制。而如果想在c语言中使用异常就比较麻烦，
-但是我们仍然可以使用c语言中强大的setjmp和longjmp函数实现类似于c++的异常处理机制。</p>
-
-
-
-
-<p>异常处理的核心思想是，把功能模块代码与系统中可能出现错误的处理代码分离开来，以此来达到使我们的代码组织起来更美观、
-逻辑上更清晰，并且同时从根本上来提高我们软件系统长时间稳定运行的可靠性。那么，现在回过头来看，实际上在计算机系统的硬件
-设计中，操作系统的总体设计中，早期的许多面向结构化程序设计语言中(例如C语言)，都有异常处理的机制和方法的广泛运用。</p>
-
-
-
-
-<h2>2.基于goto语句的异常处理</h2>
-
-
-<p>goto语句，程序员朋友们对它太熟悉了，它是C语言中使用最为灵活的一条语句，由它也充分体现出了C语言的许多特点或者说是优点。
-它虽然是一条高级语言中提供的语句，但是它一般却直接对应一条“无条件直接跳转的机器指令”，所以说它非常地特别，它引起过许多
-争议，但是这条语句仍然一直被保留了下来，即便是今天的C++语言中，也有对它的支持(虽然不建议使用它)。</p>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2011/05/03/Exception-handling-mechanism-in-c/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2011/05/03/introduce-to-assert-in-c-language/">C语言断言简介</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2011-05-03T10:31:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2011/05/03/introduce-to-assert-in-c-language/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>1.概述</h2>
-
-
-<p> 断言是对某种假设条件进行检查（可理解为若条件成立则无动作，否则应报告），它可以快速发现并定位软件问题，
-同时对系统错误进行自动报警。断言可以对在系统中隐藏很深，用其它手段极难发现的问题进行定位，从而缩短软件问题定位时间，
-提高系统的可测性。实际应用时，可根据具体情况灵活地设计断言。</p>
-
-
-
-
-<h2>2.标准断言机制</h2>
-
-
-<p>原型定义：</p>
-
-
-<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;assert.h&gt;</span>
-</span><span class='line'><span class="kt">void</span><span class="w"> </span><span class="nf">assert</span><span class="p">(</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">expression_r_r_r</span><span class="w"> </span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-
-<p>assert的作用是现计算表达式 expression_r_r_r ，如果其值为假（即为0），
-那么它先向stderr打印一条出错信息，然后通过调用 abort来终止程序运行。</p>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2011/05/03/introduce-to-assert-in-c-language/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2011/04/21/about-variable-parameters-in-c-language/">浅谈C语言的可变参数</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2011-04-21T16:50:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2011/04/21/about-variable-parameters-in-c-language/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>1.问题引入</h2>
-
-
-<p>
-C语言中有些函数使用可变参数，比如常见的 `int printf( const char *format [, argument]... );`，
-第一个参数format是固定的，其余的参数的个数和类型都不固定。例如：</p>
-
-
-<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Enjoy yourself everyday!/n&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="n">printf</span><span class="p">(</span><span class="s">&quot;The value is %d!/n&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-
-<p>这种可变参数可以说是C语言一个比较难理解的部分，这里会由几个问题引发一些对它的分析。
-注意：在C++中有函数重载（overload）可以用来区别不同函数参数的调用，但它还是不能表示任意数量的函数参数。</p>
-
-
-
-
-<h2>2.printf（）实现原理</h2>
-
-
-<p>
-C语言用va_start等宏来处理这些可变参数。这些宏看起来很复杂，其实原理挺简单，
-就是根据参数入栈的特点从最靠近第一个可变参数的固定参数开始，依次获取每个可变参数的地址。
-下面我们来分析这些宏。</p>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2011/04/21/about-variable-parameters-in-c-language/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page17">&larr; Older</a></li>
@@ -993,7 +1125,7 @@ C语言用va_start等宏来处理这些可变参数。这些宏看起来很复�
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

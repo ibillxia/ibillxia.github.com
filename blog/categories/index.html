@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -197,7 +202,7 @@ $(document).bind('DOMNodeInserted', function(event) {
     	</a></li>
      
     	<li><a href="#View-ref">
-    		View <span>11</span>
+    		View <span>12</span>
     	</a></li>
      
     	<li><a href="#PRML-ref">
@@ -233,11 +238,11 @@ $(document).bind('DOMNodeInserted', function(event) {
     	</a></li>
      
     	<li><a href="#大模型-ref">
-    		大模型 <span>5</span>
+    		大模型 <span>6</span>
     	</a></li>
      
     	<li><a href="#Agent-ref">
-    		Agent <span>2</span>
+    		Agent <span>4</span>
     	</a></li>
     
   
@@ -968,6 +973,14 @@ $(document).bind('DOMNodeInserted', function(event) {
     
 
 
+  
+    
+      
+      	
+      	<li><a href="/blog/2026/07/03/FDE-what-why-and-future/">什么是 FDE？从它的爆火看软件研发的职能大洗牌</a></li>
+      	
+      
+    
   
     
       
@@ -1856,6 +1869,14 @@ $(document).bind('DOMNodeInserted', function(event) {
     
       
       	
+      	<li><a href="/blog/2025/03/16/music-cover-by-so-vits-svc/">基于so-vits-svc的AI翻唱歌曲教程</a></li>
+      	
+      
+    
+  
+    
+      
+      	
       	<li><a href="/blog/2025/01/22/transformer-attention-guide/">大模型入门指南：Transformer与Attention机制</a></li>
       	
       
@@ -1904,6 +1925,22 @@ $(document).bind('DOMNodeInserted', function(event) {
     
 
 
+  
+    
+      
+      	
+      	<li><a href="/blog/2026/04/26/how-claude-code-works/">Claude Code源码解读</a></li>
+      	
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/blog/2026/03/05/openclaw-trigger-interpretation/">OpenClaw中的Agent Trigger解读</a></li>
+      	
+      
+    
   
     
       
@@ -1976,7 +2013,7 @@ $(document).ready(function(){
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

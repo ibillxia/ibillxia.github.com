@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -160,6 +165,256 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2014/10/19/insight-into-stl-5-algorithm-2-numeric-algorithms/">深入理解STL源码(5.2) 算法之数值算法</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-10-19T20:28:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2014/10/19/insight-into-stl-5-algorithm-2-numeric-algorithms/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>本文主要介绍STL中的数值算法，主要涉及到的源码文件有 <code>stl_numberic.h</code>、<code>numeric</code>、<code>stl_relops.h</code> 等。</p>
+
+<p>STL 数值算法主要包含以下几个算法（来自<a href="http://www.cplusplus.com/reference/numeric/">C++文档</a>）：</p>
+
+<ul>
+<li>accumulate: Accumulate values in range</li>
+<li>adjacent_difference: Compute adjacent difference of range</li>
+<li>inner_product: Compute cumulative inner product of range</li>
+<li>partial_sum: Compute partial sums of range</li>
+<li>iota: Store increasing sequence</li>
+<li>power: power(x,n) 1 multiply by x n times (not in C++ standard)</li>
+</ul>
+
+
+<p>下面一一介绍每个算法的实现。</p>
+
+<h3>1. accumulate</h3>
+
+<p>该算法计算 init 和区间 [first, last) 内所有元素的总和。注意，必须提供 init 的初始值，这样即使 first=last 区间为空，仍能得到一个明确定义的值。当 init=0 时，即为计算 [first, last) 区间内所有元素的总和。具体实现有两个版本，如下：</p>
+
+<pre><code class="cpp">template &lt;class _InputIterator, class _Tp&gt;
+_Tp accumulate(_InputIterator __first, _InputIterator __last, _Tp __init){
+  __STL_REQUIRES(_InputIterator, _InputIterator); // concept check
+  for ( ; __first != __last; ++__first)
+    __init = __init + *__first; // 求和
+  return __init;
+}
+template &lt;class _InputIterator, class _Tp, class _BinaryOperation&gt;
+_Tp accumulate(_InputIterator __first, _InputIterator __last, _Tp __init, _BinaryOperation __binary_op){
+  __STL_REQUIRES(_InputIterator, _InputIterator); // concept check
+  for ( ; __first != __last; ++__first)
+    __init = __binary_op(__init, *__first); // 指定二元操作
+  return __init;
+}
+</code></pre>
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/10/19/insight-into-stl-5-algorithm-2-numeric-algorithms/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2014/10/12/insight-into-stl-5-algorithm-1-overview/">深入理解STL源码(5.1) 算法</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-10-12T21:30:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2014/10/12/insight-into-stl-5-algorithm-1-overview/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>1. 算法概述</h2>
+
+<p>算法（Algorithm）是一个计算的具体步骤，常用于计算、数据处理和自动推理。Donald Knuth 在他的著作 The Art of Computer Programming 里对算法的特征归纳（来自wiki）：</p>
+
+<ul>
+<li>输入：一个算法必须有零个或以上输入量。</li>
+<li>输出：一个算法应有一个或以上输出量，输出量是算法计算的结果。</li>
+<li>明确性：算法的描述必须无歧义，以保证算法的实际执行结果是精确地符合要求或期望，通常要求实际运行结果是确定的。</li>
+<li>有限性：依据图灵的定义，一个算法是能够被任何图灵完备系统模拟的一串运算，而图灵机只有有限个状态、有限个输入符号和有限个转移函数（指令）。而一些定义更规定算法必须在有限个步骤内完成任务。</li>
+<li>有效性：又称可行性。能够实现，算法中描述的操作都是可以通过已经实现的基本运算执行有限次来实现。</li>
+</ul>
+
+
+<p>算法的核心是创建问题抽象的模型和明确求解目标，常见的算法有分治法、贪婪算法、动态规划、平摊分析等。再好的编程技巧，也无法让一个笨拙的算法起死回生，选择了错误的算法，便注定了失败的命运。</p>
+
+<p>算法的<strong>时间复杂度</strong>是指算法需要消耗的时间资源。一般来说，计算机算法是问题规模 $n$ 的函数 $f(n)$ ，算法的时间复杂度也因此记做：</p>
+
+<center> $T(n) = O(f(n))$ </center>
+
+
+<p>
+算法执行时间的增长率与$f(n)$的增长率正相关，称作渐近时间复杂度（Asymptotic Time Complexity），简称时间复杂度。
+常见的时间复杂度有：常数阶 $O(1)$ ,对数阶 $O({log}_ {2}n)$ ,线性阶 $O(n)$ , 线性对数阶 $O(n{log}_ {2} n)$ ,平方阶 $O(n<sup>2</sup> )$ ，立方阶 $O(n<sup>3</sup> )$ ，...， k次方阶 $O( n<sup>k</sup> )$ ,指数阶 $O( 2<sup>n</sup> )$ 。随着问题规模 $n$ 的不断增大，上述时间复杂度不断增大，算法的执行效率越低。</p>
+
+<p>算法的<strong>空间复杂度</strong>是指算法需要消耗的空间资源。其计算和表示方法与时间复杂度类似，一般都用复杂度的渐近性来表示。同时间复杂度相比，空间复杂度的分析要简单得多。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/10/12/insight-into-stl-5-algorithm-1-overview/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2014/09/27/insight-into-stl-4-associative-containers-5-hashset-and-hashmap/">深入理解STL源码(4.5) 关联式容器之hashset和hashmap</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-09-27T21:30:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2014/09/27/insight-into-stl-4-associative-containers-5-hashset-and-hashmap/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>本文涉及到 SGI STL 源码的文件主要是 <code>stl_hash_set.h</code>、<code>stl_hash_map.h</code> 等文件。</p>
+
+<h2>1. hashset 和 hash_multi_set</h2>
+
+<p>需要说明的是，STL 标准只规范了复杂度与接口，并没有规范实现方法，但 STL 实现的版本中 set 大多以 RB-tree 为底层机制，SGI STL 在实现了以 RB-tree 为底层机制的 set 外，还实现了以 hashtable 为底层机制的 hashset。<br/>
+和 set 一样，hashset 的键值（key）和实值（value）是同一个字段，不同的是 set 默认是自动排序的，而 hashset 则是无序的。除此之外，hashset 与 set 的对外接口完全相同。<br/>
+这里还有一种称为 hash_multi_set 的集合，它同 multiset 类似，允许键值重复，而上面的 hashset 则不允许。下面是 hashset 的定义的主要代码：</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/09/27/insight-into-stl-4-associative-containers-5-hashset-and-hashmap/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2014/09/13/insight-into-stl-4-associative-containers-4-hashtable/">深入理解STL源码(4.4) 关联式容器之hashtable</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-09-13T21:30:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2014/09/13/insight-into-stl-4-associative-containers-4-hashtable/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>本文涉及到 SGI STL 源码的文件主要是 <code>stl_hashtable.h</code>、<code>stl_hash_fun.h</code> 等文件。</p>
+
+<h2>1. hashtable 简介</h2>
+
+<p>在数据结构中我们知道，有种数据结构的插入、删除、查找等操作的性能是常数时间，但需要比元素个数更多的空间，这种数据结构就是哈希表。哈希表的基本思想是，将数据存储在与其数值大小相关的地方，比如对该数取模，然后存储在以余数为下表的数组中。但这样会出现一个问题，就是可能会有多个数据被映射到同一个存储位置，即出现了所谓的“碰撞”。哈希表的主要内容就是解决“碰撞”问题，一般而言有以下几种方法：线性探测、二次探测、开链等。</p>
+
+<h4>线性探测</h4>
+
+<p>简单而言，就是在出现“碰撞”后，寻找当前位置以后的空档，然后存入。如果找到尾部都没有空档，则从头部重新开始找。只要空间大小比元素个数大，总能找到的。相应的，元素的查找和删除也与普通的数组不同，查找如果直接定位到相应位置并找到或是空档，就可以确定存在或不存在，而如果定位到当前位置非空且与待查找的元素不同，则要依序寻找后续位置的元素，直到找到或移到了空档。删除则是采用懒惰删除策略，即只标记删除记号，实际删除操作则待表格重新整理时再进行。</p>
+
+<h4>二次探测</h4>
+
+<p>与线性探测类似，但向后寻找的策略是探测距当前位置为平方数的位置，即 $index = H+i<em>^{2}$ </em>。但这样会有一个问题，那就是能否保证每次探测的是不同的位置，即是否存在某次插入时，探测完一圈后回到自己而出现死循环。</p>
+
+<h4>开链</h4>
+
+<p>这种方法是将出现冲突的元素放在一个链表中，而哈希表中只存储这些链表的首地址。SGI STL中就是使用这种方法来解决“碰撞”的。</p>
+
+<h2>2. hashtable 的数据结构</h2>
+
+<p>由于使用开链的方法解决冲突，所以要维护两种数据结构，一个是 hash table，在 STL 中称为 buckets，用 vector 作为容器；另一个是链表，这里没有使用 list 或 slist 这些现成的数据结构，而是使用自定义 <code>__hashtable_node</code> ，相关定义具体如下：</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/09/13/insight-into-stl-4-associative-containers-4-hashtable/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -536,242 +791,6 @@ public:
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2014/06/29/stl-source-insight-3-sequential-containers-1-vector/">深入理解STL源码(3.1) 序列式容器之vector</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-06-29T23:26:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2014/06/29/stl-source-insight-3-sequential-containers-1-vector/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>本文涉及到 SGI STL 源码的文件有<code>vector</code>、<code>stl_vector.h</code>、<code>vector.h</code> 等几个文件。</p>
-
-<h2>1. 容器</h2>
-
-<p>在数据结构的课程中，我们主要研究数据的特定排列方式，以利于搜索、排序等算法，几乎可以说，任何特定的数据结构都是为了实现某种特定的算法。STL 容器即由一个个特定的数据结构组成，例如向量（vector），链表（list），堆栈（stack），队列（queue），树（tree），哈希表（hash table），集合（set），映射（map）等，根据数据在容器中的排列特性，这些数据接口分为序列式容器（sequence container）和关联式容器（association container）两种，本文主要解读SGI STL中的序列式容器。</p>
-
-<p>所谓序列式容器，其中的元素可序（ordered），但未必有序（sorted）。C++ 本身提供了一个序列式容器——数组（array），STL中还提供了向量（vector），链表（list），堆栈（stack），队列（queue），优先队列（priority queue）等，其中stack和queue只是将deque（双端队列）设限而得到的，技术上可以被归为一种配接器（adaptor）。本系列文章将依次解读SGI STL各容器的关键实现细节。</p>
-
-<h2>2. vector 及其数据结构</h2>
-
-<p>在STL中，vector的空间在物理上就是连续的，而且是可以动态扩展的，这里的动态扩展，不需要用户去处理溢出的问题，而只需要关心上层逻辑。vector连续物理空间的动态扩展技术是该容器的关键，它主要分为三个步骤：配置新空间，数据移动，释放旧空间。这三个步骤执行的次数以及每次执行时的效率是影响最终 vector 效率的关键因素。为了减少执行的次数，就需要未雨绸缪，每次扩充空间时，成倍增长。而每次执行的效率，就主要是数据移动的效率了。下面，我们依次介绍vector的数据结构，使用的空间配置器和迭代器，以及常用操作。<br/>
-<strong>vector 的数据结构</strong><br/>
-vector的数据结构很简单，就是一段连续的物理空间，包含起止地址以及已用到的空间的末尾地址这三个成员：<br/>
-<code>cpp
-template &lt;class _Tp, class _Alloc&gt;
-class _Vector_base {
-protected:
-  _Tp* _M_start;
-  _Tp* _M_finish;
-  _Tp* _M_end_of_storage;
-};
-class vector : protected _Vector_base&lt;_Tp, _Alloc&gt;{
-};
-</code></p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/06/29/stl-source-insight-3-sequential-containers-1-vector/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/">深入理解STL源码(2) 迭代器(Iterators)和Traits</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-06-21T21:46:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>本文涉及到 SGI STL 源码的文件有 <code>iterator.h</code>, <code>stl_iterator_base.h</code>, <code>concept_checks.h</code>, <code>stl_iterator.h</code>, <code>type_traits.h</code>, <code>stl_construct.h</code>, <code>stl_raw_storage_iter.h</code> 等7个文件。</p>
-
-<h2>1. 迭代器的设计思维</h2>
-
-<p>迭代器（iterators）是一种抽象的设计概念，显示程序中并没有直接对应于这个概念的实体。在 <em>Design Patterns</em> 一书中，对 iterators 模式的定义如下：提供一种方法，使之能够依序遍历某个聚合物（容器）所包含的各个元素，而又无需暴露该聚合物内部的表述方式。</p>
-
-<p>在STL中迭代器扮演着重要的角色。STL的中心思想在于：将数据容器（container）和算法（algorithm）分开，彼此独立设计，最后再通过某种方式将他们衔接在一起。容器和算法的泛型化，从技术的角度来看并不困难，C++ 的 class template 和 function template 可以分别达到目标，难点在于如何设计二者之间的衔接器。</p>
-
-<p>在STL中，起者这种衔接作用的是迭代器，它是一种行为类似指针的对象。指针的各种行为中最常见也最重要的便是内容获取（dereference）和成员访问（member access），因此迭代器最重要的工作就是对 <code>operator*</code> 和 <code>operator-&gt;</code> 进行重载。然而要对这两个操作符进行重载，就需要对容器内部的对象的数据类型和存储结构有所了解，于是在 STL 中迭代器的最终实现都是由容器本身来实现的，每种容器都有自己的迭代器实现，例如我们使用vector容器的迭代器的时候是这样用的 <code>vector&lt;int&gt;::iterator it;</code> 。而本文所讨论的迭代器是不依存于特定容器的迭代器，它在STL中主要有以下两个方面的作用（我自己的理解和总结）：</p>
-
-<blockquote><ul>
-<li>规定容器中需要实现的迭代器的类型及每种迭代器的标准接口</li>
-<li>通过Traits编程技巧实现迭代器相应型别的获取，弥补 C++ 模板参数推导的不足，为配置器提供可以获取容器中对象型别的接口</li>
-</ul>
-</blockquote>
-
-<p>其中前一个没啥好解释的。关于第二个，后面第3节会详细介绍，那就是Traits编程技巧。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2014/06/13/stl-source-insight-1-memory-allocator/">深入理解STL源码(1) 空间配置器(allocator)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-06-13T22:04:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2014/06/13/stl-source-insight-1-memory-allocator/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>在STL中，Memory Allocator 处于最底层的位置，为一切的 Container 提供存储服务，是一切其他组件的基石。对于一般使用 STL 的用户而言，Allocator 是不可见的，如果需要对 STL 进行扩展，如编写自定义的容器，就需要调用 Allocator 的内存分配函数进行空间配置。本文涉及到的 SGI STL 源代码文件有 <code>alloc.h</code>, <code>stl_config.h</code>, <code>stl_alloc.h</code>, <code>stl_threads.h</code> 这4个。</p>
-
-<p>在C++中，一个对象的内存配置和释放一般都包含两个步骤，对于内存的配置，首先是调用operator new来配置内存，然后调用对象的类的构造函数进行初始化；而对于内存释放，首先是调用析构函数，然后调用 operator delete进行释放。 如以下代码：
-<code>cpp
-class Foo { ... };
-Foo* pf = new Foo;
-...
-delete pf;
-</code>
-Allocator 的作用相当于operator new 和operator delete的功能，只是它考虑得更加细致周全。SGI STL 中考虑到了内存分配失败的异常处理，内置轻量级内存池（主要用于处理小块内存的分配，应对内存碎片问题）实现， 多线程中的内存分配处理（主要是针对内存池的互斥访问）等，本文就主要分析 SGI STL 中在这三个方面是如何处理的。在介绍着三个方面之前，我们先来看看 Allocator的标准接口。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/06/13/stl-source-insight-1-memory-allocator/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2014/06/08/stl-source-insight-0-stl-overview/">深入理解STL源码(0) STL简介</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-06-08T21:39:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2014/06/08/stl-source-insight-0-stl-overview/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>0. 两个问题</h2>
-
-<p>在介绍 STL 之前，先讨论两个问题：为什么要剖析 STL 源代码？如何剖析 STL 源代码？</p>
-
-<p>首先是为什么要剖析 STL 源代码呢？ 有人会说，会使用 STL 不就性了，为什么一定要知道其内部的机制呢？ 对于大多数程序猿来说，确实没有必要去阅读或分析 STL 的源代码，但如果要想提升自己的编程修养，要相让自己编码的思想境界提升一个档次，还是很有必要读读 STL 这样的大师制作。阅读和分析之后，你会明白STL是如何分配和管理内存的（特别是对vector、string、deque等动态数据结构），是如何实现各种数据结构（特别是红黑树等比较复杂的数据结构）和相关算法的，又是如何将这些组件融合起来实现高内聚低耦合的。或许用《洋葱》的几句歌词获取最能表达你的明白这些问题之后的心情：</p>
-
-<blockquote><p>如果你愿意一层一层<br/>
-一层的剥开我的心<br/>
-你会发现<br/>
-你会讶异<br/>
-你是我<br/>
-最压抑<br/>
-最深处的秘密</p>
-
-<p>如果你愿意一层一层<br/>
-一层的剥开我的心<br/>
-你会鼻酸<br/>
-你会流泪<br/>
-只要你能<br/>
-听到我<br/>
-看到我的全心全意</p></blockquote>
-
-<p>那么，如何剖析源代码呢？其实歌词中已经蕴含这答案了，那就是“一层一层一层的剥开”。当然，我这里说的一层一层不是说要一个函数step in 到底，而是说要按层次解读：首先从最外层结构框架着手，从整体上把握；然后从细处着笔，一个组件一个组件的来分析；在分析每个组件时，也是先把握改组件的全貌及其与其他组件的关联关系，然后在深入组件内部，了解其实现。在阅读和分析源码的过程中，首先要理解其功能，然后在看它是如何实现的。切忌纠缠于代码的细节或陷入源码而不能自拔，即坠入“不识庐山真面目，只缘身在此山中”的深渊！</p>
-
-<p>因此，本文的目的在于，站在STL这座大山的山顶，一窥其全貌。随后的文章则深入每个组件，细细观赏每一处的风景。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/06/08/stl-source-insight-0-stl-overview/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page10">&larr; Older</a></li>
@@ -808,7 +827,7 @@ Allocator 的作用相当于operator new 和operator delete的功能，只是它
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

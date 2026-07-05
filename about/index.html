@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -174,66 +179,122 @@ $(document).bind('DOMNodeInserted', function(event) {
 
 
 
-<time datetime="2016-09-11T20:51:00+08:00" pubdate data-updated="true"></time></p>
+<time datetime="2026-07-03T10:46:00+08:00" pubdate data-updated="true"></time></p>
   </header>
   
-  <center><img src="/images/bg_singer.jpg"></center>
+  <center><img src="/images/bg_zju.png"></center>
 
 
-<h2>Introduction</h2>
+<p></p>
 
-<p>I am a postgraduate student in Computer Science Department, Zhejiang University since Sep.6, 2012. My research area is Biometric via Voice Print Recognition(VPR). I also do some projects related to speech recognition, i.e., a project related to bio-robots based on Brain-Computer Interfaces. Now I'm working at Digital Music Department, Social Network Business Group, Tencent.</p>
+<h2>个人概览 Profile</h2>
 
-<h2>教育经历</h2>
+<p>高级数据科学家，10+ 年腾讯 / 腾讯音乐工作经验，3+ 年团队管理经验。</p>
 
 <ul>
-<li>2012.07 ~ 2015.03: ZJU，计算机学院，CCNT实验室，研究方向为语音处理与说话人识别、动物机器人导航与控制.</li>
-<li>2008.09 ~ 2012.06：HZAU，理学院，计算机专业.</li>
+<li><p><strong>GenAI &amp; Agent</strong> <br/>
+把音乐 AI 助手升级为 ReAct + Tool Calling 的自主 Agent，带全链路可观测，回答准确率 +20%、卡片 CTR +50%； <br/>
+在 vLLM 推理上做调优并向 HuggingFace transformers 提交 issue； <br/>
+沉淀 TMEDevLoop 工程提效 Skill，vibe coding 效率 +70%。</p></li>
+<li><p><strong>Recommendation &amp; Advertising</strong> <br/>
+迭代音乐推荐召回与排序模型，完播率与收藏转化 +5%； <br/>
+主导 B 端内容推广投放系统从 0 到亿级 ARR，服务于环球音乐、索尼音乐、腾讯游戏等厂牌，以及上万独立音乐人，两次获得公司业务突破奖。</p></li>
+<li><p><strong>Data Science &amp; Engineering</strong> <br/>
+通过爆款潜力评估模型挖掘并推火《一路生花》等现象级歌曲； <br/>
+从 0 到 1 搭建离线 + 流式数据管道，支撑实时音乐榜单。</p></li>
 </ul>
 
 
-<h2>实习工作经历</h2>
+<h2>核心技能 Core Skills</h2>
 
-<ul>
-<li>2016.10 ~ Now： 腾讯音乐/QQ音乐业务线/平台产品部，数据科学</li>
-<li>2015.04 ~ 2016.09: 腾讯公司/社交网络事业群/数字音乐部，数据分析</li>
-<li>2014.07 ~ 2014.09： 腾讯公司/社交网络事业群/数字音乐部/音频基础开发组，基于内容的音乐情感分类</li>
-<li>2011.07 ~ 2011.08： Linux 平台， C/C++ 开发专题的实习</li>
-</ul>
+<p>• GenAI &amp; Agent: ReAct、Tool Calling、Multi-Agent、RAG、Prompt 工程、评测 Pipeline、全链路可观测、Skill / Workflow 工程化。<br/>
+• 推荐与机器学习: 召回 / 精排 / 重排 · DeepFM / DIN / DCN / MMOE / EPNet / OneTrans · CLIP, Qwen3-Embedding · Faiss 向量检索 · 冷启动推荐 · Go服务开发。  <br/>
+• 实验设计&amp;因果推断: 双边市场的A/B 实验设计 · 倾向得分匹配 / IPW · Uplift Modeling。 <br/>
+• 数据栈: SQL (HiveSQL) · Python (pandas, scikit-learn, PyTorch / TensorFlow)  · Spark / Flink / Kafka · Elasticsearch / HBase / MySQL。</p>
 
+<h2>技术影响力 Speaking &amp; Influence</h2>
 
-<h2>项目经验</h2>
+<p>• 2025.06 · 开源贡献 · 发现HuggingFace transformers项目的一个 TorchTensorParallelPlugin 相关的bug <a href="https://github.com/huggingface/transformers/issues/39077">issue</a>  <br/>
+• 2023.09 · 北京·人人都是产品经理大会 · 《AI + 内容精细化运营下的产品增长》 <a href="https://www.woshipm.com/event/5895272.html">link</a>  <br/>
+• 2022.04 · 上海(Online) · A2M 大会 · 《数据科学在音乐推荐中的实践和应用》 <a href="https://a2m.msup.com.cn/course/15492?_a2m_nocache=1783047050732&amp;aid=4949&amp;city=shanghai">link</a>  <br/>
+• 2021.10 · 深圳(Online) · DataFunTalk · 《内容评估理解和流量精细化运营》<a href="https://mp.weixin.qq.com/s/SaJcVARQzUSpPj2uugXypA">link</a></p>
 
-<ul>
-<li>2013.04 - 2013.06 基于 DTW（动态时间规整）的关键词识别 <br/>
-实现了语音数据时获取、端点检测、MFCC 特征提取及基于 DTW 的关键词识别。 <a href="https://github.com/ibillxia/MFCCandDTW">code</a></li>
-<li>2012.12 - 2013.02 Android 关键词识别 app<br/>
-使用 CMU 开源的 pocketsphinx实现特定指令的语音识别 ，主要是训练特定人的模型参数</li>
-<li>2011.07 - 2011.07 简单的 HTTP、SMTP、POP3 服务器<br/>
-暑期实习期间编写了 Linux 平台下简单的 HTTP、SMTP、POP3 服务器等</li>
-<li>2010.07 - 2010.10 生物信息检索网站开发<br/>
-基于 LAMP(PHP)，负责数据抓取与解析 、数据库设计与检索等后台开发任务 ，见 <a href="http://ibi.hzau.edu.cn/amphioxus/index.php">链接</a></li>
-<li>2009.07 - 2009.10 xxxx 大学人事管理系统<br/>
-用 C#+SQL Server开发，负责部分功能模块的开发，主要是数据的增删查改排等</li>
-</ul>
+<h2>工作 &amp; 教育经历 Experience &amp; Education</h2>
 
+<p>• 腾讯音乐 (TME / QQ 音乐)  ·  数据科学家 / 数科管理岗   2016.10 – 至今 <br/>
+• 腾讯 (Tencent)  ·  数据分析师   2015.04 – 2016.09 <br/>
+• 浙江大学 (C9)  ·  计算机科学与技术 硕士  2012.09 – 2015.04 <br/>
+• 华中农业大学 (211)  ·  计算机科学与技术 学士   2008.09 – 2012.06</p>
 
-<h2>专业技能</h2>
+<h2>主要项目经历 Key Projects</h2>
 
-<ul>
-<li>Go: 高性能后台服务开发，推荐系统后台，AI Agent后台</li>
-<li>C/C++/C#:  比较熟悉C，用C++（VC/QT）/C#也做过一些大大小小的项目</li>
-<li>Python/TensorFlow/Pytorch:  做数据分析与建模，能用Python做基本的语音信号处理，基于tf构建推荐算法</li>
-<li>Speech/Machine Learning： 熟悉基本的分类和聚类算法，熟练掌握语音信号处理、语音识别相关模型和方法，了解深度学习</li>
-<li>PHP/MySQL:  和小伙伴们一起做过网站，对前端的html/css/js略有了解</li>
-<li>Linux/Perl:  熟悉Linux开发环境，会使用Shell/Perl等脚本语言</li>
-</ul>
+<h3>1. 生产级 Agent、全链路可观测与主动触达  2025 – 2026</h3>
 
+<p>• 资产Agent (Tool Calling + ReAct): 把基于意图识别+Workflow的音乐资产助手升级为自主Agent，封装资产获取 / 数据统计 / 数据筛选 / 用户画像查询为标准化 Tool，搭建 Tool Schema 校验、失败降级与回答评测 Pipeline — 准确率 +20%。 <br/>
+• 全链路可观测: 覆盖工具调用链、token / latency / cost、检索命中率、最终回答准确率与安全性。 <br/>
+• 主动触达: 行为历史 + 兴趣时钟 + 听歌月报 / 年报 → trigger 召回、模板变量填充、多维打分排序、频控、发送时间选择 — 端到端 A/B 测试的主动对话系统。</p>
+
+<h3>2. 推荐召回与排序升级  ·  多模态表征 + 多样性重排   2024 – 2026</h3>
+
+<p>• 长音频精排: 基于EPNet等算法的多个排序策略和模型的升级 — 曝光→播放转化、播放时长、收藏 +5%，拉动下游留存与北极星指标提升。 <br/>
+• 多模态召回: CLIP 图文特征 + Qwen3-Embedding 歌词向量基于 Faiss 向量库构建召回服务，图文表征用于封面精排模型的特征 — 渗透与播放时长 +3%。 <br/>
+• 多样性与生态健康: 歌单重排引入语种 / 流派 / 歌手多维频控 — 显著提升新歌单播放与收藏渗透，沉淀为通用重排组件。</p>
+
+<h3>3. 音乐推流 0 → 亿级 ARR  ·  服务于全球厂牌与创作者 2021 – 2026</h3>
+
+<p>• 业务成就: 音乐投放收入从 0 到亿级 ARR突破，两度获得公司级业务突破奖，在厂牌供给、听众需求和平台商业化之间找到长期平衡点。 <br/>
+• 度量体系架构: 设计双边市场 A/B 实验，对投放任务（内容）x用户的交叉维度进行分流，同时评估任务进度控制策略优化的收益和对用户听歌指标的影响。 <br/>
+• 因果推断: 对无法评估同一个用户投放、不投放情况下的时长、留存情况，使用 Uplift Modeling 把投放预算分配到真正增量的曝光上。 <br/>
+• 模型与排序: 排序模型从 XGBoost 演进到 DIN / DCN / MMOE，引入跨场景建模与生成式推荐解决冷启动；库存利用率&amp;任务完成率 +10%，同时保障听众体验无显著负向影响。 <br/>
+• 数据闭环: 实时回收投放的下发、播放、收藏等行为数据，设计多轮赛马投放、多点位分级流转、点位熔断机制等策略，保障任务进度和用户体验。</p>
+
+<h3>4. 推荐系统流量调控  ·  流量调控内容中台   2019 – 2026</h3>
+
+<p>• 业务成果: 优势版权内容、付费内容播放份额提升x%，用户留存、会员转化提升x%；翻唱、盗版等内容份额下降x%；价值评估结果作为推荐模型重要特征，消融实验显示对时长影响1%+；多次获公司级奖项。 <br/>
+• 内容价值评估: 构建离线、实时统计的内容互动转化效率、拉新拉活能力、商业化驱动价值等多维度评估体系，融合内容的语种、年代、流派、厂牌等基础属性。
+• 流量调控中台：支持内容池配置、内容加权公式配置、流量调控点位配置等，实现对推荐等可控点位在粗精排阶段内容打分的干预，扶持或打压相关属性的内容。</p>
+
+<h3>5. 潜力热歌挖掘  ·  多模态内容理解 + 前瞻行为画像   2019 – 2021</h3>
+
+<p>• 成果: 挖掘并推火《一路生花》等现象级歌曲，获公司级创新奖、业务突破奖等。 <br/>
+• 内容挖掘: 融合歌词 / 音频等多模态信号和站内前瞻用户行为数据，构建爆款潜力打分模型；挖掘的优质内容，在它还处于长尾流量时，提前进行版权锁定。
+• 站内外宣发: 联合站内、站外流量，进行多轮赛马筛选和验证，站内先进行3～5轮流量验证，再联合站外达人进行推广。 <br/>
+• 拉新拉活: 站外宣发的内容，在评论区引导用户使用QQ音乐收听完整版，带来新回流用户，提升大盘DAU和留存。</p>
+
+<h3>6. 数据可视化平台  ·  0 → 1，全栈开发    2015 – 2018</h3>
+
+<p>• 大盘实时监控: 分终端实时播放量，实时累计top歌曲，实时播放人群分布（如性别、年龄段、地域省份）等数据统计和监控展示。 <br/>
+• 内容分析: 按歌曲、专辑、歌手、厂牌等维度的播放量、下载量、收藏量等数据趋势，内容的播放用户人群分布，不同内容的数据对比分析；版权结算和预算数据统计与预估，结算合同规则录入与结算公式自动化。 <br/>
+• 用户分群: 基于多种用户画像维度（基础属性、活跃于操作行为、音乐偏好等）进行人群圈选，用于下游运营（如push、内容运营、会员活动等）。 <br/>
+• 技术栈: 计算 HiveSQL / Flink · 存储 ES / HBase / MySQL · 可视化 HTML / D3.js / Echarts。</p>
+
+<h2>其他项目 Selected Side Projects</h2>
+
+<h3>Sovits-SVC AI 翻唱:</h3>
+
+<p>RTX 4060 本地全流程 hands-on，涵盖人声 / 伴奏分离、切片、训练、推理，生成周杰伦 / 孙燕姿等音色微调模型。</p>
+
+<h3>基于 Gemma 的端侧音乐 App(Kotlin):</h3>
+
+<p>Gemma 4 端侧模型解析多模态(摄像头 + 麦克风 + GPS)输入，对话式推荐 + AI DJ 电台 TTS，整合 iTunes / Deezer / Last.fm等平台API，支持本地音乐扫描与听歌周报生成。</p>
+
+<h3>跨端 AI 日报 App (TypeScript):</h3>
+
+<p>数据源 / LLM / 平台发布全链路可配置，自动生成日报并发布至 GitHub Pages / 公众号。</p>
+
+<h3>Spotify 资讯日报 Skill:</h3>
+
+<p>聚合 9+ 信息源，下载量 530+ — clawhub.ai/ibillxia/spotify-news-digest</p>
 
 <h2>我的网络社交</h2>
 
-<p>【<a href="http://stackoverflow.com/users/1602285/bill-xia">StackOverFlow</a>】  【<a href="https://github.com/ibillxia">GitHub</a>】  【<a href="https://www.facebook.com/ibillxia">Facebook</a>】   【<a href="https://twitter.com/ibillxia">Tiwtter</a>】 <br/>
-【<a href="http://weibo.com/ibillxia">新浪微博</a>】  【<a href="http://www.douban.com/people/ibillxia/">豆瓣</a>】  【<a href="http://www.zhihu.com/people/ibillxia">知乎</a>】</p>
+<p>【<a href="http://stackoverflow.com/users/1602285/bill-xia">StackOverFlow</a>】<br/>
+【<a href="https://github.com/ibillxia">GitHub</a>】<br/>
+【<a href="https://www.facebook.com/ibillxia">Facebook</a>】 <br/>
+【<a href="https://twitter.com/ibillxia">Tiwtter</a>】    <br/>
+【<a href="http://weibo.com/ibillxia">新浪微博</a>】<br/>
+【<a href="http://www.douban.com/people/ibillxia/">豆瓣</a>】<br/>
+【<a href="http://www.zhihu.com/people/ibillxia">知乎</a>】</p>
 
 <h2>联系我</h2>
 
@@ -253,7 +314,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
 
 
-<time datetime="2016-09-11T20:51:00+08:00" pubdate data-updated="true"></time>
+<time datetime="2026-07-03T10:46:00+08:00" pubdate data-updated="true"></time>
         
       </p>
       
@@ -298,7 +359,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

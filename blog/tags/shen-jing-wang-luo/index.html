@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -175,10 +180,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Reading</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/reading/'>Reading</a></span>
 		
 		
-		  <span class="tags">Tagged with 机器学习神经网络</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/shen-jing-wang-luo/'>神经网络</a></span>
 		
 		</footer>
 		
@@ -202,10 +207,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in PRML</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/prml/'>PRML</a></span>
 		
 		
-		  <span class="tags">Tagged with 机器学习神经网络</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/shen-jing-wang-luo/'>神经网络</a></span>
 		
 		</footer>
 		
@@ -229,10 +234,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in PRML</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/prml/'>PRML</a></span>
 		
 		
-		  <span class="tags">Tagged with AudioSpeech深度学习神经网络机器学习</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/audio/'>Audio</a>, <a class='tag' href='/blog/tags/speech/'>Speech</a>, <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/shen-du-xue-xi/'>深度学习</a>, <a class='tag' href='/blog/tags/shen-jing-wang-luo/'>神经网络</a></span>
 		
 		</footer>
 		
@@ -253,10 +258,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in PRML</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/prml/'>PRML</a></span>
 		
 		
-		  <span class="tags">Tagged with RBM神经网络</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/rbm/'>RBM</a>, <a class='tag' href='/blog/tags/shen-jing-wang-luo/'>神经网络</a></span>
 		
 		</footer>
 		
@@ -277,10 +282,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in PRML</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/prml/'>PRML</a></span>
 		
 		
-		  <span class="tags">Tagged with CNN神经网络机器学习</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/cnn/'>CNN</a>, <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/shen-jing-wang-luo/'>神经网络</a></span>
 		
 		</footer>
 		
@@ -301,10 +306,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in PRML</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/prml/'>PRML</a></span>
 		
 		
-		  <span class="tags">Tagged with BPNN神经网络梯度下降</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/bpnn/'>BPNN</a>, <a class='tag' href='/blog/tags/ti-du-xia-jiang/'>梯度下降</a>, <a class='tag' href='/blog/tags/shen-jing-wang-luo/'>神经网络</a></span>
 		
 		</footer>
 		
@@ -325,10 +330,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in PRML</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/prml/'>PRML</a></span>
 		
 		
-		  <span class="tags">Tagged with 神经网络机器学习</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/shen-jing-wang-luo/'>神经网络</a></span>
 		
 		</footer>
 		
@@ -349,10 +354,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in PRML</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/prml/'>PRML</a></span>
 		
 		
-		  <span class="tags">Tagged with 神经网络感知机</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/gan-zhi-ji/'>感知机</a>, <a class='tag' href='/blog/tags/shen-jing-wang-luo/'>神经网络</a></span>
 		
 		</footer>
 		
@@ -373,10 +378,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in PRML</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/prml/'>PRML</a></span>
 		
 		
-		  <span class="tags">Tagged with 神经网络感知机</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/gan-zhi-ji/'>感知机</a>, <a class='tag' href='/blog/tags/shen-jing-wang-luo/'>神经网络</a></span>
 		
 		</footer>
 		
@@ -397,10 +402,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in PRML</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/prml/'>PRML</a></span>
 		
 		
-		  <span class="tags">Tagged with 机器学习深度学习神经网络AutoEncoderSparseCodingRBM</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/autoencoder/'>AutoEncoder</a>, <a class='tag' href='/blog/tags/rbm/'>RBM</a>, <a class='tag' href='/blog/tags/sparsecoding/'>SparseCoding</a>, <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/shen-du-xue-xi/'>深度学习</a>, <a class='tag' href='/blog/tags/shen-jing-wang-luo/'>神经网络</a></span>
 		
 		</footer>
 		
@@ -431,7 +436,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

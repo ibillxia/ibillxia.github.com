@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -160,6 +165,242 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2014/06/29/stl-source-insight-3-sequential-containers-1-vector/">深入理解STL源码(3.1) 序列式容器之vector</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-06-29T23:26:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2014/06/29/stl-source-insight-3-sequential-containers-1-vector/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>本文涉及到 SGI STL 源码的文件有<code>vector</code>、<code>stl_vector.h</code>、<code>vector.h</code> 等几个文件。</p>
+
+<h2>1. 容器</h2>
+
+<p>在数据结构的课程中，我们主要研究数据的特定排列方式，以利于搜索、排序等算法，几乎可以说，任何特定的数据结构都是为了实现某种特定的算法。STL 容器即由一个个特定的数据结构组成，例如向量（vector），链表（list），堆栈（stack），队列（queue），树（tree），哈希表（hash table），集合（set），映射（map）等，根据数据在容器中的排列特性，这些数据接口分为序列式容器（sequence container）和关联式容器（association container）两种，本文主要解读SGI STL中的序列式容器。</p>
+
+<p>所谓序列式容器，其中的元素可序（ordered），但未必有序（sorted）。C++ 本身提供了一个序列式容器——数组（array），STL中还提供了向量（vector），链表（list），堆栈（stack），队列（queue），优先队列（priority queue）等，其中stack和queue只是将deque（双端队列）设限而得到的，技术上可以被归为一种配接器（adaptor）。本系列文章将依次解读SGI STL各容器的关键实现细节。</p>
+
+<h2>2. vector 及其数据结构</h2>
+
+<p>在STL中，vector的空间在物理上就是连续的，而且是可以动态扩展的，这里的动态扩展，不需要用户去处理溢出的问题，而只需要关心上层逻辑。vector连续物理空间的动态扩展技术是该容器的关键，它主要分为三个步骤：配置新空间，数据移动，释放旧空间。这三个步骤执行的次数以及每次执行时的效率是影响最终 vector 效率的关键因素。为了减少执行的次数，就需要未雨绸缪，每次扩充空间时，成倍增长。而每次执行的效率，就主要是数据移动的效率了。下面，我们依次介绍vector的数据结构，使用的空间配置器和迭代器，以及常用操作。<br/>
+<strong>vector 的数据结构</strong><br/>
+vector的数据结构很简单，就是一段连续的物理空间，包含起止地址以及已用到的空间的末尾地址这三个成员：<br/>
+<code>cpp
+template &lt;class _Tp, class _Alloc&gt;
+class _Vector_base {
+protected:
+  _Tp* _M_start;
+  _Tp* _M_finish;
+  _Tp* _M_end_of_storage;
+};
+class vector : protected _Vector_base&lt;_Tp, _Alloc&gt;{
+};
+</code></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/06/29/stl-source-insight-3-sequential-containers-1-vector/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/">深入理解STL源码(2) 迭代器(Iterators)和Traits</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-06-21T21:46:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>本文涉及到 SGI STL 源码的文件有 <code>iterator.h</code>, <code>stl_iterator_base.h</code>, <code>concept_checks.h</code>, <code>stl_iterator.h</code>, <code>type_traits.h</code>, <code>stl_construct.h</code>, <code>stl_raw_storage_iter.h</code> 等7个文件。</p>
+
+<h2>1. 迭代器的设计思维</h2>
+
+<p>迭代器（iterators）是一种抽象的设计概念，显示程序中并没有直接对应于这个概念的实体。在 <em>Design Patterns</em> 一书中，对 iterators 模式的定义如下：提供一种方法，使之能够依序遍历某个聚合物（容器）所包含的各个元素，而又无需暴露该聚合物内部的表述方式。</p>
+
+<p>在STL中迭代器扮演着重要的角色。STL的中心思想在于：将数据容器（container）和算法（algorithm）分开，彼此独立设计，最后再通过某种方式将他们衔接在一起。容器和算法的泛型化，从技术的角度来看并不困难，C++ 的 class template 和 function template 可以分别达到目标，难点在于如何设计二者之间的衔接器。</p>
+
+<p>在STL中，起者这种衔接作用的是迭代器，它是一种行为类似指针的对象。指针的各种行为中最常见也最重要的便是内容获取（dereference）和成员访问（member access），因此迭代器最重要的工作就是对 <code>operator*</code> 和 <code>operator-&gt;</code> 进行重载。然而要对这两个操作符进行重载，就需要对容器内部的对象的数据类型和存储结构有所了解，于是在 STL 中迭代器的最终实现都是由容器本身来实现的，每种容器都有自己的迭代器实现，例如我们使用vector容器的迭代器的时候是这样用的 <code>vector&lt;int&gt;::iterator it;</code> 。而本文所讨论的迭代器是不依存于特定容器的迭代器，它在STL中主要有以下两个方面的作用（我自己的理解和总结）：</p>
+
+<blockquote><ul>
+<li>规定容器中需要实现的迭代器的类型及每种迭代器的标准接口</li>
+<li>通过Traits编程技巧实现迭代器相应型别的获取，弥补 C++ 模板参数推导的不足，为配置器提供可以获取容器中对象型别的接口</li>
+</ul>
+</blockquote>
+
+<p>其中前一个没啥好解释的。关于第二个，后面第3节会详细介绍，那就是Traits编程技巧。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2014/06/13/stl-source-insight-1-memory-allocator/">深入理解STL源码(1) 空间配置器(allocator)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-06-13T22:04:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2014/06/13/stl-source-insight-1-memory-allocator/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>在STL中，Memory Allocator 处于最底层的位置，为一切的 Container 提供存储服务，是一切其他组件的基石。对于一般使用 STL 的用户而言，Allocator 是不可见的，如果需要对 STL 进行扩展，如编写自定义的容器，就需要调用 Allocator 的内存分配函数进行空间配置。本文涉及到的 SGI STL 源代码文件有 <code>alloc.h</code>, <code>stl_config.h</code>, <code>stl_alloc.h</code>, <code>stl_threads.h</code> 这4个。</p>
+
+<p>在C++中，一个对象的内存配置和释放一般都包含两个步骤，对于内存的配置，首先是调用operator new来配置内存，然后调用对象的类的构造函数进行初始化；而对于内存释放，首先是调用析构函数，然后调用 operator delete进行释放。 如以下代码：
+<code>cpp
+class Foo { ... };
+Foo* pf = new Foo;
+...
+delete pf;
+</code>
+Allocator 的作用相当于operator new 和operator delete的功能，只是它考虑得更加细致周全。SGI STL 中考虑到了内存分配失败的异常处理，内置轻量级内存池（主要用于处理小块内存的分配，应对内存碎片问题）实现， 多线程中的内存分配处理（主要是针对内存池的互斥访问）等，本文就主要分析 SGI STL 中在这三个方面是如何处理的。在介绍着三个方面之前，我们先来看看 Allocator的标准接口。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/06/13/stl-source-insight-1-memory-allocator/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2014/06/08/stl-source-insight-0-stl-overview/">深入理解STL源码(0) STL简介</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-06-08T21:39:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2014/06/08/stl-source-insight-0-stl-overview/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>0. 两个问题</h2>
+
+<p>在介绍 STL 之前，先讨论两个问题：为什么要剖析 STL 源代码？如何剖析 STL 源代码？</p>
+
+<p>首先是为什么要剖析 STL 源代码呢？ 有人会说，会使用 STL 不就性了，为什么一定要知道其内部的机制呢？ 对于大多数程序猿来说，确实没有必要去阅读或分析 STL 的源代码，但如果要想提升自己的编程修养，要相让自己编码的思想境界提升一个档次，还是很有必要读读 STL 这样的大师制作。阅读和分析之后，你会明白STL是如何分配和管理内存的（特别是对vector、string、deque等动态数据结构），是如何实现各种数据结构（特别是红黑树等比较复杂的数据结构）和相关算法的，又是如何将这些组件融合起来实现高内聚低耦合的。或许用《洋葱》的几句歌词获取最能表达你的明白这些问题之后的心情：</p>
+
+<blockquote><p>如果你愿意一层一层<br/>
+一层的剥开我的心<br/>
+你会发现<br/>
+你会讶异<br/>
+你是我<br/>
+最压抑<br/>
+最深处的秘密</p>
+
+<p>如果你愿意一层一层<br/>
+一层的剥开我的心<br/>
+你会鼻酸<br/>
+你会流泪<br/>
+只要你能<br/>
+听到我<br/>
+看到我的全心全意</p></blockquote>
+
+<p>那么，如何剖析源代码呢？其实歌词中已经蕴含这答案了，那就是“一层一层一层的剥开”。当然，我这里说的一层一层不是说要一个函数step in 到底，而是说要按层次解读：首先从最外层结构框架着手，从整体上把握；然后从细处着笔，一个组件一个组件的来分析；在分析每个组件时，也是先把握改组件的全貌及其与其他组件的关联关系，然后在深入组件内部，了解其实现。在阅读和分析源码的过程中，首先要理解其功能，然后在看它是如何实现的。切忌纠缠于代码的细节或陷入源码而不能自拔，即坠入“不识庐山真面目，只缘身在此山中”的深渊！</p>
+
+<p>因此，本文的目的在于，站在STL这座大山的山顶，一窥其全貌。随后的文章则深入每个组件，细细观赏每一处的风景。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/06/08/stl-source-insight-0-stl-overview/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -470,237 +711,6 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/">全排列及某排列的后继的求解及其STL实现的分析</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-04-24T23:24:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>在Leetcode上有好几道全排列相关的题，一直以来只是会写基于递归的全排列生成算法，遇到这几道题后，搜了下一些非递归的实现方法，发现其实全排列的生成还是很有规律的有木有！这里就总结一下递归和非递归的全排列生成方法，并分析一下 STL 的实现。</p>
-
-<p>递归和非递归实现全排列生成的方法也分别有多种，递归法有基于交换的，有基于链接的，还有回溯，非递归法有排序、回溯、求模等，关于所有这些方法的具体实现参见 <a href="http://mengliao.blog.51cto.com/876134/824079">全排列的六种算法</a>. 本文只实现一种递归和一种非递归算法，并在最后对 STL 的非递归算法进行分析。</p>
-
-<p>本文的全部代码下载：<a href="http://ibillxia.github.io/upload/code/20140424.cpp">code</a>.</p>
-
-<h2>递归法求全排列</h2>
-
-<p>递归法的基本思路是这样的：</p>
-
-<blockquote><p>首先选一个元素排在第一个（有 n 中选法）；
-然后递归的对剩下的所有元素进行全排列；
-直到一个元素的全排列是其本身。</p></blockquote>
-
-<p>假设给定的元素序列为 <e1, e2, ..., en>，其全排列表示为 P(e1, e2, ..., en)，则对递归的第一步展开有：</p>
-
-<blockquote><p>P(e1, e2, ..., en) = {
-<e1, P(e2, e3, ..., en)>,
-<e2, P(e1, e3, ..., en)>,
-... ...
-<en, P(e1, e2, ..., e(n-1))> }</p></blockquote>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2014/04/11/swap-two-variables-in-place/">原地交换两个变量的值</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-04-11T22:27:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2014/04/11/swap-two-variables-in-place/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>引子</h2>
-
-<p>在码代码的过程中，不经意间就会遇到需要交换两个变量的情况，一般情况下都是通过新定义一个同类型的变量来中转，但自己也知道可以不用定义新变量直接原地交换，但具体如何原地交换以及其中可能隐藏的bug却了解得不是很清楚，于是乎google了一下，发现这里面还真是有很多学问呢，这里整理和总结一下。</p>
-
-<p>原地交换两个变量，最主要有加减法和异或法。</p>
-
-<p>本文完整代码链接：<a href="../upload/code/20140411.cpp">20140411.cpp</a></p>
-
-<h2>加减法</h2>
-
-<p>加减法最简单、最好理解了，设待交换的两个变量分别为 a 和 b ，首先将两者的和赋给 a ；然后将 a 与 b的差赋给 b ，这样 b 就是 a 原来的值了；最后再将 a 与 b 的差赋给 a ，这样 a 就是 b 原来的值了。具体代码如下：</p>
-
-<pre><code class="cpp">inline template &lt;class T&gt;
-void xswap(T &amp;a,T &amp;b){
-    a=a+b;
-    //printf("a=%u\n",a);
-    b=a-b;
-    a=a-b;
-}
-</code></pre>
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/04/11/swap-two-variables-in-place/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2014/03/16/go-concurrent-programming-first-try/">Go并发编程初探</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-03-16T23:35:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2014/03/16/go-concurrent-programming-first-try/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>概述</h2>
-
-<p>最近在做的一个项目，需要对大量数据进行一些基本的统计和处理，整个程序的思路很简单，但处理起来却很慢，特别是有二重循环的地方，龟速前进，眼看着16核32线程
-的服务器只有一个线程被利用，束手无策。之前一直听说Go是一门对并发编程有很好的支持的语言，七牛的许牛大力推崇Go语言，于是就开始了对Go并行编程的探索之旅。</p>
-
-
-<center><img src="/images/2014/IMAG2014031601.jpg"></center>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/03/16/go-concurrent-programming-first-try/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2014/03/10/top-10-open-source-recommendation-systems/">TOP 10开源的推荐系统简介</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-03-10T22:29:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2014/03/10/top-10-open-source-recommendation-systems/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>最近这两年推荐系统特别火，本文搜集整理了一些比较好的开源推荐系统，即有轻量级的适用于做研究的SVDFeature、LibMF、LibFM等，也有重量级的适用于工业系统的
-Mahout、Oryx、EasyRecd等，供大家参考。PS：这里的top 10仅代表个人观点。</p>
-
-
-<h2>#1.SVDFeature</h2>
-
-
-<center><img src="/images/2014/IMAG2014031001.png"></center>
-
-
-<p>主页：<a href="http://svdfeature.apexlab.org/wiki/Main_Page">http://svdfeature.apexlab.org/wiki/Main_Page</a> 语言：C++</br>
-一个feature-based协同过滤和排序工具，由上海交大Apex实验室开发，代码质量较高。在KDD Cup 2012中获得第一名，KDD Cup 2011中获得第三名，相关论文
-发表在2012的JMLR中，这足以说明它的高大上。</br>
-SVDFeature包含一个很灵活的Matrix Factorization推荐框架，能方便的实现SVD、SVD++等方法, 是单模型推荐算法中精度最高的一种。SVDFeature代码精炼，可以用
-相对较少的内存实现较大规模的单机版矩阵分解运算。另外含有Logistic regression的model，可以很方便的用来进行ensemble。</p>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/03/10/top-10-open-source-recommendation-systems/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page11">&larr; Older</a></li>
@@ -737,7 +747,7 @@ SVDFeature包含一个很灵活的Matrix Factorization推荐框架，能方便�
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

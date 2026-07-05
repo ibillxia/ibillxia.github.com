@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -160,6 +165,229 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2025/01/03/llm-recommendation-industry-practice/">【蘑菇先生】工业界大模型推荐实战经验梳理</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2025-01-03T10:31:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2025/01/03/llm-recommendation-industry-practice/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>原文链接：<a href="https://zhuanlan.zhihu.com/p/7387477310">https://zhuanlan.zhihu.com/p/7387477310</a></p>
+
+<p>大家好，我是蘑菇先生。好久不见，今天盘点下2024年工业界大模型在搜广推上的实战落地型工作。业界工作大体分为两类：</p>
+
+<ul>
+<li><p>用大模型做数据和知识增强、提取表征、通过prompt将推荐转成对话驱动的任务等，本质上没有修改LLM，属于信息增强和补充方法，无法直接建模海量协同信号。</p></li>
+<li><p>修改LLM直接建模搜广推海量数据中的协同信号，对输入输出范式改造，通过预训练/微调等过程建模海量数据，让模型同时拥有通用的世界知识和垂直领域海量协同信息。是能实现搜广推大模型scaling的前提，需要更复杂的工程架构支持。</p></li>
+</ul>
+
+
+<p>第一类工作层出不穷，大部分在工业界无法惊起水花，属于学术性的探索居多。第二类工作寥寥无几，需要资源算力和业务场景等支撑，但也是搜广推值得探索的前沿方向之一。本文重点分享第二类工作。本次分享4篇文章：GRs(Meta)、HLLMs(字节)、NoteLLM(小红书)、NoteLLM-2(小红书)等工作，基本都在各自场景验证了收益，最近又重读了下，常读常新，做一些梳理分享给大家。涵盖目前推荐系统两类主流范式：</p>
+
+<ul>
+<li><p>表征学习：NoteLLM\NoteLLM-2提供了一种使用LLMs训练item表征的范式，通过海量数据中的“共现”协同信号，应用对比学习目标来微调LLMs并提取多模态的item表征。学习的item表征可以用于I2I召回、排序特征提取器等。</p></li>
+<li><p>模型预估：GRs和HLLMs通过改造输入数据为行为序列，在自回归设定下，可以建模海量用户行为，从而达到推荐的目的。二者既可以作为召回模型、也可以用作排序模型，用于CXR预估。但二者在输入、架构、目标方面存在较大差异，下文会介绍。</p></li>
+</ul>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2025/01/03/llm-recommendation-industry-practice/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2024/07/19/hulu-video-ads-algorithms/">Hulu视频广告系统中的算法实践</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2024-07-19T14:40:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2024/07/19/hulu-video-ads-algorithms/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>原文链接：<a href="https://www.infoq.cn/article/ko9yxouspj4kuoh9jut4">https://www.infoq.cn/article/ko9yxouspj4kuoh9jut4</a></p>
+
+<h1>概述</h1>
+
+<h2>Hulu 的广告产品</h2>
+
+<p>首先介绍一下 Hulu 以及 Hulu 的广告产品形态。</p>
+
+<p>Hulu 是一家美国的提供专业视频点播与直播的服务平台，成立于 2006 年，目前由迪士尼控股，拥有近 3000 万付费订阅用户，是全美用户数量增长最快的流媒体平台。</p>
+
+<p>① 产品形态：点播，直播，回看等；</p>
+
+<p>② 广告形态：以视频流中的 15 秒、30 秒的视频广告短片为主；</p>
+
+<p>③ 广告特点：</p>
+
+<ul>
+<li><p>以品牌类广告为主，品牌类广告看重长期效果，品牌的曝光度，用户认知等等；</p></li>
+<li><p>采用 CPM ( Cost Per Mille，千次展示 ) 方式计费，即无论用户是否点击，按照展示次数计价；</p></li>
+<li><p>以担保式广告订单为主，广告主希望其品牌曝光有一定量的保障，例如，某品牌希望在指定地区给指定用户群投放指定的次数；</p></li>
+<li><p>质量要求非常高，包括清晰度、创意、制作的精良程度等等。</p></li>
+</ul>
+
+
+<center><img src="/images/2024/IMAG2024071901.png"></center>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2024/07/19/hulu-video-ads-algorithms/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2024/07/15/tensorflow-onnx-tensorrt-inference/">使用TensorFlow、ONNX和TensorRT加速深度学习推理</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2024-07-15T15:17:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2024/07/15/tensorflow-onnx-tensorrt-inference/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>原文链接：<a href="https://developer.nvidia.cn/blog/speeding-up-deep-learning-inference-using-tensorflow-onnx-and-tensorrt/">https://developer.nvidia.cn/blog/speeding-up-deep-learning-inference-using-tensorflow-onnx-and-tensorrt/</a></p>
+
+<p>从 TensorRT 7 . 0 开始， Universal Framework Format（ UFF ）被弃用。在本文中，您将学习如何使用新的 TensorFlow -ONNX- TensorRT 工作流部署经过 TensorFlow 培训的深度学习模型。图 1 显示了 TensorRT 的高级工作流。</p>
+
+<center><img src="/images/2024/IMAG2024071501.png"></center>
+
+
+<p>图 1 。 TensorRT 是一种推理加速器。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2024/07/15/tensorflow-onnx-tensorrt-inference/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2024/07/09/causal-inference-complex-ab-testing/">【DataFun】因果推断与复杂AB测试</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2024-07-09T15:51:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2024/07/09/causal-inference-complex-ab-testing/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>24年7月5-6北京站</h2>
+
+<h2><strong>eBay 基于Uplift Model的优惠券分发优化</strong></h2>
+
+<p><a href="https://drive.weixin.qq.com/s?k=AJEAIQdfAAoRew3eteAZgAQAbMAKM#/preview?fileId=s.1970325010981265.7204251960EC_f.720425750F67V">https://drive.weixin.qq.com/s?k=AJEAIQdfAAoRew3eteAZgAQAbMAKM#/preview?fileId=s.1970325010981265.7204251960EC_f.720425750F67V</a></p>
+
+<center><img src="/images/2024/IMAG2024070901.png"></center>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2024/07/09/causal-inference-complex-ab-testing/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -495,219 +723,6 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2024/05/15/spark-memory-management-tuning/">Spark内存管理及调优</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2024-05-15T17:25:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2024/05/15/spark-memory-management-tuning/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>原文链接：<a href="https://qiankunli.github.io/2022/05/05/spark_detail.html">https://qiankunli.github.io/2022/05/05/spark_detail.html</a></p>
-
-<h1>内存划分及用途</h1>
-
-<h2>内存划分</h2>
-
-<center><img src="/images/2024/IMAG2024051501.png"></center>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2024/05/15/spark-memory-management-tuning/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2024/05/14/feature-platform-hierarchy/">特征平台需求层次理论</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2024-05-14T17:49:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2024/05/14/feature-platform-hierarchy/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h1>前言</h1>
-
-<p>原文链接：<a href="https://tech.ipalfish.com/blog/2021/05/31/feature-stores-a-hierarchy-of-needs/">https://tech.ipalfish.com/blog/2021/05/31/feature-stores-a-hierarchy-of-needs/</a></p>
-
-<p>本文是<a href="https://tech.ipalfish.com/blog/2021/05/31/mlsys-we-love/">「算法工程化实践调研」</a>系列的第 1 篇，翻译 <a href="https://twitter.com/eugeneyan">Eugene Yan</a> 的技术博客 <a href="https://eugeneyan.com/writing/feature-stores/">Feature Stores - A Hierarchy of Needs [1]</a>。</p>
-
-<p>出于开发伴鱼特征平台的需要，我最近阅读了很多关于特征平台的实践文章，但总有「一叶障目，不见泰山」之感——每个公司的算法工程化现状不尽相同，导致解决方案的侧重点不同，在架构上的区别也很大。正如我的前同事佘昶在他 2019 年的一篇文章中，到位地总结：我们缺乏一个系统性地思考特征平台的框架。[2]</p>
-
-<p>幸运的是，Eugene 的博客正好提供了这样一个思考框架，并将这个思考框架用于分析当前的各个特征平台上。我在征得 Eugene 的同意后，全文翻译，以飨中文读者。以下是译文。</p>
-
-<hr />
-
-<p>特征平台（feature store）最近很火。2020 年 12 月，<a href="https://aws.amazon.com/about-aws/whats-new/2020/12/introducing-amazon-sagemaker-feature-store/">AWS 发布了 SageMaker 特征平台</a>。上个月，<a href="https://splicemachine.com/press-releases/splice-machine-launches-the-splice-machine-feature-store-to-simplify-feature-engineering-and-democratize-machine-learning/">大数据平台 Splice Machine 也发布了一款特征平台</a>。Datanami 引用 Tecton.ai 联合创始人的话，称 2021 年为<a href="https://www.datanami.com/2021/01/19/2021-the-year-of-the-feature-store/">特征平台之年</a>。</p>
-
-<blockquote><p>根据我们的经验，管理特征是机器学习上线最大的瓶颈之一。—— Uber</p></blockquote>
-
-<p>特征和标签是机器学习模型的输入。在回归中，标签是因变量，特征是自变量。在表格中，标签是我们想要预测的列，特征是除 ID 外的其它列。</p>
-
-<p>大家对于「特征平台是什么」有很多种理解。有人把它简单地定义为「一个集中存储特征的地方」。也有人称特征平台能帮你「实现特征的一次创建，多处使用」或「百倍地提高模型部署效率」。之所以回答五花八门，是因为每个人想要特征平台做的事情都不同。</p>
-
-<p>我研究了<a href="https://github.com/eugeneyan/applied-ml#feature-stores">大量业界实践</a>，试图理解特征平台在不同场景下解决的问题。受心理学家马斯洛的启发，我发现特征平台的能力可以满足多个层次的需求。我称之为「特征平台的需求层次」，我将逐层介绍这些需求，并讨论业界的特征平台为满足该层次需求所做的实践。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2024/05/14/feature-platform-hierarchy/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2023/12/27/causal-inference-weishi-application/">【DataFun】因果推断在微视激励和供需场景的应用</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2023-12-27T16:16:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2023/12/27/causal-inference-weishi-application/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><center><img src="/images/2023/IMAG2023122701.png"></center>
-
-
-<h1>一、因果推断与激励算法</h1>
-
-<h2>1、业务背景与业务建模</h2>
-
-<p>首先简单地介绍一下腾讯微视的红包激励业务背景。与其他的产品和场景类似，在给定的预算之下，我们向腾讯微视的用户发放一些现金激励，希望通过现金激励最大化用户的次日留存和当天使用时长。现金激励的形式主要是以不定的时间间隔为用户发放不定数量和不定金额的现金红包。以上提到的 3 个“不定”最终由算法来确定。这三个“不定”也称红包激励策略的三要素。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2023/12/27/causal-inference-weishi-application/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2023/05/04/ten-open-source-llms/">10个开源的ChatGPT类模型简介及部分代码实践</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2023-05-04T23:51:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2023/05/04/ten-open-source-llms/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><center><img src="/images/2023/IMAG2023050401.png"></center>
-
-
-<p>本文将介绍10个开源的ChatGPT类替代模型，包括LLaMA、Alpaca、Vicuna、Dolly 2、GPT4All、BLOOMZ、ChatGLM、CodeGeeX、MOSS、ChatRWKV等。由于这些模型（参数甚至完整代码）是开源的，因此它们是免费提供的，您无需使用付费的OpenAI API即可访问它们。</p>
-
-<p>使用开源大型语言模型有很多好处，下面列出了其中一些：</p>
-
-<ol>
-<li><p>数据隐私：许多公司都希望控制数据，这对他们来说很重要，因为他们不希望任何第三方访问他们的数据；</p></li>
-<li><p>自主定制：它允许开发人员使用自己的数据训练大型语言模型，如果他们想应用某些主题，可以对某些主题进行一些过滤；</p></li>
-<li><p>经济实惠：开源 GPT 模型可让您训练复杂的大型语言模型，而无需担心昂贵的硬件。</p></li>
-<li><p>AI平民化：它为进一步的研究开辟了空间，可用于解决现实世界的问题。</p></li>
-</ol>
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2023/05/04/ten-open-source-llms/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page3">&larr; Older</a></li>
@@ -744,7 +759,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

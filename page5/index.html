@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -160,6 +165,212 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2019/05/07/svn-to-git-migration/">SVN迁移到Git的过程与技巧</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2019-05-07T09:49:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2019/05/07/svn-to-git-migration/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>关于在VCS中SVN和Git之间的迁移（Clone）这个部分网上已经有大批的文章介绍，而且都非常不错，能够满足我们的常见的需求，这里介绍的是我自己整理的一些技巧和使用中出现的一些问题和疑问。</p>
+
+<p>阅读本篇文章，请先有一些Git和SVN的使用经验（又是经验，经验到底是什么？我都不知道）。</p>
+
+<h1>一、基础迁移：分支和tags同步</h1>
+
+<p>今天的实验对象是，把 <a href="http://code.google.com/p/jdbcdslog-exp">http://code.google.com/p/jdbcdslog-exp/</a> 这个使用SVN管理的project迁移到 Git上面，Git托管网站选择github。SVN迁移到Git，当然要清楚git svn 命令了。</p>
+
+<p>首先请在github上面创建一个repository，这个简单，就不说了，然后就是使用强大的git了。</p>
+
+<pre><code>$ git svn init https://jdbcdslog-exp.googlecode.com/svn/ -s   
+$ git svn fetch  
+</code></pre>
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2019/05/07/svn-to-git-migration/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2019/05/06/mysql-system-commands/">MySQL常用系统命令</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2019-05-06T22:30:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2019/05/06/mysql-system-commands/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h1>1 show processlist</h1>
+
+<p>SHOW PROCESSLIST显示哪些线程正在运行。您也可以使用mysqladmin processlist语句得到此信息。如果您有SUPER权限，您可以看到所有线程。否则，您只能看到您自己的线程（也就是，与您正在使用的MySQL账户相关的线程）。如果有线程在update或者insert 某个表，此时进程的status为updating 或者 sending data。</p>
+
+<p>如果您得到“too many connections”错误信息，并且想要了解正在发生的情况，本语句是非常有用的。MySQL保留一个额外的连接，让拥有SUPER权限的账户使用，以确保管理员能够随时连接和检查系统（假设您没有把此权限给予所有的用户）。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2019/05/06/mysql-system-commands/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2019/04/24/elasticsearch-guide/">Elasticsearch安装与使用指南</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2019-04-24T17:55:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2019/04/24/elasticsearch-guide/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><center><img src="/images/2019/IMAG2019042401.svg"></center>
+
+
+<p><br></p>
+
+<p>Elasticsearch（简称ES）是一个基于Apache Lucene(TM)的开源搜索引擎，无论在开源还是专有领域，Lucene可以被认为是迄今为止最先进、性能最好的、功能最全的搜索引擎库。</p>
+
+<h1>一、Elasticsearch简介</h1>
+
+<h2>1.1 Elasticsearch是什么</h2>
+
+<p>Elasticsearch是一个基于Apache Lucene(TM)的开源搜索引擎，无论在开源还是专有领域，Lucene可以被认为是迄今为止最先进、性能最好的、功能最全的搜索引擎库。</p>
+
+<p>但是，Lucene只是一个库。想要发挥其强大的作用，你需使用Java并要将其集成到你的应用中。Lucene非常复杂，你需要深入的了解检索相关知识来理解它是如何工作的。</p>
+
+<p>Elasticsearch也是使用Java编写并使用Lucene来建立索引并实现搜索功能，但是它的目的是通过简单连贯的RESTful API让全文搜索变得简单并隐藏Lucene的复杂性。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2019/04/24/elasticsearch-guide/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2019/03/31/tencent-engineer-culture/">腾讯副总裁曾宇揭秘：腾讯的程序员牛在哪</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2019-03-31T23:12:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2019/03/31/tencent-engineer-culture/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>曾宇先生，腾讯公司副总裁。 2002年加入腾讯，曾负责腾讯研发线管理，后续担任互动娱乐事业群研发部总经理，负责游戏、互娱相关的技术研发及管理工作，2012年升任公司VP，16年起主要负责移动互联网事业群技术管理工作，继续参与公司级技术管理工作。</p>
+
+<center><img src="/images/2019/IMAG2019033101.jpeg"></center>
+
+
+<p><br></p>
+
+<h1>技术人员的核心素养</h1>
+
+<p>腾讯的职业发展通道大概有6级，1级是初入者，2级是有经验者，3级是骨干，4级是专家，5级和6级是权威和资深权威。我认为1、2级主要是学习、执行、改进的循环，在这个过程中你的经验不断增长；3级可以对交付负责，交付过程中持续思考和总结，跳出自己做的事情，宏观看待它们在整个战略中的位置，就可以走到4级。以前Tony（编者注：腾讯主要创始人张志东，曾任职公司CTO）对4级的要求就是什么事找这个人，他都能解决，自己解决不了就会主动去找其他资源来解决。我对技术通道4级的定义就是能在组织里起技术掌控的作用。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2019/03/31/tencent-engineer-culture/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -446,245 +657,6 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2018/06/02/tencent-univercity-ceo-comming/">《腾讯大学-CEO来了》笔记</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2018-06-02T22:30:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2018/06/02/tencent-univercity-ceo-comming/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><center><img src="/images/2018/IMAG2018060201.png"></center>
-
-
-<h1>一、每日优鲜 徐正</h1>
-
-<p>15岁上大学，其实保送原因很简单，就是因为数学拿了全国奥林匹克竞赛一等奖 <br/>
-科大少年班 数学+工商管理双学位 <br/>
-01年911，出国三次拒签，初恋在国外，比较失落，就算出国也会回来，大机会在国内 <br/>
-数学是一个研究模型和方法论的学科</p>
-
-<h3>一个CEO的三要素</h3>
-
-<p>一个叫硬件，硬件就像 CPU、内存一样，比如说人的智商、情商、体力、精力等<br/>
-第二叫思维模型，就是操作系统：对一个事务抽离出来，抽象化思考的低层能力，数学是把任何一个事务抽象化的能力，能够想背后的问题 <br/>
-第三是那些软件，它上面装的各种应用，今天怎么融资，明天怎么带队伍等</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2018/06/02/tencent-univercity-ceo-comming/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2018/05/23/sklearn-feature-selection-methods/">【Python机器学习】结合sklearn介绍常用特征选择方法</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2018-05-23T11:29:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2018/05/23/sklearn-feature-selection-methods/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>特征选择(排序)对于数据科学家、机器学习从业者来说非常重要。好的特征选择能够提升模型的性能，更能帮助我们理解数据的特点、底层结构，这对进一步改善模型、算法都有着重要作用。</p>
-
-<p>特征选择主要有两个功能：</p>
-
-<ul>
-<li><p>减少特征数量、降维，使模型泛化能力更强，减少过拟合</p></li>
-<li><p>增强对特征和特征值之间的理解</p></li>
-</ul>
-
-
-<p>拿到数据集，一个特征选择方法，往往很难同时完成这两个目的。通常情况下，我们经常不管三七二十一，选择一种自己最熟悉或者最方便的特征选择方法（往往目的是降维，而忽略了对特征和数据理解的目的）。</p>
-
-<p>在许多机器学习相关的书里，很难找到关于特征选择的内容，因为特征选择要解决的问题往往被视为机器学习的一种副作用，一般不会单独拿出来讨论。</p>
-
-<p>本文将结合Scikit-learn提供的例子介绍几种常用的特征选择方法，它们各自的优缺点和问题。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2018/05/23/sklearn-feature-selection-methods/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2018/05/06/tencent-has-no-dream/">【潘乱】腾讯没有梦想</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2018-05-06T00:45:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2018/05/06/tencent-has-no-dream/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>腾讯没有梦想</h2>
-
-<p>原创 2018-05-05 潘乱 乱翻书</p>
-
-<center><img src="/images/2018/IMAG2018050601.jpeg"></center>
-
-
-<p>腾讯总办，左起：汤道生(SNG)/James（首席战略官）/任宇昕（COO兼IEG MIG OMG）/马化腾（CEO）/刘炽平（总裁）/张小龙（WXG）</p>
-
-<p>腾讯正在丧失产品能力和创业精神，变成一家投资公司。</p>
-
-<p>这家快20岁的公司正在变得功利和短视，他的强项不再是产品业务，而是投资财技 。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2018/05/06/tencent-has-no-dream/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2018/04/18/regression-model-evaluation/">【Python机器学习】回归模型评估方法总结</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2018-04-18T15:42:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2018/04/18/regression-model-evaluation/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>回归模型评估常用的有四种方法，分别是：平均绝对值误差、均方误差、均方根误差和R平方值，如下表所示：</p>
-
-<table>
-<thead>
-<tr>
-<th> 指标 </th>
-<th> 描述 </th>
-<th> metrics方法 </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td> Mean Absolute Error(MAE) </td>
-<td> 平均绝对误差 </td>
-<td> from sklearn.metrics import mean_absolute_error </td>
-</tr>
-<tr>
-<td> Mean Square Error(MSE) </td>
-<td> 均方误差 </td>
-<td> from sklearn.metrics import mean_squared_error </td>
-</tr>
-<tr>
-<td> Root Mean Square Error(RMSE) </td>
-<td> 均方根误差 </td>
-<td> from sklearn.metrics import root_mean_squared_error </td>
-</tr>
-<tr>
-<td> R-Squared </td>
-<td> R平方值 </td>
-<td> from sklearn.metrics import r2_score </td>
-</tr>
-</tbody>
-</table>
-
-
-<p><br>
-更多评估指标参见 sklearn 官方文档：<a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.mean_absolute_error.html">sklearn.metrics 文档</a>.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2018/04/18/regression-model-evaluation/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page6">&larr; Older</a></li>
@@ -721,7 +693,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

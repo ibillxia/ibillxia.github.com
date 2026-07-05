@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: Music - Bill's Blog</title>
+  <title>Tag: OpenClaw - Bill's Blog</title>
   <meta name="author" content="Bill Xia">
 
   
-  <meta name="description" content="Category: Music">
+  <meta name="description" content="Tag: OpenClaw">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://ibillxia.github.io/blog/categories/music">
+  <link rel="canonical" href="http://ibillxia.github.io/blog/tags/openclaw">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -158,27 +163,27 @@ $(document).bind('DOMNodeInserted', function(event) {
 </nav>
   <div class="container">
     <div class="row-fluid">
-      <div id="blog-archives" class="category">
+      <div id="blog-archives" class="tag">
 
 
 
   
-  <h1>2014</h1>
+  <h2>2026</h2>
 
 <article>
   
 
 <ul>
 	<li>
-		<span class='month'>Dec</span> <span class='day'>06</span>
-		> <a href="/blog/2014/12/06/world-most-famous-musicians-and-there-works/">你不可不知道的音乐大师及其名作</a>
+		<span class='month'>Mar</span> <span class='day'>05</span>
+		> <a href="/blog/2026/03/05/openclaw-trigger-interpretation/">OpenClaw中的Agent Trigger解读</a>
 		
 		<footer>
 		
-		  <span class="categories">Posted in <a class='category' href='/blog/categories/music/'>Music</a>, <a class='category' href='/blog/categories/reading/'>Reading</a></span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/agent/'>Agent</a></span>
 		
 		
-		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/jiao-xiang-qu/'>交响曲</a>, <a class='tag' href='/blog/tags/gu-dian/'>古典</a>, <a class='tag' href='/blog/tags/gang-qin/'>钢琴</a>, <a class='tag' href='/blog/tags/yin-le/'>音乐</a></span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/agent/'>Agent</a>, <a class='tag' href='/blog/tags/openclaw/'>OpenClaw</a>, <a class='tag' href='/blog/tags/trigger/'>Trigger</a></span>
 		
 		</footer>
 		
@@ -194,7 +199,7 @@ $(document).bind('DOMNodeInserted', function(event) {
   <footer role="contentinfo" class="page-footer">
 <hr>
 <p>
-  Copyright &copy; 2009 - 2025 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
 </p>
 
@@ -209,7 +214,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

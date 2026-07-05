@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -175,10 +180,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in RecSys</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/recsys/'>RecSys</a></span>
 		
 		
-		  <span class="tags">Tagged with LLM推荐系统大模型工程实践</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/llm/'>LLM</a>, <a class='tag' href='/blog/tags/da-mo-xing/'>大模型</a>, <a class='tag' href='/blog/tags/gong-cheng-shi-jian/'>工程实践</a>, <a class='tag' href='/blog/tags/tui-jian-xi-tong/'>推荐系统</a></span>
 		
 		</footer>
 		
@@ -202,10 +207,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in 大模型</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/大模型/'>大模型</a></span>
 		
 		
-		  <span class="tags">Tagged with 大模型LLaMAChatGLMRWKV</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/chatglm/'>ChatGLM</a>, <a class='tag' href='/blog/tags/llama/'>LLaMA</a>, <a class='tag' href='/blog/tags/rwkv/'>RWKV</a>, <a class='tag' href='/blog/tags/da-mo-xing/'>大模型</a></span>
 		
 		</footer>
 		
@@ -236,7 +241,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

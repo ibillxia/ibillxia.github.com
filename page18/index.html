@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -160,6 +165,276 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2010/09/24/PHP-string-filter-methods-for-safety/">PHP字符串安全过滤全攻略</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-09-24T13:28:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2010/09/24/PHP-string-filter-methods-for-safety/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>php安全过滤是防止注入的第一道防线，不得大意。提到PHP的安全过滤，不得不提的两个东西是`set_magic_quotes_runtime` 和 `magic_quotes_gpc`。</p>
+
+
+
+
+<p>`set_magic_quotes_runtime()` 可以让程序员在代码中动态开启或关闭 `magic_quotes_runtime`，`set_magic_quotes_runtime(1)` 表示开启，
+`set_magic_quotes_runtime(0)` 则表示关闭。当`set_magic_quotes_runtime(1)`时，从数据库或通过`fread`之类的函数读取的文本，将自动对' "和\自动
+加上反斜杠\进行转义，防止溢出。这在对数据库的数据进行转移的时候非常有用。但在一般情况下，应当将其关闭，否则从数据库读取出来的数据单引
+号、双引号和反斜杠都会被加上\，导致显示不正常。像Discuz，PHPWind都在公共文件的头部加上一句 `set_magic_quotes_runtime(0);` 强制关闭 
+`magic_quotes_runtime` 。</p>
+
+
+
+
+<p>`magic_quotes_gpc` 和 `magic_quotes_runtime` 的区别在于，`magic_quotes_gpc` 是对通过GET、POST、COOKIE传递的数据进行转义，一般在数据入库前
+要先进行转义，`magic_quotes_gpc`不能在代码中动态开启或关 闭，需要到`php.ini`将`magic_quotes_gpc`设置为on或off，代码中可以用`get_magic_quotes_gpc`
+获取 `magic_quotes_gpc`的状态。当`magic_quotes_gpc`为off时，需要手工对数据进行addslashes，代码如下：</p>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/09/24/PHP-string-filter-methods-for-safety/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2010/08/31/the-elements-of-ip-faking/">伪造IP地址的原理</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-08-31T09:41:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2010/08/31/the-elements-of-ip-faking/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>入侵者使用假IP地址发送包，利用基于IP地址证实的应用程序。其结果是未授权的远端用户进入带有防火墙的主机系统。</p>
+
+
+
+
+<p>假设有两台主机A、B和入侵者控制的主机X。假设B授予A某些特权，使得A能够获得B所执行的一些操作。X的目标就是得到与B相同的权利。
+为了实现该目标，X必须执行两步操作：首先，与B建立一个虚假连接；然后，阻止A向B报告网络证实系统的问题。主机X必须假造A的IP地址，
+从而使B相信从X发来的包的确是从A发来的。</p>
+
+
+
+
+<p>我们同时假设主机A和B之间的通信遵守TCP／IP的三次握手机制。握手方法是：</p>
+
+
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>A->：SYN（序列号=M）
+</span><span class='line'>B->A：SYN（序列号＝N），ACK（应答序号=M+1）
+</span><span class='line'>A->B：ACK（应答序号＝N+1）</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/08/31/the-elements-of-ip-faking/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/">超好的HTML解析工具PHP Simple HTML DOM Parser</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-08-28T20:49:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>采用PHP5+ 开发的一个简单的 PHP HTML DOM 分析，支持 invalid HTML 并提供非常简单的方式来操作 HTML 元素。在 HMTL 页面
+上查找标签所使用的语法与 jQuery （一个轻量级，实用的 javascript 框架） 相似，从页面中抽取内容只需要一行代码。开源代码：
+<a href="http://sourceforge.net/projects/simplehtmldom/">http://sourceforge.net/projects/simplehtmldom/</a> </p>
+
+
+
+
+<p>它具有以下几个特点：</br>
+1. 只支援 PHP5 以上. </br>
+2. 可以分析不严谨 (invalid) 的 HTML. </br>
+3. 支援简单的 CSS Selector. </br>
+4. 简单的 DOM 操作. </br>
+5. 会维持 HTML 中的原始格式 .</br>
+下面是使用手册上举的几个简单的使用示例。</p>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2010/08/25/php-print-in-format-very-useful-in-debuging/">PHP格式化打印数组，调试有用</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-08-25T10:08:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2010/08/25/php-print-in-format-very-useful-in-debuging/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>以下是从FleaPHP上挖来的，感谢FleaPHP的开发者们。</p>
+
+
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span></span><span class="sd">/**</span>
+</span><span class='line'><span class="sd">* 输出变量的内容，通常用于调试</span>
+</span><span class='line'><span class="sd">*</span>
+</span><span class='line'><span class="sd">* @package Core</span>
+</span><span class='line'><span class="sd">*</span>
+</span><span class='line'><span class="sd">* @param mixed $vars 要输出的变量</span>
+</span><span class='line'><span class="sd">* @param string $label</span>
+</span><span class='line'><span class="sd">* @param boolean $return</span>
+</span><span class='line'><span class="sd">*/</span>
+</span><span class='line'><span class="k">function</span> <span class="nf">dump</span><span class="p">(</span><span class="nv">$vars</span><span class="p">,</span> <span class="nv">$label</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$return</span> <span class="o">=</span> <span class="k">false</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nb">ini_get</span><span class="p">(</span><span class="s1">&#39;html_errors&#39;</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$content</span> <span class="o">=</span> <span class="s2">&quot;&lt;pre&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nv">$label</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$content</span> <span class="o">.=</span> <span class="s2">&quot;&lt;strong&gt;</span><span class="si">{</span><span class="nv">$label</span><span class="si">}</span><span class="s2"> :&lt;/strong&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="nv">$content</span> <span class="o">.=</span> <span class="nb">htmlspecialchars</span><span class="p">(</span><span class="nb">print_r</span><span class="p">(</span><span class="nv">$vars</span><span class="p">,</span> <span class="k">true</span><span class="p">));</span>
+</span><span class='line'>        <span class="nv">$content</span> <span class="o">.=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;/pre&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$content</span> <span class="o">=</span> <span class="nv">$label</span> <span class="o">.</span> <span class="s2">&quot; :</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">.</span> <span class="nb">print_r</span><span class="p">(</span><span class="nv">$vars</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nv">$return</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nv">$content</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="k">echo</span> <span class="nv">$content</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">null</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/08/25/php-print-in-format-very-useful-in-debuging/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -528,270 +803,6 @@ $smtp-&gt;sendmail($smtpemailto, $smtpusermail, $mailsubject, $mailbody, $mailty
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2010/07/18/UML-based-library-management-system-requirement-analysis-and-system-design/">基于UML的图书管理系统的需求分析</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2010-07-18T10:06:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2010/07/18/UML-based-library-management-system-requirement-analysis-and-system-design/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>一个图书馆的图书资料库在正常运转中总是面对大量的读者信息、书籍信息以及两者相互作用产生的借书信息、还书信息。
-图书馆作为一个信息资源的集散地，图书和用户借阅资料繁多，包含着很多的信息数据。图书管理系统的开发和应用主要通过
-两个步骤来实现：首先是基于系统功能的需求分析，其次是系统模型的设计和实现。
-</p>
-
-
-
-
-<h2>1.需求分析</h2>
-
-
-<p>需求分析是软件工程过程的一个重要阶段,其中一个主要任务是确定系统的功能需求,采用面向对象方法,基于UML的可视化
-系统需求分析,因为有用户的积极参与,既可以加快设计者对于问题的理解,又能够在系统描述方面减少语义差异,保证分析的
-正确性。需求分析的目标就是建立需求模型,即从功能需求出发建立用例模型, UML的用例视图从用户的需求中提取,以盒图的
-方式描述待开发的系统的功能需求。每个用例都指定了客户的需求即他们需要系统干什么。用例图为设计活动不仅记录需求
-而且还提供了一种挖掘的信息, 它记录了需求到设计结果之间的映射关系,能够确保设计结果具有明确的根据或者说具有可
-维护性,基于UML的软件开发过程是以用例驱动的。</p>
-
-
-
-
-<p>首先我们进行角色识别，角色识别的任务是找出所有可能与系统发生交互行为的外部实体、对象、系统。它们的行为不受系统控制，
-但是可以提供输入给系统。对于一所大学的图书管理系统，基本的功能是完成图书的借阅和相关信息的管理，服务的对象有本科生，
-研究生，教师，及其他学校的学生，还有社会人员，这些人可归结为一类即读者。而为帮助读者顺利完成借还书的可以是工作人员，
-可以是自动借还书机，他们可以归结为一类即图书管理人员。因此对于一个图书管理系统主要有两类角色，读者、图书管理员。</p>
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2010/07/18/UML-based-library-management-system-requirement-analysis-and-system-design/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2010/04/10/10-stories-in-management/">管理的十个寓言故事</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2010-04-10T12:36:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2010/04/10/10-stories-in-management/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>▲ (一)相信自己是一只雄鹰 ▲</h2>
-
-
-<p>一个人在高山之巅的鹰巢里，抓到了一只幼鹰，他把幼鹰带回家，养在鸡笼里。这只幼鹰和鸡一起啄食、嬉闹和休息。它以为自己是一只鸡。 
-这只鹰渐渐长大，羽翼丰满了，主人想把它训练成猎鹰，可是由于终日和鸡混在一起，它已经变得和鸡完全一样，根本没有飞的愿望了。 主人试了
-各种办法，都毫无效果，最后把它带到山顶上，一把将它扔了出去。这只鹰像块石头似的，直掉下去，慌乱之中它拼命地扑打翅膀，就这样，它
-终于飞了起来！ </p>
-
-
-
-
-<p><strong>秘诀1：磨练召唤成功的力量。</strong></p>
-
-
-
-
-<h2>▲ (二)五枚金币 ▲</h2>
-
-
-<p>有个叫阿巴格的人生活在内蒙古草原上。有一次，年少的阿巴格和他爸爸在草原上迷了路，阿巴格又累又怕，到最后快走不动了。爸爸就从兜里
-掏出５枚硬币，把一枚硬币埋在草地里，把其余４枚放在阿巴格的手上，说：“人生有５枚金币，童年、少年、青年、中年、老年各有一枚，你现在
-才用了一枚，就是埋在草地里的那一枚，你不能把５枚都扔在草原里，你要一点点地用，每一次都用出不同来，这样才不枉人生一世。今天我们一定
-要走出草原，你将来也一定要走出草原。世界很大，人活着，就要多走些地方，多看看，不要让你的金币没有用就扔掉。”在父亲的鼓励下，那天阿巴格
-走出了草原。长大后，阿巴格离开了家乡，成了一名优秀的船长。 </p>
-
-
-
-
-<p><strong>秘诀2：珍惜生命，就能走出挫折的沼泽地。</strong></p>
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2010/04/10/10-stories-in-management/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2009/07/23/useful-queries-methods-in-MS-SQL-Server/">Sql Server数据库常用的查询语句</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2009-07-23T22:31:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2009/07/23/useful-queries-methods-in-MS-SQL-Server/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>一、表操作</h2>
-
-<p>例 1 对于表的教学管理数据库中的表 STUDENTS ，可以定义如下：
-<code>
-Create TABLE STUDENTS (SNO NUMERIC (6, 0) NOT NULL
-SNAME CHAR (8) NOT NULL
-AGE NUMERIC(3,0)
-SEX CHAR(2)
-BPLACE CHAR(20)
-PRIMARY KEY(SNO))
-</code></p>
-
-<p>例 2 对于表的教学管理数据库中的表 ENROLLS ，可以定义如下：
-<code>
-Create TABLE ENROLLS(SNO NUMERIC(6,0) NOT NULL
-CNO CHAR(4) NOT NULL
-GRADE INT
-PRIMARY KEY(SNO,CNO)
-FOREIGN KEY(SNO) REFERENCES STUDENTS(SNO)
-FOREIGN KEY(CNO) REFERENCES COURSES(CNO)
-CHECK ((GRADE IS NULL) or (GRADE BETWEEN 0 AND 100)))
-</code></p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2009/07/23/useful-queries-methods-in-MS-SQL-Server/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2009/07/20/useful-commands-in-MS-SQL-Server/">Sql Server数据库常用的命令语句</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2009-07-20T14:44:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2009/07/20/useful-commands-in-MS-SQL-Server/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><strong>1. 查看数据库的版本</strong> <br/>
-<code>
-select @@version
-</code></p>
-
-<p><strong>2. 查看数据库所在机器操作系统参数</strong>
-<code>
-exec master..xp_msver
-</code></p>
-
-<p><strong>3. 查看数据库启动的参数</strong><br/>
-<code>
-sp_configure
-</code></p>
-
-<p><strong>4. 查看数据库启动时间</strong><br/>
-<code>
-select convert(varchar(30),login_time,120) from   master..sysprocesses where spid=1
-</code>
-查看数据库服务器名和实例名</p>
-
-<pre><code>print 'Server Name...............: ' + convert(varchar(30),@@SERVERNAME) 
-print 'Instance..................: ' + convert(varchar(30),@@SERVICENAME)
-</code></pre>
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2009/07/20/useful-commands-in-MS-SQL-Server/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page19">&larr; Older</a></li>
@@ -828,7 +839,7 @@ print 'Instance..................: ' + convert(varchar(30),@@SERVICENAME)
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

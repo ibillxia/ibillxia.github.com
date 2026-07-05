@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -160,6 +165,161 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2026/07/03/FDE-what-why-and-future/">什么是 FDE？从它的爆火看软件研发的职能大洗牌</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2026-07-03T22:02:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2026/07/03/FDE-what-why-and-future/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><center><img src="/images/2026/IMAG2026070301.png"></center>
+
+
+<p></p>
+
+<p>如果你最近关注 IT、独立开发者或者 AI 创业圈子，一定频繁被一个新词刷屏——FDE（Forward Deployed Engineer，前沿部署工程师 / 前沿开发工程师）。  <br/>
+这个在海外被 OpenAI、Anthropic 疯狂抢夺，国内被字节、阿里、腾讯真金白银用百万年薪高薪诚聘的岗位，正在成为 AI 时代最炙手可热的“黄金赛道”。  <br/>
+很多人会好奇：FDE 到底是个什么角色？它和我们熟知的程序员、售前、实施顾问有什么区别？它是真的行业趋势，还是又一个包装出来的新名词？今天，我们就用一张“硬核对比表”，带大家看懂 FDE 的本质。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2026/07/03/FDE-what-why-and-future/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2026/04/26/how-claude-code-works/">Claude Code源码解读</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2026-04-26T20:08:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2026/04/26/how-claude-code-works/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>这应该是目前看过的最详细、最深入的技术解读系列文章。</p>
+
+<p>第1章原文链接： <a href="https://diwang.info/how-claude-code-works/#/docs/01-overview">https://diwang.info/how-claude-code-works/#/docs/01-overview</a></p>
+
+<blockquote><p><strong>本章导读</strong>：本章从宏观视角介绍 Claude Code 的定位、技术栈和架构全貌。我们会先理解它作为 Agent 与传统编程辅助工具的本质区别（1.1），然后介绍技术选型（1.2）、6 条核心设计原则（1.3）、关键术语（1.3+）、源码目录结构（1.4），最后通过数据流全景（1.5）、启动流程（1.6）和架构总览（1.7）将所有概念串联起来。如果你只想快速了解全貌，可以直接跳到 1.5 数据流全景。</p></blockquote>
+
+<h2>1.1 Claude Code 解决什么问题</h2>
+
+<p>Claude Code 不是一个简单的"CLI 调用大模型"工具。它是 Anthropic 官方推出的 <strong>受控工具循环 Agent（Controlled Tool-Loop Agent）</strong>，专为真实软件工程任务设计。</p>
+
+<h3>从工具到 Agent：三级范式</h3>
+
+<p>要理解 Claude Code 的定位，我们需要先理解 AI 辅助编程的三级范式：</p>
+
+<p><strong>第一级：代码补全</strong>（如 Copilot）。模型的工作是"预测下一行代码"。它看到你的光标位置和上下文，生成一个补全建议。这本质上是一个<strong>单次预测问题</strong>——模型不需要理解整个项目，不需要执行任何操作，只需要根据局部上下文生成合理的代码片段。用户始终是驾驶员，模型只是副驾。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2026/04/26/how-claude-code-works/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2026/03/05/openclaw-trigger-interpretation/">OpenClaw中的Agent Trigger解读</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2026-03-05T10:08:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2026/03/05/openclaw-trigger-interpretation/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h1>1 引言</h1>
+
+<p>自动化非常强大，但如果没有触发器，自动化系统将不会发生任何事情。</p>
+
+<p>在 OpenClaw 中，AI Agent Trigger（AI 代理触发器）是告诉代理什么时候开始执行任务的事件。 <br/>
+它定义了执行的时间、原因以及条件。如果没有触发器，系统会一直处于等待状态； <br/>
+一旦触发器被激活，Agent 工作流就会自动运行。</p>
+
+<center><img src="/images/2026/IMAG2026030501.png"></center>
+
+
+<p></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2026/03/05/openclaw-trigger-interpretation/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -366,6 +526,62 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2025/03/16/music-cover-by-so-vits-svc/">基于so-vits-svc的AI翻唱歌曲教程</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2025-03-16T09:51:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2025/03/16/music-cover-by-so-vits-svc/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>原文链接：<a href="https://zhuanlan.zhihu.com/p/635429751">https://zhuanlan.zhihu.com/p/635429751</a></p>
+
+<p>So-vits-svc(SoftVC VITS Singing Voice Conversion)是一款开源免费AI语音转换软件，最近大火的AI孙燕姿利用的也是这一技术：</p>
+
+<p><a href="https://github.com/svc-develop-team/so-vits-svc">github.com/svc-develop-team/so-vits-svc</a></p>
+
+<p>so-vits-svc可以通过学习一个人的声音，对另一首歌做音色替换。所需的样本量较少，且少量的训练时间就可以得到不错的效果。</p>
+
+<p>但如果要真的跑so-vits-svc，步骤非常多，目前的门槛还是很高的。B站上有大神做了整合包，这个门槛会稍微低一点：</p>
+
+<iframe src="//player.bilibili.com/player.html?isOutside=true&aid=695334884&bvid=BV1H24y187Ko&cid=1110252582&p=1" 
+scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"
+style="width: 100%; height: 500px; max-width: 900px;"></iframe>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2025/03/16/music-cover-by-so-vits-svc/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2025/01/22/transformer-attention-guide/">大模型入门指南：Transformer与Attention机制</a></h1>
     
     
@@ -460,229 +676,6 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2025/01/03/llm-recommendation-industry-practice/">【蘑菇先生】工业界大模型推荐实战经验梳理</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2025-01-03T10:31:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2025/01/03/llm-recommendation-industry-practice/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>原文链接：<a href="https://zhuanlan.zhihu.com/p/7387477310">https://zhuanlan.zhihu.com/p/7387477310</a></p>
-
-<p>大家好，我是蘑菇先生。好久不见，今天盘点下2024年工业界大模型在搜广推上的实战落地型工作。业界工作大体分为两类：</p>
-
-<ul>
-<li><p>用大模型做数据和知识增强、提取表征、通过prompt将推荐转成对话驱动的任务等，本质上没有修改LLM，属于信息增强和补充方法，无法直接建模海量协同信号。</p></li>
-<li><p>修改LLM直接建模搜广推海量数据中的协同信号，对输入输出范式改造，通过预训练/微调等过程建模海量数据，让模型同时拥有通用的世界知识和垂直领域海量协同信息。是能实现搜广推大模型scaling的前提，需要更复杂的工程架构支持。</p></li>
-</ul>
-
-
-<p>第一类工作层出不穷，大部分在工业界无法惊起水花，属于学术性的探索居多。第二类工作寥寥无几，需要资源算力和业务场景等支撑，但也是搜广推值得探索的前沿方向之一。本文重点分享第二类工作。本次分享4篇文章：GRs(Meta)、HLLMs(字节)、NoteLLM(小红书)、NoteLLM-2(小红书)等工作，基本都在各自场景验证了收益，最近又重读了下，常读常新，做一些梳理分享给大家。涵盖目前推荐系统两类主流范式：</p>
-
-<ul>
-<li><p>表征学习：NoteLLM\NoteLLM-2提供了一种使用LLMs训练item表征的范式，通过海量数据中的“共现”协同信号，应用对比学习目标来微调LLMs并提取多模态的item表征。学习的item表征可以用于I2I召回、排序特征提取器等。</p></li>
-<li><p>模型预估：GRs和HLLMs通过改造输入数据为行为序列，在自回归设定下，可以建模海量用户行为，从而达到推荐的目的。二者既可以作为召回模型、也可以用作排序模型，用于CXR预估。但二者在输入、架构、目标方面存在较大差异，下文会介绍。</p></li>
-</ul>
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2025/01/03/llm-recommendation-industry-practice/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2024/07/19/hulu-video-ads-algorithms/">Hulu视频广告系统中的算法实践</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2024-07-19T14:40:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2024/07/19/hulu-video-ads-algorithms/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>原文链接：<a href="https://www.infoq.cn/article/ko9yxouspj4kuoh9jut4">https://www.infoq.cn/article/ko9yxouspj4kuoh9jut4</a></p>
-
-<h1>概述</h1>
-
-<h2>Hulu 的广告产品</h2>
-
-<p>首先介绍一下 Hulu 以及 Hulu 的广告产品形态。</p>
-
-<p>Hulu 是一家美国的提供专业视频点播与直播的服务平台，成立于 2006 年，目前由迪士尼控股，拥有近 3000 万付费订阅用户，是全美用户数量增长最快的流媒体平台。</p>
-
-<p>① 产品形态：点播，直播，回看等；</p>
-
-<p>② 广告形态：以视频流中的 15 秒、30 秒的视频广告短片为主；</p>
-
-<p>③ 广告特点：</p>
-
-<ul>
-<li><p>以品牌类广告为主，品牌类广告看重长期效果，品牌的曝光度，用户认知等等；</p></li>
-<li><p>采用 CPM ( Cost Per Mille，千次展示 ) 方式计费，即无论用户是否点击，按照展示次数计价；</p></li>
-<li><p>以担保式广告订单为主，广告主希望其品牌曝光有一定量的保障，例如，某品牌希望在指定地区给指定用户群投放指定的次数；</p></li>
-<li><p>质量要求非常高，包括清晰度、创意、制作的精良程度等等。</p></li>
-</ul>
-
-
-<center><img src="/images/2024/IMAG2024071901.png"></center>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2024/07/19/hulu-video-ads-algorithms/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2024/07/15/tensorflow-onnx-tensorrt-inference/">使用TensorFlow、ONNX和TensorRT加速深度学习推理</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2024-07-15T15:17:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2024/07/15/tensorflow-onnx-tensorrt-inference/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>原文链接：<a href="https://developer.nvidia.cn/blog/speeding-up-deep-learning-inference-using-tensorflow-onnx-and-tensorrt/">https://developer.nvidia.cn/blog/speeding-up-deep-learning-inference-using-tensorflow-onnx-and-tensorrt/</a></p>
-
-<p>从 TensorRT 7 . 0 开始， Universal Framework Format（ UFF ）被弃用。在本文中，您将学习如何使用新的 TensorFlow -ONNX- TensorRT 工作流部署经过 TensorFlow 培训的深度学习模型。图 1 显示了 TensorRT 的高级工作流。</p>
-
-<center><img src="/images/2024/IMAG2024071501.png"></center>
-
-
-<p>图 1 。 TensorRT 是一种推理加速器。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2024/07/15/tensorflow-onnx-tensorrt-inference/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2024/07/09/causal-inference-complex-ab-testing/">【DataFun】因果推断与复杂AB测试</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2024-07-09T15:51:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2024/07/09/causal-inference-complex-ab-testing/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>24年7月5-6北京站</h2>
-
-<h2><strong>eBay 基于Uplift Model的优惠券分发优化</strong></h2>
-
-<p><a href="https://drive.weixin.qq.com/s?k=AJEAIQdfAAoRew3eteAZgAQAbMAKM#/preview?fileId=s.1970325010981265.7204251960EC_f.720425750F67V">https://drive.weixin.qq.com/s?k=AJEAIQdfAAoRew3eteAZgAQAbMAKM#/preview?fileId=s.1970325010981265.7204251960EC_f.720425750F67V</a></p>
-
-<center><img src="/images/2024/IMAG2024070901.png"></center>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2024/07/09/causal-inference-complex-ab-testing/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page2">&larr; Older</a></li>
@@ -717,7 +710,7 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

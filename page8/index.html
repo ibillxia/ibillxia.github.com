@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -160,6 +165,211 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2015/10/28/mysql-charset-and-confusion/">MySQL乱码问题详解与解决方案</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2015-10-28T17:12:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2015/10/28/mysql-charset-and-confusion/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>本文节选自<a href="http://cenalulu.github.io/mysql/mysql-mojibake/">10分钟学会理解和解决MySQL乱码问题</a>   <br/>
+PS: 原文博主通过MySQL垂直深耕，成功进入Facebook了，祝福。</p>
+
+<h2>1. MySQL乱码的成因</h2>
+
+<center><img src="/images/2015/IMAG2015102801.png"></center>
+
+
+<p></p>
+
+<p>要了解为什么会出现乱码，需要理解从客户端发起请求到MySQL存储数据，再到取回客户端的过程中，哪些环节会有编码/解码的行为。</p>
+
+
+<p></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2015/10/28/mysql-charset-and-confusion/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2015/03/26/google-cpp-style-guide/">Google C++ 编程规范要点总结</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2015-03-26T18:45:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2015/03/26/google-cpp-style-guide/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><center><img src="/images/2015/IMAG2015032601.png"></center>
+
+
+<p>Google C++ Style Guide是业界最为著名的C++编程规范之一。本文对其核心要点进行梳理总结，涵盖头文件管理、命名规范、类设计、内存管理等方面。</p>
+
+<h1>1. 头文件（Header Files）</h1>
+
+<p>通常每个 <code>.cc</code> 文件应该有一个配套的 <code>.h</code> 文件. 常见的例外情况包括单元测试和仅有 <code>main()</code> 函数的 <code>.cc</code> 文件.   <br/>
+正确使用头文件会大大改善代码的可读性和执行文件的大小、性能.</p>
+
+<ul>
+<li>每个.cc文件都应有一个对应的.h文件</li>
+<li>使用#define保护头文件防止多重包含，格式：<code>PROJECT_PATH_FILE_H_</code></li>
+<li>尽量使用前置声明（Forward Declarations）减少 <code>#include</code> 的数量</li>
+<li>内联函数不超过10行</li>
+</ul>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2015/03/26/google-cpp-style-guide/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2015/01/25/hui-hang-gu-dao/">徽杭古道之行</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2015-01-25T22:30:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2015/01/25/hui-hang-gu-dao/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>这一阵子一直都在忙着写论文，改论文，改论文，再改论文，还是该论文，上周末终于抽出一点时间去离杭州不远的徽杭古道玩了两天，这周又忙于专利、预审、写开题报告、考驾照等等等，所以拖到现在才写这个游记（其实主要是帖照片了），我也是醉了。</p>
+
+<p>下面是徽杭古道安徽绩溪入口处，大约12点左右就到这儿了。注意要在这个地方买票哦（全价￥68），检票口在后面。。。</p>
+
+<center><img src="/images/2015/IMAG2015012501.jpg"></center>
+
+
+<p></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2015/01/25/hui-hang-gu-dao/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2015/01/01/congcong-2014/">匆匆2014</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2015-01-01T13:30:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2015/01/01/congcong-2014/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><center><img src="/images/2015/IMAG2015010101.jpg"></center>
+
+
+<p>匆匆又一年。</p>
+
+<p>这段时间一直都在忙着写毕业论文，快一个月没有更新博客了，昨天是2014最后一天，也是学校举行的第一个学生节，在去紫荆港吃免费晚餐前将论文的模板提交到了<a href="https://github.com/ibillxia/zjuthesis">github</a>，这也是2014年最后一次commit了。在校园的最后一个跨年和元旦，就这样一个人在风雨操场看现场晚会度过了。今天是新年的第一天，又是一个人宅在实验室边听着二次元plus萌系的SNH48的『化作樱花树』边写着这篇本该昨天写的年终总结。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2015/01/01/congcong-2014/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -490,256 +700,6 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2014/10/19/insight-into-stl-5-algorithm-2-numeric-algorithms/">深入理解STL源码(5.2) 算法之数值算法</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-10-19T20:28:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2014/10/19/insight-into-stl-5-algorithm-2-numeric-algorithms/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>本文主要介绍STL中的数值算法，主要涉及到的源码文件有 <code>stl_numberic.h</code>、<code>numeric</code>、<code>stl_relops.h</code> 等。</p>
-
-<p>STL 数值算法主要包含以下几个算法（来自<a href="http://www.cplusplus.com/reference/numeric/">C++文档</a>）：</p>
-
-<ul>
-<li>accumulate: Accumulate values in range</li>
-<li>adjacent_difference: Compute adjacent difference of range</li>
-<li>inner_product: Compute cumulative inner product of range</li>
-<li>partial_sum: Compute partial sums of range</li>
-<li>iota: Store increasing sequence</li>
-<li>power: power(x,n) 1 multiply by x n times (not in C++ standard)</li>
-</ul>
-
-
-<p>下面一一介绍每个算法的实现。</p>
-
-<h3>1. accumulate</h3>
-
-<p>该算法计算 init 和区间 [first, last) 内所有元素的总和。注意，必须提供 init 的初始值，这样即使 first=last 区间为空，仍能得到一个明确定义的值。当 init=0 时，即为计算 [first, last) 区间内所有元素的总和。具体实现有两个版本，如下：</p>
-
-<pre><code class="cpp">template &lt;class _InputIterator, class _Tp&gt;
-_Tp accumulate(_InputIterator __first, _InputIterator __last, _Tp __init){
-  __STL_REQUIRES(_InputIterator, _InputIterator); // concept check
-  for ( ; __first != __last; ++__first)
-    __init = __init + *__first; // 求和
-  return __init;
-}
-template &lt;class _InputIterator, class _Tp, class _BinaryOperation&gt;
-_Tp accumulate(_InputIterator __first, _InputIterator __last, _Tp __init, _BinaryOperation __binary_op){
-  __STL_REQUIRES(_InputIterator, _InputIterator); // concept check
-  for ( ; __first != __last; ++__first)
-    __init = __binary_op(__init, *__first); // 指定二元操作
-  return __init;
-}
-</code></pre>
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/10/19/insight-into-stl-5-algorithm-2-numeric-algorithms/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2014/10/12/insight-into-stl-5-algorithm-1-overview/">深入理解STL源码(5.1) 算法</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-10-12T21:30:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2014/10/12/insight-into-stl-5-algorithm-1-overview/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>1. 算法概述</h2>
-
-<p>算法（Algorithm）是一个计算的具体步骤，常用于计算、数据处理和自动推理。Donald Knuth 在他的著作 The Art of Computer Programming 里对算法的特征归纳（来自wiki）：</p>
-
-<ul>
-<li>输入：一个算法必须有零个或以上输入量。</li>
-<li>输出：一个算法应有一个或以上输出量，输出量是算法计算的结果。</li>
-<li>明确性：算法的描述必须无歧义，以保证算法的实际执行结果是精确地符合要求或期望，通常要求实际运行结果是确定的。</li>
-<li>有限性：依据图灵的定义，一个算法是能够被任何图灵完备系统模拟的一串运算，而图灵机只有有限个状态、有限个输入符号和有限个转移函数（指令）。而一些定义更规定算法必须在有限个步骤内完成任务。</li>
-<li>有效性：又称可行性。能够实现，算法中描述的操作都是可以通过已经实现的基本运算执行有限次来实现。</li>
-</ul>
-
-
-<p>算法的核心是创建问题抽象的模型和明确求解目标，常见的算法有分治法、贪婪算法、动态规划、平摊分析等。再好的编程技巧，也无法让一个笨拙的算法起死回生，选择了错误的算法，便注定了失败的命运。</p>
-
-<p>算法的<strong>时间复杂度</strong>是指算法需要消耗的时间资源。一般来说，计算机算法是问题规模 $n$ 的函数 $f(n)$ ，算法的时间复杂度也因此记做：</p>
-
-<center> $T(n) = O(f(n))$ </center>
-
-
-<p>
-算法执行时间的增长率与$f(n)$的增长率正相关，称作渐近时间复杂度（Asymptotic Time Complexity），简称时间复杂度。
-常见的时间复杂度有：常数阶 $O(1)$ ,对数阶 $O({log}_ {2}n)$ ,线性阶 $O(n)$ , 线性对数阶 $O(n{log}_ {2} n)$ ,平方阶 $O(n<sup>2</sup> )$ ，立方阶 $O(n<sup>3</sup> )$ ，...， k次方阶 $O( n<sup>k</sup> )$ ,指数阶 $O( 2<sup>n</sup> )$ 。随着问题规模 $n$ 的不断增大，上述时间复杂度不断增大，算法的执行效率越低。</p>
-
-<p>算法的<strong>空间复杂度</strong>是指算法需要消耗的空间资源。其计算和表示方法与时间复杂度类似，一般都用复杂度的渐近性来表示。同时间复杂度相比，空间复杂度的分析要简单得多。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/10/12/insight-into-stl-5-algorithm-1-overview/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2014/09/27/insight-into-stl-4-associative-containers-5-hashset-and-hashmap/">深入理解STL源码(4.5) 关联式容器之hashset和hashmap</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-09-27T21:30:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2014/09/27/insight-into-stl-4-associative-containers-5-hashset-and-hashmap/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>本文涉及到 SGI STL 源码的文件主要是 <code>stl_hash_set.h</code>、<code>stl_hash_map.h</code> 等文件。</p>
-
-<h2>1. hashset 和 hash_multi_set</h2>
-
-<p>需要说明的是，STL 标准只规范了复杂度与接口，并没有规范实现方法，但 STL 实现的版本中 set 大多以 RB-tree 为底层机制，SGI STL 在实现了以 RB-tree 为底层机制的 set 外，还实现了以 hashtable 为底层机制的 hashset。<br/>
-和 set 一样，hashset 的键值（key）和实值（value）是同一个字段，不同的是 set 默认是自动排序的，而 hashset 则是无序的。除此之外，hashset 与 set 的对外接口完全相同。<br/>
-这里还有一种称为 hash_multi_set 的集合，它同 multiset 类似，允许键值重复，而上面的 hashset 则不允许。下面是 hashset 的定义的主要代码：</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/09/27/insight-into-stl-4-associative-containers-5-hashset-and-hashmap/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2014/09/13/insight-into-stl-4-associative-containers-4-hashtable/">深入理解STL源码(4.4) 关联式容器之hashtable</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-09-13T21:30:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2014/09/13/insight-into-stl-4-associative-containers-4-hashtable/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>本文涉及到 SGI STL 源码的文件主要是 <code>stl_hashtable.h</code>、<code>stl_hash_fun.h</code> 等文件。</p>
-
-<h2>1. hashtable 简介</h2>
-
-<p>在数据结构中我们知道，有种数据结构的插入、删除、查找等操作的性能是常数时间，但需要比元素个数更多的空间，这种数据结构就是哈希表。哈希表的基本思想是，将数据存储在与其数值大小相关的地方，比如对该数取模，然后存储在以余数为下表的数组中。但这样会出现一个问题，就是可能会有多个数据被映射到同一个存储位置，即出现了所谓的“碰撞”。哈希表的主要内容就是解决“碰撞”问题，一般而言有以下几种方法：线性探测、二次探测、开链等。</p>
-
-<h4>线性探测</h4>
-
-<p>简单而言，就是在出现“碰撞”后，寻找当前位置以后的空档，然后存入。如果找到尾部都没有空档，则从头部重新开始找。只要空间大小比元素个数大，总能找到的。相应的，元素的查找和删除也与普通的数组不同，查找如果直接定位到相应位置并找到或是空档，就可以确定存在或不存在，而如果定位到当前位置非空且与待查找的元素不同，则要依序寻找后续位置的元素，直到找到或移到了空档。删除则是采用懒惰删除策略，即只标记删除记号，实际删除操作则待表格重新整理时再进行。</p>
-
-<h4>二次探测</h4>
-
-<p>与线性探测类似，但向后寻找的策略是探测距当前位置为平方数的位置，即 $index = H+i<em>^{2}$ </em>。但这样会有一个问题，那就是能否保证每次探测的是不同的位置，即是否存在某次插入时，探测完一圈后回到自己而出现死循环。</p>
-
-<h4>开链</h4>
-
-<p>这种方法是将出现冲突的元素放在一个链表中，而哈希表中只存储这些链表的首地址。SGI STL中就是使用这种方法来解决“碰撞”的。</p>
-
-<h2>2. hashtable 的数据结构</h2>
-
-<p>由于使用开链的方法解决冲突，所以要维护两种数据结构，一个是 hash table，在 STL 中称为 buckets，用 vector 作为容器；另一个是链表，这里没有使用 list 或 slist 这些现成的数据结构，而是使用自定义 <code>__hashtable_node</code> ，相关定义具体如下：</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/09/13/insight-into-stl-4-associative-containers-4-hashtable/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page9">&larr; Older</a></li>
@@ -776,7 +736,7 @@ _Tp accumulate(_InputIterator __first, _InputIterator __last, _Tp __init, _Binar
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

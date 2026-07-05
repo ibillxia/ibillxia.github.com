@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -160,6 +165,270 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2010/07/18/UML-based-library-management-system-requirement-analysis-and-system-design/">基于UML的图书管理系统的需求分析</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-07-18T10:06:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2010/07/18/UML-based-library-management-system-requirement-analysis-and-system-design/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>一个图书馆的图书资料库在正常运转中总是面对大量的读者信息、书籍信息以及两者相互作用产生的借书信息、还书信息。
+图书馆作为一个信息资源的集散地，图书和用户借阅资料繁多，包含着很多的信息数据。图书管理系统的开发和应用主要通过
+两个步骤来实现：首先是基于系统功能的需求分析，其次是系统模型的设计和实现。
+</p>
+
+
+
+
+<h2>1.需求分析</h2>
+
+
+<p>需求分析是软件工程过程的一个重要阶段,其中一个主要任务是确定系统的功能需求,采用面向对象方法,基于UML的可视化
+系统需求分析,因为有用户的积极参与,既可以加快设计者对于问题的理解,又能够在系统描述方面减少语义差异,保证分析的
+正确性。需求分析的目标就是建立需求模型,即从功能需求出发建立用例模型, UML的用例视图从用户的需求中提取,以盒图的
+方式描述待开发的系统的功能需求。每个用例都指定了客户的需求即他们需要系统干什么。用例图为设计活动不仅记录需求
+而且还提供了一种挖掘的信息, 它记录了需求到设计结果之间的映射关系,能够确保设计结果具有明确的根据或者说具有可
+维护性,基于UML的软件开发过程是以用例驱动的。</p>
+
+
+
+
+<p>首先我们进行角色识别，角色识别的任务是找出所有可能与系统发生交互行为的外部实体、对象、系统。它们的行为不受系统控制，
+但是可以提供输入给系统。对于一所大学的图书管理系统，基本的功能是完成图书的借阅和相关信息的管理，服务的对象有本科生，
+研究生，教师，及其他学校的学生，还有社会人员，这些人可归结为一类即读者。而为帮助读者顺利完成借还书的可以是工作人员，
+可以是自动借还书机，他们可以归结为一类即图书管理人员。因此对于一个图书管理系统主要有两类角色，读者、图书管理员。</p>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/07/18/UML-based-library-management-system-requirement-analysis-and-system-design/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2010/04/10/10-stories-in-management/">管理的十个寓言故事</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-04-10T12:36:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2010/04/10/10-stories-in-management/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>▲ (一)相信自己是一只雄鹰 ▲</h2>
+
+
+<p>一个人在高山之巅的鹰巢里，抓到了一只幼鹰，他把幼鹰带回家，养在鸡笼里。这只幼鹰和鸡一起啄食、嬉闹和休息。它以为自己是一只鸡。 
+这只鹰渐渐长大，羽翼丰满了，主人想把它训练成猎鹰，可是由于终日和鸡混在一起，它已经变得和鸡完全一样，根本没有飞的愿望了。 主人试了
+各种办法，都毫无效果，最后把它带到山顶上，一把将它扔了出去。这只鹰像块石头似的，直掉下去，慌乱之中它拼命地扑打翅膀，就这样，它
+终于飞了起来！ </p>
+
+
+
+
+<p><strong>秘诀1：磨练召唤成功的力量。</strong></p>
+
+
+
+
+<h2>▲ (二)五枚金币 ▲</h2>
+
+
+<p>有个叫阿巴格的人生活在内蒙古草原上。有一次，年少的阿巴格和他爸爸在草原上迷了路，阿巴格又累又怕，到最后快走不动了。爸爸就从兜里
+掏出５枚硬币，把一枚硬币埋在草地里，把其余４枚放在阿巴格的手上，说：“人生有５枚金币，童年、少年、青年、中年、老年各有一枚，你现在
+才用了一枚，就是埋在草地里的那一枚，你不能把５枚都扔在草原里，你要一点点地用，每一次都用出不同来，这样才不枉人生一世。今天我们一定
+要走出草原，你将来也一定要走出草原。世界很大，人活着，就要多走些地方，多看看，不要让你的金币没有用就扔掉。”在父亲的鼓励下，那天阿巴格
+走出了草原。长大后，阿巴格离开了家乡，成了一名优秀的船长。 </p>
+
+
+
+
+<p><strong>秘诀2：珍惜生命，就能走出挫折的沼泽地。</strong></p>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/04/10/10-stories-in-management/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2009/07/23/useful-queries-methods-in-MS-SQL-Server/">Sql Server数据库常用的查询语句</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2009-07-23T22:31:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2009/07/23/useful-queries-methods-in-MS-SQL-Server/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>一、表操作</h2>
+
+<p>例 1 对于表的教学管理数据库中的表 STUDENTS ，可以定义如下：
+<code>
+Create TABLE STUDENTS (SNO NUMERIC (6, 0) NOT NULL
+SNAME CHAR (8) NOT NULL
+AGE NUMERIC(3,0)
+SEX CHAR(2)
+BPLACE CHAR(20)
+PRIMARY KEY(SNO))
+</code></p>
+
+<p>例 2 对于表的教学管理数据库中的表 ENROLLS ，可以定义如下：
+<code>
+Create TABLE ENROLLS(SNO NUMERIC(6,0) NOT NULL
+CNO CHAR(4) NOT NULL
+GRADE INT
+PRIMARY KEY(SNO,CNO)
+FOREIGN KEY(SNO) REFERENCES STUDENTS(SNO)
+FOREIGN KEY(CNO) REFERENCES COURSES(CNO)
+CHECK ((GRADE IS NULL) or (GRADE BETWEEN 0 AND 100)))
+</code></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2009/07/23/useful-queries-methods-in-MS-SQL-Server/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2009/07/20/useful-commands-in-MS-SQL-Server/">Sql Server数据库常用的命令语句</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2009-07-20T14:44:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2009/07/20/useful-commands-in-MS-SQL-Server/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>1. 查看数据库的版本</strong> <br/>
+<code>
+select @@version
+</code></p>
+
+<p><strong>2. 查看数据库所在机器操作系统参数</strong>
+<code>
+exec master..xp_msver
+</code></p>
+
+<p><strong>3. 查看数据库启动的参数</strong><br/>
+<code>
+sp_configure
+</code></p>
+
+<p><strong>4. 查看数据库启动时间</strong><br/>
+<code>
+select convert(varchar(30),login_time,120) from   master..sysprocesses where spid=1
+</code>
+查看数据库服务器名和实例名</p>
+
+<pre><code>print 'Server Name...............: ' + convert(varchar(30),@@SERVERNAME) 
+print 'Instance..................: ' + convert(varchar(30),@@SERVICENAME)
+</code></pre>
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2009/07/20/useful-commands-in-MS-SQL-Server/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -298,7 +567,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

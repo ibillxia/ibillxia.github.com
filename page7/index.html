@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -160,6 +165,200 @@ $(document).bind('DOMNodeInserted', function(event) {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2016/11/15/sensors-analytics-architecture/">神策分析的技术选型与架构实现</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2016-11-15T21:17:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2016/11/15/sensors-analytics-architecture/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><center><img src="/images/2016/IMAG2016111500.png"></center>
+
+
+<p>很多朋友很想知道神策分析（Sensors Analytics）是如何实现在每天十亿级别数据的情况下可以做到秒级导入和秒级查询，是如何做到不需要预先指定指标和维度就能实现多维查询的。今天正好在这篇文章里面，和大家交流一下我们的技术选型与具体的架构实现，希望能够对大家有所启发。</p>
+
+<p>当然，脱离客户需求谈产品设计，不太现实；而脱离产品设计，纯粹谈技术选型与架构实现，也不现实。因此，我们首先会跟大家探讨一下神策分析从产品角度，是如何从客户需求抽象产品设计的，而产品设计，又是如何确定我们的技术选型。然后，我们则会从产品的整体架构出发，逐步介绍每一个模块和子系统的具体实现。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2016/11/15/sensors-analytics-architecture/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2016/09/22/hive-join-usage-guide/">【简单之美】Hive JOIN使用详解</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2016-09-22T15:55:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2016/09/22/hive-join-usage-guide/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Hive是基于Hadoop平台的，它提供了类似SQL一样的查询语言HQL。有了Hive，如果使用过SQL语言，并且不理解Hadoop MapReduce运行原理，也就无法通过编程来实现MR，但是你仍然可以很容易地编写出特定查询分析的HQL语句，通过使用类似SQL的语法，将HQL查询语句提交Hive系统执行查询分析，最终Hive会帮你转换成底层Hadoop能够理解的MR Job。</p>
+
+<p>对于最基本的HQL查询我们不再累述，这里主要说明Hive中进行统计分析时使用到的JOIN操作。在说明Hive JOIN之前，我们先简单说明一下，Hadoop执行MR Job的基本过程（运行机制），能更好的帮助我们理解HQL转换到底层的MR Job后是如何执行的。我们重点说明MapReduce执行过程中，从Map端到Reduce端这个过程（Shuffle）的执行情况，如图所示（来自《Hadoop: The Definitive Guide》）：</p>
+
+<center><img src="/images/2016/IMAG2016092201.png"></center>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2016/09/22/hive-join-usage-guide/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2016/09/11/data-driven-precision-marketing/">【美团】数据驱动精准化营销在大众点评的实践</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2016-09-11T23:25:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2016/09/11/data-driven-precision-marketing/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>精准化营销一直以来都是互联网营销业务在细分市场下快速获取用户和提高转化的利器。在移动互联网爆发的今天，数据量呈指数增长，如何在移动和大数据场景下用数据驱动进行精准营销，从而提高营销效能，成为营销业务部门的主要挑战之一，同时也是大数据应用的一个重要研究方向。本文通过数据体系架构和技术实现案例，分享美团大众点评数据应用团队在这个方向上的一些尝试和实践经验。</p>
+
+<h2>总体框架</h2>
+
+<p>在介绍数据体系和框架前，为了方便大家理解，先简单阐述一下O2O营销的基本组成：O2O营销是由营销发生的渠道（站内，站外）与营销的主题业务（流量，交易）两个维度组成的，其中产生了多种营销的形态，如精准化用户营销活动、DSP的精准投放、渠道价值排名和反作弊等，数据分析和挖掘在这些环节都能发挥很大的价值。本文主要阐述站内的精准化用户营销活动。</p>
+
+<p>一个站内用户运营活动的生命周期大概可以归纳为：确定目标、选取活动对象、设计活动方案、活动配置与上线、线上精准营销与动态优化以及效果监控与评估六个环节。如下图所示。</p>
+
+<center><img src="/images/2016/IMAG2016091101.png"></center>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2016/09/11/data-driven-precision-marketing/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2016/06/08/neural-network-parameter-settings/">神经网络模型中参数设置的一些经验</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2016-06-08T09:36:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2016/06/08/neural-network-parameter-settings/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><center><img src="/images/2016/IMAG2016060801.png"></center>
+
+
+<h1>一、神经网络中隐层数和隐层节点数问题的讨论</h1>
+
+<h2>1.1 隐层数</h2>
+
+<p>一般认为，增加隐层数可以降低网络误差（也有文献认为不一定能有效降低），提高精度，但也使网络复杂化，从而增加了网络的训练时间和出现“过拟合”的倾向。一般来讲应设计神经网络应优先考虑3层网络（即有1个隐层）。一般地，靠增加隐层节点数来获得较低的误差，其训练效果要比增加隐层数更容易实现。对于没有隐层的神经网络模型，实际上就是一个线性或非线性（取决于输出层采用线性或非线性转换函数型式）回归模型。因此，一般认为，应将不含隐层的网络模型归入回归分析中，技术已很成熟，没有必要在神经网络理论中再讨论之。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2016/06/08/neural-network-parameter-settings/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -461,211 +660,6 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     </article>
   
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2015/10/28/mysql-charset-and-confusion/">MySQL乱码问题详解与解决方案</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2015-10-28T17:12:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2015/10/28/mysql-charset-and-confusion/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>本文节选自<a href="http://cenalulu.github.io/mysql/mysql-mojibake/">10分钟学会理解和解决MySQL乱码问题</a>   <br/>
-PS: 原文博主通过MySQL垂直深耕，成功进入Facebook了，祝福。</p>
-
-<h2>1. MySQL乱码的成因</h2>
-
-<center><img src="/images/2015/IMAG2015102801.png"></center>
-
-
-<p></p>
-
-<p>要了解为什么会出现乱码，需要理解从客户端发起请求到MySQL存储数据，再到取回客户端的过程中，哪些环节会有编码/解码的行为。</p>
-
-
-<p></p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2015/10/28/mysql-charset-and-confusion/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2015/03/26/google-cpp-style-guide/">Google C++ 编程规范要点总结</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2015-03-26T18:45:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2015/03/26/google-cpp-style-guide/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><center><img src="/images/2015/IMAG2015032601.png"></center>
-
-
-<p>Google C++ Style Guide是业界最为著名的C++编程规范之一。本文对其核心要点进行梳理总结，涵盖头文件管理、命名规范、类设计、内存管理等方面。</p>
-
-<h1>1. 头文件（Header Files）</h1>
-
-<p>通常每个 <code>.cc</code> 文件应该有一个配套的 <code>.h</code> 文件. 常见的例外情况包括单元测试和仅有 <code>main()</code> 函数的 <code>.cc</code> 文件.   <br/>
-正确使用头文件会大大改善代码的可读性和执行文件的大小、性能.</p>
-
-<ul>
-<li>每个.cc文件都应有一个对应的.h文件</li>
-<li>使用#define保护头文件防止多重包含，格式：<code>PROJECT_PATH_FILE_H_</code></li>
-<li>尽量使用前置声明（Forward Declarations）减少 <code>#include</code> 的数量</li>
-<li>内联函数不超过10行</li>
-</ul>
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2015/03/26/google-cpp-style-guide/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2015/01/25/hui-hang-gu-dao/">徽杭古道之行</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2015-01-25T22:30:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2015/01/25/hui-hang-gu-dao/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>这一阵子一直都在忙着写论文，改论文，改论文，再改论文，还是该论文，上周末终于抽出一点时间去离杭州不远的徽杭古道玩了两天，这周又忙于专利、预审、写开题报告、考驾照等等等，所以拖到现在才写这个游记（其实主要是帖照片了），我也是醉了。</p>
-
-<p>下面是徽杭古道安徽绩溪入口处，大约12点左右就到这儿了。注意要在这个地方买票哦（全价￥68），检票口在后面。。。</p>
-
-<center><img src="/images/2015/IMAG2015012501.jpg"></center>
-
-
-<p></p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2015/01/25/hui-hang-gu-dao/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2015/01/01/congcong-2014/">匆匆2014</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2015-01-01T13:30:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2015/01/01/congcong-2014/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><center><img src="/images/2015/IMAG2015010101.jpg"></center>
-
-
-<p>匆匆又一年。</p>
-
-<p>这段时间一直都在忙着写毕业论文，快一个月没有更新博客了，昨天是2014最后一天，也是学校举行的第一个学生节，在去紫荆港吃免费晚餐前将论文的模板提交到了<a href="https://github.com/ibillxia/zjuthesis">github</a>，这也是2014年最后一次commit了。在校园的最后一个跨年和元旦，就这样一个人在风雨操场看现场晚会度过了。今天是新年的第一天，又是一个人宅在实验室边听着二次元plus萌系的SNH48的『化作樱花树』边写着这篇本该昨天写的年终总结。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2015/01/01/congcong-2014/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <ul class="pager">
     
     <li class="previous"><a href="/page8">&larr; Older</a></li>
@@ -702,7 +696,7 @@ PS: 原文博主通过MySQL垂直深耕，成功进入Facebook了，祝福。</p
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

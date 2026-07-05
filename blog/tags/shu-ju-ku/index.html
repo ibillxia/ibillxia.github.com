@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -175,10 +180,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Program</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
 		
 		
-		  <span class="tags">Tagged with MySQL数据库字符集编码</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/mysql/'>MySQL</a>, <a class='tag' href='/blog/tags/zi-fu-ji/'>字符集</a>, <a class='tag' href='/blog/tags/shu-ju-ku/'>数据库</a>, <a class='tag' href='/blog/tags/bian-ma/'>编码</a></span>
 		
 		</footer>
 		
@@ -202,10 +207,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Engineering</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/engineering/'>Engineering</a></span>
 		
 		
-		  <span class="tags">Tagged with SQL数据库</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/sql/'>SQL</a>, <a class='tag' href='/blog/tags/shu-ju-ku/'>数据库</a></span>
 		
 		</footer>
 		
@@ -226,10 +231,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Engineering</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/engineering/'>Engineering</a></span>
 		
 		
-		  <span class="tags">Tagged with SQL数据库</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/sql/'>SQL</a>, <a class='tag' href='/blog/tags/shu-ju-ku/'>数据库</a></span>
 		
 		</footer>
 		
@@ -260,7 +265,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>

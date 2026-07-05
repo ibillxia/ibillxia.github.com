@@ -62,8 +62,13 @@ function addBlankTargetForLinks () {
   });
 }
 
-$(document).bind('DOMNodeInserted', function(event) {
+$(function () {
   addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 });
 </script>
 <!-- MathJax -->
@@ -94,7 +99,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 </script>
 
 <script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
 
 
@@ -106,7 +111,7 @@ $(document).bind('DOMNodeInserted', function(event) {
 
     (function() {
       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
@@ -175,10 +180,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Life</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/life/'>Life</a></span>
 		
 		
-		  <span class="tags">Tagged with 生活运动旅游</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/lu-you/'>旅游</a>, <a class='tag' href='/blog/tags/sheng-huo/'>生活</a>, <a class='tag' href='/blog/tags/yun-dong/'>运动</a></span>
 		
 		</footer>
 		
@@ -199,10 +204,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Life</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/life/'>Life</a></span>
 		
 		
-		  <span class="tags">Tagged with ZJU学习生活</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/zju/'>ZJU</a>, <a class='tag' href='/blog/tags/xue-xi/'>学习</a>, <a class='tag' href='/blog/tags/sheng-huo/'>生活</a></span>
 		
 		</footer>
 		
@@ -226,10 +231,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Life</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/life/'>Life</a></span>
 		
 		
-		  <span class="tags">Tagged with 生活豆瓣</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/sheng-huo/'>生活</a>, <a class='tag' href='/blog/tags/dou-ban/'>豆瓣</a></span>
 		
 		</footer>
 		
@@ -250,10 +255,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Life</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/life/'>Life</a></span>
 		
 		
-		  <span class="tags">Tagged with ZJU生活运动</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/zju/'>ZJU</a>, <a class='tag' href='/blog/tags/sheng-huo/'>生活</a>, <a class='tag' href='/blog/tags/yun-dong/'>运动</a></span>
 		
 		</footer>
 		
@@ -274,10 +279,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Life</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/life/'>Life</a></span>
 		
 		
-		  <span class="tags">Tagged with ZJU生活运动</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/zju/'>ZJU</a>, <a class='tag' href='/blog/tags/sheng-huo/'>生活</a>, <a class='tag' href='/blog/tags/yun-dong/'>运动</a></span>
 		
 		</footer>
 		
@@ -298,10 +303,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Life</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/life/'>Life</a></span>
 		
 		
-		  <span class="tags">Tagged with ZJU生活</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/zju/'>ZJU</a>, <a class='tag' href='/blog/tags/sheng-huo/'>生活</a></span>
 		
 		</footer>
 		
@@ -325,10 +330,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Life</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/life/'>Life</a></span>
 		
 		
-		  <span class="tags">Tagged with 生活健康运动</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/jian-kang/'>健康</a>, <a class='tag' href='/blog/tags/sheng-huo/'>生活</a>, <a class='tag' href='/blog/tags/yun-dong/'>运动</a></span>
 		
 		</footer>
 		
@@ -349,10 +354,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Life</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/life/'>Life</a></span>
 		
 		
-		  <span class="tags">Tagged with 生活经典台词</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/sheng-huo/'>生活</a>, <a class='tag' href='/blog/tags/jing-dian-tai-ci/'>经典台词</a></span>
 		
 		</footer>
 		
@@ -376,10 +381,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Life</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/life/'>Life</a></span>
 		
 		
-		  <span class="tags">Tagged with 生活格言修心</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/xiu-xin/'>修心</a>, <a class='tag' href='/blog/tags/ge-yan/'>格言</a>, <a class='tag' href='/blog/tags/sheng-huo/'>生活</a></span>
 		
 		</footer>
 		
@@ -403,10 +408,10 @@ $(document).bind('DOMNodeInserted', function(event) {
 		
 		<footer>
 		
-		  <span class="categories">Posted in Life</span>
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/life/'>Life</a></span>
 		
 		
-		  <span class="tags">Tagged with 管理寓言</span>
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/yu-yan/'>寓言</a>, <a class='tag' href='/blog/tags/guan-li/'>管理</a></span>
 		
 		</footer>
 		
@@ -437,7 +442,7 @@ $(document).bind('DOMNodeInserted', function(event) {
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
       (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>
