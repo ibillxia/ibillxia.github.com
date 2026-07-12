@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: Kaggle | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/kaggle/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Google&Kaggle五天Agent强化课程]]></title>
+    <link href="https://ibillxia.github.io/blog/2026/01/05/5d-agent-course-by-google/"/>
+    <updated>2026-01-05T09:51:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2026/01/05/5d-agent-course-by-google</id>
+    <content type="html"><![CDATA[<p>Kaggle链接：<a href="https://www.kaggle.com/learn-guide/5-day-agents">https://www.kaggle.com/learn-guide/5-day-agents</a></p>
+
+<p>推荐B站up主<a href="https://space.bilibili.com/85645193">碳硅同传</a>的讲解视频：</p>
+
+<p>第一集：</p>
+
+<iframe src="//player.bilibili.com/player.html?isOutside=true&aid=115769501356144&bvid=BV1JSBTB2EMT&cid=34935080758&p=1" 
+scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"
+style="width: 100%; height: 600px; max-width: 900px;"></iframe>
+
+
+
+
+<!--more-->
+
+
+<p>第二集：<a href="https://www.bilibili.com/video/BV19uB2BjEiZ">https://www.bilibili.com/video/BV19uB2BjEiZ</a></p>
+
+<p>第三集：<a href="https://www.bilibili.com/video/BV1fiBYBnEmy">https://www.bilibili.com/video/BV1fiBYBnEmy</a></p>
+
+<p>第四集：<a href="https://www.bilibili.com/video/BV1NEBkBREUF">https://www.bilibili.com/video/BV1NEBkBREUF</a></p>
+
+<p>第五集：<a href="https://www.bilibili.com/video/BV1G6vkBfEjF">https://www.bilibili.com/video/BV1G6vkBfEjF</a></p>
+]]></content>
+  </entry>
+  
+</feed>

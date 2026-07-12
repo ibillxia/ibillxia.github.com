@@ -1,0 +1,1829 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: 大模型 | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/categories/大模型/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[基于so-vits-svc的AI翻唱歌曲教程]]></title>
+    <link href="https://ibillxia.github.io/blog/2025/03/16/music-cover-by-so-vits-svc/"/>
+    <updated>2025-03-16T09:51:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2025/03/16/music-cover-by-so-vits-svc</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/635429751">https://zhuanlan.zhihu.com/p/635429751</a></p>
+
+<p>So-vits-svc(SoftVC VITS Singing Voice Conversion)是一款开源免费AI语音转换软件，最近大火的AI孙燕姿利用的也是这一技术：</p>
+
+<p><a href="https://github.com/svc-develop-team/so-vits-svc">github.com/svc-develop-team/so-vits-svc</a></p>
+
+<p>so-vits-svc可以通过学习一个人的声音，对另一首歌做音色替换。所需的样本量较少，且少量的训练时间就可以得到不错的效果。</p>
+
+<p>但如果要真的跑so-vits-svc，步骤非常多，目前的门槛还是很高的。B站上有大神做了整合包，这个门槛会稍微低一点：</p>
+
+<iframe src="//player.bilibili.com/player.html?isOutside=true&aid=695334884&bvid=BV1H24y187Ko&cid=1110252582&p=1" 
+scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"
+style="width: 100%; height: 500px; max-width: 900px;"></iframe>
+
+
+
+
+<!--more-->
+
+
+<p>但目前网络上关于so-vits-svc的教程，大多没有把从下载、数据准备、模型训练到最终歌曲生成的整个流程讲清楚。</p>
+
+<p>这篇文章会讲述在Windows系统中，利用so-vits-svc进行声音克隆的完整过程。</p>
+
+<p>在进入教程之前你需要满足几个条件：</p>
+
+<ul>
+<li>有N卡，且内存在6G以上，并安装了对应的CUDA环境</li>
+<li>可以登录外网</li>
+</ul>
+
+
+<h1>一、下载so-vits-svc</h1>
+
+<h2>1. 创建新的conda环境</h2>
+
+<p>首先你需要在电脑上安装Anaconda，生成一个新的环境，方便不同Python包的版本管理：</p>
+
+<pre><code>conda create --name so-vits-svc
+</code></pre>
+
+<p>激活该环境：</p>
+
+<pre><code>conda activate so-vits-svc
+</code></pre>
+
+<h2>2. Git clone项目</h2>
+
+<p>首先把该项目下载到本地</p>
+
+<pre><code>git clone https://github.com/svc-develop-team/so-vits-svc.git
+</code></pre>
+
+<p>进入项目文件夹</p>
+
+<pre><code>cd .\so-vits-svc\
+</code></pre>
+
+<h2>3. 安装所需的Python环境</h2>
+
+<pre><code>pip install -r requirements_win.txt
+</code></pre>
+
+<p>注意：安装过程中，可能会有个别包安装失败。安装失败后，可以手动安装，例如我遇到了faiss, edge-tts, fairseq这三个包安装识别，然后自己手动通过pip安装：</p>
+
+<pre><code>pip install faiss-cpu
+pip install edge-tts
+pip install fairseq
+</code></pre>
+
+<h2>4. 下载预训练模型文件</h2>
+
+<p>下载地址：<a href="https://ibm.ent.box.com/s/z1wgl1stco8ffooyatzdwsqn2psd9lrr">checkpoint_best_legacy_500.pt | Powered by Box</a></p>
+
+<p>下载得到checkpoint_best_legacy_500.pt文件，放到.\so-vits-svc\pretrain文件夹中。</p>
+
+<h1>二、准备训练集</h1>
+
+<p>so-vits-svc需要唱歌或者说话的音频文件作为训练集，这里以唱歌的音频为例。</p>
+
+<p>准备训练集时，需要把人声提取出来，去掉和声和伴奏。然后把人声切成30秒以内的片段。</p>
+
+<h2>1. 歌曲下载</h2>
+
+<p>首先你需要下载一个人唱歌的音频，尽量下载无损音质(flac., wav.)，音频的数量建议在20首以上。</p>
+
+<h2>2. 提取人声</h2>
+
+<p>人声的提取需要用到Ultimate Vocal Remover，这是一个基于深度学习的人声、伴奏分离工具:</p>
+
+<p><a href="https://github.com/Anjok07/ultimatevocalremovergui">github.com/Anjok07/ultimatevocalremovergui</a></p>
+
+<p>GitHub上有下载地址：</p>
+
+<p><a href="https://github.com/Anjok07/ultimatevocalremovergui/releases/download/v5.5.0/UVR_v5.5.1_setup.exe">https://github.com/Anjok07/ultimatevocalremovergui/releases/download/v5.5.0/UVR_v5.5.1_setup.exe</a></p>
+
+<p>下载好Ultimate Vocal Remover，需要分别去除伴奏、和声，才能得到干净的人声：</p>
+
+<h3>（1）去除伴奏</h3>
+
+<p>去除伴奏利用MDX-Net：</p>
+
+<center><img src="/images/2025/IMAG2025031601.jpg"></center>
+
+
+<h3>（2）去除和声</h3>
+
+<p>把去除伴奏了的歌曲文件，利用VR Architecture去除和声：</p>
+
+<center><img src="/images/2025/IMAG2025031602.jpg"></center>
+
+
+<p>如果左下角Choose VR Model中只有1_HP-UVR，可以通过Download More Models下载6_HP-Karaoke-UVR这个模型。</p>
+
+<center><img src="/images/2025/IMAG2025031603.jpg"></center>
+
+
+<p>最后就可以得到干净的人声了。</p>
+
+<h2>3. 音频切片</h2>
+
+<p>得到了干净的人声后，需要把音频切成30s以内的片段，且去除没有人声的片段，只保留有人声的片段。</p>
+
+<p>音频切片需要用到开源的Audio Slicer工具：</p>
+
+<p><a href="https://github.com/flutydeer/audio-slicer">github.com/flutydeer/audio-slicer</a></p>
+
+<p>下载地址：<a href="https://github.com/flutydeer/audio-slicer/releases">Releases · flutydeer/audio-slicer</a></p>
+
+<p>添加人声文件，设置好输出文件夹，采用默认设置就可以了：</p>
+
+<center><img src="/images/2025/IMAG2025031604.jpg"></center>
+
+
+<p>最终得到的音频片段：</p>
+
+<center><img src="/images/2025/IMAG2025031605.jpg"></center>
+
+
+<p>数据集准备好后，在.\so-vits-svc\dataset_raw文件夹中新建一个文件夹，命名为该音色的名字，例如：</p>
+
+<blockquote><p>.\so-vits-svc\dataset_raw\jayzhou</p></blockquote>
+
+<p>把所有声音片段放在都放在这个文件夹下。</p>
+
+<h1>三、模型训练</h1>
+
+<h2>1. 导入训练集</h2>
+
+<p>确保激活了conda环境，且当前目录为.\so-vits-svc\，在command window中依次输入</p>
+
+<pre><code>python resample.py
+python preprocess_flist_config.py
+python preprocess_hubert_f0.py
+</code></pre>
+
+<h2>2. 开始训练</h2>
+
+<p>导入训练集后，可以开始训练</p>
+
+<pre><code>python train.py -c configs/config.json -m 44k
+</code></pre>
+
+<p>如果成功开始训练，可以得到每个Epoch的时间、loss以及模型保存的信息：</p>
+
+<center><img src="/images/2025/IMAG2025031606.jpg"></center>
+
+
+<p>建议至少训练1000个Epoch。</p>
+
+<p>可以通过Ctrl+C停止训练。</p>
+
+<h1>四、音色替换</h1>
+
+<h2>1. 准备干净的人声以及伴奏</h2>
+
+<p>so-vits-svc本质是对干净的人声进行音色替换，所以需要做替换的音频，也应该是干净的人声。</p>
+
+<p>下载一首新的歌曲，重复提取人声那一部分，去除和声和伴奏。</p>
+
+<p>去除伴奏的时候，不用勾选Vocal Only，这样就能得到歌曲的伴奏。在后面人声、伴奏混合时可以用到。</p>
+
+<h2>2. 打开WebUI</h2>
+
+<pre><code>python .\webUI.py
+</code></pre>
+
+<p>Running on local URL: http://127.0.0.1:7860</p>
+
+<p>在浏览器中输入http://127.0.0.1:7860，可以打开WebUI：</p>
+
+<center><img src="/images/2025/IMAG2025031607.jpg"></center>
+
+
+<h3>（1）加载模型</h3>
+
+<p>首先导入模型文件，模型文件所在位置：.\so-vits-svc\logs\44k\G_xxxx.pth</p>
+
+<p>然后导入配置文件，配置文件所在位置：.\so-vits-svc\configs\config.json</p>
+
+<p>导入这两个文件后，加载模型，如果成功加载，可以得到音色名称：</p>
+
+<center><img src="/images/2025/IMAG2025031608.jpg"></center>
+
+
+<h3>（2）导入歌曲并替换音色</h3>
+
+<p>将刚才准备的干净人声导入，点击音频转换即可得到转换后的音频：</p>
+
+<center><img src="/images/2025/IMAG2025031609.jpg"></center>
+
+
+<h1>五、人声伴奏混合</h1>
+
+<p>得到转换后的人声音频后，需要把人声和伴奏混合，最简单的方法是利用格式工厂的音频混合功能：</p>
+
+<center><img src="/images/2025/IMAG2025031610.jpg"></center>
+
+
+<p>这种方法不能条件人声和伴奏的比例，如果想要更好地去混音，可以利用AU等专业的音乐处理软件。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[大模型入门指南：Transformer与Attention机制]]></title>
+    <link href="https://ibillxia.github.io/blog/2025/01/22/transformer-attention-guide/"/>
+    <updated>2025-01-22T16:51:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2025/01/22/transformer-attention-guide</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://developer.aliyun.com/article/1655110">https://developer.aliyun.com/article/1655110</a></p>
+
+<center><img src="/images/2025/IMAG2025012201.octet-stream"></center>
+
+
+<p>阿里妹导读</p>
+
+<p>本文档旨在详细阐述当前主流的大模型技术架构如Transformer架构。我们将从技术概述、架构介绍到具体模型实现等多个角度进行讲解。通过本文档，我们期望为读者提供一个全面的理解，帮助大家掌握大模型的工作原理，增强与客户沟通的技术基础。本文档适合对大模型感兴趣的人员阅读。</p>
+
+<!--more-->
+
+
+<h1>论文介绍</h1>
+
+<p>论文名称：《Attention is all you need》</p>
+
+<p>发布时间：2017/06/12</p>
+
+<p>发布单位：Google、多伦多大学</p>
+
+<p>简单摘要：所有LLM的始祖，迈向NLP新时代的基础架构</p>
+
+<p>中文摘要：传统的序列转换模型使用复杂的循环或卷积神经网络，包括编码器和解码器。表现最好的模型会透过注意力机制连接编码器和解码器。</p>
+
+<p>作者团队提出了一种新的简单网络结构，Transformer，完全基于注意力机制，不再使用循环和卷积。</p>
+
+<p>在两个机器翻译任务上进行实验，发现这些模型在质量上的表现优越，并且更容易进行平行运算，训练所需时间明显减少。</p>
+
+<p>该模型在WMT 2014年英德翻译任务上达到了28.4 BLEU，比现有最佳结果（包括整体模型）提高了超过2 BLEU。在WMT 2014年英法翻译任务中，模型在八个GPU上训练3.5天后，取得了新的单模型最佳BLEU分数41.8，训练成本仅为文献中最佳模型的一小部分。</p>
+
+<p>展示出无论是在大量或有限的训练数据下，Transformer在其他任务中的泛化能力，成功应用于英语组成句分析。</p>
+
+<p>论文链接：https://arxiv.org/pdf/1706.03762.pdf</p>
+
+<p>核心技术：模型架构（此处先留下大体印象 encode+decode）</p>
+
+<center><img src="/images/2025/IMAG2025012202.webp"></center>
+
+
+<h1>LLM 浅谈</h1>
+
+<p>很多人认为大模型可以直接回答问题或参与对话，但实际上，它们的核心功能是根据输入的文本预测下一个可能出现的词汇，即“Token”。这种预测能力使得LLM在各种应用中表现出色，包括但不限于：</p>
+
+<p>文本生成：LLM可以生成连贯且有意义的文本段落，用于写作辅助、内容创作等。</p>
+
+<p>问答系统：通过理解问题的上下文，LLM能够生成准确的回答，广泛应用于智能客服和信息检索。</p>
+
+<p>翻译：LLM可以根据上下文进行高质量的语言翻译，支持多语言交流。</p>
+
+<p>文本摘要：LLM能够提取长文档的关键内容，生成简洁的摘要，方便快速理解。</p>
+
+<p>对话系统：LLM可以模拟人类对话，提供自然流畅的互动体验，应用于聊天机器人和虚拟助手。</p>
+
+<p>通过理解Token的概念，我们可以更好地掌握LLM的工作原理及其在实际应用中的强大能力。</p>
+
+<h2>Token</h2>
+
+<h3>样例</h3>
+
+<p>谈到 token，不得不提到近期一个大模型被揪出来的低级错误“Strawberry里有几个 r”。</p>
+
+<center><img src="/images/2025/IMAG2025012203.webp"></center>
+
+
+<p>嘲笑之后，大家也冷静了下来，开始思考：低级错误背后的本质是什么？</p>
+
+<p>大家普遍认为，是 Token 化（Tokenization）的锅。</p>
+
+<p>在国内，Tokenization 经常被翻译成「分词」。这个翻译有一定的误导性，因为 Tokenization 里的 token 指的未必是词，也可以是标点符号、数字或者某个单词的一部分。比如，在 OpenAI 提供的一个工具中，我们可以看到，Strawberry 这个单词就被分为了 Str-aw-berry 三个 token。在这种情况下，你让 AI 大模型数单词里有几个 r，属实是为难它。</p>
+
+<p>为了让大家直观地看到大模型眼里的文字世界，Karpathy特地写了一个小程序，用表情符号（emoji）来表示 token。</p>
+
+<center><img src="/images/2025/IMAG2025012204.webp"></center>
+
+
+<h3>尝试</h3>
+
+<p>Token 是 LLM 理解的文本基本单位。虽然将 Token 看作单词很方便，但对 LLM 来说，目标是尽可能高效地编码文本。所以在许多情况下，Token 代表的字符序列比整个单词都要短或长。标点符号和空格也被表示为 Token，可能是单独或与其他字符组合表示。LLM 词汇中的每个 Token 都有一个唯一的标识符，通常是一个数字。LLM 使用分词器在常规文本字符串和等效的 Token 数列表之间进行转换。</p>
+
+<pre><code>import tiktoken
+# 获取适用于 GPT-2 模型的编码器
+encoding = tiktoken.encoding_for_model("gpt-2")
+# 编码示例句子
+encoded_text = encoding.encode("A journey of a thousand miles begins with a single step.")print(encoded_text)
+# 解码回原始文本
+decoded_text = encoding.decode(encoded_text)print(decoded_text)
+# 单个 token 的编码与解码
+print(encoding.decode([32]))  # 'A'
+print(encoding.decode([7002])) # ' journey'
+print(encoding.decode([286]))   # 'of'
+# 编码单词 "Payment"
+payment_encoded = encoding.encode("thousand")
+print(payment_encoded)
+# 解码 "Payment" 的编码结果
+print(encoding.decode([400])) # 'th'
+print(encoding.decode([29910]))   # 'ousand'
+[32, 7002, 286, 257, 7319, 4608, 6140, 351, 257, 2060, 2239, 13]
+A journey of a thousand miles begins with a single step.
+A 
+journey 
+of
+[400, 29910]
+th
+ousand
+</code></pre>
+
+<h3>预测下一个 Token</h3>
+
+<p>如上所述，给定一段文本，语言模型的任务是预测接下来的一个 Token。如果用 Python 伪代码来表示，这看起来就像这样：</p>
+
+<pre><code>predictions = predict_next_token(['A', 'journey', 'of', 'a'])
+</code></pre>
+
+<p>这里predict_next_token 函数接收一个由用户提供的提示词转换成的一系列输入 Token。在本例中，我们假设每个单词都构成一个单独的 Token。实际上，每个 Token 都会被编码为一个数字，而非直接以文本形式传入模型。函数的输出是一个数据结构，其中包含了词汇表中每一个可能的 Token 出现在当前输入序列之后的概率值。</p>
+
+<p>语言模型需要通过一个训练过程来学会做出这样的预测。训练过程中，模型会接触到大量的文本数据，从中学习语言模式和规则。训练完成后，模型就能够利用所学知识来估计任何给定 Token 序列之后可能出现的下一个 Token 的概率。</p>
+
+<p>要生成连续的文本，模型需要反复调用自身，每次生成一个新的 Token 并将其加入到已有的序列中，直至达到预设的长度。下面是一段更详尽的 Python 伪代码，展示了这一过程：</p>
+
+<pre><code>def generate_text(prompt, num_tokens, hyperparameters):   
+tokens = tokenize(prompt)  # 将提示转换为 Token 列表    
+for _ in range(num_tokens):  # 根据指定的 Token 数量重复执行      
+predictions = predict_next_token(tokens)  # 获取下一个 Token 的预测       
+next_token = select_next_token(predictions, hyperparameters)  # 根据概率选择下一个 Token       
+tokens.append(next_token)  # 将选中的 Token 添加到列表中   
+return ''.join(tokens)  # 将 Token 列表合并为字符串
+# 辅助函数用于选择下一个 Token
+def select_next_token(predictions, hyperparameters):  
+# 使用温度（temperature）、top-k 或 top-p 等策略调整 Token 选择 
+# 实现细节取决于具体的超参数设置    
+pass
+</code></pre>
+
+<p>在这段代码中，<code>generate_text</code> 函数接受一个提示字符串、生成 Token 的数量以及一组超参数作为输入。<code>tokenize</code> 函数负责将提示转换成 Token 列表，而 <code>select_next_token</code> 函数则根据预测的概率分布选择下一个 Token。通过调整 <code>select_next_token</code> 中的超参数，比如温度（temperature）、top-k 和 top-p，可以控制生成文本的多样性和创造性。随着循环的不断迭代，新的 Token 不断被添加到序列中，最终形成了连贯的文本输出。</p>
+
+<h2>模型训练</h2>
+
+<p>想象一下，我们要培养一个模型来预测句子中的下一个词。这就像是玩一个猜词游戏，模型需要根据已经出现的词来猜测下一个词。简化的词汇表,我们假设只有五个词：</p>
+
+<p>['I','you','love','oranges','grapes']</p>
+
+<p>我们不考虑空格和标点，只关注这些词。</p>
+
+<p>我们有三句话作为训练数据：</p>
+
+<ul>
+<li><p>I love oranges</p></li>
+<li><p>I love grapes</p></li>
+<li><p>you love oranges</p></li>
+</ul>
+
+
+<p>我们可以想象一个5x5的表格，表格中的每个格子代表一个词后面跟着另一个词的次数。这个表格可能看起来像这样：</p>
+
+<center><img src="/images/2025/IMAG2025012205.webp"></center>
+
+
+<p>在这个例子中，“I”后面跟着“love”两次，而“love”后面跟着“oranges”一次，跟着“grapes”两次。为了使这个表格有用，我们需要将这些次数转换成概率，这样模型就可以预测下一个词的可能性。例如，“love”后面跟着“oranges”的概率是 1/3（大约33.3%），而跟着“grapes”的概率是 2/3（大约66.7%）。</p>
+
+<p>但是，我们遇到了一个问题：“oranges”和“grapes”没有出现在其他词后面。这意味着，如果没有其他信息，模型将无法预测这两个词后面可能是什么。为了解决这个问题，我们可以假设每个词后面都可能跟着词汇表中的任何其他词，尽管这并不完美，但它确保了模型即使在训练数据有限的情况下也能做出预测。</p>
+
+<p>在现实世界中，大型语言模型（LLM）使用了大量的训练数据，这减少了这种“漏洞”出现的机会。然而，由于某些词的组合在训练数据中出现得较少，LLM可能在某些情况下表现不佳，导致生成的文本虽然语法上正确，但逻辑上可能存在错误或不一致。这种现象有时被称为“模型幻觉”。</p>
+
+<h2>上下文窗口</h2>
+
+<p>在之前的讨论中，我们提到使用马尔可夫链训练小模型的方法，这种方法的局限在于它只依赖最后一个 Token 来预测下一个 Token。这意味着，任何出现在最后一个 Token 之前的文本都不会影响预测结果，因此这种解决方案的上下文窗口非常小，只有一个 Token。由于上下文窗口过小，模型容易“忘记”先前的信息，导致生成的文本缺乏一致性，从一个词跳跃到另一个词。</p>
+
+<h2>改进上下文窗口</h2>
+
+<p>为了提高模型的预测质量，可以尝试增加上下文窗口的大小。例如，如果使用两个 Token 的上下文窗口，就需要构建一个更大的概率矩阵，其中每一行代表所有可能的两个 Token 序列。对于五个 Token 的词汇表，这将新增 25 行（5<sup>2</sup>）。在每次调用 predict_next_token() 函数时，将使用输入的最后两个 Token 来查找概率表中的对应行。</p>
+
+<p>然而，即使使用两个 Token 的上下文窗口，生成的文本仍可能缺乏连贯性。为了生成更加一致且有意义的文本，需要进一步增加上下文窗口的大小。例如，将上下文窗口增加到三个 Token 将使概率表的行数增加到 125 行（5<sup>3</sup>），但这仍然不足以生成高质量的文本。</p>
+
+<p>随着上下文窗口的增大，概率表的大小呈指数级增长。以 GPT-2 模型为例，它使用了 1024 个 Token 的上下文窗口。如果按上文中使用马尔可夫链来实现这样一个大的上下文窗口，每行概率表都需要代表一个长度在 1 到 1024 个 Token 之间的序列。对于一个包含 5 个 Token 的词汇表，可能的序列数量为 5<sup>1024</sup>，这是一个天文数字。这个数字太大了，以至于无法实际存储和处理如此庞大的概率表。因此，马尔可夫链在处理大规模上下文窗口时存在严重的可扩展性问题。</p>
+
+<h2>从马尔可夫链到神经网络</h2>
+
+<p>显然，使用概率表的方法在处理大规模上下文窗口时不可行。我们需要一种更高效的方法来预测下一个 Token。这就是神经网络发挥作用的地方。神经网络是一种特殊的函数，它可以接受输入数据，对其进行一系列计算，然后输出预测结果。对于语言模型而言，输入是一系列 Token，输出是下一个 Token 的概率分布。</p>
+
+<p>神经网络的关键在于其参数。这些参数在训练过程中逐渐调整，以优化模型的预测性能。训练过程涉及大量的数学运算，包括前向传播和反向传播。前向传播是指输入数据通过网络的各个层进行计算，生成预测结果；反向传播则是根据预测结果与真实标签之间的差异，调整网络的参数，以减小误差。</p>
+
+<p>现代语言模型，如 GPT-2、GPT-3 和 GPT-4，使用了非常深的神经网络，拥有数亿甚至数万亿的参数。这些模型的训练过程非常复杂，通常需要数周甚至数月的时间。尽管如此，训练有素的 LLM 能够在生成文本时保持较高的连贯性和一致性，这得益于其强大的上下文理解和生成能力。</p>
+
+<h2>Transformer 和注意力机制</h2>
+
+<p>Transformer 是目前最流行的神经网络架构之一，特别适用于自然语言处理任务。Transformer 模型的核心特点是其注意力机制。注意力机制允许模型在处理输入序列时，动态地关注序列中的不同部分，从而更好地捕捉上下文信息。</p>
+
+<p>注意力机制最初应用于机器翻译任务，目的是帮助模型识别输入序列中的关键信息。通过注意力机制，模型可以“关注”输入序列中的重要 Token，从而生成更准确的翻译结果。在语言生成任务中，注意力机制同样发挥了重要作用，使得模型能够在生成下一个 Token 时，综合考虑上下文窗口中的多个 Token，从而生成更加连贯和有意义的文本。</p>
+
+<p>总结来说，虽然马尔可夫链提供了一种简单的文本生成方法，但其在处理大规模上下文窗口时存在明显的局限性。现代语言模型通过使用神经网络和注意力机制，克服了这些局限性，实现了高效且高质量的文本生成。</p>
+
+<h1>Transformer 的输入</h1>
+
+<center><img src="/images/2025/IMAG2025012202.webp"></center>
+
+
+<p>回到框架图，Transformer中单词的输入表示x由单词Embedding和位置Embedding （Positional Encoding）相加得到。</p>
+
+<p>单词的 Embedding 有很多种方式可以获取，例如可以采用 Word2Vec、Glove 等算法预训练得到，也可以在 Transformer 中训练得到。</p>
+
+<p>Transformer 中除了单词的 Embedding，还需要使用位置 Embedding 表示单词出现在句子中的位置。因为 Transformer 不采用 RNN 的结构，而是使用全局信息，不能利用单词的顺序信息，而这部分信息对于 NLP 来说非常重要。所以 Transformer 中使用位置 Embedding 保存单词在序列中的相对或绝对位置。</p>
+
+<p>简而言之：以苹果为例</p>
+
+<p>“水果店里有苹果，香蕉”中苹果代指水果，“商店里最新推出了苹果 16”中苹果代表品牌</p>
+
+<h1>Self-Attention（自注意力机制）</h1>
+
+<center><img src="/images/2025/IMAG2025012206.webp"></center>
+
+
+<p>上图是论文中 Transformer 的内部结构图，左侧为 Encoder block，右侧为 Decoder block。红色圈中的部分为 Multi-Head Attention，是由多个 Self-Attention组成的，可以看到 Encoder block 包含一个 Multi-Head Attention，而 Decoder block 包含两个 Multi-Head Attention (其中有一个用到 Masked)。Multi-Head Attention 上方还包括一个 Add &amp; Norm 层，Add 表示残差连接 (Residual Connection) 用于防止网络退化，Norm 表示 Layer Normalization，用于对每一层的激活值进行归一化。</p>
+
+<p>因为 Self-Attention是 Transformer 的重点，所以我们重点关注 Multi-Head Attention 以及 Self-Attention，首先详细了解一下 Self-Attention 的内部逻辑。</p>
+
+<p>当然，我们可以用更简洁的方式来理解Self-Attention机制。</p>
+
+<h2>Self-Attention 简介</h2>
+
+<p>Self-Attention 是一种允许模型在处理序列数据时关注不同部分的方法，特别适用于处理长文本。它通过计算序列中每个元素与其他所有元素之间的相关性来实现这一点。</p>
+
+<h3>工作流程</h3>
+
+<ol>
+<li><p>转换：每个输入元素（比如一个词）都会被转换成三个向量：Query (查询)、Key (键) 和 Value (值)。这些向量是通过将输入向量分别乘以三个不同的权重矩阵WQ、WK 和 WV 得到的。</p></li>
+<li><p>计算注意力分数：对于每个元素，使用它的 Query 向量与所有其他元素的 Key 向量进行点积运算，得到一个分数列表。这个分数表示当前元素与其他所有元素的相关性。</p></li>
+<li><p>归一化：将这些分数通过 softmax 函数进行归一化，得到一个概率分布，表示当前元素对其他所有元素的注意力权重。</p></li>
+<li><p>加权求和：使用这些注意力权重对所有元素的 Value 向量进行加权求和，得到最终的输出向量。</p></li>
+</ol>
+
+
+<h3>公式</h3>
+
+<p>假设输入序列为 X=[x1,x2,...,xn]X，每个 xi 都是一个向量。</p>
+
+<ul>
+<li>转换：</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025012207.webp"></center>
+
+
+<ul>
+<li>计算注意力分数：   </li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025012208.webp"></center>
+
+
+<p>其中dk是Key向量的维度。</p>
+
+<ul>
+<li><p>归一化：Attention Weights=softmax(Scores)</p></li>
+<li><p>加权求和：Output=Attention Weights⋅V</p></li>
+</ul>
+
+
+<h2>Multi-Head Attention</h2>
+
+<ul>
+<li>多头注意力（Multi-Head Attention）是为了让模型从多个不同的角度捕捉信息。具体做法是并行运行多个Self-Attention层（每个称为一个“头”），然后将所有头的输出拼接在一起，再通过一个线性变换。</li>
+</ul>
+
+
+<h2>总结</h2>
+
+<ul>
+<li><p>Self-Attention 让模型能够关注序列中的不同部分，从而更好地捕捉长距离依赖关系。</p></li>
+<li><p>Multi-Head Attention 通过多个Self-Attention层增强模型的表达能力，使其能够从多个角度综合考虑信息。</p></li>
+</ul>
+
+
+<h1>Add &amp; Norm 和 Feed Forward</h1>
+
+<h2>Add &amp; Norm (残差连接与层归一化)</h2>
+
+<h3>残差连接 (Residual Connection)</h3>
+
+<ul>
+<li><p>作用：帮助模型更好地学习，防止训练过程中信息丢失。</p></li>
+<li><p>方法：把输入直接加到输出上。</p></li>
+</ul>
+
+
+<h3>层归一化 (Layer Normalization)</h3>
+
+<ul>
+<li><p>作用：让数据更稳定，加快训练速度。</p></li>
+<li><p>方法：把每个样本的特征值调整到一个标准范围内，通常是平均值为0，标准差为1。</p></li>
+</ul>
+
+
+<p>结合使用</p>
+
+<ul>
+<li><p>步骤：</p></li>
+<li><p>先计算某一层的输出 F(x)F(x)。</p></li>
+<li><p>把输入 xx 加到 F(x)F(x) 上，得到 y=F(x)+xy=F(x)+x。</p></li>
+<li><p>对 yy 进行层归一化，得到最终的输出。</p></li>
+</ul>
+
+
+<h3>Feed Forward (前馈神经网络)</h3>
+
+<p>作用</p>
+
+<ul>
+<li>增加非线性：让模型更灵活，能处理更复杂的数据。</li>
+</ul>
+
+
+<p>结构</p>
+
+<ul>
+<li><p>两层全连接网络：</p></li>
+<li><p>第一层：把输入通过一个线性变换（乘以一个矩阵），然后用 ReLU 激活函数处理。</p></li>
+<li><p>第二层：再通过一个线性变换（乘以另一个矩阵）。</p></li>
+</ul>
+
+
+<h3>总结</h3>
+
+<ul>
+<li><p>Add &amp; Norm：通过残差连接和层归一化，让模型更稳定，训练更快。</p></li>
+<li><p>Feed Forward：通过两层全连接网络增加模型的灵活性，使其能处理更复杂的数据。</p></li>
+</ul>
+
+
+<h2>Decoder 结构</h2>
+
+<center><img src="/images/2025/IMAG2025012209.webp"></center>
+
+
+<p>上图红色部分为 Transformer 的 Decoder block 结构，与 Encoder block 相似，但是存在一些区别：</p>
+
+<ul>
+<li><p>包含两个 Multi-Head Attention 层。</p></li>
+<li><p>第一个 Multi-Head Attention 层采用了 Masked 操作。</p></li>
+<li><p>第二个 Multi-Head Attention 层的K, V矩阵使用 Encoder 的编码信息矩阵C进行计算，而Q使用上一个 Decoder block 的输出计算。</p></li>
+<li><p>最后由一个 Softmax 层计算下一个翻译单词的概率。</p></li>
+</ul>
+
+
+<h1>附</h1>
+
+<pre><code># 导入必要的库
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import math
+# 定义位置编码层，用于为输入序列添加位置信息
+class PositionalEncoding(nn.Module):   
+def __init__(self, d_model, max_len=5000):       
+super(PositionalEncoding, self).__init__()       
+# 初始化位置编码张量       
+pe = torch.zeros(max_len, d_model)       
+position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)      
+div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model))        # 计算正弦和余弦值        pe[:, 0::2] = torch.sin(position * div_term)        pe[:, 1::2] = torch.cos(position * div_term)        pe = pe.unsqueeze(0).transpose(0, 1)        # 将位置编码注册为缓冲区        self.register_buffer('pe', pe)
+    def forward(self, x):      
+    # 将位置编码与输入相加      
+    x = x + self.pe[:x.size(0), :]      
+    return x
+# 定义基于Transformer的模型类
+class TransformerModel(nn.Module):   
+def __init__(self, input_dim, output_dim, d_model=512, nhead=8, num_encoder_layers=6, dim_feedforward=2048, dropout=0.1):     
+super(TransformerModel, self).__init__()       
+self.model_type = 'Transformer'        
+# 定义嵌入层        
+self.embedding = nn.Embedding(input_dim, d_model)       
+# 定义位置编码层       
+self.pos_encoder = PositionalEncoding(d_model)       
+# 定义编码器层      
+encoder_layers = nn.TransformerEncoderLayer(d_model, nhead, dim_feedforward, dropout)     
+self.transformer_encoder = nn.TransformerEncoder(encoder_layers, num_encoder_layers)     
+self.d_model = d_model     
+# 定义解码器层      
+self.decoder = nn.Linear(d_model, output_dim)     
+# 初始化权重       
+self.init_weights()
+    def init_weights(self):       
+    initrange = 0.1       
+    self.embedding.weight.data.uniform_(-initrange, initrange)     
+    self.decoder.bias.data.zero_()      
+    self.decoder.weight.data.uniform_(-initrange, initrange)
+    def forward(self, src, src_mask):       
+    # 嵌入输入并乘以根号下d_model       
+    src = self.embedding(src) * math.sqrt(self.d_model)     
+    src = self.pos_encoder(src)      
+    # 编码输入       
+    output = self.transformer_encoder(src, src_mask)    
+    # 解码输出       
+    output = self.decoder(output)      
+    return output
+# 生成一个上三角矩阵作为掩码def generate_square_subsequent_mask(sz):  
+mask = (torch.triu(torch.ones(sz, sz)) == 1).transpose(0, 1)  
+mask = mask.float().masked_fill(mask == 0, float('-inf')).masked_fill(mask == 1, float(0.0))   
+return mask
+# 示例用法
+input_dim = 1000 # 词汇表大小
+output_dim = 1000 # 输出维度
+seq_length = 10  # 序列长度
+# 创建模型实例
+model = TransformerModel(input_dim=input_dim, output_dim=output_dim)
+# 示例数据
+src = torch.randint(0, input_dim, (seq_length, 32))  # (序列长度, 批次大小)
+src_mask = generate_square_subsequent_mask(seq_length)
+# 前向传播
+output = model(src, src_mask)
+print(output.shape)  # 预期输出: [序列长度, 批次大小, 输出维度]
+# 定义简单的损失函数和优化器用于训练
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+# 示例训练循环
+for epoch in range(10):  # 迭代次数  
+optimizer.zero_grad()   
+output = model(src, src_mask)   
+loss = criterion(output.view(-1, output_dim), src.view(-1)) 
+loss.backward()   
+optimizer.step()
+print(f"Epoch {epoch+1}, Loss: {loss.item()}")
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[AI绘画原理解析：从CLIP、DALLE到Stable Diffusion]]></title>
+    <link href="https://ibillxia.github.io/blog/2024/07/02/ai-painting-clip-dalle-stable-diffusion/"/>
+    <updated>2024-07-02T15:16:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2024/07/02/ai-painting-clip-dalle-stable-diffusion</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://blog.csdn.net/v_JULY_v/article/details/131205615">https://blog.csdn.net/v_JULY_v/article/details/131205615</a></p>
+
+<h1>前言</h1>
+
+<p>关于Stable Diffusion，可以先看下这篇<a href="https://jalammar.github.io/illustrated-stable-diffusion/">图解Stable Diffusion</a>的文章(此篇文章也是本文的参考之一)</p>
+
+<ol>
+<li>23年3月中旬，当OpenAI宣称GPT4具备了CV多模态的能力之后，让我对AI绘画和CV多模态有了更强的动力去研究探索，并把背后的技术细节写出来</li>
+</ol>
+
+
+<p>其实当时就想写了，但当时因为写各种开源平替模型的原理、部署、微调去了，所以一直没来得及写，包括之前计划的100篇论文也因此耽搁</p>
+
+<p>4.23，我所讲的ChatGPT原理课开课之后，终于有时间开写这篇多模态博客，然想写清楚stable diffusion和midjourney背后的技术细节，不得不先从扩散模型开始，于此便有了上一篇<a href="https://blog.csdn.net/v_JULY_v/article/details/130361959">《图像生成发展起源：从VAE、扩散模型DDPM、DETR到ViT、Swin transformer》</a>「且如果你此前不了解何谓扩散模型、何谓DDPM，务必先看该文，不然没法看懂本文」</p>
+
+<p>援引上一篇文章的这段话“AI绘画随着去年stable diffusion和Midjourney的推出，使得文生图火爆异常，各种游戏的角色设计、网上店铺的商品/页面设计都用上了AI绘画这样的工具，更有不少朋友利用AI绘画取得了不少的创收，省时省力还能赚钱，真香”，此外，包括我司LLM项目团队开发的AIGC模特生成系统也用到了这方面的技术：基于SD二次开发“</p>
+
+<p>沿着上文之后，本文将写清楚下面表格中带下划线的模型</p>
+
+<center><img src="/images/2024/IMAG2024070201.png"></center>
+
+
+
+
+<!--more-->
+
+
+<p>且过程中会顺带介绍MiniGPT-4、VisualGPT到HuggingGPT、AutoGPT这几个模型</p>
+
+<h1>第一部分 从CLIP到BLIP1、BLIP2</h1>
+
+<h2>1.1 CLIP：基于对比文本-图像对的预训练方法</h2>
+
+<h3>1.1.1 CLIP的原理结构</h3>
+
+<p>我第一次见识到CLIP这个论文的时候(对应论文为：Learning Transferable Visual Models From Natural Language Supervision，作者为Alec Radford等人)，当时的第一反应是，特么也太强悍了..</p>
+
+<p>CLIP由OpenAI在2021年1月发布</p>
+
+<ol>
+<li><p>通过超大规模模型预训练提取视觉特征，进行图片和文本之间的对比学习 (简单粗暴理解就是发微博/朋友圈时，人喜欢发一段文字然后再配一张或几张图，CLIP便是学习这种对应关系)</p></li>
+<li><p>且预训练好之后不微调直接推理 (即zero-shot，用见过的图片特征去判断没见过的图片的类别，而不用下游任务训练集进行微调)</p></li>
+</ol>
+
+
+<p>使得在ImageNet数据集上，CLIP模型在不使用ImageNet数据集的任何一张图片进行训练的的情况下，最终模型精度能跟一个有监督的训练好的ResNet-50打成平手 (在ImageNet上zero-shot精度为76.2%，这在之前一度被认为是不可能的)  </p>
+
+<p>为了训练CLIP，OpenAI从互联网收集了共4个亿的文本-图像对，论文称之为WIT(Web Image Text，WIT质量很高，而且清理的非常好，其规模相当于JFT-300M，这也是CLIP如此强大的原因之一，后续在WIT上还孕育出了DALL-E模型)</p>
+
+<p>其训练过程如下图所示：</p>
+
+<center><img src="/images/2024/IMAG2024070202.png"></center>
+
+
+<ol>
+<li>如下图的第一步所示，CLIP的输入是一对对配对好的的图片-文本对（比如输入是一张狗的图片，对应文本也表示这是一只狗），这些文本和图片分别通过Text Encoder和Image Encoder输出对应的特征。然后在这些输出的文字特征和图片特征上进行对比学习</li>
+</ol>
+
+
+<p>假如模型输入的是n对图片-文本对，那么这n对互相配对的图像–文本对是正样本(上图输出特征矩阵对角线上标识蓝色的部位)，其它n2−n对样本都是负样本，这样模型的训练过程就是最大化n个正样本的相似度，同时最小化n2−n个负样本的相似度</p>
+
+<p>→  Text Encoder可以采用NLP中常用的text transformer模型</p>
+
+<p>→  而Image Encoder可以采用常用CNN模型或者vision transformer等模型</p>
+
+<p>相似度是计算文本特征和图像特征的余弦相似性cosine similarity</p>
+
+<p>之后，CLIP可以直接实现zero-shot的图像分类，即不需要任何训练和微调，其实现zero-shot分类只需要简单的两步，如下第2、3点所示</p>
+
+<ol>
+<li><p>根据任务的分类标签构建每个类别的描述文本：A photo of {label}，然后将这些文本送入Text Encoder得到对应的文本特征，如果类别数目为n，那么将得到n个文本特征</p></li>
+<li><p>将要预测的图像送入Image Encoder得到图像特征，然后与n个文本特征计算缩放的余弦相似度(和训练过程保持一致)，然后选择相似度最大的文本对应的类别作为图像分类预测结果</p></li>
+</ol>
+
+
+<p>进一步地，可以将这些相似度看成logits，送入softmax后可以到每个类别的预测概率</p>
+
+<p>以下是对应的伪代码</p>
+
+<pre><code># image_encoder - ResNet or Vision Transformer
+# text_encoder - CBOW or Text Transformer
+# I[n, h, w, c] - 输入图片维度
+# T[n, l] - 输入文本维度，l表示序列长度
+# W_i[d_i, d_e] - learned proj of image to embed
+# W_t[d_t, d_e] - learned proj of text to embed
+# t - learned temperature parameter
+#  分别提取图像特征和文本特征
+I_f = image_encoder(I) #[n, d_i]
+T_f = text_encoder(T) #[n, d_t]
+# 对两个特征进行线性投射，得到相同维度的特征d_e，并进行l2归一化，保持数据尺度的一致性
+# 多模态embedding [n, d_e]
+I_e = l2_normalize(np.dot(I_f, W_i), axis=1)
+T_e = l2_normalize(np.dot(T_f, W_t), axis=1)
+# 计算缩放的余弦相似度：[n, n]
+logits = np.dot(I_e, T_e.T) * np.exp(t)
+# symmetric loss function
+labels = np.arange(n) #  对角线元素的labels
+loss_i = cross_entropy_loss(logits, labels, axis=0) # image loss
+loss_t = cross_entropy_loss(logits, labels, axis=1) # text loss
+loss = (loss_i + loss_t)/2 # 对称式的目标函数
+</code></pre>
+
+<p>2021年10月，Accomplice发布的disco diffusion，便是第一个结合CLIP模型和diffusion模型的AI开源绘画工具，其内核便是采用的CLIP引导扩散模型(CLIP-Guided diffusion model)</p>
+
+<p>且后续有很多基于CLIP的一系列改进模型，比如Lseg、GroupViT、ViLD、GLIP</p>
+
+<h3>1.1.2 CLIP匹配的一个示例</h3>
+
+<p>如果让你把下图左侧三张图和右侧三句话配对，你可以轻松完成这个连线。但对 AI 来说，图片就是一系列像素点，文本就是一串字符，要完成这个工作可不简单。</p>
+
+<center><img src="/images/2024/IMAG2024070203.png"></center>
+
+
+<p>原因在于</p>
+
+<ol>
+<li>这需要 AI 在海量「文本-图片」数据上学习图片和文本的匹配。图中绿色方块是「图片潜在空间」的 N 张图片，紫色方块是「文本潜在空间」的 N 句描述语</li>
+</ol>
+
+
+<p>CLIP会努力将对应的 I1与T1(蓝色方块)匹配，而不是 I1与T2(灰色方块)匹配</p>
+
+<center><img src="/images/2024/IMAG2024070204.png"></center>
+
+
+<ol>
+<li>当 AI 能成功完成这个连线，也就意味着 AI 建立了「文字潜在空间」到「图片潜在空间」的对应关系，这样才能通过文字控制图片的去噪过程，实现通过文字描述得到图像的生成</li>
+</ol>
+
+
+<center><img src="/images/2024/IMAG2024070205.png"></center>
+
+
+<h2>1.2 从BLIP1、BLIP2到miniGPT4</h2>
+
+<h3>1.2.1 BLIP1：ViT + BERT ——通过encoder-decoder统一理解与生成任务</h3>
+
+<p>随着AI的迅速发展，多模态日渐成为一种趋势，而「Vision-Language Pre-training (VLP) + Fine-tuning => Zero Shot / Few Shot」的模式是快速解决多下游任务的一个好的模式，VLP 是这个模式的开端，所以对于 VLP 的相关研究也很多。BLIP 是一个新的 VLP 架构，可以灵活、快速的应用到下游任务，如：图像-文本检索、图像翻译、以及 VQA 等</p>
+
+<p>简单来讲，BLIP的主要特点是结合了encoder和decoder，形成了统一的理解和生成多模态模型。再利用BLIP进行后续工作的时候，既可以使用其理解的能力(encoder)，又可以利用其生成的能力(decoder)，拓展了多模态模型的应用</p>
+
+<h4>1.2.1.1 BLIP的模型结构</h4>
+
+<p>CLIP 采用了 image-encoder (ViT / ResNet) &amp; text-encoder (transformer)，然后直接拿 图片特征 和 文本特征 做余弦相似度对比，得到结果，而BLIP 的做法要复杂挺多</p>
+
+<p>如下图所示，为了预训练一个同时具有理解和生成能力的统一模型，BLIP模型主要由4个部分组成，从左至右分别是</p>
+
+<center><img src="/images/2024/IMAG2024070206.jpeg"></center>
+
+
+<ul>
+<li>上图第1部分：视觉编码器Image Encoder(ViT)——提取图片特征</li>
+</ul>
+
+
+<p>视觉编码器本质就是 ViT 的架构：将输入图像分割成一个个的 Patch 并将它们编码为一系列 Image Embedding，并使用额外的 [CLS] token 来表示全局的图像特征</p>
+
+<ul>
+<li>上图第2部分：文本编码器Text Encoder(BERT)——提取文本特征</li>
+</ul>
+
+
+<p>文本编码器就是 BERT 的架构，其中 [CLS] token 附加到文本输入的开头以总结句子，作用是提取文本特征与第1部分的图像特征做对比学习</p>
+
+<p>在这个过程中会训练一个对比学习目标函数 (Image-Text Contrastive Loss, ITC)</p>
+
+<p>ITC 作用于第1部分的视觉编码器(ViT)和第2部分的文本编码器(BERT)，目标是对齐视觉和文本的特征空间，方法是使得正样本图文对的相似性更大，负样本图文对的相似性更低，在 ALBEF 里面也有使用到。作者在这里依然使用了 ALBEF 中的动量编码器，它的目的是产生一些伪标签，辅助模型的训练</p>
+
+<p>为方便对比，把BLIP的模型结构图再贴一遍</p>
+
+<center><img src="/images/2024/IMAG2024070207.jpeg"></center>
+
+
+<ul>
+<li>上图第3部分：视觉文本编码器Image-grounded Text Encoder(变种 BERT)——BERT中插入交叉注意层，从而针对图片特征和文本特征做二分类</li>
+</ul>
+
+
+<p>视觉文本编码器的具体做法是在文本编码器比如BERT的每个transformer  block的自注意(Bi Self-Att)层和前馈网络(Feed Forward)之间额外插入一个交叉注意(Cross-Attention)，以引入视觉特征，作用是根据 ViT 给的图片特征和文本输入做二分类，所以使用的是编码器，且注意力部分是双向的 Self-Attention，且添加一个额外的 [Encode] token，作为图像文本的联合表征</p>
+
+<p>在这个过程中则训练一个图文匹配目标函数 (Image-Text Matching Loss, ITM)</p>
+
+<p>ITM 作用于第1部分的视觉编码器和第3部分的视觉文本编码器，是一个二分类任务，目标是学习图像文本的联合表征，使用一个分类头来预测 image-text pair 的 正匹配 还是 负匹配，目的是学习 image-text 的多模态表示，调整视觉和语言之间的细粒度对齐，作者在这里依然使用了 ALBEF 中的 hard negative mining 技术</p>
+
+<ul>
+<li>上图第4部分：视觉文本解码器Image-grounded Text Decoder(变种 BERT)——根据图片特征和文本特征做文本生成</li>
+</ul>
+
+
+<p>视觉文本解码器使用 Cross-Attention，作用是根据 ViT 给的图片特征和文本输入做文本生成的任务，所以使用的是解码器，且将 上图第3部分的 Image-grounded Text Encoder 结构中的 Bi Self-Att 替换为 Causal Self-Att，目标是预测下一个 token，且添加一个额外的 [Decode] token 和结束 token，作为生成结果的起点和终点</p>
+
+<p>一个需要注意的点是：相同颜色的部分是参数共享的，即视觉文本编码器和视觉文本解码器共享除 Self-Attention 层之外的所有参数。每个 image-text 在输入时，image 部分只需要过一个 ViT 模型，text 部分需要过3次文本模型</p>
+
+<p>过程中训练一个语言模型目标函数 (Language Modeling Loss, LM)</p>
+
+<p>毕竟由于BLIP 包含解码器，用于生成任务。既然有这个任务需求，那就意味着需要一个针对于生成任务的语言模型目标函数，LM 作用于第1部分的视觉编码器和第4部分的视觉文本解码器，目标是根据给定的图像以自回归方式来生成关于文本的描述。与 VLP 中广泛使用的 MLM 损失(完形填空)相比，LM 使模型能够将视觉信息转换为连贯的字幕</p>
+
+<h4>1.2.1.2 BLIP的字幕与过滤器方法CapFiltg</h4>
+
+<p>上述整个过程中，有一个不可忽略的问题，即高质量的人工注释图像-文本对(Ih,Th)(例如，COCO) 因为成本高昂所以数量不多</p>
+
+<ul>
+<li><p>CLIP 的数据来源于 Web 上爬来的 图像-文本对(Iw,Tw)，所以数据集很容易扩充的很大，而且采用 对比学习的方式，基本属于自监督了，不太需要做数据标注；</p></li>
+<li><p>BLIP 改进了 CLIP 直接从 Web 取数据 噪声大 的缺点，提出了 Captioning and Filtering (CapFilt) 模块，这个模块就是用来 减小噪声、丰富数据的，主要包括两个模块：即字幕与过滤器方法CapFilt (Captioning and Filtering)</p></li>
+</ul>
+
+
+<p>如下图所示</p>
+
+<center><img src="/images/2024/IMAG2024070208.png"></center>
+
+
+<p>CapFilt 方法包含两个模块：</p>
+
+<ol>
+<li><p>字幕器 Captioner：相当于给一张网络图片，生成字幕。它是一个视觉文本解码器(对应于上述BLIP模型结构的第4部分)，在 COCO数据集上使用 LM 目标函数微调，对给定图像的文本进行解码，从而实现给定网络图片Iw，Captioner 生成字幕Ts的效果</p></li>
+<li><p>过滤器 Filter：过滤掉噪声图文对image-text pair，它是一个视觉文本编码器(对应于上述BLIP模型结构的第3部分)，看文本是否与图像匹配，在 COCO 数据集上使用 ITC 和 ITM 目标函数微调</p></li>
+</ol>
+
+
+<p>Filter 删除原始 Web 文本Tw和合成文本 Ts中的嘈杂文本，如果 ITM 头将其预测为与图像不匹配，则认为文本有噪声</p>
+
+<p>最后，将过滤后的图像-文本对与人工注释对相结合，形成一个新的数据集，作者用它来预训练一个新的模型</p>
+
+<p>下图展示了被过滤器接受和拒绝的文本可视化(绿色 文本是被 filter 认可的，而 红色 文本是被 filter 拒绝的)</p>
+
+<center><img src="/images/2024/IMAG2024070209.png"></center>
+
+
+<h3>1.2.2 BLIP2：CLIP ViT-G/14 + Q-Former + FLAN-T5</h3>
+
+<p>下图是BLIP-2的模型结构 (论文地址：BLIP-2: Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models)，其中视觉侧和文本侧分别使用预训练的CLIP ViT-G/14模型和FLAN-T5模型，仅中间的起桥接作用的Q-Former参与训练，训练需要的成本和数据量进一步降低，BLIP-2的训练数据量仅129M，16卡A100训练9天</p>
+
+<center><img src="/images/2024/IMAG2024070210.png"></center>
+
+
+<ul>
+<li><p>后来的LLAVA工作更是将这一思路简化到极致，仅通过一个projection layer将CLIP ViT-L/14和Vicuna语言模型缝合在一起，训练数据仅用了595K图文对以及158K指令微调数据</p></li>
+<li><p>miniGPT4则是在复用BLIP-2的vision encoder + Q-Former的基础上，通过一层project layer缝合了Vicuna语言模型，训练数据仅用了5M的图文对数据+3.5K的指令微调数据</p></li>
+</ul>
+
+
+<h3>1.2.3 MiniGPT4：基于LLaMA微调的Vicuna + BLIP2 + 线性投影层</h3>
+
+<p>MiniGPT-4具有许多类似于GPT-4所展示的功能，如详细的图像描述生成和从手写草稿创建网站，以及根据给定图像编写灵感的故事和诗歌，为图像中显示的问题提供解决方案，比如教用户如何根据食物照片烹饪等</p>
+
+<p>模型结构</p>
+
+<p>miniGPT4的模型架构由一个语言模型拼接一个视觉模型，最后加一个线性投影层来对齐，具体而言</p>
+
+<center><img src="/images/2024/IMAG2024070211.png"></center>
+
+
+<ul>
+<li><p>它先是使用基于LLaMA微调的小羊驼Vicuna，作为语言解码器</p></li>
+<li><p>在视觉感知方面，采用了与BLIP-2相同的预训练视觉组件(该组件由EVA-CLIP[13]的ViT- G/14和Q-Former组成)</p></li>
+<li><p>再之后，增加了一个单一的投影层，将编码的视觉特征与语言模型小羊驼对齐，并冻结所有其他视觉和语言组件</p></li>
+</ul>
+
+
+<p>模型训练：预训练(500万图像文本对)-微调</p>
+
+<p>训练上，还是经典的预训练-微调模式</p>
+
+<ol>
+<li><p>在整个预训练过程中，无论是预训练的视觉编码器还是LLM都保持冻结状态，只有线性投影层被预训练。具体是使用Conceptual Caption、SBU和LAION的组合数据集来训练我们的模型，历经2万个训练步骤，批大小为256，覆盖了大约500万对图像-文本，整个过程花费大约10小时，且使用的4个A100 (80GB) gpu</p></li>
+<li><p>然而，简单地将视觉特征与LLM对齐不足以训练出像聊天机器人那样具有视觉会话能力的高性能模型，并且原始图像-文本对背后的噪声可能导致语言输出不连贯。因此，我们收集了另外3500个高质量对齐的图像-文本对，用设计好的会话模板进一步微调模型(只需要400个训练步骤，批量大小为12，使用单个A100 GPU最终7分钟即可完成)，以提高生成语言的自然度及其可用性</p></li>
+</ol>
+
+
+<h1>第二部分 从DALLE到DALLE 2、DALLE 3</h1>
+
+<h2>2.1 DALL-E：Zero-Shot Text-to-Image Generation</h2>
+
+<p>有趣的是，DALL-E和CLIP一样，也是21年年初发布的，对应论文为《Zero-Shot Text-to-Image Generation》，其参数大小有着12B，其数据集是2.5 亿个图像文本对</p>
+
+<ol>
+<li><p>通过上一篇文章可知，VQ-VAE的生成模式是pixcl-CNN +codebook，其中pixcl-CNN就是一个自回归模型</p></li>
+<li><p>OpenAI 将pixcl-CNN换成GPT，再加上那会多模态相关工作的火热进展，可以考虑使用文本引导图像生成，所以就有了DALL·E</p></li>
+</ol>
+
+
+<center><img src="/images/2024/IMAG2024070212.png"></center>
+
+
+<p>DALL·E和VQ-VAE-2一样，也是一个两阶段模型：</p>
+
+<ul>
+<li>Stage1：Learning the Visual Codebook</li>
+</ul>
+
+
+<p>先是输入：一对图像-文本对(训练时)，之后编码特征，具体编码时涉及到两个步骤</p>
+
+<p>首先，文本经过BPE编码得到256维的特征ft</p>
+
+<p>其次，256×256的图像经过VQ-VAE(将训练好的VQ-VAE的codebook直接拿来用)，得到32×32的图片特征fq</p>
+
+<p>We train a discrete variational autoencoder (dVAE) to compress each 256×256 RGB image into a 32 × 32 grid of image tokens</p>
+
+<ul>
+<li>Stage2：Learning the Prior</li>
+</ul>
+
+
+<p>重构原图</p>
+
+<p>将fq拉直为1024维的tokens，然后连上256维的文本特征ft，这样就得到了1280维的token序列，然后直接送入GPT(masked decoder)重构原图</p>
+
+<p>推理时，输入文本经过编码得到文本特征，再将文本通过GPT利用自回归的方式生成图片，生成的多张图片会通过CLIP模型和输入的文本进行相似度计算，然后调出最相似(描述最贴切)的图像</p>
+
+<h2>2.2 DALLE 2：Hierarchical Text-Conditional Image Generation with CLIP Latents</h2>
+
+<p>对于DALL·E2而言，基本就是整合了CLIP和基于扩散模型的GLIDE，而后者则采用了两阶段的训练方式：文本 → 文本特征 → 图片特征 → 图片</p>
+
+<center><img src="/images/2024/IMAG2024070213.png"></center>
+
+
+<ol>
+<li>CLIP训练过程：学习文字与图片的对应关系</li>
+</ol>
+
+
+<p>如上图所示，CLIP的输入是一对对配对好的的图片-文本对(根据对应文本一条狗，去匹配一条狗的图片)，这些文本和图片分别通过Text Encoder和Image Encoder输出对应的特征，然后在这些输出的文字特征和图片特征上进行对比学习</p>
+
+<ol>
+<li>DALL·E2：prior + decoder</li>
+</ol>
+
+
+<p>上面的CLIP训练好之后，就将其冻住了，不再参与任何训练和微调，DALL·E2训练时，输入也是文本-图像对，下面就是DALL·E2的两阶段训练：</p>
+
+<p>→ 阶段一 prior的训练：根据文本特征(即CLIP text encoder编码后得到的文本特征)，预测图像特征(CLIP image encoder编码后得到的图片特征)</p>
+
+<p>换言之，prior模型的输入就是上面CLIP编码的文本特征，然后利用文本特征预测图片特征(说明白点，即图中右侧下半部分预测的图片特征的ground truth，就是图中右侧上半部分经过CLIP编码的图片特征)，就完成了prior的训练</p>
+
+<p>推理时，文本还是通过CLIP text encoder得到文本特征，然后根据训练好的prior得到类似CLIP生成的图片特征，此时图片特征应该训练的非常好，不仅可以用来生成图像，而且和文本联系的非常紧(包含丰富的语义信息)</p>
+
+<p>→阶段二 decoder生成图：常规的扩散模型解码器，解码生成图像</p>
+
+<p>这里的decoder就是升级版的GLIDE(GLIDE基于扩散模型)，所以说DALL·E2 = CLIP + GLIDE</p>
+
+<h2>2.3 DALLE 3：Improving Image Generation with Better Captions</h2>
+
+<p>我司LLM项目团队于23年11月份在给一些B端客户做文生图的应用时，对比了各种同类工具，发现DALLE 3确实强(其对应的论文为《Improving Image Generation with Better Captions》，作者为James Betker等人)</p>
+
+<p>加之也要在七月官网的论文100课上讲DALLE三代的三篇论文，故接下来，咱们结合DALLE 3和相关paper好好看下DALLE 3的训练细节</p>
+
+<h3>2.3.1 为提高文本图像配对数据集的质量：基于谷歌的CoCa​微调出图像字幕生成器</h3>
+
+<p>目前文生图模型的一个很大的问题是模型的文本理解能力，这个文本理解能力指的是生成的图像是否能和文本保持一致，也就是论文里面所说的prompt following能力</p>
+
+<p>如论文中所说</p>
+
+<ul>
+<li>论文提出来字幕改进(caption improvement)的方法</li>
+</ul>
+
+
+<p>毕竟现在text-to-image模型现存的一个基本问题便是：这些模型训练所用的文本-图像配对数据的质量较差</p>
+
+<p>We hypothesize that a fundamental issue with existing text-to-image models is the poor quality of the text and image pairing of the datasets they were trained on</p>
+
+<ul>
+<li>故论文提出可以通过改进「文本-图像配对数据集中的针对图像的文本描述的质量」来解决这个问题(We propose to address this by generating improved captions for the images in our dataset)</li>
+</ul>
+
+
+<p>为实现这个目标，首先训练一个强大的图像字幕生成器(image captioner)，以生成详细、准确的图像描述，然后我们便可以把这个图像字幕生成器应用到已有的文本-图像配对数据集中，以为各个图像生成更详细、准确的图像描述或字幕，最后在改进的数据集上训练text-to-image模型</p>
+
+<p>We do this by first learning a robust image captioner which produces detailed, accurate descriptions of images. We then apply this captioner to our dataset to produce more detailed captions. We finally train text-to-image models on our improved dataset.</p>
+
+<p>总之，对于稍微复杂的文本，目前的文生图模型生成的图像往往会容易忽略部分文本描述，甚至无法生成文本所描述的图像。这个问题主要还是由于训练数据集本身所造成的，更具体的是说是图像caption不够准确</p>
+
+<ol>
+<li><p>一方面，图像常规的文本描述往往过于简单(比如COCO数据集)，它们大部分只描述图像中的主体而忽略图像中其它的很多信息，比如背景，物体的位置和数量，图像中的文字等</p></li>
+<li><p>另外一方面，目前训练文生图的图像文本对数据集(比如LAION数据集)都是从网页上爬取的，图像的文本描述其实就是alt-text，但是这种文本描述很多是一些不太相关的东西，比如广告。训练数据的caption不行，训练的模型也就自然而然无法充分学习到文本和图像的对应关系，那么prompt following能力必然存在问题</p></li>
+</ol>
+
+
+<h4>2.3.1.1 什么是谷歌的CoCa</h4>
+
+<p>OpenAI最终基于谷歌的CoCa来训练这个image captioner来合成图像的caption，CoCa构建在encoder-decoder的基础上</p>
+
+<ul>
+<li><p>其中，Image Encoder和Text Decoder均采用Transformer模型</p></li>
+<li><p>其中，Image Encoder的参数量为1B，而Text Decoder的参数量达到1.1B，这样整个CoCa模型的参数量为2.1B(对于图像，其输入大小为288×288，而patch size为18x18，这样总共有256个image tokens。同时，这里也设计了两个更小模型：CoCa-Base和CoCa-Large)</p></li>
+</ul>
+
+
+<center><img src="/images/2024/IMAG2024070214.png"></center>
+
+
+<p>不过这里将text decoder均分成两个部分：</p>
+
+<ol>
+<li><p>一个单模态解码器unimodal text decoder</p></li>
+<li><p>一个多模态解码器multimodal text decoder</p></li>
+</ol>
+
+
+<p>然后增加一个cls token在文本的最后(CoCa相比CLIP额外增加了一个Multimodel Text Encoder来生成caption，如此，它训练的损失包含了CLIP的对比损失和captioing的交叉熵损失，所以CoCa不仅可以像CLIP那样进行多模态检索，也可以用于caption生成)</p>
+
+<p>具体而言，如下图的左半部分所示</p>
+
+<center><img src="/images/2024/IMAG2024070215.png"></center>
+
+
+<ol>
+<li>unimodal text decoder不参与对图像特征的cross-attention(We omit cross-attention in unimodal decoder layers to encode text-only representations，相当于把 Transformer Decoder 中的cross attention去掉，只保留 masked self-attention 和 FFNN)</li>
+</ol>
+
+
+<p>→  这样cls token经过unimodal text decoder之后就能够得到整个句子的全局特征</p>
+
+<p>→  同时采用attention pooling对image encoder得到特征提取图像的全局特征(这里的attention pooling其实就是一个multi-head attention，只不过key和value是image encoder得到的特征，而query是预先定义的一个可训练的embedding，由于我们只需要提取一个全局特征，所以只需要定义一个query就好了)</p>
+
+<p>两个全局特征就可以实现图像-文本的对比学习「相当于image encoder和unimodal text decoder的两个[CLS]向量作为图片和文本的表示，进行batch 内对比学习，同 CLIP」</p>
+
+<ol>
+<li>multimodal text decoder将用来执行生成任务，这里也通过一个attention pooling对image encoder得到的特征进行提取，不过这里query数量定义为256，这样attention pooling可以得到256个特征，它作为multimodal text decoder的cross-attention的输入(cascademultimodal decoder layers cross-attending to image encoder outputs to learn multimodal image-textrepresentations)</li>
+</ol>
+
+
+<p>相当于就是正常的Transformer Decoder，包含masked self-attention、cross-attention、FFNN，用于融合图片和文本信息，实现双模态，最后做文本生成</p>
+
+<ol>
+<li>所以，CoCa将同时执行对比学习和文本生成任务，它的训练损失也包括两个部分：CoCa=λCon⋅Con+λCap⋅Cap</li>
+</ol>
+
+
+<p>顺带说一句，这个CoCa和如下图所示的ALBEF(这是其论文)还挺像的，所以有人评论它两的关系就像BERT和RoBERTa(可以简单理解为是对BERT的精调)</p>
+
+<ol>
+<li><p>但CoCa 与 ALBEF 最大的不同在于：CoCa 右侧处理文本和进行多模态融合的网络是一个 decoder，而非ALBEF那里是 encoder</p></li>
+<li><p>再说一句，其实下图的下半部分不就是类似一个CLIP么？^_^</p></li>
+</ol>
+
+
+<center><img src="/images/2024/IMAG2024070216.png"></center>
+
+
+<h4>2.1.1.2 分别通过短caption、长caption微调预训练好的image captioner</h4>
+
+<p>为了提升模型生成caption的质量，OpenAI对预训练好的image captioner进行了进一步微调，这个微调包括两个不同的方案，两个方案构建的微调数据集不同</p>
+
+<ul>
+<li><p>第一个方案的微调数据集是只描述图像主体的短caption(类似COCO风格的caption)</p></li>
+<li><p>而第二个方案的微调数据集是详细描述图像内容的长caption</p></li>
+</ul>
+
+
+<p>相应地，两个微调模型分别可以生成：短caption(short synthetic captions，简称SSC)、长caption(descriptive synthetic captions，简称DSC)</p>
+
+<p>下图展示了三个样例图像各自的原始caption(ground-truth)，以及生成的短caption、长caption</p>
+
+<center><img src="/images/2024/IMAG2024070217.png"></center>
+
+
+<ul>
+<li><p>每个样例图像的原始caption是从网页上得到的alt-text，其质量较差</p></li>
+<li><p>每个样例图像的合成的短caption简洁地描述了图像的主体内容</p></li>
+<li><p>每个样例图像的合成的长caption详细描述了图像的很多内容，细节比较丰富</p></li>
+</ul>
+
+
+<h4>2.1.1.3 为提高合成caption对文生图模型的性能：采用描述详细的长caption，训练的混合比例高达95%</h4>
+
+<p>接下来要解决两个问题</p>
+
+<ol>
+<li><p>通过实验来分析合成caption对文生图模型性能的影响</p></li>
+<li><p>另外一点是探讨训练过程中合成caption和原始caption的最佳混合比例</p></li>
+</ol>
+
+
+<p>这里之所以要混合合成caption和原始caption(opted to blend synthetic captions with ground truth captions)，主要是为了防止模型过拟合到合成caption的某些范式</p>
+
+<p>比如最常见的例子是合成的caption往往以"a"和"an"开头，解决这个问题最好的方法便是：通过接近the style and formatting that humans might use，以regularize our inputs to a distribution of text</p>
+
+<p>所以，我们在训练过程中，在合成caption中混入原始caption(human-written text)，相当于一种模型正则化</p>
+
+<p>首先是合成caption对模型性能的影响，这里共训练了三个模型，它们的差异是采用不同类型的caption，分别是</p>
+
+<ol>
+<li><p>只用原始caption</p></li>
+<li><p>5%的原始caption + 95%的合成短caption</p></li>
+<li><p>5%的原始caption + 95%的合成长caption</p></li>
+</ol>
+
+
+<p>通过上一节对DALLE 2的分析，我们得知最后的文生图decoder模型是基于扩散模型的</p>
+
+<center><img src="/images/2024/IMAG2024070218.png"></center>
+
+
+<p>而DALLE 3的论文中训练的文生图是latent diffusion模型</p>
+
+<ul>
+<li><p>其VAE和SD一样都是8x下采样</p></li>
+<li><p>而text encoder采用T5-XXL，之所以用T5-XXL，可能主要有两个原因，一方面T5-XXL可以编码更长的文本，另外一方面是T5-XXL的文本编码能力也更强</p></li>
+<li><p>这里训练的图像尺寸为256x256(这只是实验，所以低分辨率训练就足够了)，采用batch size为2048共训练50W步，这相当于采样了1B样本</p></li>
+</ul>
+
+
+<p>论文中并没有说明UNet模型的具体架构，只是说它包含3个stages，应该和SDXL类似(SDXL包含3个stage，只下采样了2次，第一个stage是纯卷积，而后面两个stages包含attention)</p>
+
+<p>这里只是想验证模型的prompt following能力，所以采用了CLIP score来评价模型，这里的CLIP score是基于以下两者的相似度，即</p>
+
+<ol>
+<li><p>CLIP ViT-B/32来计算生成图像的image embedding即zi</p></li>
+<li><p>和text prompt对应的text embedding即zt的余弦相似度(这里是生成了50000个图像并取平均值，并乘以100)</p></li>
+</ol>
+
+
+<p>C(zi,zt)=zi⋅zt‖zi‖‖zt‖</p>
+
+<p>下图展示了采用三种caption训练的模型在CLIP score上的差异：</p>
+
+<center><img src="/images/2024/IMAG2024070219.png"></center>
+
+
+<ul>
+<li><p>左图在计算CLIP score时，text采用原始caption(ground truth caption)，从整体上来看，无论是采用合成的长caption还是短caption，其CLIP score比只采用原始caption要好一点，但是波动比较大</p></li>
+<li><p>右图计算CLIP score时，text采用合成的长caption，这里就可以明显看到：合成长caption > 合成短caption > 原始caption，而且CLIP score要比左图要高很多</p></li>
+</ul>
+
+
+<p>这说明采用长caption来计算CLIP score是比较合理的，因为图像的image embedding信息很大，而短文本信息少，所以两者的相似度就会低一些，而且还可能存在一定的波动</p>
+
+<p>总之，从上面的实验来看，采用合成的长caption对模型的prompt following能力是有比较大的提升的。</p>
+
+<p>接下来的问题就是通过实验来找到最佳的数据混合比例。所以又增加了混合比例为65%、80%、90%的实验，下图展示了不同混合比例训练出来的模型其CLIP score的差异，可以看到采用95%的合成caption训练的模型在效果上要明显高于采用更低比例的caption训练的模型。</p>
+
+<center><img src="/images/2024/IMAG2024070220.png"></center>
+
+
+<p>所以最终的结论是采用合成的caption对模型提升帮助比较大，而且要采用描述详细的长caption，训练的混合比例高达95%，这也是后面DALL-E 3的数据训练策略。</p>
+
+<p>不过采用95%的合成长caption来训练，得到的模型也会“过拟合”到长caption上，如果采用常规的短caption来生成图像，效果可能就会变差</p>
+
+<p>为了解决这个问题，OpenAI采用GPT-4来“upsample”用户的caption，下面展示了如何用GPT-4来进行这个优化，不论用户输入什么样的caption，经过GPT-4优化后就得到了长caption：</p>
+
+<center><img src="/images/2024/IMAG2024070221.png"></center>
+
+
+<p>下图展示了三个具体的例子，可以看到使用优化后的长caption(图中第二排)其生成图像效果要优于原来的短caption(图中第一排)：</p>
+
+<center><img src="/images/2024/IMAG2024070222.png"></center>
+
+
+<p>所以，DALL-E 3接入ChatGPT其实是不得已而为之的事情，因为这样才能保证DALL-E 3的输入不偏离训练的分布</p>
+
+<h3>2.3.2 训练细节总结：原始caption和合成长caption混合训练 + T5 + latent decoder</h3>
+
+<p>DALLE 3的论文提到，DALL-E 3的具体实现有两个关键点：</p>
+
+<ol>
+<li><p>首先，DALL-E 3也采用95%的合成长caption和5%的原始caption混合训练，这也应该是DALL-E 3性能提升的关键</p></li>
+<li><p>另外，DALL-E 3的模型是上述实验中所采用的模型的一个更大版本(基于T5-XXL的latent diffusion模型)，同时加上其它的改进(但论文中并没有说是具体的哪些改进，只说DALL-E 3也不应简单地归功于在合成caption的数据集上训练，所以DALL-E 3的其它改进应该也会比较重要)</p></li>
+</ol>
+
+
+<p>目前DALL-E 3生成的图像的分辨率都是在1024x1024以上，所以DALL-E 3的模型应该类似于SDXL，采用递进式的训练策略(256 -> 512 -> 1024)，而且最后也是采用了多尺度训练策略来使模型能够输出各种长宽比的图像</p>
+
+<p>另外如小小将所说，附录里面给出了一个细节是</p>
+
+<center><img src="/images/2024/IMAG2024070223.png"></center>
+
+
+<ul>
+<li>DALL-E 3额外训练了一个latent decoder来提升图像的细节，特别是文字和人脸方面，这个应该是为了解决VAE所产生的图像畸变。这里采用的扩散模型是基于DDPM中的架构，所以是pixel diffusion</li>
+</ul>
+
+
+<p>从直观上来看，这个latent decoder就是替换原始的VAE decoder，因此这个扩散模型的condition是VAE的latent</p>
+
+<p>但是具体是怎么嵌入到扩散模型的UNet中，这里没有说明，最简单的方式应该是通过上采样或者一个可学习的网络将latent转变为和噪音图像一样的维度，然后与噪音图像拼接在一起</p>
+
+<ul>
+<li>同时为了加速，基于Consistency Models中提出的蒸馏策略将去噪步数降低为2步，所以推理是相当高效的</li>
+</ul>
+
+
+<p>This diffusion decoder is a convolutional U-Net identical to the one described in Ho et al. (2020). Once trained, we used the consistency distillation process described in Song et al. (2023) to bring it down to two denoising steps</p>
+
+<h3>2.3.3 DALL-E 3的评测结果</h3>
+
+<p>对于DALL-E 3的评测，论文是选取了DALL-E 2和SDXL(加上refiner模块)来进行对比。模型评测包括自动评测和人工评测。</p>
+
+<h4>2.3.3.1 针对DALLE 3的自动评测</h4>
+
+<p>自动评测主要有3个指标</p>
+
+<ol>
+<li>首先是计算CLIP score，评测数据集是从COCO 2014数据集中选择4096个captions</li>
+</ol>
+
+
+<p>这里的评测数据集是Imagen中所提出的DrawBench评测集(共包括200个包含不同类型的prompts)</p>
+
+<ol>
+<li>然后是采用GPT-4V来进行评测</li>
+</ol>
+
+
+<p>这里的评测是将生成的图像和对应的text输入到GPT-4V，然后让模型判断生成的图像是否和text一致，如果一致就输出正确，否则就输出不正确</p>
+
+<ol>
+<li>最后是采用T2I-CompBench来评测</li>
+</ol>
+
+
+<p>这个评测集包含6000个组合类型的text prompts，它包括多个方面，这里只选择color binding、shape binding和texture binding三个方面进行评测，评测是通过BLIP-VQA model来得到评分</p>
+
+<p>下表给出了DALL-E 3与其它模型的对比结果，可以看到DALL-E 3还是明显优于DALL-E 2和SDXL。不过自动评测所选择的三个指标都是评测模型的prompt following能力，并不涉及到图像质量</p>
+
+<center><img src="/images/2024/IMAG2024070224.png"></center>
+
+
+<h4>2.3.3.2 针对DALLE 3的人工评测</h4>
+
+<p>人工评测主要包括三个方面</p>
+
+<ol>
+<li><p>第一个是prompt following，给出两张不同的模型生成的图像，让人来选择哪个图像和文本更一致</p></li>
+<li><p>第二个是style，这里不给文本，只给两张图像，让人选择更喜欢的那个图像</p></li>
+<li><p>第三个是coherence，这里也不给文本，让人从两张图像中选择包含更多真实物体的图像</p></li>
+</ol>
+
+
+<p>可以看到后面的两个方面其实就是评测模型生成图像的质量，对于prompt following和style，这里使用的评测集是DALL-E 3 Eval，它共包含170个captions，是从用户应用场景收集得到的。而coherence方面的评测集是从COCO数据集抽样的250个captions，因为coherence是评测真实性，所以采用更偏真实场景的COCO数据集</p>
+
+<p>另外，之前DrawBench评测集是采用GPT-4V来自动评测的，但是GPT-4V也会犯错，比如在计数方面，所以这里也额外增加了DrawBench评测集的人工评测。</p>
+
+<p>所有人工评测的对比结果如表所示，可以看到DALL-E 3具有明显优势：</p>
+
+<center><img src="/images/2024/IMAG2024070225.png"></center>
+
+
+<p>这里的ELO score是GLIDE中所提出的来计算胜率的指标：</p>
+
+<center><img src="/images/2024/IMAG2024070226.png"></center>
+
+
+<p>尽管DALL-E 3在prompt following方面有很大的提升，但是它依然有一定的局限性</p>
+
+<ol>
+<li><p>首先是模型在空间位置关系上还是会比较容易出错，当prompt包含一些位置关系描述如"to the left of"，模型生成的图像并不一定会符合这样的位置关系，这主要是因为合成的caption在这方面也并不可靠</p></li>
+<li><p>另外就是文字生成能力，虽然DALL-E 3在生成文字方面很强，但是还是会出现多词或者少词的情况，一个可能的原因T5-XXL的tokenizer并不是字符级的</p></li>
+<li><p>还有一个比较大的问题是合成的caption会幻想图像中的重要细节，比如给一幅植物的绘图，image captioner可能会虚构出一个植物并体现在合成的caption上。这就意味着模型可能会学到错误的绑定关系，也导致模型在生成特定种类的东西并不可靠</p></li>
+<li><p>最后一点是模型的安全性和偏见，这个是所有大模型所面临的问题，也是由于训练集所导致的，对于这点，DALL·E 3 system card有更多的评测</p></li>
+</ol>
+
+
+<h1>第三部分 通俗理解stable diffusion：文本到图像的潜在扩散模型(改进版DDPM)</h1>
+
+<h2>3.1 SD与DDPM的对比</h2>
+
+<p>我们在上篇博客《AI绘画能力的起源：从VAE、扩散模型DDPM、DETR到ViT/MAE/Swin transformer》中，已经详细介绍了扩散模型DDPM，为方便对后续内容的理解，特再回顾下DDPM相关的内容(至于详细的请看上篇博客)：</p>
+
+<p>前向过程加噪</p>
+
+<p>xt=α¯t‾‾√x0+1−α¯t‾‾‾‾‾‾√ε</p>
+
+<p>逆向过程去噪，由于反向扩散过程不可直接计算，因此训练神经网络εθ来近似它，训练目标(损失函数)如下</p>
+
+<p>Lsimple =��t,x0,ε[‖ε−εθ(xt,t)‖2]</p>
+
+<p>所以，DDPM的关键是训练噪声估计模型，使其预测的噪声 ϵ^ 与真实用于破坏的噪声 相近，具体怎么个训练过程呢？</p>
+
+<ol>
+<li><p>比如可以选择选择一个训练图像，例如海边沙滩的照片，然后生成随机噪声图像，通过将此噪声图像添加到一定数量的步骤来损坏训练图像</p></li>
+<li><p>然后通过一个噪声估计器U-Net 预测添加的噪声，使其与实际噪声做差异对比，从而建立损失函数做反向传播，最后更新噪声估计器的参数</p></li>
+</ol>
+
+
+<p>说白了，就是通过告诉U-Net 我们在每一步添加了多少噪声，从而手把手一步步教U-Net 怎么去估计噪声</p>
+
+<center><img src="/images/2024/IMAG2024070227.png"></center>
+
+
+<ol>
+<li>U-Net训练好了之后(意味着其对噪声的估计比较准确了)，我们便可以基于训练好的 U-Net 来生成图像</li>
+</ol>
+
+
+<p>原理很简单，通过噪声估计器预测出噪声后，不模糊的图片便减去每一步添加的噪声以清晰化 不就ok了么</p>
+
+<center><img src="/images/2024/IMAG2024070228.png"></center>
+
+
+<p>而如果用一句话介绍Stable Diffusion(SD对应的论文为《High-Resolution Image Synthesis with Latent Diffusion Models》，由慕尼黑大学和runway于2021年年底共同提交，其一作为Robin Rombach)，可以理解为：改进版的DDPM，Stable Diffusion原来的名字叫“Latent Diffusion Model”(LDM)，很明显就是扩散过程发生隐空间中(即latent space，下文或其他地方也有说潜在空间或压缩空间之类的，都一个意思)，其实就是对图片做了压缩</p>
+
+<center><img src="/images/2024/IMAG2024070229.png"></center>
+
+
+<p>总之，Stable Diffusion会先训练一个自编码器，来学习将图像压缩成低维表示</p>
+
+<ul>
+<li><p>通过训练好的编码器E，可以将原始大小的图像压缩成低维的latent data（图像压缩）</p></li>
+<li><p>通过训练好的解码器D，可以将latent data还原为原始大小的图像</p></li>
+</ul>
+
+
+<p>在将图像压缩成latent data后，便可以在latent space中完成扩散过程，对比下和Diffusion扩散过程的区别，如下图所示：</p>
+
+<center><img src="/images/2024/IMAG2024070230.png"></center>
+
+
+<p>可以看到Diffusion扩散模型就是在原图 x 上进行的操作，而Stale Diffusion是在压缩后的图像 z 上进行操作</p>
+
+<h2>3.2 从模型结构和源码彻底理解Stable Diffusion</h2>
+
+<h3>3.2.1 SD的模型结构：autoencoder + CLIP text encoder + UNet</h3>
+
+<p>stable diffusion和上面DALL E2的原理其实差不多，具体而言，会先后经历以下几个步骤「左边红色是像素空间 pixel space(含编码器ε和解码器D)、中间绿色区域是潜在空间latent space、右边灰色的是条件condition」</p>
+
+<center><img src="/images/2024/IMAG2024070231.png"></center>
+
+
+<ol>
+<li>将图像从像素空间(Pixel Space)压缩到潜在空间(Latent Space)</li>
+</ol>
+
+
+<p>图像编码器  可以对图像x进行压缩，可以理解为它能忽略图片中的高频信息，只保留重要的深层特征，从而将x从(3, 515, 512)的像素空间压缩到一个维度为(4, 64, 64)的潜在空间</p>
+
+<p>这个就是所谓的感知压缩（Perceptual Compression），即“将高维特征压缩到低维，接着在低维空间上进行操作”的方法具有普适性，可以很容易的推广到文本、音频、视频等不同模态的数据上</p>
+
+<ol>
+<li>针对潜在空间的图片做扩散(Diffusion Process)：添加噪声</li>
+</ol>
+
+
+<p>对潜在空间Latent Space中的图片添加噪声，进行扩散过程，将其结果作为 U-Net 的输入</p>
+
+<ol>
+<li>根据用户的输入text/prompt 获取去噪条件(Conditioning)</li>
+</ol>
+
+
+<p>text encoder提取输入text/prompt的text embeddings(维度为77✖️768，意味着77个token嵌入向量，其中每个向量包含768个维度)</p>
+
+<p>然后通过cross attention方式送入噪声估计模型UNet中作为去噪条件condition(当然了，去噪时可以灵活地以文本、图像和其他形式为条件，比如以文本为条件即text2img、以图像为条件即 img2img)</p>
+
+<ol>
+<li>噪声估计器U-Net 预测噪声，然后依据「去噪条件」去噪：生成图片的潜在表示</li>
+</ol>
+
+
+<p>首先，噪声估计器 U-Net 将潜在噪声图像和文本提示作为输入，并预测噪声「该过程也在潜在空间(4x64x64 张量)中」</p>
+
+<p>之后，基于上面第3步的去噪条件对图像通过 噪声估计器U-NET进行去噪(Denoising)，以获得生成图片的潜在表示</p>
+
+<p>具体而言，可以分为以下4步骤</p>
+
+<p>a) 事实上，扩散模型可以理解为一个时序去噪自编码器</p>
+
+<center><img src="/images/2024/IMAG2024070232.png"></center>
+
+
+<p>，我们需要训练使得预测的噪声与真实噪声相近，则目标函数为：</p>
+
+<center><img src="/images/2024/IMAG2024070233.png"></center>
+
+
+<p>b) 而在 Latent Diffusion Models 中，引入了预训练的感知压缩模型，它包含一个编码器和一个解码器，这样就可以在训练时利用 得到 latent representation ，从而让模型在潜在表示空间中学习，其目标函数为：</p>
+
+<center><img src="/images/2024/IMAG2024070234.png"></center>
+
+
+<p>c ) 对于条件生成任务，我们将拓展为：，这样就可以通过来控制图片合成的过程，通过在 U-Net 上增加 cross-attention 机制来实现</p>
+
+<p>而为了能够从不同的模态预处理，论文引入了一个领域专用编码器，它用来将映射成一个中间表示</p>
+
+<center><img src="/images/2024/IMAG2024070235.png"></center>
+
+
+<p>，这样我们就可以很方便的引入各种形式的条件，例如文本、类别、layout等</p>
+
+<p>d) 最终模型可通过一个 cross-attention 将去噪条件引导融入到 UNet 中(作为query向量，作为key和value向量)，cross-attention 表示为：</p>
+
+<center><img src="/images/2024/IMAG2024070236.png"></center>
+
+
+<p>其中</p>
+
+<center><img src="/images/2024/IMAG2024070237.png"></center>
+
+
+<p>是 UNet 的一个中间表征</p>
+
+<p>最终，目标函数可以写为：</p>
+
+<center><img src="/images/2024/IMAG2024070238.png"></center>
+
+
+<p>总之，加噪后的隐式表达zt和文本语义表征通过Attention的方式输入到U-Net，用以更好的学习文本和图像的匹配关系，这里文本的语义向量就是条件(用户的输入text或prompt)，控制图像生成往我们想要的方向发展，通过U-Net来预测每一步要减少的噪声</p>
+
+<p>然后计算网络输出噪声和真实噪声的差距，最小化损失来反向传播更新参数，注意整个训练阶段VAE是冻结的 也如七月官网的「大模型线上营」中的一学员战士长所说，这里面有两个东西，一个是传统的diffuion，是通过预测噪声来还原成图片，另一个是unet里嵌入的注意力模块，用来控制你图片还原的方向</p>
+
+<ol>
+<li>潜在空间转换成最终图像</li>
+</ol>
+
+
+<p>图像解码器负责将去噪后的 latent 图像从潜在空间恢复到原始像素空间来生成最终图x̃ 「各维度为：(3,512,512)，即（红/绿/蓝, 宽, 高)」</p>
+
+<p>下图亦可辅助理解</p>
+
+<center><img src="/images/2024/IMAG2024070239.png"></center>
+
+
+<h3>3.2.2 从源码层面理解SD</h3>
+
+<center><img src="/images/2024/IMAG2024070240.png"></center>
+
+
+<p>// 待更</p>
+
+<h2>3.3 七月AIGC模特生成平台：基于SD的微调与二次开发</h2>
+
+<p>详见七月官网右上角的体验入口，或七月的SD课程或AIGC模特生成课程</p>
+
+<h1>第四部分 从SDXL Turbo、LCM到stable diffusion3</h1>
+
+<p>为避免本文太长，故特把SDXL Turbo、LCM、SD3相关的内容放到新一篇文章中，详见《文生图的最新进展：从LCM、SDXL到与sora同架构的Stable Diffusion3》</p>
+
+<h1>参考文献与推荐阅读</h1>
+
+<ol>
+<li><p>Learning Transferable Visual Models From Natural Language Supervision CLIP原始论文</p></li>
+<li><p>​​​​​CLIP 论文逐段精读，这是针对该视频解读的笔记之一：CLIP和改进工作串讲</p></li>
+<li><p>BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation BLIP原始论文</p></li>
+<li><p>多模态超详细解读 (六)：BLIP：统一理解和生成的自举多模态模型，极智AI | 多模态新姿势 详解 BLIP 算法实现</p></li>
+<li><p>理解DALL·E 2， Stable Diffusion和 Midjourney工作原理</p></li>
+<li><p>读完 DALL-E 论文，我们发现大型数据集也有平替版</p></li>
+<li><p>Hierarchical Text-Conditional Image Generation with CLIP Latents （DALL E2原始论文）</p></li>
+<li><p>DALL·E 2（内含扩散模型介绍），这是针对该视频解读的笔记</p></li>
+<li><p>DALL-E 3技术报告阅读笔记</p></li>
+<li><p>OpenAI一夜颠覆AI绘画！DALL·E 3+ChatGPT强强联合，画面直接细节爆炸</p></li>
+<li><p>CoCa：对比+生成式任务构建“全能型多模态模型”，这是其论文地址</p></li>
+<li><p>关于CoCa的另外几篇文章：CoCa: 在图生文过程中加入对比学习、如何评价谷歌的 CoCa，在 ImageNet 上达到新的 SOTA：91.0%？</p></li>
+<li><p>浅析多模态大模型的前世今生</p></li>
+<li><p>SD的奠基论文《High-Resolution Image Synthesis with Latent Diffusion Models》，由慕尼黑大学和runway于2021年年底共同提交</p></li>
+<li><p>The Illustrated Stable Diffusion，这是图解SD的翻译版</p></li>
+<li><p>Stable Diffusion Clearly Explained! How does Stable Diffusion paint an AI artwork? Understanding the tech behind the rise of AI-generated art.</p></li>
+<li><p>Getting Started With Stable Diffusion</p></li>
+<li><p>知乎上关于SD原理的几篇文章：Stable Diffusion 的技术原理是什么？、人工智能Ai画画——stable diffusion 原理和使用方法详解、十分钟读懂Stable Diffusion</p></li>
+<li><p>Memory-efficient array redistribution through portable collective communication</p></li>
+<li><p>stable diffusion 原理介绍 - AI绘画每日一帖</p></li>
+<li><p>How does Stable Diffusion work?</p></li>
+<li><p>Stable Diffusion 原理介绍与源码分析（一）</p></li>
+<li><p>保姆级讲解 Stable Diffusion</p></li>
+<li><p>李宏毅生成式AI模型diffusion model/stable diffusion概念讲解</p></li>
+<li><p>速度惊人！手机跑Stable Diffusion，12秒出图，谷歌加速扩散模型破记录</p></li>
+<li><p>SDXL Turbo、LCM相继发布，AI画图进入实时生成时代：字打多快，出图就有多快</p></li>
+<li><p>文生图10倍速，视频实时渲染！清华发布LCM：兼容全部SD大模型、LoRA、插件等</p></li>
+<li><p>七月在线：AIGC下SD/MDJ的原理与实战课 [深度探究AI绘画/多模态]</p></li>
+</ol>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[多模态大语言模型调研]]></title>
+    <link href="https://ibillxia.github.io/blog/2024/06/27/multimodal-llm-survey/"/>
+    <updated>2024-06-27T10:53:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2024/06/27/multimodal-llm-survey</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/689385182">https://zhuanlan.zhihu.com/p/689385182</a></p>
+
+<p>本文是关于论文《MM-LLMs: Recent Advances in MultiModal Large Language Models》的简要介绍。大型语言模型沿着多模态方向发展成为目前越来越受关注的研究领域，这篇论文从方法角度整理了2022年到2024年2月的经典多模态大语言模型，并从技术角度给出了一些前瞻思路。本文主要按照作者提供的框架和案例进行介绍。</p>
+
+<p>有关本专栏的更多内容，请参考大语言模型文献调研专栏目录</p>
+
+<h1>1. 文章简介</h1>
+
+<h2>1.1 基本信息</h2>
+
+<p>题目：MM-LLMs: Recent Advances in MultiModal Large Language Models</p>
+
+<p>论文：https://arxiv.org/pdf/2401.13601.pdf?trk=public_post_comment-text</p>
+
+<p>项目主页：https://mm-llms.github.io/</p>
+
+<p>论文引用：</p>
+
+<pre><code>@article{zhang2024mm,
+  title={Mm-llms: Recent advances in multimodal large language models},
+  author={Zhang, Duzhen and Yu, Yahan and Li, Chenxing and Dong, Jiahua and Su, Dan and Chu, Chenhui and Yu, Dong},
+  journal={arXiv preprint arXiv:2401.13601},
+  year={2024}
+}
+</code></pre>
+
+
+
+<!--more-->
+
+
+<h2>1.2 多模态大语言模型简介</h2>
+
+<p>GPT诞生以来，一向以强大的自然语言处理能力而著称，人们试着将大型语言模型（Large Language Models，LLM）的强大推理和生成能力在除文本以外的模态数据上应用起来。例如图像、视频、音频、3D点云等。得益于各个模态的数据都已经有各自的高质量的编码器和生成器，再加上LLM的加持，可以实现很多有趣的任务，多模态的大语言模型（Multi-modal Large Language Models， MM-LLMs）由此而来。</p>
+
+<p>多模态大语言模型的关键是如何将各个模态的模型（例如图像编码器，视频生成器等）与大语言模型结合起来，因为不同的模态是原生的不兼容的。这就涉及到多模态领域中的一个概念：对齐（Alignment）。这就对MM-LLMs框架提出了要求，一方面，各个模态的编码器、生成器所使用的编码，要和大语言模型中所使用的编码（也就是token）进行对齐，另一方面，在人机交互时，需要模型的功能能够对齐用户的意图，而非答非所问。</p>
+
+<h2>1.3 多模态大语言模型的简要历史</h2>
+
+<p>自从GPT-4和Gemini诞生后，多模态大语言模型吸引众多研究者加入；早期框架还是致力于用LLM辅助特定模态的理解，例如LLaVA、BLIP-2、Video-ChatGPT等；后续陆陆续续有研究关注多模态生成任务，例如MiniGPT-5、SpeechGPT、AudioPaLM等；近期最新成果关注和人类类似的从任意到任意（Any-to-Any）模态的交互，例如AudioGPT、NExt-GPT等。很多公司和机构高也在布局大语言模型以服务于特定的业务需要。</p>
+
+<center><img src="/images/2024/IMAG2024062701.png"></center>
+
+
+<h1>2. 多模态大语言模型的整体架构</h1>
+
+<p>目前的多模态大语言模型采取并联式的框架，以NExtGPT为例，多模态数据送到各自模态的编码器后得到各自模态的编码，这些编码通过各自模态的输入转换器（Input Projection）后得到对齐到大语言模型的文本编码，经过大语言模型处理后的输出，经过限定模态的输出转换器（Output Projection）以及生成器得到多模态的数据。通常的，Input Projection和Output Projection是需要训练的，这些模块占整个框架的参数量的比例很小，通常在2%左右。其他模块多是现成的经过大量数据训练过的，可以固定参数，也可以跟随Projection模块一起微调。</p>
+
+<center><img src="/images/2024/IMAG2024062702.png"></center>
+
+
+<h2>2.1 各个模态的编码器</h2>
+
+<p>各个模态的编码器用于将特定模态的数据转换成编码，现在已经有很多成熟的编码器可以解决这些问题，除了文本模态之外：</p>
+
+<ul>
+<li><p>视觉编码器：例如CLIP ViT、SAM HQ、DiNoV2等；</p></li>
+<li><p>语音编码器：例如CFormer、Whisper、CLAP等；</p></li>
+<li><p>3D编码器：例如ULIP2；</p></li>
+<li><p>联合编码器：各种模态均可处理，例如ImageBind；</p></li>
+</ul>
+
+
+<h2>2.2 输入转换器</h2>
+
+<p>用于模态对齐，将多模态数据编码对齐到文本空间，也是多模态融合的关键，这一模块是需要训练的。通常的转换器可以采取的形式有：</p>
+
+<ul>
+<li><p>一个简单的线性层；</p></li>
+<li><p>多层感知机</p></li>
+<li><p>其他类型，例如Cross-Attention、Q-former等</p></li>
+</ul>
+
+
+<h2>2.3 大型语言模型底座</h2>
+
+<p>这一部分可以独自的进行文本到文本的转换，当有其他模态的数据加入时，大型语言模型会将这些模态的数据也认定为一种文本，输出的模态也是以文本的形式，交给后续解码器处理。常见的用于多模态的大语言模型有ChatGLM、PaLM、Vicuna等。</p>
+
+<h2>2.4 输出转换器</h2>
+
+<p>用于将大语言模型的输出转换成多模态生成器空间中所使用的输入编码。与输入转换器形态类似。</p>
+
+<h2>2.5 多模态生成器</h2>
+
+<p>针对不同模态，目前已经有比较成熟的生成解决方案，可以直接拿来使用。例如</p>
+
+<ul>
+<li><p>图像生成：Stable Diffusion</p></li>
+<li><p>视频生成：ZeroScope</p></li>
+<li><p>语音生成：AudioLDM-2</p></li>
+</ul>
+
+
+<h2>2.6 多模态大语言模型的训练框架</h2>
+
+<p>根据训练数据类型的不同，目前的多模态大语言模型通常采用两种训练框架，MMPT和MMIT。前者使用X-文本对形式的输入数据，这里X就是各种模态的输入。例如图像-文本、视频-文本、语音-文本；MMIT使用指令形式的数据，将有监督微调（SFT）和强化学习结合起来。</p>
+
+<h1>3. 目前经典的多模态大语言模型的及其评测</h1>
+
+<h2>3.1 当前经典的大语言模型</h2>
+
+<p>分类。作者根据设计思路将多模态大语言模型按照功能和设计进行分类。</p>
+
+<center><img src="/images/2024/IMAG2024062703.png"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024062704.png"></center>
+
+
+<p>目前的大语言模型表现出以下趋势：</p>
+
+<ol>
+<li><p>从多模态理解到多模态生成，如MiniGPT-4=>MiniGPT-5=>NExtGPT；</p></li>
+<li><p>更好的对齐人的意图以及更好的交互，如BLIP-2=>InstructBLIP=>DRESS；</p></li>
+<li><p>扩展更多的模态类型；</p></li>
+<li><p>使用更高质量的多模态数据；</p></li>
+<li><p>更高效的网络结构；</p></li>
+</ol>
+
+
+<h2>3.2 目前SOTA多模态大语言模型及其在特定领域的性能</h2>
+
+<p>作者以视觉-语言任务为例，提供了多模态大语言模型在18个benchmark上的性能：</p>
+
+<center><img src="/images/2024/IMAG2024062705.png"></center>
+
+
+<p>并且有一些发现：</p>
+
+<ol>
+<li><p>更高的视觉分辨率可以获得更好的更细节的多模态性能；</p></li>
+<li><p>高质量的有监督微调数据集可以促进特定任务中的多模态性能；</p></li>
+<li><p>在LLM上使用PEFT可以促进编码对齐</p></li>
+<li><p>交叉使用图像和文本比使用图像-文本对效果更好</p></li>
+<li><p>使用多模态的有监督微调可以改善特定多模态任务中的性能，但是文本-文本单模态任务中性能下降</p></li>
+</ol>
+
+
+<h1>4. 后续方向</h1>
+
+<p>作者提供了后续多模态大模型发展的一些方向：</p>
+
+<ol>
+<li><p>更加强大的模型结构，可以引入网页、热力图或图表之类的更多模态来增加模型对更多模态的处理能力，也可以使用更高质量的多模态数据来改善模型性能，或者得到更强大的各个模态的生成模型；</p></li>
+<li><p>更多有挑战的Benchmark，例如像MathVista一样衡量视觉任务中的推理能力，或者像MMMU这样的通用智能多学科专家系统；</p></li>
+<li><p>轻量化部署，目前已经有一些工作在做，例如Mobile VLM、TinyGPT-V或Mobile-Agent，提高推理效率；</p></li>
+<li><p>嵌入式智能：使得MM-LLMs可以应对真实世界并与之交互，例如PaLM-E或者EmbodiedGPT；</p></li>
+<li><p>持续学习：根据当前使用环境进行持续参数更新；</p></li>
+<li><p>缓解幻觉现象：改善GPT一本正经的胡说八道的问题；</p></li>
+</ol>
+
+
+<h1>附录：论文的思维导图（大图，请在新标签页打开查阅）</h1>
+
+<center><img src="/images/2024/IMAG2024062706.png"></center>
+
+
+<p>有关本专栏的更多内容，请参考<a href="https://zhuanlan.zhihu.com/p/690590730">大语言模型文献调研专栏</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[为什么大型语言模型都在使用SwiGLU作为激活函数]]></title>
+    <link href="https://ibillxia.github.io/blog/2024/06/21/swiglu-activation-in-llm/"/>
+    <updated>2024-06-21T11:46:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2024/06/21/swiglu-activation-in-llm</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/691227850">https://zhuanlan.zhihu.com/p/691227850</a></p>
+
+<p>如果你一直在关注大型语言模型的架构，你可能会在最新的模型和研究论文中看到“SwiGLU”这个词。SwiGLU可以说是在大语言模型中最常用到的激活函数，我们本篇文章就来对他进行详细的介绍。SwiGLU其实是2020年谷歌提出的激活函数，它结合了SWISH和GLU两者的特点。</p>
+
+<center><img src="/images/2024/IMAG2024062101.jpg"></center>
+
+
+<p>我们一个一个来介绍：</p>
+
+<!--more-->
+
+
+<h1>Swish</h1>
+
+<p>Swish是一个非线性激活函数，定义如下:</p>
+
+<pre><code>Swish(x)= x*sigmoid(ßx)
+</code></pre>
+
+<p>函数的曲线：</p>
+
+<center><img src="/images/2024/IMAG2024062102.jpg"></center>
+
+
+<p>其中，ß 为可学习参数。Swish可以比ReLU激活函数更好，因为它在0附近提供了更平滑的转换，这可以带来更好的优化。</p>
+
+<h1>Gated Linear Unit</h1>
+
+<p>GLU（Gated Linear Unit）定义为两个线性变换的分量积，其中一个线性变换由sigmoid激活。</p>
+
+<pre><code>GLU(x)=sigmoid(W1x+b)⊗(Vx+c)
+</code></pre>
+
+
+
+<center><img src="/images/2024/IMAG2024062103.jpg"></center>
+
+
+<p>GLU可以有效地捕获序列中的远程依赖关系，同时避免与lstm和gru等其他门控机制相关的一些梯度消失问题。</p>
+
+<h1>SwiGLU</h1>
+
+<p>上面我们已经说到SwiGLU是两者的结合。它是一个GLU，但不是将sigmoid作为激活函数，而是使用ß=1的swish，因此我们最终得到以下公式:</p>
+
+<pre><code>SwiGLU(x)=Swish(W1x+b)⊗(Vx+c)
+</code></pre>
+
+<p>我们用SwiGLU函数构造一个前馈网络</p>
+
+<pre><code>FFNSwiGLU(x)=(Swish1(xW)⊗xV)W2
+</code></pre>
+
+<h1>Pytorch的简单实现</h1>
+
+<p>如果上面的数学原理看着比较麻烦枯燥难懂，我们下面直接使用代码解释。</p>
+
+<pre><code>class SwiGLU(nn.Module): 
+
+    def __init__(self, w1, w2, w3) -&gt; None: 
+        super().__init__() 
+        self.w1 = w1 
+        self.w2 = w2 
+        self.w3 = w3 
+
+    def forward(self, x): 
+        x1 = F.linear(x, self.w1.weight) 
+        x2 = F.linear(x, self.w2.weight) 
+        hidden = F.silu(x1) * x2 
+        return F.linear(hidden, self.w3.weight)
+</code></pre>
+
+<p>我们代码使用的F.silu函数与ß=1时的swish相同的，所以就直接拿来使用了。</p>
+
+<p>代码可以看到，我们的激活函数中也有3个权重是可以训练的，这就是来自于GLU公式里的参数。</p>
+
+<h1>SwiGLU的效果对比</h1>
+
+<p>SwiGLU与其他GLU变体进行比较，我们可以看到SwiGLU在两种预训练期间都表现得更好。</p>
+
+<center><img src="/images/2024/IMAG2024062104.jpg"></center>
+
+
+<p>下游任务</p>
+
+<center><img src="/images/2024/IMAG2024062105.jpg"></center>
+
+
+<p>效果表现得最好，所以现在的llm，如LLAMA, OLMO和PALM都在其实现中采用SwiGLU。但是为什么SwiGLU比其他的好呢？</p>
+
+<p>论文中只给了测试结果而且并没有说明原因，而是说：</p>
+
+<blockquote><p>We offer no explanation as to why these architectures seem to work; we  attribute their success, as all else, to divine benevolence.</p></blockquote>
+
+<p>作者说炼丹成功了。</p>
+
+<p>但是现在已经是2024年了我们可以强行的解释一波：</p>
+
+<p>1、Swish对于负值的响应相对较小克服了 ReLU 某些神经元上输出始终为零的缺点</p>
+
+<p>2、GLU 的门控特性，这意味着它可以根据输入的情况决定哪些信息应该通过、哪些信息应该被过滤。这种机制可以使网络更有效地学习到有用的表示，有助于提高模型的泛化能力。在大语言模型中，这对于处理长序列、长距离依赖的文本特别有用。</p>
+
+<p>3、SwiGLU 中的参数 W1,W2,W3,b1,b2,b3W1,W2,W3,b1,b2,b3 可以通过训练学习，使得模型可以根据不同任务和数据集动态调整这些参数，增强了模型的灵活性和适应性。</p>
+
+<p>4、计算效率相比某些较复杂的激活函数（如 GELU）更高，同时仍能保持较好的性能。这对于大规模语言模型的训练和推理是很重要的考量因素。</p>
+
+<p>选择 SwiGLU  作为大语言模型的激活函数，主要是因为它综合了非线性能力、门控特性、梯度稳定性和可学习参数等方面的优势。在处理语言模型中复杂的语义关系、长依赖问题、以及保持训练稳定性和计算效率方面，SwiGLU 表现出色，因此被广泛采用。</p>
+
+<p>论文地址: <a href="https://arxiv.org/abs/2002.05202">https://arxiv.org/abs/2002.05202</a></p>
+]]></content>
+  </entry>
+  
+</feed>

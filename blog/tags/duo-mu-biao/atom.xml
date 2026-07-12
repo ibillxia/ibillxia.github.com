@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 多目标 | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/duo-mu-biao/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[工业界推荐系统多目标预估的两种范式]]></title>
+    <link href="https://ibillxia.github.io/blog/2020/04/20/multi-objective-recommendation/"/>
+    <updated>2020-04-20T20:39:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2020/04/20/multi-objective-recommendation</id>
+    <content type="html"><![CDATA[<p>转载自知乎，原文链接：<a href="https://zhuanlan.zhihu.com/p/125507748">从谷歌到阿里，谈谈工业界推荐系统多目标预估的两种范式</a></p>
+
+<h1>多目标是什么？为什么要多目标？</h1>
+
+<p>我们的大脑会同时学习多种不同的任务，无论我们是想将英文翻译成中文，还是想将中文翻译成德语，我们都是使用相同的大脑架构，也就是我们自己的脑袋。同理在我们的模型中，如果我们采用的是同一个网络来同时完成这两个任务，那么我们就可以把这个任务称为 多目标学习。</p>
+
+<p>在推荐系统中，即使在同一个场景中，常常也有不只一个的业务目标。在Youtube的视频推荐中，推荐排序任务不仅需要考虑到用户点击率，完播率，也需要考虑到一些满意度指标，例如，对视频是否喜欢，用户观看后对视频的评分；在淘宝的信息流商品推荐中，需要考虑到点击率，也需要考虑转化率；而在一些内容场景中，需要考虑到点击和互动、关注、停留时长等指标。</p>
+
+<p>用多个模型分别对这些指标进行一个排序，然后综合起来可以吗？</p>
+
+<p>可以，但是会面临一些问题。第一，会面临比较大的线上开销，考虑一下你的场景至少可以承受多少rt吧。第二，一些目标的样本比较稀疏，还存在一些问题，例如，单独对CVR进行建模，存在样本选择偏差（Sample Selection Bias,SSB）和数据稀疏性(Data Sparisity,DS)问题，其实不好解决。</p>
+
+<p>什么是SSB问题，什么又是DS问题，我们后面再讲，我们知道的是，多目标预估可以通过同一个模型，解决（或者说缓解）上面的两个问题，甚至带来场景效果上的提升。</p>
+
+<p>讲完了必要性，下面进入正题，下面谈谈工业界推荐系统做多目标预估的两种范式。</p>
+
+<!--more-->
+
+
+<h1>范式一：MMoE替换hard parameter sharing</h1>
+
+<p>2017年的这篇综述文章An Overview of Multi-Task Learning in Deep Neural Networks将多目标的方法分成了两类。第一类是Hard parameter sharing的方法，将排序模型的底层的全连接层进行共享，学习共同的模式，上层用一些特定的全连接层学习任务特定的模式。这种方法非常经典，但是效果还是不错的，美团、知乎在18年分享的文章美团“猜你喜欢”深度学习排序模型实践、知乎推荐页Ranking经验分享使用的都是这种方法。</p>
+
+<center><img src="/images/2020/IMAG2020042001.webp"></center>
+
+
+<p><br></p>
+
+<p>这种方法最大的优势是Task越多，单任务更加不可能过拟合，劣势是底层强制shared layers难以学得适用于所有任务的表达。尤其是两个任务很不相关的时候。</p>
+
+<p>这个视频里给出了生动的例子，假设你的多目标预估是同时做猫狗的分类，那么底层的shared layer 学到的可能是关于眼睛、耳朵、颜色的一些共同模式。</p>
+
+<center><img src="/images/2020/IMAG2020042002.webp"></center>
+
+
+<p><br></p>
+
+<p>而如果你的任务是做一个狗的分类，同时做汽车的分类，采用Hard parameter sharing的方法，底层的shared layer 很难学到两者共同的模式，多目标任务也很难学好。</p>
+
+<center><img src="/images/2020/IMAG2020042003.webp"></center>
+
+
+<p><br></p>
+
+<p>谷歌在MMOE论文中的实验显示，任务相关性越高，模型的loss可以降到更低。</p>
+
+<center><img src="/images/2020/IMAG2020042004.webp"></center>
+
+
+<p><br></p>
+
+<p>当两个任务相关性没有那么好时（例如，推荐系统排序中的点击率和互动率，点击率和停留时长等），Hard parameter sharing 的模式就不是那么适用了，会损害到一些效果。对应的，Soft parameter sharing的方式可能更加适合。</p>
+
+<center><img src="/images/2020/IMAG2020042005.webp"></center>
+
+
+<p><br></p>
+
+<p>广义上MMoE方法也是Soft parameter sharing的一种。MMoE的全称叫做Multi-gate Mixture-of-Experts，在这篇论文发表前，还有个MoE模型（Mixture-of-Experts），下面先介绍MoE模型。</p>
+
+<p>MoE模型的底层将shared layer变成了多个expert，同时设置了一个gate，不同的任务通过gate的输出加权各个expert的输出。</p>
+
+<center><img src="/images/2020/IMAG2020042006.webp"></center>
+
+
+<p><br></p>
+
+<p>其中fi(x)为第i个expert网络的输出，g表示gate网络的输出。</p>
+
+<p>MMoE在MoE的基础上，设计了多个gate（每个任务都对应一个gate）。对于第k个任务，输出为对应的gate加权各个expert的输出，然后接多层全连接得到每个任务的输出。</p>
+
+<center><img src="/images/2020/IMAG2020042007.webp"></center>
+
+
+<p><br></p>
+
+<p>MMoE是Google发表在2018 KDD的一篇文章，在2019年的RecSys上，Google又发表了一篇MMoE的应用文章Recommending What Video to Watch Next: A Multitask Ranking System。</p>
+
+<p>算法的应用离不开其场景，这篇文章应用在Youtube视频推荐的场景中，其优化的多目标包含engagement objectives（点击率、完播率）和satisfaction objectives（喜欢、评分）。</p>
+
+<center><img src="/images/2020/IMAG2020042008.webp"></center>
+
+
+<p><br></p>
+
+<p>详情页的场景大多都面临着各种bias问题。包括position bias，user bias，trigger bias等。position bias指的是不同坑位天然的xx率指标都不同；user bias表示着不同用户天然的xx率不同，有的用户爱点，有的用户不爱点；trigger bias表示这个内容出现在不同的详情页下，xx率也并不相同。</p>
+
+<p>Youtube这篇论文解决的是position bias的问题，下图以点击率为例，可以看出youtube的详情页场景的点击率面临着严重的position bias问题。</p>
+
+<center><img src="/images/2020/IMAG2020042009.webp"></center>
+
+
+<p><br></p>
+
+<p>Youtube解决这个问题使用的方式是使用一个shallow tower来建模xx率的position bias。这个shallow tower的输入特征只采用一些selection bias特征，结果加入到user engagement objectives中（Youtube认为这些指标的position bias比较大）。</p>
+
+<center><img src="/images/2020/IMAG2020042010.webp"></center>
+
+
+<p><br></p>
+
+<p>这个shallow tower实际学到了什么呢？论文中将学到的position bias打出来了，发现确实，position靠前的坑位，值要更大一些。</p>
+
+<p>MMoE出来后，确实在工业界掀起了不小的水花，包括阿里在内的一些公司都对MMoE进行了改进，适配到自己的场景上，取得了效果。下面也想抛出一下自己的一些问题和想法，和大家讨论下。</p>
+
+<p>1.shallow tower放置在expert中是否更加合理？</p>
+
+<p>不同指标的position bias的严重程度可能不一样，在expert外学习统一的position bias可能不是十分合理。shallow tower放置在expert中是否更加合理？</p>
+
+<p>2.各个expert学到了什么？我们希望某个expert和task强相关，怎么办？</p>
+
+<p>Youtube的论文中，分析了不同expert和各个目标之间的关系（其实就是看各个gate的softmax值）。可以看到不同的expert确实在不同的任务中的重要性不同。但是这种expert和task的对应关系是随机决定的。而在一些情况下，我们需要某个expert和某个task之间存在强相关关系。这个时候可以在输入gate前，加入一些预设好的任务和expert权值关系，或者直接修改softmax函数，让占比大的更大。但这种方式比较粗糙，还有没有更加优雅的解决方式呢？</p>
+
+<center><img src="/images/2020/IMAG2020042011.webp"></center>
+
+
+<p><br></p>
+
+<h1>范式二：任务序列依赖关系建模</h1>
+
+<p>好了，是时候进入第二种范式了，我把它称之为任务序列依赖关系建模，代表作为阿里妈妈在2018年提出来的Entire Space Multi-Task Model （ESSM）。</p>
+
+<p>在推荐系统中，不同任务之间通常存在一种序列依赖关系。例如，电商推荐中的多目标预估经常是ctr和cvr，其中转换这个行为只有在点击发生后才会发生。这种序列依赖关系其实可以被利用，来解决一些任务预估中存在的样本选择偏差(Sample Selection Bias,SSB)和数据稀疏性(Data Sparisity,DS)问题。</p>
+
+<p>简单介绍一下什么是SSB问题和DS问题。SSB问题：后一阶段的模型基于上一阶段采样后的样本子集进行训练，但是最终在全样本空间进行推理，带来严重的泛化性问题。DS问题：后一阶段的模型训练样本通常远小于前一阶段任务。</p>
+
+<center><img src="/images/2020/IMAG2020042012.webp"></center>
+
+
+<p><br></p>
+
+<p>事实上，通过观察下面公式中pctcvr、pctr、pcvr之间的关系，可以找到解决上面问题的方法。</p>
+
+<center><img src="/images/2020/IMAG2020042013.png"></center>
+
+
+<p><br></p>
+
+<p>上面公式可以转化为</p>
+
+<center><img src="/images/2020/IMAG2020042014.webp"></center>
+
+
+<p><br></p>
+
+<p>那么，我们可以通过分别估计pctcvr和pctr，然后通过两者相除来解决。而pctcvr和pctr都可以在全样本空间进行训练和预估。但是这种除法在实际使用中，会引入新的问题。因为pctr其实是一个很小的值，范围一般在百分之几，预估时会出现pctcvr>pctr的情况，导致pcvr预估值大于1。</p>
+
+<center><img src="/images/2020/IMAG2020042015.webp"></center>
+
+
+<p><br></p>
+
+<p>ESSM巧妙的通过将除法改成乘法来解决上面的问题。它引入了pctr和pctcvr两个辅助任务，训练时，loss为两者相加。</p>
+
+<center><img src="/images/2020/IMAG2020042016.png"></center>
+
+
+<p><br></p>
+
+<p>ESSM是一种较为的通用的任务序列依赖关系建模的方法，除此之外，阿里的DBMTL 、ESM<sup>2</sup>等工作都属于这一范式。</p>
+
+<h1>两种范式结合：MMoE+ESSM？</h1>
+
+<p>我在看这些工作的时候就在思考，上文所述的两大类方法能不能结合呢？</p>
+
+<p>这两种范式，一种范式是使用expert+gate的方式替代hard parameter sharing，让不相关的任务也可以学习的很好。另一种范式聚焦于寻找多目标的任务中本身就存在的联系，来解决SSB和DS等问题，更好的建模。事实上这两种范式是可以叠加的。在阿里内也有一些相关工作，取得了效果。</p>
+
+<h1>多目标预估中的其他问题</h1>
+
+<p>多目标预估后，线上使用模型还存在一些问题。例如，线上多目标如何进行融合打分?一般的方式有</p>
+
+<center><img src="/images/2020/IMAG2020042017.png"></center>
+
+
+<p><br></p>
+
+<p>或者</p>
+
+<center><img src="/images/2020/IMAG2020042018.png"></center>
+
+
+<p><br></p>
+
+<p>两种。哪种方法、什么权重好，通常需要靠经验和线上ab来尝试。</p>
+
+<p>另外，常常存在的问题是，指标a的提升常常伴随着指标b的下降。阿里在recsys 2019发表的文章A Pareto-Efficient Algorithm for Multiple Objective Optimization in E-Commerce Recommendation 使用帕累托最优的思想，生成多组权重参数，目的是为了在不损害a指标的情况，提升b指标，感兴趣的同学可以看一下。</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 编码规范 | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/bian-ma-gui-fan/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Google C++ 编程规范要点总结]]></title>
+    <link href="https://ibillxia.github.io/blog/2015/03/26/google-cpp-style-guide/"/>
+    <updated>2015-03-26T18:45:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2015/03/26/google-cpp-style-guide</id>
+    <content type="html"><![CDATA[<center><img src="/images/2015/IMAG2015032601.png"></center>
+
+
+<p>Google C++ Style Guide是业界最为著名的C++编程规范之一。本文对其核心要点进行梳理总结，涵盖头文件管理、命名规范、类设计、内存管理等方面。</p>
+
+<h1>1. 头文件（Header Files）</h1>
+
+<p>通常每个 <code>.cc</code> 文件应该有一个配套的 <code>.h</code> 文件. 常见的例外情况包括单元测试和仅有 <code>main()</code> 函数的 <code>.cc</code> 文件.   <br/>
+正确使用头文件会大大改善代码的可读性和执行文件的大小、性能.</p>
+
+<ul>
+<li>每个.cc文件都应有一个对应的.h文件</li>
+<li>使用#define保护头文件防止多重包含，格式：<code>PROJECT_PATH_FILE_H_</code></li>
+<li>尽量使用前置声明（Forward Declarations）减少 <code>#include</code> 的数量</li>
+<li>内联函数不超过10行</li>
+</ul>
+
+
+<!--more-->   
+
+
+<h1>2. 命名规范（Naming）</h1>
+
+<p>最重要的一致性规则是命名管理. 命名的风格能让我们在不需要去查找类型声明的条件下快速地了解某个名字代表的含义: 类型, 变量, 函数, 常量, 宏, 等等, 甚至. 我们大脑中的模式匹配引擎非常依赖这些命名规则.</p>
+
+<p>命名规则具有一定随意性, 但相比按个人喜好命名, 一致性更重要, 所以无论你认为它们是否重要, 规则总归是规则.</p>
+
+<ul>
+<li><b>文件名</b>：全部小写，用下划线连接，如 <code>my_useful_class.cc</code></li>
+<li><b>类型名</b>：大驼峰，如 <code>MyExcitingClass</code></li>
+<li><b>变量名</b>：全部小写加下划线，如 <code>table_name</code>；类成员变量加尾部下划线 <code>table_name_</code></li>
+<li><b>常量名</b>：以k开头后跟大驼峰，如 <code>kDaysInAWeek</code></li>
+<li><b>函数名</b>：大驼峰，如 <code>AddTableEntry()</code></li>
+<li><b>命名空间</b>：全部小写加下划线</li>
+</ul>
+
+
+<h1>3. 类（Classes）</h1>
+
+<p>类 (class) 是 C++ 中最基本的代码单元. 因此，类在 C++ 中被广泛使用.</p>
+
+<ul>
+<li>构造函数中不要做过于复杂的初始化，考虑使用 <code>Init()</code> 方法</li>
+<li>必须定义拷贝构造函数和赋值操作符，或使用 <code>DISALLOW_COPY_AND_ASSIGN</code> 宏禁用</li>
+<li>优先使用组合（Composition）而非继承（Inheritance）</li>
+<li>接口类只有纯虚函数和静态成员</li>
+<li>声明顺序：<code>public</code> → <code>protected</code> → <code>private</code></li>
+</ul>
+
+
+<h1>4. 格式（Formatting）</h1>
+
+<p>每个人都可能有自己的代码风格和格式, 但如果一个项目中的所有人都遵循同一风格的话, 这个项目就能更顺利地进行. <br/>
+每个人未必能同意下述的每一处格式规则, 而且其中的不少规则需要一定时间的适应, 但整个项目服从统一的编程风格是很重要的, 只有这样才能让所有人轻松地阅读和理解代码.</p>
+
+<ul>
+<li>每行最多80个字符</li>
+<li>使用2个空格缩进，不使用Tab</li>
+<li>函数声明和定义的返回类型与函数名在同一行</li>
+</ul>
+
+
+<h1>5. 其他C++特性</h1>
+
+<ul>
+<li>优先使用const引用传递参数</li>
+<li>避免使用异常（Exceptions）</li>
+<li>使用C++风格的类型转换（static_cast等），禁止C风格强转</li>
+<li>使用前置递增（++i）而非后置递增（i++）</li>
+<li>使用nullptr替代NULL和0</li>
+</ul>
+
+
+<h1>参考资料</h1>
+
+<p>[1]<a href="https://google.github.io/styleguide/cppguide.html">Google C++ Style Guide</a>   <br/>
+[2]<a href="https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/contents.html">C++ 风格指南</a></p>
+]]></content>
+  </entry>
+  
+</feed>

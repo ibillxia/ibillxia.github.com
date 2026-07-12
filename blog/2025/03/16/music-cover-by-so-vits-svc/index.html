@@ -1,0 +1,528 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>基于so-vits-svc的AI翻唱歌曲教程 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2025/03/16/music-cover-by-so-vits-svc">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(function () {
+  addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">基于so-vits-svc的AI翻唱歌曲教程</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2025-03-16T09:51:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>原文链接：<a href="https://zhuanlan.zhihu.com/p/635429751">https://zhuanlan.zhihu.com/p/635429751</a></p>
+
+<p>So-vits-svc(SoftVC VITS Singing Voice Conversion)是一款开源免费AI语音转换软件，最近大火的AI孙燕姿利用的也是这一技术：</p>
+
+<p><a href="https://github.com/svc-develop-team/so-vits-svc">github.com/svc-develop-team/so-vits-svc</a></p>
+
+<p>so-vits-svc可以通过学习一个人的声音，对另一首歌做音色替换。所需的样本量较少，且少量的训练时间就可以得到不错的效果。</p>
+
+<p>但如果要真的跑so-vits-svc，步骤非常多，目前的门槛还是很高的。B站上有大神做了整合包，这个门槛会稍微低一点：</p>
+
+<iframe src="//player.bilibili.com/player.html?isOutside=true&aid=695334884&bvid=BV1H24y187Ko&cid=1110252582&p=1" 
+scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"
+style="width: 100%; height: 500px; max-width: 900px;"></iframe>
+
+
+
+
+<!--more-->
+
+
+<p>但目前网络上关于so-vits-svc的教程，大多没有把从下载、数据准备、模型训练到最终歌曲生成的整个流程讲清楚。</p>
+
+<p>这篇文章会讲述在Windows系统中，利用so-vits-svc进行声音克隆的完整过程。</p>
+
+<p>在进入教程之前你需要满足几个条件：</p>
+
+<ul>
+<li>有N卡，且内存在6G以上，并安装了对应的CUDA环境</li>
+<li>可以登录外网</li>
+</ul>
+
+
+<h1>一、下载so-vits-svc</h1>
+
+<h2>1. 创建新的conda环境</h2>
+
+<p>首先你需要在电脑上安装Anaconda，生成一个新的环境，方便不同Python包的版本管理：</p>
+
+<pre><code>conda create --name so-vits-svc
+</code></pre>
+
+<p>激活该环境：</p>
+
+<pre><code>conda activate so-vits-svc
+</code></pre>
+
+<h2>2. Git clone项目</h2>
+
+<p>首先把该项目下载到本地</p>
+
+<pre><code>git clone https://github.com/svc-develop-team/so-vits-svc.git
+</code></pre>
+
+<p>进入项目文件夹</p>
+
+<pre><code>cd .\so-vits-svc\
+</code></pre>
+
+<h2>3. 安装所需的Python环境</h2>
+
+<pre><code>pip install -r requirements_win.txt
+</code></pre>
+
+<p>注意：安装过程中，可能会有个别包安装失败。安装失败后，可以手动安装，例如我遇到了faiss, edge-tts, fairseq这三个包安装识别，然后自己手动通过pip安装：</p>
+
+<pre><code>pip install faiss-cpu
+pip install edge-tts
+pip install fairseq
+</code></pre>
+
+<h2>4. 下载预训练模型文件</h2>
+
+<p>下载地址：<a href="https://ibm.ent.box.com/s/z1wgl1stco8ffooyatzdwsqn2psd9lrr">checkpoint_best_legacy_500.pt | Powered by Box</a></p>
+
+<p>下载得到checkpoint_best_legacy_500.pt文件，放到.\so-vits-svc\pretrain文件夹中。</p>
+
+<h1>二、准备训练集</h1>
+
+<p>so-vits-svc需要唱歌或者说话的音频文件作为训练集，这里以唱歌的音频为例。</p>
+
+<p>准备训练集时，需要把人声提取出来，去掉和声和伴奏。然后把人声切成30秒以内的片段。</p>
+
+<h2>1. 歌曲下载</h2>
+
+<p>首先你需要下载一个人唱歌的音频，尽量下载无损音质(flac., wav.)，音频的数量建议在20首以上。</p>
+
+<h2>2. 提取人声</h2>
+
+<p>人声的提取需要用到Ultimate Vocal Remover，这是一个基于深度学习的人声、伴奏分离工具:</p>
+
+<p><a href="https://github.com/Anjok07/ultimatevocalremovergui">github.com/Anjok07/ultimatevocalremovergui</a></p>
+
+<p>GitHub上有下载地址：</p>
+
+<p><a href="https://github.com/Anjok07/ultimatevocalremovergui/releases/download/v5.5.0/UVR_v5.5.1_setup.exe">https://github.com/Anjok07/ultimatevocalremovergui/releases/download/v5.5.0/UVR_v5.5.1_setup.exe</a></p>
+
+<p>下载好Ultimate Vocal Remover，需要分别去除伴奏、和声，才能得到干净的人声：</p>
+
+<h3>（1）去除伴奏</h3>
+
+<p>去除伴奏利用MDX-Net：</p>
+
+<center><img src="/images/2025/IMAG2025031601.jpg"></center>
+
+
+<h3>（2）去除和声</h3>
+
+<p>把去除伴奏了的歌曲文件，利用VR Architecture去除和声：</p>
+
+<center><img src="/images/2025/IMAG2025031602.jpg"></center>
+
+
+<p>如果左下角Choose VR Model中只有1_HP-UVR，可以通过Download More Models下载6_HP-Karaoke-UVR这个模型。</p>
+
+<center><img src="/images/2025/IMAG2025031603.jpg"></center>
+
+
+<p>最后就可以得到干净的人声了。</p>
+
+<h2>3. 音频切片</h2>
+
+<p>得到了干净的人声后，需要把音频切成30s以内的片段，且去除没有人声的片段，只保留有人声的片段。</p>
+
+<p>音频切片需要用到开源的Audio Slicer工具：</p>
+
+<p><a href="https://github.com/flutydeer/audio-slicer">github.com/flutydeer/audio-slicer</a></p>
+
+<p>下载地址：<a href="https://github.com/flutydeer/audio-slicer/releases">Releases · flutydeer/audio-slicer</a></p>
+
+<p>添加人声文件，设置好输出文件夹，采用默认设置就可以了：</p>
+
+<center><img src="/images/2025/IMAG2025031604.jpg"></center>
+
+
+<p>最终得到的音频片段：</p>
+
+<center><img src="/images/2025/IMAG2025031605.jpg"></center>
+
+
+<p>数据集准备好后，在.\so-vits-svc\dataset_raw文件夹中新建一个文件夹，命名为该音色的名字，例如：</p>
+
+<blockquote><p>.\so-vits-svc\dataset_raw\jayzhou</p></blockquote>
+
+<p>把所有声音片段放在都放在这个文件夹下。</p>
+
+<h1>三、模型训练</h1>
+
+<h2>1. 导入训练集</h2>
+
+<p>确保激活了conda环境，且当前目录为.\so-vits-svc\，在command window中依次输入</p>
+
+<pre><code>python resample.py
+python preprocess_flist_config.py
+python preprocess_hubert_f0.py
+</code></pre>
+
+<h2>2. 开始训练</h2>
+
+<p>导入训练集后，可以开始训练</p>
+
+<pre><code>python train.py -c configs/config.json -m 44k
+</code></pre>
+
+<p>如果成功开始训练，可以得到每个Epoch的时间、loss以及模型保存的信息：</p>
+
+<center><img src="/images/2025/IMAG2025031606.jpg"></center>
+
+
+<p>建议至少训练1000个Epoch。</p>
+
+<p>可以通过Ctrl+C停止训练。</p>
+
+<h1>四、音色替换</h1>
+
+<h2>1. 准备干净的人声以及伴奏</h2>
+
+<p>so-vits-svc本质是对干净的人声进行音色替换，所以需要做替换的音频，也应该是干净的人声。</p>
+
+<p>下载一首新的歌曲，重复提取人声那一部分，去除和声和伴奏。</p>
+
+<p>去除伴奏的时候，不用勾选Vocal Only，这样就能得到歌曲的伴奏。在后面人声、伴奏混合时可以用到。</p>
+
+<h2>2. 打开WebUI</h2>
+
+<pre><code>python .\webUI.py
+</code></pre>
+
+<p>Running on local URL: http://127.0.0.1:7860</p>
+
+<p>在浏览器中输入http://127.0.0.1:7860，可以打开WebUI：</p>
+
+<center><img src="/images/2025/IMAG2025031607.jpg"></center>
+
+
+<h3>（1）加载模型</h3>
+
+<p>首先导入模型文件，模型文件所在位置：.\so-vits-svc\logs\44k\G_xxxx.pth</p>
+
+<p>然后导入配置文件，配置文件所在位置：.\so-vits-svc\configs\config.json</p>
+
+<p>导入这两个文件后，加载模型，如果成功加载，可以得到音色名称：</p>
+
+<center><img src="/images/2025/IMAG2025031608.jpg"></center>
+
+
+<h3>（2）导入歌曲并替换音色</h3>
+
+<p>将刚才准备的干净人声导入，点击音频转换即可得到转换后的音频：</p>
+
+<center><img src="/images/2025/IMAG2025031609.jpg"></center>
+
+
+<h1>五、人声伴奏混合</h1>
+
+<p>得到转换后的人声音频后，需要把人声和伴奏混合，最简单的方法是利用格式工厂的音频混合功能：</p>
+
+<center><img src="/images/2025/IMAG2025031610.jpg"></center>
+
+
+<p>这种方法不能条件人声和伴奏的比例，如果想要更好地去混音，可以利用AU等专业的音乐处理软件。</p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2025/03/16/music-cover-by-so-vits-svc/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2025-03-16T09:51:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/大模型/'>大模型</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/aifan-chang/'>AI翻唱</a>, <a class='tag' href='/blog/tags/yin-le-sheng-cheng/'>音乐生成</a></span>
+		
+    </p>
+    
+      
+         <div class="sharing">
+  
+  
+  
+</div>
+
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2025/01/22/transformer-attention-guide/" title="Previous Post:
+        大模型入门指南：Transformer与Attention机制">&laquo; 大模型入门指南：Transformer与Attention机制</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2025/06/18/gen-rec-servey-notes/"
+        title="Next Post: GenRec综述论文笔记">GenRec综述论文笔记
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://ibillxia.github.io/blog/2025/03/16/music-cover-by-so-vits-svc/';
+        var disqus_url = 'https://ibillxia.github.io/blog/2025/03/16/music-cover-by-so-vits-svc/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

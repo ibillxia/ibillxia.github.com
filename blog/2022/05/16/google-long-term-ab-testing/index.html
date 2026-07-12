@@ -1,0 +1,464 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Google长期AB测试：避免短期收益陷阱 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2022/05/16/google-long-term-ab-testing">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(function () {
+  addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">Google长期AB测试：避免短期收益陷阱</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2022-05-16T14:57:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>在AB测试中，我们一般会关注某个变化带来的短期影响。比如：</p>
+
+<ul>
+<li><p> 新功能会给我们带来更高转换率吗？</p></li>
+<li><p> 改变设计是否会让更多的用户参与到特定功能？</p></li>
+</ul>
+
+
+<p>如果答案是肯定的，就开始把改动全面推向所有用户。</p>
+
+<p>但是，短期目标可能会与企业更关键的长期目标发生冲突。比如，一家超市突然提高价格，可能会在短期带来更高利润。但长远看，如果更多的顾客改从竞争对手那里购买商品，那么这家店的收入就会减少。</p>
+
+<center><img src="/images/2022/IMAG2022051601.jpg"></center>
+
+
+<p><br></p>
+
+<center>(图源：Unsplash)</center>
+
+
+
+
+<!--more-->
+
+
+<p>本文中，我将对在线实验的先驱之一 —- Google进行介绍，看看Google是如何通过长期实验来解决上述问题的；以及我们能从中学习到的一些用AB测试实现持续成功的方法。</p>
+
+<h2>权衡用户价值与收益</h2>
+
+<p>用户价值和收入之间的权衡并不是直观。但是你可能会问，企业不就应该通过提供用户价值来赚钱吗？</p>
+
+<p>是，也不是。举个例子，想想报纸、杂志或电视节目。对用户来讲，更少的广告和更多的内容确实会更有价值。但这些都会对出版商的收入有明显影响。</p>
+
+<p>产品开发（Product Development）领域也是这样。无论是想提高用户留存率，吸引更多用户；还是鼓励更多用户使用某个功能:任何努力优化背后的长期目标，都是为了增加收益。实验时，我们通常专注于改进其中的一个主要成分。</p>
+
+<p>对于Google这样的搜索引擎，他们具体收入分布如下：</p>
+
+<center><img src="/images/2022/IMAG2022051602.png"></center>
+
+
+<p><br></p>
+
+<p>从等式我们不难看出：改善其中任一部分，总体收入值都会增加。</p>
+
+<p>但是，想要达到这些效果并不容易。因为各部分总是相互纠缠在一起。增加某一指标，可能会影响等式中的另一部分。最终，可能对整体造成负面影响。</p>
+
+<p>比如，我们想要查看每个任务的查询量。这个指标，就是用户在Google Search上找到他问题答案需要搜索的次数。从等式中可以看到，这是总收入的直接来源。但是，如果为了留住用户，而降低搜索结果的质量，对Google的收入来说可能是个很错误的想法。因为这会导致越来越多用户转向其他搜索引擎（比如Bing或DuckDuckGo），最终造成用户数量(等式中另一个组成部分)迅速减少。</p>
+
+<h2>与AB测试的关系</h2>
+
+<p>通常来说，这些效果的影响是存在一定的时间间隔的。假如Google降低了搜索结果的质量，那么用户可能要花一些时间来决定要不要尝试其他搜索引擎。而在此之前，团队会观察到每个用户的查询量有所增加，收入也会略有增加。</p>
+
+<p>在AB测试中，我们衡量的指标要与变化之间存在密切联系，而且它也必须是收入的驱动力。界定一个较小范围，不但可以节省时间，还能更简单的把兴趣指标转化为处理方法。</p>
+
+<p>如我们所见，对整体目标(增加收益)的长期影响，可能会与我们的预期完全相反，这种矛盾尤其在对用户体验产生了负面影响时更加突出。</p>
+
+<h2>Google对长期影响的衡量</h2>
+
+<p>Google团队很清楚这个困境的存在。所以，他们尝试开发了一种方法来评估页面广告数量变化带来的长期影响。</p>
+
+<center><img src="/images/2022/IMAG2022051603.jpg"></center>
+
+
+<p><br></p>
+
+<center>Google Search上的广告 (图源：作者)</center>
+
+
+<p>除了可能会将用户拱手让给竞争对手之外，增加广告数量也会对整体收益产生更多负面影响。比如，它会让用户习惯性忽略广告，这种现象被称为广告漠视或广告盲区（ad blindness）。</p>
+
+<p>这种效应会降低用户点击广告的频率，最终降低Google的收入。</p>
+
+<p>为了权衡和量化长期投放广告与较低点击率之间的关系，该团队进行了一项长期实验。分为以下三个阶段：</p>
+
+<ul>
+<li><p>前期：对照组和实验组体验相同，以确保两组具有可比性。</p></li>
+<li><p>实验：实验组广告曝光较多，在此阶段可以观察到使用该解决方法的短期效果。</p></li>
+<li><p>后期：两组再次回到Google Search的正常体验。这一阶段，可以观察到实验组的学习效果。如果用户点击广告的频率明显低于没有使用该方法的用户，那么实验组的用户就是习惯性忽略广告了。</p></li>
+</ul>
+
+
+<center><img src="/images/2022/IMAG2022051604.jpg"></center>
+
+
+<p><br></p>
+
+<center>增加广告曝光对Google Search的长期影响(图源：作者)</center>
+
+
+<p>通过这个实验，团队可以观察到广告点击率的变化以及随着时间的推移对收益的影响。然后，结合短期变化和学习效果，可以计算出整体的长期效果。</p>
+
+<p>在后期，投入与控制组数量相同的广告时，可以看到实验组中用户点击率更低。所以团队确实可以观察到学习效果：</p>
+
+<center><img src="/images/2022/IMAG2022051605.jpg"></center>
+
+
+<p><br></p>
+
+<p>与对照组相比，两种变量的用户在发布后的广告点击率（图源：Hohnhold等）</p>
+
+<p>注：如上图所示，Google在实验中又加入了第三组。在实验阶段，变量组用户看到的广告是少于对照组的，但结果却显示，播放更多广告的组产生了相反的效果。</p>
+
+<p>无法进行长期实验怎么办？</p>
+
+<p>通过上述方法，Google可以在改变展示广告数量的同时，量化短期和长期变化之间的权衡。</p>
+
+<p>另外，团队还可以利用他们的发现来创建一个公式，通过短期结果来衡量一个变化的总体影响。然后在AB测试中把这个估计值当作主要指标。</p>
+
+<h2>长期实验的缺点</h2>
+
+<p>问题是，有很多其他公司（想要采用这种方法的）并没有Google这样的资源和流量。Bing的一个研究团队指出，长期实验也存在一些严重的缺陷。</p>
+
+<p>该团队指出了长期AB测试存在的问题，具体如下：</p>
+
+<ul>
+<li><p>Cookie流失：进行试验时，必须先确定用户身份，然后再将其分类。如果用户不需要登录某项服务(Google Search和大多数网站都是这样)，那么识别用户的唯一方法就是cookie。由于用户可以随时更改他们的浏览器或删除他们的cookie，因此，保持一个稳定的样本几乎是不可能的。实验进行得越久，这个问题就会变得越严重。</p></li>
+<li><p>幸存者偏差：增加实验组的广告负荷可能会增加用户流失率。所以，忠诚度较低的用户会有更高流失率。随着实验的推进，实验组中的忠实用户比例可能会更高。这种情况下，对照组和实验组就不再具有可比性。</p></li>
+<li><p>选择偏差：由于Cookie的流失，后期的实验组可能只由忠实用户组成，所以不具有代表性。</p></li>
+<li><p>副作用：有时实验会涉及一些个性化设置。在比较对照组和实验组后期的情况时，实验组可能会有更好体验，因为他们的帐户设置得更好。</p></li>
+<li><p>假设有一项新功能，可以测试回家路上的交通流量，并实时提醒Google Maps的用户。向用户提供的信息在实验后还可以继续使用，并且能显着改善用户体验。</p></li>
+</ul>
+
+
+<p>这些缺陷并不是所有的长期实验都有。比如，假设用户必须登录才能使用特定服务（参考Netflix或Spotify），那么Cookie流失就不会是问题。</p>
+
+<h2>评估长期影响的替代方法</h2>
+
+<p>虽然有(复杂的)方法来解决或减轻上述副作用，但资源较少的企业该如何衡量实验的长期影响呢？</p>
+
+<p>在评估AB测试成功与否时，应把客户终身价值（Customer Lifetime Value）作为指导原则。</p>
+
+<p>简单来说，就是我们在进行实验时必须选择正确的度量标准。在选择特定的目标和度量标准时，增加客户终身价值（Customer Lifetime Value）作为指导原则。在选择试验成功的短期指标时，应该充分了解这项业务。</p>
+
+<p>例如，Netflix团队知道用户留存率与用户对产品的参与度相关。衡量用户留存率的重大变化不仅耗时，而且对Netflix这种已经有了很高的留存率的公司，还很棘手。所以，团队将用户粘性作为AB测试的主要指标来代替留存率，这样更容易衡量，并能更快得出结果。</p>
+
+<p>以下是牺牲(短期)收益，改善用户体验的更多灵感：</p>
+
+<p>在进行多次长期研究之后，Google把移动端上的广告量减少了50%。可以预见的是，由于呈现给用户的广告数量大幅减少，游戏营收会大幅下降。但实际上，该团队发现，由于网站上的用户体验得到了显着改善，所以对Google Search的收益能力产生了长期的积极影响。</p>
+
+<h2>总结</h2>
+
+<p>对于产品团队而言，短期收入的增长变化看似是一个绝佳机会，但我们必须了解，那些既得利益往往与企业的长期发展目标不一致。</p>
+
+<p>为了解决这一难题，产品团队应将客户终身价值（Customer Lifetime Value）当作他们实验工作的中心。</p>
+
+<p>在我看来，有两个因素至关重要：</p>
+
+<ul>
+<li><p>实验需要专注于改善用户体验，而不是推动短期收益。想想Google 50%的广告削减带来的长期收益。</p></li>
+<li><p>应该使用对企业有积极影响的长期目标的指标来评估实验的成功。比如，Netflix使用的敏感指标很容易受到影响，但它和用户留存率是呈正相关的。</p></li>
+</ul>
+
+
+<p>原文作者：Dennis Meisner</p>
+
+<p>原文链接：https://towardsdatascience.com/what-we-can-learn-from-googles-long-term-ab-test-64e45b649cc4</p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2022/05/16/google-long-term-ab-testing/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2022-05-16T14:57:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/datascience/'>DataScience</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/abce-shi/'>AB测试</a>, <a class='tag' href='/blog/tags/google/'>Google</a>, <a class='tag' href='/blog/tags/yin-guo-tui-duan/'>因果推断</a></span>
+		
+    </p>
+    
+      
+         <div class="sharing">
+  
+  
+  
+</div>
+
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2021/11/14/qqmusic-content-understanding-and-refined-operations-of-recsys/" title="Previous Post:
+        【DataFunTalk】QQ音乐内容理解与精细化运营——推荐系统的精细化调控">&laquo; 【DataFunTalk】QQ音乐内容理解与精细化运营——推荐系统的精细化调控</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2022/06/01/flink-state-management/"
+        title="Next Post: Apache Flink漫谈系列：State状态管理">Apache Flink漫谈系列：State状态管理
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://ibillxia.github.io/blog/2022/05/16/google-long-term-ab-testing/';
+        var disqus_url = 'https://ibillxia.github.io/blog/2022/05/16/google-long-term-ab-testing/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

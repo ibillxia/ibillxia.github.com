@@ -1,0 +1,638 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Hulu视频广告系统中的算法实践 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(function () {
+  addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">Hulu视频广告系统中的算法实践</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2024-07-19T14:40:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>原文链接：<a href="https://www.infoq.cn/article/ko9yxouspj4kuoh9jut4">https://www.infoq.cn/article/ko9yxouspj4kuoh9jut4</a></p>
+
+<h1>概述</h1>
+
+<h2>Hulu 的广告产品</h2>
+
+<p>首先介绍一下 Hulu 以及 Hulu 的广告产品形态。</p>
+
+<p>Hulu 是一家美国的提供专业视频点播与直播的服务平台，成立于 2006 年，目前由迪士尼控股，拥有近 3000 万付费订阅用户，是全美用户数量增长最快的流媒体平台。</p>
+
+<p>① 产品形态：点播，直播，回看等；</p>
+
+<p>② 广告形态：以视频流中的 15 秒、30 秒的视频广告短片为主；</p>
+
+<p>③ 广告特点：</p>
+
+<ul>
+<li><p>以品牌类广告为主，品牌类广告看重长期效果，品牌的曝光度，用户认知等等；</p></li>
+<li><p>采用 CPM ( Cost Per Mille，千次展示 ) 方式计费，即无论用户是否点击，按照展示次数计价；</p></li>
+<li><p>以担保式广告订单为主，广告主希望其品牌曝光有一定量的保障，例如，某品牌希望在指定地区给指定用户群投放指定的次数；</p></li>
+<li><p>质量要求非常高，包括清晰度、创意、制作的精良程度等等。</p></li>
+</ul>
+
+
+<center><img src="/images/2024/IMAG2024071901.png"></center>
+
+
+
+
+<!--more-->
+
+
+<h2>核心算法问题</h2>
+
+<p>上面简单介绍了 Hulu 和 Hulu 的广告产品形态，接下来介绍下广告系统中我们主要面对的核心算法问题有哪些，以及算法发挥的主要作用。</p>
+
+<p><strong>广告生态系统有三个核心要素：广告主，用户，媒体方 ( Hulu )。每个要素都有自己的优化目标。</strong></p>
+
+<h3>广告主：</h3>
+
+<p>广告主的核心优化目标是广告的投放效率、有效性，以及 ROAS ( Return-On-Ad-Spend，广告支出回报率 )，算法的主要应用为：</p>
+
+<p>① 广告定向：使用机器学习算法进行受众定向、基于上下文的定向、lookalike 定向等；</p>
+
+<p>② 订单及价格优化：给广告主一些订单定向条件及价格的建议，使其在 Hulu 上更好的进行订单的购买和投放；</p>
+
+<p>③ 转化率优化：越来越多的品牌类的广告主也开始在意短期或者长期的转化率，使用机器学习方法提高转化率，把正确的广告投给正确的用户；</p>
+
+<h3>用户：</h3>
+
+<p>对于用户的核心优化目标是优化用户体验，尽可能减少广告对用户的干扰，给用户更有连贯性的观看体验，算法的主要应用为：</p>
+
+<p>① 个性化广告：给用户推荐更感兴趣，更相关的广告</p>
+
+<p>② 情景式广告：使用 AI 技术进行图像音频的识别、广告创意的生成，为用户带来浸入式广告体验</p>
+
+<p>③ 个性化频次控制：为用户提供个性化频次控制，避免重复及过量广告为用户带来的反感</p>
+
+<h3>媒体方（Hulu）：</h3>
+
+<p>最终的优化目标：广告收入最大化，吸引更多的广告商和用户；与此同时我们也会进行生产环境的工作效率优化，算法的主要应用为：</p>
+
+<p>① 库存预估：这是在担保式广告里面是一个必不可少的环节，在售卖广告以及做广告预算时发挥重要作用</p>
+
+<p>② 广告流量匹配：对广告订单与用户流量进行匹配，保证担保式广告能够按时按量且均匀的进行投放</p>
+
+<p>③ 定价策略优化：根据流量的热门程度及售卖压力，进行动态的定价，让整个系统得到一个收入的最大化。</p>
+
+<p>下图总结了在 Hulu 的视频广告系统中的 <strong>核心算法问题</strong>，也是我们研究员每天在做的事情：</p>
+
+<center><img src="/images/2024/IMAG2024071902.png"></center>
+
+
+<p>① 广告定向，涉及到：</p>
+
+<ul>
+<li><p>预估模型：例如用户标签的补全，构建 lookalike 模型等等</p></li>
+<li><p>主题模型：使用无监督方式挖掘用户属性</p></li>
+<li><p>图像识别技术：识别视频内容中物体、场景、氛围等等，投放上下文相关视频广告</p></li>
+</ul>
+
+
+<p>② 库存预估，涉及到：</p>
+
+<ul>
+<li>时序预测算法：库存预估一般被建模成时序预测问题</li>
+</ul>
+
+
+<p>③ 流量匹配，涉及到：</p>
+
+<ul>
+<li><p>凸优化：使用凸优化进行离线流量匹配</p></li>
+<li><p>自动化控制理论 ( PID Controller )：使用自动化控制理论进行线上动态调整</p></li>
+</ul>
+
+
+<p>④ 转化率优化，涉及到：</p>
+
+<ul>
+<li><p>CVR 预估模型</p></li>
+<li><p>Casual Inference ( 因果推断 )：使用因果推断，得到一个更加公正、有效的指标来评估转化是否有效。</p></li>
+<li><p>Bandit/增强学习：使用 Bandit 以及增强学习的方式来解决广告冷启动的问题</p></li>
+</ul>
+
+
+<p>⑤ 程序化交易广告，涉及到：</p>
+
+<ul>
+<li><p>RTB ( Real time bidding ) 策略研究</p></li>
+<li><p>流量预估/CVR 预估/投放节奏控制</p></li>
+</ul>
+
+
+<p>⑥ 用户/广告体验分析，涉及到：</p>
+
+<ul>
+<li><p>统计理论</p></li>
+<li><p>Casual Inference ( 因果推断 )</p></li>
+</ul>
+
+
+<p>⑦ 价格机制设计，涉及到：</p>
+
+<ul>
+<li><p>博弈问题</p></li>
+<li><p>增强学习</p></li>
+</ul>
+
+
+<h1>核心业务场景中的算法实践</h1>
+
+<p>由于篇幅有限，这里着重讲一下在三个比较核心的业务场景下，算法在 Hulu 广告系统中的实践与落地。</p>
+
+<h2>1. Ad Targeting 广告定向</h2>
+
+<center><img src="/images/2024/IMAG2024071903.png"></center>
+
+
+<p>广告定向在品牌类广告中，是最最重要的一个环节。</p>
+
+<p>在 Hulu 的场景下，主要有三种类型的广告定向：</p>
+
+<p>① 上下文相关：例如用户用的设备，在什么位置，在哪个频道，看什么样的视频内容，插播广告点前后的视频内容是什么情景等等。</p>
+
+<p>② 用户相关：例如用户年龄性别、用户基本属性以及根据用户历史行为挖掘出来的属性等。</p>
+
+<p>③ 用户广告交互相关：</p>
+
+<ul>
+<li><p>Remarketing ( 再营销 )：例如投放广告给最近访问过广告商网站的用户，为他加深品牌印象；</p></li>
+<li><p>Look-alike Targeting ( 相似访客定向 )：投放广告给与种子用户相似的受众，扩大受众人数，以及挖掘具有潜能的用户。</p></li>
+</ul>
+
+
+<p>下面分别介绍一下针对这三种类型的广告定向使用到的核心算法：</p>
+
+<center><img src="/images/2024/IMAG2024071904.png"></center>
+
+
+<h3>a. 用户相关定向：</h3>
+
+<p>我们构建了用户画像系统作为用户定向的基础。底层是一个核心用户平台，负责用户数据的管理，版本控制，每天的 ETL 等等。注入的数据来自三种数据源：</p>
+
+<p>① 来自第三方数据平台的用户标签、属性，</p>
+
+<p>② Hulu 自己本身的一些标签，这里有两类工作：</p>
+
+<ul>
+<li><p>第一类是工作是标签的补全，我们会用一些例如 XGBoost、DNN 的预测模型来对这些缺失标签的用户进行一个预估，得到用户具有哪些标签，以及概率是多少。</p></li>
+<li><p>第二类是无监督模式，我们从用户的历史行为以及其他属性中进行挖掘，挖掘出一些新的属性出来，会涉及聚类、主题模型、user2vec 的方式来生成用户的标签。</p></li>
+</ul>
+
+
+<p>③ 广告商提供的用户标签，针对这种标签最常用的就是进行 Lookalike 定向，我们会用机器学习的方式来进行预测，找到与种子用户相似的用户群体。</p>
+
+<h3>b. 上下文相关定向：</h3>
+
+<center><img src="/images/2024/IMAG2024071905.png"></center>
+
+
+<p>这里主要介绍一下 AI 在视频内容上下文情景广告中的应用。视频广告会插播在视频内容播放前以及播放中， 投放与视频上下文情节比较相关的广告，会减少广告对用户的干扰，举个例子：用户当前所看的是婚礼视频，如果此时投放的广告是珠宝广告，那就毫无违和感，甚至会激起用户的购买欲望。另外，我们需要探测视频中的的一些暴力血腥画面，在这些地方不适合投放广告。</p>
+
+<p>这个问题的核心是使用图像识别技术检测出视频每帧都出现了什么样的实体、情景以及氛围等。Hulu 结合业界的标准构建了自己的 Taxonomy 体系，分为情绪、物体、场景、位置以及声音几个大的分类。</p>
+
+<p>简要介绍一下图像检测大致流程：考虑到获取大量数据样本的人力物力成本较大，我们最开始会借助于公开数据集 ( 比如 Open Iamge、Places 365 等 )，使用 Inception V3、VGG 等模型去生成一些标签，接下来会根据 Hulu 的场景进行少量的人工标注，对模型进行 Finetune 以及使用多模型融合决定最终的标签。</p>
+
+<h3>c. 转化率优化：</h3>
+
+<center><img src="/images/2024/IMAG2024071906.png"></center>
+
+
+<p>虽然品牌类的广告点击率没有那么重要，但是越来越多的广告商开始和 Hulu 谈，我把我的转化数据给你，你帮我计算下我这次投放的转化率是多少。这就带来了另外一个问题，广告商最终还是希望优化自己广告的转化率，所以我们最近开始了这方面的研究。目前开展的研究是基于 Hulu 自己的广告的转化率优化，Hulu 在自己的视频里面也会放一些推广新剧的广告内容，例如一个 15 秒的预告，希望这些广告能投放给正确的用户，得到比较高的转化率。这个问题被建模成为 CVR 预估的问题，根据投放数据以及转化数据，通过机器学习来建模用户看到广告后的 7 天内、30 天内的转化率，再投放的时候把正确的广告投放给正确的用户。</p>
+
+<ul>
+<li>转化率优化中的特征 &amp; 模型</li>
+</ul>
+
+
+<center><img src="/images/2024/IMAG2024071907.png"></center>
+
+
+<p>特征主要分为三块：</p>
+
+<ul>
+<li><p>User related：基本的用户属性，如位置，活跃度，留存时间等，以及一些重要的历史行为，比如曾经看过哪些内容，搜索过哪些内容，收藏过哪些内容。</p></li>
+<li><p>Ad related：广告本身的属性，如行业、剧目本身的信息等等。</p></li>
+<li><p>User-Ad：用户这个广告看过多少次了，通过多次投放使用户加深印象。</p></li>
+</ul>
+
+
+<p>模型方面我们目前使用了 DIN + FM 模型进行建模，同时也在探索更好的模型优化。</p>
+
+<h3>d. 广告定向中不可忽视的问题：因果推断和共享账号</h3>
+
+<ul>
+<li>因果推断</li>
+</ul>
+
+
+<center><img src="/images/2024/IMAG2024071908.png"></center>
+
+
+<p>我们在评估广告转化率的时候，会考虑评估是否正确，广告是否有效，举个例子：假如有一群用户，不论你对不对他投放广告，他都会去买这辆车，如果把广告投放给这样的用户，最后评估广告的转化率的时候会评估的非常高，其实广告效果一般，因为你投不投他都会去买，其实是白白消耗了这次投放。这就需要引入 Casual Inference 作为评估指标，其核心思想是：评估这个用户看这个广告和不看这个广告的收益分别是怎么样，最后将两者之间的差作为评估指标，使用 Doubly Robust Estimator 进行建模。除此，更加重要的问题是怎么根据 Casual Inference 作为目标去进行转化率的优化，怎么找到这些广告增益最大的用户，然后把广告投放给这些用户。</p>
+
+<ul>
+<li>共享账号</li>
+</ul>
+
+
+<center><img src="/images/2024/IMAG2024071909.png"></center>
+
+
+<p>接下来是用户共享账号的问题，例如：一个账号，孩子晚上 8 点左右看动画片，妈妈晚上 10 点左右看综艺节目，爸爸周末看体育视频，妈妈使用该账号的时候，发现推荐的都是动画片，找不到自己喜欢看的内容。这个在推荐以及广告定向中都是非常重要的问题，例如有的广告商，希望这个体育类广告只推荐给家庭中的爸爸，如果是小孩和妈妈看是没有效果的。</p>
+
+<p>这个问题规划到三个方面来解决：</p>
+
+<p>① 探测这个账号背后有多少个虚拟用户</p>
+
+<p>② 给每个虚拟用户打上标签，预测他的行为模式</p>
+
+<p>③ 用户来到 app 的时候预估是哪个虚拟用户，推荐对应的广告和内容</p>
+
+<p>这个问题核心是一些聚类的算法和预估模型的问题，这也是我们目前正在解决的问题。</p>
+
+<h2>2. Inventory Prediction 流量预估</h2>
+
+<p>流量预估在担保式广告中是非常重要的环节，广告在售卖之前都要检查是否有足够多的库存余量卖给广告主，以保证售出的广告都能够保量完成投放。</p>
+
+<p>问题简单描述为：给定未来的一段时间，一些定向条件的组合，预估有多少广告流量库存。</p>
+
+<center><img src="/images/2024/IMAG2024071910.png"></center>
+
+
+<p>这个问题可以建模成时序预估的问题，通常有以下两个步骤：</p>
+
+<p>第一步：用时序预估模型来预估总的流量是多少；</p>
+
+<p>第二步：根据历史分布把流量分配到不同的排列组合，不同的维度上。</p>
+
+<ul>
+<li>Time Series Model</li>
+</ul>
+
+
+<p>我们目前尝试过以下三类模型：</p>
+
+<p>第一个是 ARIMA ( Autoregressive Integrated Moving Average model )，稳定时序预估中最常用的模型，第二个是来自 Facebook 的 Prophet 模型，第三个是 LSTM。</p>
+
+<p>ARIMA 作为最为直接简单的稳定时序预估模型，在我们的实验中，在短期时序的预估准确率很不错，但是对长期的预估相对来说就不那么稳定了。原因在于，以下一些因素都会影响到长期的广告流量时序数据：</p>
+
+<ul>
+<li><p>用户增长的因素</p></li>
+<li><p>季节性的因素</p></li>
+<li><p>每周的波动</p></li>
+<li><p>节假日和特殊事件</p></li>
+</ul>
+
+
+<p>Prophe 模型是专门为具有这几种特性的时序数据而设计的时序预估模型。</p>
+
+<center><img src="/images/2024/IMAG2024071911.png"></center>
+
+
+<p>Prophet 把时序数据拆成了三部分：趋势部分，周期性和季节性部分，节假日部分，每一部分会单独做预测模型，最后合到一起得到最终的预测结果。</p>
+
+<center><img src="/images/2024/IMAG2024071912.png"></center>
+
+
+<p>例如，上图为 Prophet 模型产生的几种因素的分解：左上角为趋势，左下角为节假日，右边为季度性，分别为每个月和每周的变化，可以观察到淡季和旺季的变化。目前，我们采用的是 Prophet 模型，在 Hulu 的广告流量预估问题上表现稳健。</p>
+
+<h2>3. Inventory Allocation 流量匹配</h2>
+
+<p>流量匹配在担保式广告的投放环节发挥着重要的作用，保证所有广告订单都可以按时按量并且节奏均匀的投放完成。</p>
+
+<center><img src="/images/2024/IMAG2024071913.png"></center>
+
+
+<p>流量匹配算法会分为以下几个步骤：</p>
+
+<p>第一步，把广告订单的投放目标拆分到每个小时，这个拆分会根据我们预估的流量和紧俏程度来进行分配；</p>
+
+<p>第二步，进行 Offline Solving，把问题建模成一个二步图匹配算法，然后使用优化算法进行压缩解的求解；</p>
+
+<p>第三步，进行线上调控，采用 PID ( Proportion Integration Differentiation ) 控制，根据真实的流量实时进行调控。</p>
+
+<p>第一个步骤比较简单，下面简单介绍一下第二、三步中具体用到的算法。</p>
+
+<center><img src="/images/2024/IMAG2024071914.png"></center>
+
+
+<p>在离线匹配中，我们把问题建模成一个二部图匹配问题。</p>
+
+<p>在广告中最主要有 SUPPLY 与 DEMAND 端的两个限制条件：上图中左边 SUPPLY 表示用户带来的流量，流量上会有一些标签，表示用户及广告位的属性，右边 DEMAND 表示广告商的订单，订单上也会有些属性，比如投给男性，或者某个地区的；SUPPLY 与 DEMAND 之间的连线表示这个广告位可以投放的广告。SUPPLY 端的限制条件为最多只有这么多的库存可以使用，DEMAND 端的限制条件为需要将每个广告订单都保量投放完成。</p>
+
+<p>之后可以根据二部图建模优化问题，求解目标是每个边的权重，表示该流量以多大的比例分配给某个广告订单。</p>
+
+<center><img src="/images/2024/IMAG2024071915.png"></center>
+
+
+<p>首先会将原始优化问题转化为拉格朗日对偶问题，求解得到对偶变量 αj​ 和 betaj​，表示的分别是广告的对偶变量和流量的对偶变量。根据最优解满足 KKT 条件，我们可以只将相对数量级较低的广告对偶变量 αj​ 记下来，提高存储效率，线上再根据 KKT 条件计算 betaj​ 和 xij​。αj​ 可以被看做各个订单重要程度影响因子，作为线上选择订单的权重。</p>
+
+<center><img src="/images/2024/IMAG2024071916.png"></center>
+
+
+<p>但是这里还是存在一个问题，这里全部都是用的预估的流量和订单来进行匹配，但实际上会发生一些变化。所以需要第三步，线上实时调控。第一可以保证适应真实的线上流量， 第二也可以进一步保证投放节奏的稳定性。一般使用 PID ( Proportion Integration Differentiation ) 控制技术，这是常用于机械、电气系统中的一种应用非常广泛的自动控制技术，分为比例调节、积分调节、微分调节这 3 项的调节，根据线上广告真实投放的快慢来调控接下来应该投放的速度。</p>
+
+<h1>作者介绍：</h1>
+
+<p>韦春阳，2012 年从北京大学硕士毕业后加入 Hulu，目前担任智能广告算法团队负责人。有 7 年的计算广告领域的从业经验，致力于利用机器学习、人工智能技术来推动 Hulu 广告业务的发展，负责包括精准广告定向、广告流量匹配、广告库存预估、广告转化率优化等项目。</p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2024-07-19T14:40:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/recsys/'>RecSys</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/yan-gao-suan-fa/'>广告算法</a>, <a class='tag' href='/blog/tags/tui-jian-xi-tong/'>推荐系统</a>, <a class='tag' href='/blog/tags/shi-pin/'>视频</a></span>
+		
+    </p>
+    
+      
+         <div class="sharing">
+  
+  
+  
+</div>
+
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2024/07/15/tensorflow-onnx-tensorrt-inference/" title="Previous Post:
+        使用TensorFlow、ONNX和TensorRT加速深度学习推理">&laquo; 使用TensorFlow、ONNX和TensorRT加速深度学习推理</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2025/01/03/llm-recommendation-industry-practice/"
+        title="Next Post: 【蘑菇先生】工业界大模型推荐实战经验梳理">【蘑菇先生】工业界大模型推荐实战经验梳理
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms/';
+        var disqus_url = 'https://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

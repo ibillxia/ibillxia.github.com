@@ -1,0 +1,406 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>GenRec综述论文笔记 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2025/06/18/gen-rec-servey-notes">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(function () {
+  addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">GenRec综述论文笔记</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2025-06-18T09:51:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>论文链接：<a href="https://arxiv.org/abs/2409.15173">https://arxiv.org/abs/2409.15173</a></p>
+
+<h1>book structure</h1>
+
+<center><img src="/images/2025/IMAG2025061801.webp"></center>
+
+
+
+
+<!--more-->
+
+
+<p>Advantages of recommender systems with generative models</p>
+
+<center><img src="/images/2025/IMAG2025061802.webp"></center>
+
+
+<p>Outline of key techniques and publications in LLM-driven RSs</p>
+
+<center><img src="/images/2025/IMAG2025061803.webp"></center>
+
+
+<h1>Chap4-LLM Rec</h1>
+
+<h2>4.3 Encoder-only LLM Rec</h2>
+
+<p><strong>encoder-only LLMs</strong> can be used in two main architectures: as dense retrievers (c.f. Sec 4.3.1) or as cross-encoders (c.f. Sec 4.3.2).</p>
+
+<center><img src="/images/2025/IMAG2025061804.webp"></center>
+
+
+<p>Autoregressive LLM inputs are called prompts, which are sequences of tokens expressing a task such as top-k recommendation, rating prediction, or explanation generation.</p>
+
+<center><img src="/images/2025/IMAG2025061805.webp"></center>
+
+
+<h2>4.5 Retrieval Augmented Rec</h2>
+
+<center><img src="/images/2025/IMAG2025061806.webp"></center>
+
+
+<h2>4.6 LLMs Representation Generation</h2>
+
+<center><img src="/images/2025/IMAG2025061807.webp"></center>
+
+
+<h2>4.7 Conversational Rec</h2>
+
+<center><img src="/images/2025/IMAG2025061808.webp"></center>
+
+
+<h1>Chap5-Multi-modal GMs for Rec</h1>
+
+<h2>5.1 Introduction</h2>
+
+<p>Why?——item cold start problem, user request understanding, complex recsys scenes(virtual try-on, conversational shopping assistans)</p>
+
+<p>Challenges——alignment，latent space learning</p>
+
+<h2>5.2 Contrastive Multimodal Rec</h2>
+
+<p>CLIP</p>
+
+<center><img src="/images/2025/IMAG2025061809.webp"></center>
+
+
+<p>Align BEfore Fuse (ALBEF)</p>
+
+<center><img src="/images/2025/IMAG2025061810.webp"></center>
+
+
+<h2>5.3 Generative Multimodal Rec</h2>
+
+<p>GAN</p>
+
+<center><img src="/images/2025/IMAG2025061811.webp"></center>
+
+
+<p>VAE</p>
+
+<center><img src="/images/2025/IMAG2025061812.webp"></center>
+
+
+<p>Diffusion</p>
+
+<center><img src="/images/2025/IMAG2025061813.webp"></center>
+
+
+<h2>5.4 Applications of Multimodal Rec</h2>
+
+<ul>
+<li><p>E-commerce</p></li>
+<li><p>product visualization-virtual try on</p></li>
+<li><p>Marketing-create personalized ad images and videos</p></li>
+<li><p>Streaming services-Long and short-form video,music,audiobooks,podcasts,radio</p></li>
+<li><p>Travel</p></li>
+</ul>
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2025/06/18/gen-rec-servey-notes/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2025-06-18T09:51:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/recsys/'>RecSys</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/genrec/'>GenRec</a>, <a class='tag' href='/blog/tags/llm4rec/'>LLM4Rec</a>, <a class='tag' href='/blog/tags/duo-mo-tai/'>多模态</a></span>
+		
+    </p>
+    
+      
+         <div class="sharing">
+  
+  
+  
+</div>
+
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2025/03/16/music-cover-by-so-vits-svc/" title="Previous Post:
+        基于so-vits-svc的AI翻唱歌曲教程">&laquo; 基于so-vits-svc的AI翻唱歌曲教程</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2025/12/12/data-science-trends-2026/"
+        title="Next Post: 数据科学与机器学习2026年趋势展望">数据科学与机器学习2026年趋势展望
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://ibillxia.github.io/blog/2025/06/18/gen-rec-servey-notes/';
+        var disqus_url = 'https://ibillxia.github.io/blog/2025/06/18/gen-rec-servey-notes/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

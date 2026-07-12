@@ -1,0 +1,1381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ASSP | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/categories/assp/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[可视化语音分析：深度对比Wavenet、t-SNE和PCA等算法]]></title>
+    <link href="https://ibillxia.github.io/blog/2017/12/07/visual-speech-analysis-wavenet-tsne/"/>
+    <updated>2017-12-07T13:48:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2017/12/07/visual-speech-analysis-wavenet-tsne</id>
+    <content type="html"><![CDATA[<p>选自Medium，作者：Leon Fedden</p>
+
+<p>原文链接：<a href="https://medium.com/@LeonFedden/comparative-audio-analysis-with-wavenet-mfccs-umap-t-sne-and-pca-cb8237bfce2f">https://medium.com/@LeonFedden/comparative-audio-analysis-with-wavenet-mfccs-umap-t-sne-and-pca-cb8237bfce2f</a></p>
+
+<p>机器之心编译，参与：Nurhachu Null、刘晓坤</p>
+
+<p>这篇文章基于 GitHub 中探索音频数据集的项目。本文列举并对比了一些有趣的算法，例如 Wavenet、UMAP、t-SNE、MFCCs 以及 PCA。此外，本文还展示了如何在 Python 中使用 Librosa 和 Tensorflow 来实现它们，并用 HTML、Javascript 和 CCS 展示可视化结果。</p>
+
+<ul>
+<li><p>Jupyter Notebook：<a href="https://gist.github.com/fedden/52d903bcb45777f816746f16817698a0">https://gist.github.com/fedden/52d903bcb45777f816746f16817698a0</a></p></li>
+<li><p>浏览器可视化代码：<a href="https://github.com/fedden/umap_tsne_embedding_visualiser">https://github.com/fedden/umap_tsne_embedding_visualiser</a></p></li>
+</ul>
+
+
+<p>作者希望能和我们分享两个代码库。第一个是用来制作这篇文章的 notebook，它不像我通常喜欢的那样精美，但是花了很长时间，读者可以随意使用并扩展它。</p>
+
+<p>此外，作者也上传了浏览器中的这些可视化代码到 github 上。他使用 Material Design Lite 库以相对简洁的方式创建用户界面，用 THREE.js 库来快速绘制数据并进行优化，还使用 webaudiox.js 可以让音频生成得更容易。</p>
+
+<!--more-->
+
+
+<p>这个可视化方法允许以交互的形式从两个维度探索音频数据集，还可以画出参数化的图形，就像下面展示的一样：</p>
+
+<center><img src="/images/2017/IMAG2017120701.webp"></center>
+
+
+<p><br>
+结果以一个小型网页应用的形式放在我们学校的服务器上，读者将鼠标放在紫色点上边，就能听到与这个二维点向量相关联的声音了。</p>
+
+<p>你可以自由的选择音频特征的提取方式（MFCCs 或者 Wavenet 提取到的隐变量），以及降维的方法（UMAP、t-SNE 或者 PCA）。其中 UMAP 和 t-SNE 还可以调整一些参数，例如步长或者困惑度（perplexity）。</p>
+
+<center><img src="/images/2017/IMAG2017120702.webp"></center>
+
+
+<p><br>
+这是最终产品的一段演示</p>
+
+<h2>关于维度</h2>
+
+<p>那么我们说的维度大小是什么呢？它是机器学习和数据科学中的一个重要话题，用来描述数据集的潜在复杂度。一个数据集由好多数据点组成，每个数据点都有一些固定数量的特征，或者维度。例如，我可能是一个酷爱观察鸟类的人，我用自己在旅途中遇到的鸟组建了一个数据集。如果每个数据点存储了喙长、翼展以及羽毛颜色这些信息，那么就可以说我的数据集的维度是 3。</p>
+
+<p>那么我们为什么要如此关心维度的大小呢？拿以下比喻来说：</p>
+
+<p>你在一条笔直的道路上丢失了一笔现金。你想找到这笔钱，所以你沿着这条线走，然后在相对较短的一段搜索之后就找到了钱。</p>
+
+<p>这一次不太巧，你在运动的时候又一次将这笔现金丢失了，而且丢在了运动场。现在要找到这笔钱就相对比较困难了，因为每一个位置都有一个交叉口。所以找到丢失的钱就会花费更多的时间。</p>
+
+<p>最后，你魔法般地成了世界上最笨拙的宇航员。在太空行走的时候你的现金从口袋中滑落。你很恼怒，花了接下来的一整天去寻找丢失的现金。现在你是在真空的三维空间去寻找丢失的现金。相比之前的情景，这需要更多的时间和资源，可以理解，休斯顿的家伙不太乐意做这事。</p>
+
+<p>幸运的是，有一个事实很明确：随着维度的增加（通常会超过三维），寻找方案和相关的区域（也就是说现金在什么地方）需要更多的时间和资源。这一点在人和计算机上都是适用的。另一个重要的问题是，你需要更多的数据来对高维空间进行建模；随着维度数量的增加，空间的体积会呈指数增长，以至于有效的数据会变得稀疏，所获的数据很难支撑起一个具有统计意义的模型，因为所有的数据点在很多维度中以及在很多方式下都是不相似的。</p>
+
+<p>对于进行机器学习实践的人而言，降维是一个重要的话题，因为高维度会导致较高的计算成本，以及数据过拟合的倾向。了解了这一点之后，我们开始解释这个命名适当的主题——维度诅咒，它指的是以某种方式计算高维度数据集的时候出现的现象。</p>
+
+<h2>降维是什么呢？</h2>
+
+<p>在降维的时候，我们希望减少数据集的维度。维度数量越大，就越难进行可视化，这些特征都是有关联的，所以高维数据也增加了数据集中的信息冗余。</p>
+
+<center><img src="/images/2017/IMAG2017120703.webp"></center>
+
+
+<p><br>
+图中哪个是将三维的红色数据降维到二维的最好方式呢（绿色、紫色或者蓝色）？进行特征选择之后，所有的轴都形成了不同的形状，丢弃了与其他形状相关的信息。</p>
+
+<p>最简单的降维方法也许就是去选择一个能够最好描述数据的特征子集，丢弃掉数据集中的其它维度，这被称作特征选择。很不幸的是，这貌似是在丢弃信息。</p>
+
+<p>一个稍微好一些的解决方案是将数据集转换为一个较低维度的数据集。这个方法被称作特征提取，它是这篇文章的重点内容。</p>
+
+<h2>数据</h2>
+
+<p>作为一个音频控，我觉得尝试给音频文件（每个音频文件都可能具有任意长度）降维是比较合适的，将它降到一些数值，以便它们可以用二维图画出来。这使我们能够去探索一个音频库，并有希望快速地找到相似的声音。在 Python 中，我们可以使用 librosa 库得到音频 PCM 数据。下面我们循环遍历了一个文件夹中的样本，将所有 wav 格式文件中的音频数据加载进来。</p>
+
+<pre><code class="python">import os
+import librosa
+
+directory = './path/to/my/audio/folder/'
+
+for file in os.listdir(directory):
+    if file.endswith('.wav'):
+        file_path = os.path.join(directory, file)
+        audio_data, _ = librosa.load(file_path)
+</code></pre>
+
+<p>使用 Librosa 从一个路径中加载音频。</p>
+
+<p>在这个项目中，主要思想就是将样本加载到内存中，并从音频中创建特征序列。这些特征就会以下面所示的方式进行处理，所以我们并不用在意特征序列有多长。随后，特征可以用某种方法被降维，例如 PCA。</p>
+
+<p>我们可以用很多方法将一个 PCM 数据的数组转换成可以更好描述声音的形式。我们可以将声音转换成随时间变化的频率信息，例如频谱中心频率或者过零率这些参数。但是接下来我们要剖析一个在语音识别系统中使用最广泛的具有很好鲁棒性的特征--MFCC（梅尔频率倒谱系数）。</p>
+
+<h2>MFCCs</h2>
+
+<p>MFCC 实际上也可以被视为一种降维的形式；在典型的 MFCC 计算过程中，你需要传递一段段的 512 个音频样本（这里指的是离散的数字音频序列中的 512 个采样点），然后得到用来描述声音的 13 个倒谱系数。尽管 MFCC 最初是被用来表征由人类声道所发出的声音的，但是结果证明这是一种在不同音质、基音下相当稳定的一种特征，除了自动语音识别之外，它还有很多其他应用。</p>
+
+<p>在提取 MFCCs 的时候，第一步就是从我们的音频数据中计算傅里叶变换，傅里叶变换将时域信号转换成频域信号。在实际过程中是通过快速傅里叶变换来实现的，这是我们这个时代的一个很伟大的算法。</p>
+
+<center><img src="/images/2017/IMAG2017120704.gif"></center>
+
+
+
+
+<center>将时域信号转变成频域信号</center>
+
+
+<p><br></p>
+
+<p>现在我们取刚刚计算得到的频率信号的能谱，然后在能谱上应用梅尔滤波器组。这很简单，就像将每个滤波器中的能量求和一样。与待测音调的实际音高（通常意义上的 Hz 频率）相比，梅尔频率与预调的感知频率更加相关；我们对低频声音的微小变化比高频声音信号更加敏感。对能谱使用这种 Mel 滤波器组，更接近于人类的实际的听觉感知。</p>
+
+<center><img src="/images/2017/IMAG2017120705.webp"></center>
+
+
+<p><br>
+然后我们对每一个滤波器得到的能量求对数，这是由于人类对响度的听觉感知并不是线性的。意味着，如果一段声音刚开始就很响，那么之后音量上的大的变化听起来也不会那么不同。</p>
+
+<center><img src="/images/2017/IMAG2017120706.webp"></center>
+
+
+
+
+<center>自然对数函数图像</center>
+
+
+<p><br>
+最后一步就是计算一个被称为倒谱的量。倒谱就是谱的谱。就是给梅尔滤波器组处理过的能谱的对数进行离散余弦变换（DCT），这为我们给出了能谱的周期性规律，可以从中看到频率本身是如何快速变化的。离散余弦变换（DCT）和离散傅里叶变换 (DFT) 类似，只是它返回的是实数（浮点类型）而不是具有虚部的复数。</p>
+
+<p>虽然对 MFCC 做一个概述也是很好的，所幸 Python 中的 libora 库允许我们只用一行代码就能计算出特征，这要比本文的作者描述的过程稍微简洁一些。</p>
+
+<pre><code class="python">import librosa
+
+sample_rate = 44100
+mfcc_size = 13
+
+# Load the audio
+pcm_data, _ = librosa.load(file_path)
+
+# Compute a vector of n * 13 mfccs
+mfccs = librosa.feature.mfcc(pcm_data, 
+                             sample_rate, 
+                             n_mfcc=mfcc_size)
+</code></pre>
+
+<p>使用 Librosa 计算 MFCC。</p>
+
+<h2>Wavnet 和神经音频合成（NSynth）</h2>
+
+<p>Google 的 Magenta 项目是一个针对这个问题的小组：机器学习能够被用来创造引人注目的艺术和音乐吗？巧妙地避开了可计算的创新性中的未定义、空洞的问题之后，他们设计出了一些很酷的生成工具，可以生成多种形式的媒体，例如图像和音乐。</p>
+
+<center><img src="/images/2017/IMAG2017120707.gif"></center>
+
+
+<p><br>
+图为 Wavenet 的扩张一维卷积（dilated one dimensional convolutions）</p>
+
+<p>Deepmind（Google 的另一个子公司）创建了一个令人印象深刻的神经网络，它叫做 Wavenet。Magenta 将这个生成模型转变成了一个自动编码器，创建了新的网络即 NSynth。</p>
+
+<p>你可能之前没有接触过自动编码器，它们只是一种简单的神经网络，经常被用在无监督学习中。自动编码器的通常目标是学习到对某个数据的高效编码，通常是为了降维，而且越来越多地用在生成模型中。自动编码器的共同特征是它的结构；它由两部分组成—编码器和解码器。通常（但不是全部），解码器的权重和偏置是编码器的相关参数的转置。</p>
+
+<p>正如我所提到的，自动编码器的目标经常是将输入压缩到一个更小的隐变量。然而，这里的 Z 是一个低维向量，即输入音频的一个函数。</p>
+
+<center><img src="/images/2017/IMAG2017120708.webp"></center>
+
+
+<p><br>
+NSynth 的架构。注意，左边还是像 Wavenet 一样的扩张卷积。这个项目利用的低维向量 Z 大概在编码器和解码器的中间。</p>
+
+<p>使用这个网络是很简单的。首先，安装 Magneta（TensorFlow 的代码），然后下载这个模型的权值（<a href="http://download.magenta.tensorflow.org/models/nsynth/wavenet-ckpt.tar">http://download.magenta.tensorflow.org/models/nsynth/wavenet-ckpt.tar</a>）。下面的代码将会从压缩原始信号信息的网络中得到隐藏状态的向量化序列。</p>
+
+<pre><code class="python">from magenta.models.nsynth import utils
+from magenta.models.nsynth.wavenet import fastgen
+
+def wavenet_encode(file_path):
+
+    # Load the model weights.
+    checkpoint_path = './wavenet-ckpt/model.ckpt-200000'
+
+    # Load and downsample the audio.
+    neural_sample_rate = 16000
+    audio = utils.load_audio(file_path, 
+                             sample_length=400000, 
+                             sr=neural_sample_rate)
+
+    # Pass the audio through the first half of the autoencoder,
+    # to get a list of latent variables that describe the sound.
+    # Note that it would be quicker to pass a batch of audio
+    # to fastgen. 
+    encoding = fastgen.encode(audio, checkpoint_path, len(audio))
+
+    # Reshape to a single sound.
+    return encoding.reshape((-1, 16))
+
+# An array of n * 16 frames. 
+wavenet_z_data = wavenet_encode(file_path)
+</code></pre>
+
+<h2>特征预处理</h2>
+
+<p>这个数据集中的所有样本都具有不同的大小，在下面的控制台输出的第五列中可以看到。</p>
+
+<pre><code class="bash">ls -lah ./audio_dataset/
+
+...
+-rw-rw-r-- 1 tollie tollie  3.8M Jun 28  2014 HAL9K - Long Sustained Note.wav
+-rw-rw-r-- 1 tollie tollie  2.7M Jul  2  2014 HAL9K - Lost Soul.wav
+-rw-rw-r-- 1 tollie tollie  7.5M Jun 29  2014 HAL9K - Low Long Tail.wav
+-rw-rw-r-- 1 tollie tollie  3.8M Jun 28  2014 HAL9K - Low Short.wav
+-rw-rw-r-- 1 tollie tollie  4.6M Jun 28  2014 HAL9K - Low Thump.wav
+-rw-rw-r-- 1 tollie tollie  4.6M Jul  2  2014 HAL9K - Lute 1.wav
+-rw-rw-r-- 1 tollie tollie  7.7M Jul  2  2014 HAL9K - Lute 2.wav
+-rw-rw-r-- 1 tollie tollie  4.9M Jun 28  2014 HAL9K - Mechatronic.wav
+-rw-rw-r-- 1 tollie tollie  2.4M Jun 28  2014 HAL9K - Metal + Delay.wav
+-rw-rw-r-- 1 tollie tollie  4.8M Jun 28  2014 HAL9K - Metallic Hiss.wav
+-rw-rw-r-- 1 tollie tollie  5.7M Jun 28  2014 HAL9K - Mysterious Revelation.wav
+-rw-rw-r-- 1 tollie tollie  5.7M Jul  2  2014 HAL9K - Piercing.wav
+-rw-rw-r-- 1 tollie tollie  2.0M Jun 28  2014 HAL9K - Room 237.wav
+-rw-rw-r-- 1 tollie tollie  2.7M Jun 28  2014 HAL9K - SciFi 1.wav
+-rw-rw-r-- 1 tollie tollie  4.1M Jun 28  2014 HAL9K - SciFi 2.wav
+</code></pre>
+
+<p>当我们为这些样本计算特征的时候，不管是 MFCCs 还是 NSYTH，样本大小不一导致最终的特征序列的长度也不同。可以这么说，我们在这个项目中面临的问题是取可变长度的特征，将它们压缩为一系列的数字向量，最终得到能够较好描述这段声音的向量。</p>
+
+<p>最后，每段声音的特征向量会是以下三部分的拼接。首先是平均特征，它给我们提供了一段声音的特征序列中的平均值。这意味着，每一个维度的特征都被计算了平均值。对于 MFCCs 而言，平均特征的维度是 13，NSynth 是 16。</p>
+
+<p>第二部分是所得特征中每一维的标准差。它和平均特征有一样的大小（维度），它告诉了我们特征分布的扩展。</p>
+
+<p>最后一部分是相邻两帧特征之间的一阶差分的均值。这一部分反映了特征随时间变化的平均值。同样，该值在 MFCCs 对应的维度是 13，Nsynth 是 16。</p>
+
+<p>对特征的这种拼接意味着，从端到端的角度，对于任意长度的任意样本而言，都能将它压缩到一个固定长度的特征，如果使用 MFCCs，那么这个特征的维度就是 39，如果使用的是基于 Wavenet 的网络，那么这个特征的维度就是 48。给定一个任意长度和特征维度的 numpy 数组，对其计算某个长度的特征向量的代码如下所示：</p>
+
+<pre><code class="python">import numpy as np 
+
+# Create some random MFCC shaped features as a sequence of 10 values
+feature_sequence = np.random.random((10, 13))
+
+# Get the standard deviation
+stddev_features = np.std(feature_sequence, axis=0)
+
+# Get the mean
+mean_features = np.mean(feature_sequence, axis=0)
+
+# Get the average difference of the features
+average_difference_features = np.zeros((16,))
+for i in range(0, len(feature_sequence) - 2, 2):
+    average_difference_features += feature_sequence[i] - feature_sequence[i+1]
+average_difference_features /= (len(feature_sequence) // 2)   
+average_difference_features = np.array(average_difference_features)
+
+# Concatenate the features to a single feature vector
+concat_features_features = np.hstack((stddev_features, mean_features))
+concat_features_features = np.hstack((concat_features_features, average_difference_features))
+</code></pre>
+
+<h2>PCA</h2>
+
+<p>降维算法的首选是标准的线性代数算法--主成分分析。我想起了 Rebecca Fiebrink 博士，他教过一个很棒的机器学习课程（<a href="https://www.kadenze.com/courses/machine-learning-for-musicians-and-artists/info">https://www.kadenze.com/courses/machine-learning-for-musicians-and-artists/info</a>），他曾斥责像我一样的机器学习菜鸟在搞清楚简单算法（例如 PCA）之前就直接跳到更复杂的算法（例如 t-SNE）上去。</p>
+
+<p>PCA 通过最大化数据方差的同时降低数据的维度。它将数据转换成线性不相关的变量（就是所谓的主成分）。假设我们想得到这些数据的二维图，那么我们就会使用具有最大方差的两个主成分来揭示数据中的结构。如果你想更深一层地理解它，可以看一下我写的关于用 numpy 来进行线性代数算法的实现及其解释。</p>
+
+<p>我们可以很容易地实现特征的 PCA 计算：</p>
+
+<pre><code class="python">from sklearn.decomposition import PCA
+from sklearn.preprocessing import MinMaxScaler
+
+def get_pca(features):
+    pca = PCA(n_components=2)
+    transformed = pca.fit(features).transform(features)
+    scaler = MinMaxScaler()
+    scaler.fit(transformed)
+    return scaler.transform(transformed)
+
+my_array_of_feature_vectors = ...
+scaled_pca = get_pca(my_array_of_feature_vectors)
+</code></pre>
+
+<p>注意，最后的输出是进行缩放了的。我们将会在绘制的每一副图中这样做，从而可以在我们的交互式网页应用图中插入结果。</p>
+
+<p>那么，最后的图长什么样呢？我们实际上有两个数据集，一个是基于 Wavenet 的特征，另一个是 MFCC 导出的特征。所以下面的二维图中的每一个点都代表一个音频文件。这是基于 Wavenet 的特征图：</p>
+
+<center><img src="/images/2017/IMAG2017120709.webp"></center>
+
+
+<p><br>
+这是 MFCCs 的特征图：</p>
+
+<center><img src="/images/2017/IMAG2017120710.webp"></center>
+
+
+<p><br>
+有趣的是，这两张图在两种类似的样本上都有一小部分的聚集，就是踢球的声音或者短暂的敲击声，通常在这种信号中有着低能量的末尾。估计这两种特征向量能够较好地区分这种类型的声音。</p>
+
+<p>在这两张图上我们可以粗略总结，y 轴代表的是频率；如果你尝试在网页应用的图上从上至下移动鼠标，踩钹等高频声音出现在上边，敲击等低频声音出现在下面，同时，中等能量的鼓掌等声音出现在中间部分。</p>
+
+<h2>t-SNE</h2>
+
+<p>下一个降维算法是 t 分布的随机近邻嵌入（t-SNE/t-Distributed Neighbour Embedding），这个算法是由 Laurens van der Maaten 和神经网络先驱 Geoffrey Hinton 共同设计的。</p>
+
+<p> t-SNE 算法有两个阶段。它首先在高维对象对中构造一个概率分布，这样就更有可能找到相似的对象。为了获得这些高维对象的低维表征，它为低维映射构造了一个类似的概率分布。然后两个概率分布之间的散度被最小化。这个散度，或者是相对熵，被称作 KL 散度。</p>
+
+<p>用 Sklearn 计算 t-SNE 向量很容易。</p>
+
+<pre><code class="python">from sklearn.manifold import TSNE
+from sklearn.preprocessing import MinMaxScaler
+
+def get_scaled_tsne_embeddings(features, perplexity, iteration):
+    embedding = TSNE(n_components=2,
+                     perplexity=perplexity,
+                     n_iter=iteration).fit_transform(features)
+    scaler = MinMaxScaler()
+    scaler.fit(embedding)
+    return scaler.transform(embedding)
+
+tnse_embeddings_mfccs = []
+tnse_embeddings_wavenet = []
+perplexities = [2, 5, 30, 50, 100]
+iterations = [200, 500, 1000, 2000, 5000]
+
+for perplexity in perplexities:
+    for iteration in iterations:
+        tsne_mfccs = get_scaled_tsne_embeddings(mfcc_features,
+                                                perplexity,
+                                                iteration)
+        tnse_wavenet = get_scaled_tsne_embeddings(wavenet_features,
+                                                  perplexity,
+                                                  iteration)
+</code></pre>
+
+<p>t-SNE 函数只需要一小部分参数，这里有很棒的解释：<a href="https://distill.pub/2016/misread-tsne/">https://distill.pub/2016/misread-tsne/</a>。但我在这里还是做一个简单的解释吧。这个算法的第一个参数就是困惑度（perplexity），它是一个在其他流形学习算法中关于最近邻数目的参数。每一列的困惑度都会变化。另一个参数是迭代量，它指的是 t-SNE 应该优化多少次。迭代量会在每个相连的行中相继增加。迭代量对图的影响很大，使用 Wavenet 特征，我们可以在下图可以看到：</p>
+
+<center><img src="/images/2017/IMAG2017120711.webp"></center>
+
+
+<p><br>
+基于 MFCC 特征的图在下面：</p>
+
+<center><img src="/images/2017/IMAG2017120712.webp"></center>
+
+
+<p><br>
+显而易见，对于两个特征数据集而言，当迭代量太小的时候，最终的解并没有得到充足的优化（两幅大图中的第一行就是这样的情形）。在 distill 中关于有效使用 t-SNE 的文章中特别地指出了这一点。</p>
+
+<p>在更多次数的迭代时，出现了一些声音的聚类。然而，对于两个特征集而言，有时候局部的结构没有相似的声音。而全局结构经常能够表现出声音的趋势--也就是说，图中的一大部分中，大多数是敲击声，而另一部分是踩钹等声音。困惑度貌似对算法没有很大的影响，这在相关文献以及 sklearn 的文档中都有很好的表述。</p>
+
+<h2>UMAP</h2>
+
+<p>均匀流形近似和投影（UMAP/uniform manifold approximation and projection）是一种降维技术。它已经产生了一些相当激动人心的结果，我强烈建议你用一下。在 github 页面（<a href="https://github.com/lmcinnes/umap">https://github.com/lmcinnes/umap</a>）上是这么描述的：</p>
+
+<p>UMAP 是建立在对数据的三种假设之上：</p>
+
+<ul>
+<li><p>数据在黎曼流形上是均匀分布的；</p></li>
+<li><p>黎曼度量是局部恒定的（或者说是近似恒定的）；</p></li>
+<li><p>流形是局部连续的（不是全局，而是局部）；</p></li>
+</ul>
+
+
+<p>基于这些假设，可以使用一个模糊拓扑结构对流形进行建模。通过搜索具有最大可能的等价模糊拓扑结构的数据的低维投影可以找到向量。</p>
+
+<p>umap 的使用是很简单的，因为它的功能设计和 sklearn 的 t-SNE 包很类似。下面是分别为 Wavenet 特征和 MFCC 特征创建向量的代码。</p>
+
+<pre><code class="python">import umap
+from sklearn.preprocessing import MinMaxScaler
+
+def get_scaled_umap_embeddings(features, neighbour, distance):
+
+    embedding = umap.UMAP(n_neighbors=neighbour,
+                          min_dist=distance,
+                          metric='correlation').fit_transform(features)
+    scaler = MinMaxScaler()
+    scaler.fit(embedding)
+    return scaler.transform(embedding)
+
+umap_embeddings_mfccs = []
+umap_embeddings_wavenet = []
+neighbours = [5, 10, 15, 30, 50]
+distances = [0.000, 0.001, 0.01, 0.1, 0.5]
+
+for neighbour in neighbours:
+    for distance in distances:
+        umap_mfccs = get_scaled_umap_embeddings(mfcc_features,
+                                                neighbour,
+                                                distance)
+        umap_wavenet = get_scaled_umap_embeddings(wavenet_features,
+                                                  neighbour,
+                                                  distance)
+</code></pre>
+
+<p>我还是将得到的向量缩放到 0 和 1 之间，因为图像需要在每个向量之间插入。向量中，缩放并不是重点，就像在 t-SNE 中一样，唯一重要的是和一个点近邻的其它点。在代码中，我们可以再一次看到，一些列表嵌套 for 循环来参数化 UMAP 函数，所以我们可以看到它是如何影响向量的。请注意，列表最左边和最右边的参数设置是不好的参数，作者只是希望看到算法如何运行这样的参数。</p>
+
+<p>Wavenet 特征得到的结果的图像很漂亮，具有有趣的全局结构和局部结构。每一列中为算法给定的近邻数量是一样的，从一系列取值中选择 [5,10,15,30,50]。流形结构的局部近似中具有较大数目的近邻点会导致较好的全局结构，但是会损失局部结构。每一行分别对应着设置好的最小距离参数 [0.000,0.001,0.01,0.1,0.5]，这个参数控制着向量可以将数据点压缩到多近。较大的数值保证了数据更均匀的数据分布，而更小的值会确保更精确的局部结构。</p>
+
+<center><img src="/images/2017/IMAG2017120713.webp"></center>
+
+
+<p><br>
+MFCC 特征对应的图也是一样的好看。</p>
+
+<center><img src="/images/2017/IMAG2017120714.webp"></center>
+
+
+<p><br>
+图中引人注目的是在较低的参数设置下出现的局部结构，相反，当两个参数设置都很高时会出现全局结构。在参数设置相同时，基于 Wavenet 的特征比基于 MFCC 的特征能够更好地保持局部结构。</p>
+
+<p>在交互演示中，以近邻数和距离滑块较小的设置下（1 或者 2）在局部结构中尝试移动鼠标，你应该能够注意到这个算法能够正确地将这些声音聚类在一起。</p>
+
+<h2>总结</h2>
+
+<p>在很大程度上，每个算法都是有用的，并且参数化算法和绘制两组特征的输出是非常有用的。一个值得注意的说法是关于图的解释性。PCA 似乎是这个领域中最强大的算法，因为它相对简单。容易注意到，y 轴或多或少包含了样本的高频成分，这是一个很好的启示。</p>
+
+<p>确保 UMAP 的距离不是很高，并且近邻数也在一个较低的水平时，可以确定 UMAP 的局部结构是很好的。通常那些拥有较高感知相似度的样本会出现少量的线和聚类。将参数倒过来，换成较大的近邻数和最小的距离数目，这意味着在算法中结合了更多的全局结构，全局结构更加具有说服力，而且从经验上来说，要比 t-SNE 和 PCA 的结构更强大。</p>
+
+<p>Wavenet 特征的结果证明，在和降维技术结合的时候，这些特征确实很鲁棒，很可靠。与 MFCC 特征得到的图相比时，聚类中并没有明显的退化，在其他情况下，与具有相同参数设置的 MFCC 相比，使用 Wavenet 向量实际上还改善了最终得到的图。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[PCM WAVE格式详解及用C语言实现wave文件的读取]]></title>
+    <link href="https://ibillxia.github.io/blog/2013/07/20/details-of-wave-format-and-reading-wave-files-in-C-language/"/>
+    <updated>2013-07-20T20:07:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2013/07/20/details-of-wave-format-and-reading-wave-files-in-C-language</id>
+    <content type="html"><![CDATA[<h2>1.PCM Wave格式详解</h2>
+
+
+<p>WAVE文件格式是微软RIFF(Resource Interchange File Format,资源交换文件标准)的一种，是针对于多媒体文件存储的一种文件格式和标准。
+一般而言，RIFF文件由文件头和数据两部分组成，一个WAVE文件由一个“WAVE”数据块组成，这个“WAVE”块又由一个"fmt"子数据块和一个“data”子
+数据块组成，也称这种格式为“Canonical form”（权威/牧师格式），如下图所示：
+<center><img src="/images/2013/IMAG2013072001.gif"></center>
+</p>
+
+
+<!--more-->
+
+
+<p>每个字段的涵义如下：
+ChunkID: 占4个字节，内容为“RIFF”的ASCII码(0x52494646)，以大端（big endian）存储。</br>
+ChunkSize: 4字节，存储整个文件的字节数（不包含ChunkID和ChunkSize这8个字节），以小端（little endian）方式存储。</br>
+Format: 4字节，内容为“WAVE”的ASCII码(0x57415645)，以大端存储。</br>
+</p>
+
+
+
+
+<p>
+其中bigendian 主要有一个特征，在内存中对操作数的存储方式和从高字节到低字节。例如：0x1234，这样一个数，存储为:</br>
+0x4000:   0x12</br>
+0x4001:   0x34</br>
+而小尾端littleendian是：</br>
+0x4000:   0x34</br>
+0x4001:   0x12</br>
+用程序在区别的话，可以考虑：
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="w">       </span><span class="k">union</span><span class="w"> </span><span class="nc">w</span>
+</span><span class='line'><span class="w">      </span><span class="p">{</span>
+</span><span class='line'><span class="w">       </span><span class="kt">short</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+</span><span class='line'><span class="w">       </span><span class="kt">char</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+</span><span class='line'><span class="w">      </span><span class="p">}</span><span class="n">c</span><span class="p">;</span>
+</span><span class='line'><span class="w">      </span><span class="n">c</span><span class="p">.</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="w">      </span><span class="k">if</span><span class="p">(</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">b</span><span class="o">==</span><span class="mi">1</span><span class="w"> </span><span class="p">)</span><span class="w">  </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;little endian</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="w">      </span><span class="k">else</span><span class="w"> </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;big endian</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="w">      </span><span class="n">system</span><span class="p">(</span><span class="s">&quot;PAUSE&quot;</span><span class="p">);</span><span class="w"> </span>
+</span><span class='line'><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+</p>
+
+
+
+
+<p>"WAVE"格式由两个子数据块构成：“fmt”块和“data”块，其中“fmt”块的详细解释如下：
+Subchunk1ID: 占4个字节，内容为“fmt ”的ASCII码(0x666d7420)，以大端存储。</br>
+Subchunk1Size: 占4个字节，存储该子块的字节数（不含前面的Subchunk1ID和Subchunk1Size这8个字节），以小端方式存储。</br>
+AudioFormat：占2个字节，以小端方式存储，存储音频文件的编码格式，例如若为PCM则其存储值为1，若为其他非PCM格式的则有一定的压缩。</br>
+NumChannels: 占2个字节，以小端方式存储，通道数，单通道(Mono)值为1，双通道(Stereo)值为2，等等。</br>
+SampleRate: 占4个字节，以小端方式存储，采样率，如8k，44.1k等。</br>
+ByteRate: 占4个字节，以小端方式存储，每秒存储的bit数，其值=SampleRate * NumChannels * BitsPerSample/8</br>
+BlockAlign: 占2个字节，以小端方式存储，块对齐大小，其值=NumChannels * BitsPerSample/8</br>
+BitsPerSample: 占2个字节，以小端方式存储，每个采样点的bit数，一般为8,16,32等。</br>
+接下来是两个可选的扩展参数：</br>
+ExtraParamSize: 占2个字节，表示扩展段的大小。</br>
+ExtraParams: 扩展段其他自定义的一些参数的具体内容，大小由前一个字段给定。
+</p>
+
+
+
+
+<p>其中，对于每个采样点的bit数，不同的bit数读取数据的方式不同：
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="c1">// data 为读取到的采样点的值，speech为原始数据流，</span>
+</span><span class='line'><span class="c1">//对应于下面的&quot;WAVE&quot;格式文件的第二个子数据块“data”块的“Data”部分。</span>
+</span><span class='line'><span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">NumSample</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+</span><span class='line'><span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">BitsPerSample</span><span class="o">==</span><span class="mi">8</span><span class="p">)</span>
+</span><span class='line'><span class="w">        </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="n">speech</span><span class="o">+</span><span class="n">i</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">BitsPerSample</span><span class="o">==</span><span class="mi">16</span><span class="p">)</span>
+</span><span class='line'><span class="w">        </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="kt">short</span><span class="o">*</span><span class="p">)</span><span class="n">speech</span><span class="o">+</span><span class="n">i</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">BitsPerSample</span><span class="o">==</span><span class="mi">32</span><span class="p">)</span>
+</span><span class='line'><span class="w">        </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="kt">int</span><span class="o">*</span><span class="p">)</span><span class="n">speech</span><span class="o">+</span><span class="n">i</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+</p>
+
+
+
+
+<p>"WAVE"格式文件的第二个子数据块是“data”，其个字段的详细解释如下：</br>
+Subchunk2ID: 占4个字节，内容为“data”的ASCII码(0x64617461)，以大端存储。</br>
+Subchunk2Size: 占4个字节，内容为接下来的正式的数据部分的字节数，其值=NumSamples * NumChannels * BitsPerSample/8</br>
+Data: 真正的语音数据部分。</br>
+</p>
+
+
+
+
+<h2>一个Wave文件头的实例</h2>
+
+
+<p>设一个wave文件的前72个字节的十六进制内容如下(可以使用Ultra Edit等工具查看wave文件头)：
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span></span><span class="mi">52</span><span class="w"> </span><span class="mi">49</span><span class="w"> </span><span class="mi">46</span><span class="w"> </span><span class="mi">46</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="mi">08</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">57</span><span class="w"> </span><span class="mi">41</span><span class="w"> </span><span class="mi">56</span><span class="w"> </span><span class="mi">45</span><span class="w"> </span><span class="mi">66</span><span class="w"> </span><span class="mi">6</span><span class="n">d</span><span class="w"> </span><span class="mi">74</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">01</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">02</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span>
+</span><span class='line'><span class="mi">22</span><span class="w"> </span><span class="mi">56</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">88</span><span class="w"> </span><span class="mi">58</span><span class="w"> </span><span class="mo">01</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">04</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">64</span><span class="w"> </span><span class="mi">61</span><span class="w"> </span><span class="mi">74</span><span class="w"> </span><span class="mi">61</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mi">08</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span><span class="mo">00</span><span class="w"> </span>
+</span><span class='line'><span class="mi">24</span><span class="w"> </span><span class="mi">17</span><span class="w"> </span><span class="mi">1</span><span class="n">e</span><span class="w"> </span><span class="n">f3</span><span class="w"> </span><span class="mi">3</span><span class="n">c</span><span class="w"> </span><span class="mi">13</span><span class="w"> </span><span class="mi">3</span><span class="n">c</span><span class="w"> </span><span class="mi">14</span><span class="w"> </span><span class="mi">16</span><span class="w"> </span><span class="n">f9</span><span class="w"> </span><span class="mi">18</span><span class="w"> </span><span class="n">f9</span><span class="w"> </span><span class="mi">34</span><span class="w"> </span><span class="n">e7</span><span class="w"> </span><span class="mi">23</span><span class="w"> </span><span class="n">a6</span><span class="w"> </span><span class="mi">3</span><span class="n">c</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="mi">11</span><span class="w"> </span><span class="n">ce</span><span class="w"> </span><span class="mi">1</span><span class="n">a</span><span class="w"> </span><span class="mi">0</span><span class="n">d</span><span class="w"> </span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+则其个字段的解析如下图：
+<center><img src="/images/2013/IMAG2013072002.gif"></center>
+</p>
+
+
+
+
+<h2>C语言实现wave文件的读取</h2>
+
+
+<p>这里给出一个用基本的C语言文件操作库函数实现的Wave文件读取的实例代码，可以跨Windows和Linux平台。</p>
+
+
+<pre><code class="c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+// define Wave format structure
+typedef struct tWAVEFORMATEX
+{
+    short wFormatTag;         /* format type */
+    short nChannels;          /* number of channels (i.e. mono, stereo...) */
+    unsigned int nSamplesPerSec;     /* sample rate */
+    unsigned int nAvgBytesPerSec;    /* for buffer estimation */
+    short nBlockAlign;        /* block size of data */
+    short wBitsPerSample;     /* number of bits per sample of mono data */
+    short cbSize;             /* the count in bytes of the size of */
+                                    /* extra information (after cbSize) */
+} WAVEFORMATEX, *PWAVEFORMATEX;
+
+char* wavread(char *fname, WAVEFORMATEX *wf);
+
+int main(){
+    char fname[] = "test.wav";
+    char *speech;
+    WAVEFORMATEX wf;
+
+    speech = wavread(fname, &amp;wf);
+    // afterward processing...
+
+    return 0;
+}
+
+// read wave file
+char* wavread(char *fname, WAVEFORMATEX *wf){
+    FILE* fp;
+    char str[32];
+    char *speech;
+    unsigned int subchunk1size; // head size
+    unsigned int subchunk2size; // speech data size
+
+    // check format type
+    fp = fopen(fname,"r");
+    if(!fp){
+        fprintf(stderr,"Can not open the wave file: %s.\n",fname);
+        return NULL;
+    }
+    fseek(fp, 8, SEEK_SET);
+    fread(str, sizeof(char), 7, fp);
+    str[7] = '\0';
+    if(strcmp(str,"WAVEfmt")){
+        fprintf(stderr,"The file is not in WAVE format!\n");
+        return NULL;
+    }
+
+    // read format header
+    fseek(fp, 16, SEEK_SET);
+    fread((unsigned int*)(&amp;subchunk1size),4,1,fp);
+    fseek(fp, 20, SEEK_SET);
+    fread(wf, subchunk1size, 1, fp);
+
+    // read wave data
+    fseek(fp, 20+subchunk1size, SEEK_SET);
+    fread(str, 1, 4, fp);
+    str[4] = '\0';
+    if(strcmp(str,"data")){
+        fprintf(stderr,"Locating data start point failed!\n");
+        return NULL;
+    }
+    fseek(fp, 20+subchunk1size+4, SEEK_SET);
+    fread((unsigned int*)(&amp;subchunk2size), 4, 1, fp);
+    speech = (char*)malloc(sizeof(char)*subchunk2size);
+    if(!speech){
+        fprintf(stderr, "Memory alloc failed!\n");
+        return NULL;
+    }
+    fseek(fp, 20+subchunk1size+8, SEEK_SET);
+    fread(speech, 1, subchunk2size, fp);
+
+    fclose(fp);
+    return speech;
+}
+</code></pre>
+
+
+
+<h2>参考</h2>
+
+
+<p>
+[1]WAVE PCM soundfile format: https://ccrma.stanford.edu/courses/422/projects/WaveFormat/ </br>
+[2]Resource Interchange File Format: http://en.wikipedia.org/wiki/Resource_Interchange_File_Format </br>
+[3]基于Visual C++6.0的声音文件操作: http://www.yesky.com/20030414/1663116_1.shtml
+</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[用Windows API实现一个简单的录音程序]]></title>
+    <link href="https://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api/"/>
+    <updated>2013-06-04T23:59:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api</id>
+    <content type="html"><![CDATA[<p>本文介绍如何使用Windows API来录制语音信号兵保存到wave文件中，主要用到三个结构体和几个wave开头的API函数（在Winmm.lib文件中）。其中三个结构体是WAVEFORMATEX、WAVEHDR、MMTIME，其详细定义都在MMSystem.h中定义，
+可以转到定义看其详细内容及每一项的英文注释。用到的API函数的详细用法可以参见MSDN： http://msdn.microsoft.com/en-us/library/windows/desktop/dd743847(v=vs.85).aspx
+详细的使用过程请看下文的源代码，这是一个Win32 Application，需要手动添加Winmm.lib的依赖。</p>
+
+
+
+
+<!--more-->
+
+
+
+
+<p>实例程序</p>
+
+
+<pre><code class="c">// ******************* FileName: WinMain.cpp *****************************
+// 该源程序需要加入到 VC6 的 Win32 Application 的 empty Project 中
+// 对于工程的 Link 选项，至少要包含以下库: msvcrt.lib Winmm.lib
+
+#include &lt;stdio.h&gt;
+#include &lt;atlstr.h&gt;
+#include &lt;windows.h&gt;
+#include &lt;Mmsystem.h&gt;
+
+#pragma comment(lib,"Winmm.lib")
+
+char lpTemp[256];
+
+DWORD FCC(LPSTR lpStr)
+{
+    DWORD Number = lpStr[0] + lpStr[1] *0x100 + lpStr[2] *0x10000 + lpStr[3] *0x1000000 ;
+    return Number;
+}
+
+int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow )
+{
+    DWORD datasize = 48000;
+
+    // 设置录音采样参数
+    WAVEFORMATEX waveformat;
+    waveformat.wFormatTag=WAVE_FORMAT_PCM; // 指定录音格式
+    waveformat.nChannels=1;
+    waveformat.nSamplesPerSec=8000;
+    waveformat.nBlockAlign=1;
+    waveformat.wBitsPerSample=8;
+    waveformat.cbSize=0;
+    waveformat.nAvgBytesPerSec=waveformat.nChannels*waveformat.nSamplesPerSec*waveformat.wBitsPerSample/8;
+
+    sprintf(lpTemp,"WAVEFORMATEX size = %lu", sizeof(WAVEFORMATEX));
+    MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
+
+    HWAVEIN m_hWaveIn;
+    if ( !waveInGetNumDevs() )
+    {
+        MessageBox(NULL,CString("没有可以使用的 WaveIn 通道"),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    // 打开录音设备
+    int res = waveInOpen(&amp;m_hWaveIn,WAVE_MAPPER, &amp;waveformat, (DWORD)NULL,0L,CALLBACK_WINDOW); 
+    if ( res != MMSYSERR_NOERROR )
+    {
+       sprintf(lpTemp, "打开 waveIn 通道失败，Error_Code = 0x%x", res );
+       MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
+       return 0;
+    }
+
+    WAVEHDR m_pWaveHdr;
+    m_pWaveHdr.lpData = (char *)GlobalLock( GlobalAlloc(GMEM_MOVEABLE|GMEM_SHARE, datasize) );
+    memset(m_pWaveHdr.lpData, 0, datasize );
+    m_pWaveHdr.dwBufferLength = datasize;
+    m_pWaveHdr.dwBytesRecorded = 0;
+    m_pWaveHdr.dwUser = 0;
+    m_pWaveHdr.dwFlags = 0;
+    m_pWaveHdr.dwLoops = 0;
+    sprintf( lpTemp, "WAVEHDR size = %lu", sizeof(WAVEHDR) );
+    MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
+
+    // 准备内存块录音
+    int resPrepare = waveInPrepareHeader( m_hWaveIn, &amp;m_pWaveHdr, sizeof(WAVEHDR) ); 
+    if ( resPrepare != MMSYSERR_NOERROR) 
+    {
+        sprintf(lpTemp, "不能开辟录音头文件，Error_Code = 0x%03X", resPrepare );
+        MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    resPrepare = waveInAddBuffer( m_hWaveIn, &amp;m_pWaveHdr, sizeof(WAVEHDR) );
+    if ( resPrepare != MMSYSERR_NOERROR) 
+    {
+        sprintf(lpTemp, "不能开辟录音用缓冲，Error_Code = 0x%03X", resPrepare );
+        MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    if (! waveInStart(m_hWaveIn) ) 
+    {
+        MessageBox(NULL,CString("开始录音"),CString("提示"),MB_OK);
+    }
+    else 
+    {
+        MessageBox(NULL,CString("开始录音失败"),CString("提示"),MB_OK);
+        return 0;
+    }
+    Sleep(30000);
+
+    MMTIME mmt;
+    mmt.wType = TIME_BYTES;
+    sprintf( lpTemp, "sizeof(MMTIME) = %d, sizeof(UINT) = %d", sizeof(MMTIME), sizeof(UINT) );
+    MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
+
+    if (! waveInGetPosition(m_hWaveIn, &amp;mmt, sizeof(MMTIME)) )
+    {
+        MessageBox(NULL,CString("取得现在音频位置"),CString("提示"),MB_OK);
+    }
+    else 
+    {
+        MessageBox(NULL,CString("不能取得音频长度"),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    if (mmt.wType != TIME_BYTES) 
+    {
+        MessageBox(NULL,CString("指定的 TIME_BYTES 格式音频长度不支持"),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    if (! waveInStop(m_hWaveIn) ) 
+    {
+        MessageBox(NULL,CString("停止录音"),CString("提示"),MB_OK);
+    }
+    else  
+    {
+        MessageBox(NULL,CString("停止录音失败"),CString("提示"),MB_OK);
+    }
+
+    if ( waveInReset(m_hWaveIn) ) 
+    {
+        MessageBox(NULL,CString("重置内存区失败"),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    m_pWaveHdr.dwBytesRecorded = mmt.u.cb;
+    DWORD NumToWrite=0;
+    DWORD dwNumber = 0;
+    HANDLE FileHandle = CreateFile( CString("myTest.wav"), GENERIC_WRITE, 
+        FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+    // memset(m_pWaveHdr.lpData, 0, datasize);
+    dwNumber = FCC("RIFF");
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    dwNumber = m_pWaveHdr.dwBytesRecorded + 18 + 20;
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    dwNumber = FCC("WAVE");
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    dwNumber = FCC("fmt ");
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    dwNumber = 18L;
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    WriteFile(FileHandle, &amp;waveformat, sizeof(WAVEFORMATEX), &amp;NumToWrite, NULL);
+    dwNumber = FCC("data");
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    dwNumber = m_pWaveHdr.dwBytesRecorded;
+    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
+    WriteFile(FileHandle, m_pWaveHdr.lpData, m_pWaveHdr.dwBytesRecorded, &amp;NumToWrite, NULL);
+    SetEndOfFile(FileHandle);
+    CloseHandle( FileHandle );  
+    FileHandle = INVALID_HANDLE_VALUE; // 收尾关闭句柄
+    MessageBox(NULL,CString("应该已生成 myTest.wav 文件"),CString("提示"),MB_OK);
+
+    if ( waveInUnprepareHeader(m_hWaveIn, &amp;m_pWaveHdr, sizeof(WAVEHDR)) ) 
+    {
+        MessageBox(NULL,CString("Un_Prepare Header 失败"),CString("提示"),MB_OK);
+    }
+    else 
+    {
+        MessageBox(NULL,CString("Un_Prepare Header 成功"),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    if ( GlobalFree(GlobalHandle( m_pWaveHdr.lpData )) ) 
+    {
+        MessageBox(NULL,CString("Global Free 失败"),CString("提示"),MB_OK);
+    }
+    else 
+    {
+        MessageBox(NULL,CString("Global Free 成功"),CString("提示"),MB_OK);
+        return 0;
+    }
+
+    if (res == MMSYSERR_NOERROR ) // 关闭录音设备
+    {
+        if (waveInClose(m_hWaveIn)==MMSYSERR_NOERROR)
+        {
+            MessageBox(NULL,CString("正常关闭录音设备"),CString("提示"),MB_OK);
+        }
+        else
+        {
+            MessageBox(NULL,CString("非正常关闭录音设备"),CString("提示"),MB_OK);
+            return 0;
+        }
+    }
+
+    return 0;
+}
+// ******************* End of File ************************
+</code></pre>
+
+
+
+<p>这里提供的代码有点杂乱，现已整理成一个小的接口，并提供了一个简单的示例，放在GitHub上：https://github.com/ibillxia/Demo/tree/master/DemoSpeechRecord</p>
+
+
+
+
+<p>参考：</br>
+[1]MSDN: http://msdn.microsoft.com/en-us/library/windows/desktop/dd743586(v=vs.85).aspx</br>
+[2]基于API的录音机程序: http://www.vckbase.com/index.php/wv/664
+</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[语音信号处理之时域分析-音高追踪及其Python实现]]></title>
+    <link href="https://ibillxia.github.io/blog/2013/05/29/audio-signal-processing-time-domain-pitch-tracking-and-python-realization/"/>
+    <updated>2013-05-29T21:37:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2013/05/29/audio-signal-processing-time-domain-pitch-tracking-and-python-realization</id>
+    <content type="html"><![CDATA[<h2>1.概述</h2>
+
+
+<p>在<a href="http://ibillxia.github.io/blog/2013/05/16/audio-signal-processing-time-domain-pitch-python-realization/">音高及其Python实现</a>一文
+中，我们使用了简单的“观察法”来计算音高，这并不太难，但这并不有好而且费时费力，那么我们就想，如何通过分析和计算，使用算法来自动计算音高呢？
+用算法让计算机自动抓取音高的过程，称为<b>音高追踪</b>(Pitch Tracking)。所得到的音高信息有如下一些应用：</br>
+·旋律识别(Melody Recognition)：或称为“哼唱选歌”，也就是如何由使用者的哼唱，找出音乐资料库中间对应的歌。</br>
+·汉语声调识别(Tone Recognition)：辨识使用者讲一句话时，每一个字的声调（一声、二声、三声、四声等）。</br>
+·语音合成韵律分析(Prosody Analysis)中的音高分析：如何在合成语音时，使用最自然的音高曲线。</br>
+·语音评分中的音调评分(Intonation Assessment)：如何评估使用者说话的语音，其音高曲线是否标准。</br>
+·语音识别(Speech Recognition)：我们可以使用语句的音高来提高语音辨识的正确率。</br>
+总而言之，音高追踪是语音信号处理中最基本也最重要的一个环节之一。
+</p>
+
+
+
+
+<h2>2.音高追踪的基本流程</h2>
+
+
+<p>音高追踪的基本流程如下：</br>
+(1)将整段音讯讯号切成音框（Frames），相邻音框之间可以重叠。</br>
+(2)算出每个音框所对应的音高。</br>
+(3)排除不稳定的音高值。（可由音量来筛选，或由音高值的范围来过滤。）</br>
+(4)对整段音高进行平滑化，通常是使用「中位数滤波器」（Median Filters）。</br>
+</p>
+
+
+
+
+<!--more-->
+
+
+
+
+<p>在切音框的过程中，我们允许左右音框的重叠，因此，我们定义「音框率」（Frame Rate）是每秒钟所出现的音框个数，如果取样频率是11025，音框长度是256 点，
+重叠点数是84，那么音框率就是11025/(256-84) = 64，换句话说，我们的电脑要能够每秒钟处理64 个音框，才能达到实时处理的要求。如下图所示：
+<center><img src="/images/2013/IMAG2013052901.png"></center>
+</p>
+
+
+
+
+<p>我们让音框重叠的目地，只是希望相邻音框之间的变化不会太大，使抓出来的音高曲线更具有连续性。但是在实际应用时，音框的重叠也不能太大，
+否则会造成计算量的过大。一般有以下考虑：</br>
+·音框长度至少必须包含2 个基本周期以上，才能显示语音的特性。已知人声的音高范围大约在50 Hz 至1000 Hz 之间，因此对于一个的取样频率，我们就可以计算出
+音框长度的最小值。例如，若取样频率fs = 8000 Hz，那么当音高f = 50 Hz（例如男低音的歌声）时，每个基本周期的点数是fs/f = 8000/50 = 160，因此音框必须
+至少是320 点；若音高是1000 Hz（例如女高音的歌声）时，每个基本周期的点数是8000/1000 = 8，因此音框必须至少是16 点。</br>
+·音框长度也不能太大，太长的音框无法抓到音讯的特性随时间而变化的细微现象，同时计算量也会变大。</br>
+·音框之间的重叠完全是看计算机的运算能力来决定，若重叠多，音框率就会变大，计算量就跟着变大。若重叠少（甚至可以不重叠或跳点），音框率就会变小，
+计算量也跟着变小。</p>
+
+
+
+
+<h2>3.音高追踪算法</h2>
+
+
+<h4>3.1概述</h4>
+
+
+<p>由一个音框计算出音高的方法很多，可以分为时域和频域两大类：</br>
+<b>时域（Time Domain）</b></br>
+·ACF: Autocorrelation function，自相关函数</br>
+·AMDF: Average magnitude difference function，平均强度差分函数</br>
+·SIFT: Simple inverse filter tracking</br>
+<b>频域（Frequency Domain）</b></br>
+·Harmonic product spectrum method</br>
+·Cepstrum method</p>
+
+
+
+
+<h4>3.2 ACF自相关函数</h4>
+
+
+<p>首先，我们来看看ACF(Auto-Correlation Function，自相关函数)的概念。要计算音高，就得找出波形中的周期性，自相关函数的目的就是估算语音信号当前
+帧与它的下一帧的相似性，其定义如下：
+<center>$acf(\tau) = \sum_{i=0}^{n-1-\tau}s(i)s(i+\tau)$</center>
+其中$\tau$是一个延迟的时间间隔。在某个区间使得$acf(\tau)$取得最大值的那个$\tau$值就选为pitch的起止点，如下图所示：
+<center><img src="/images/2013/IMAG2013052902.png"></center>
+也就是说，我们将原始语音信号与其平移延迟信号的重叠（时间上重叠）部分进行内积运算，从而得到ACF。下面看一个具体的实例，其代码如下：
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+</pre></td><td class='code'><pre><code class='py3'><span class='line'><span></span><span class="kn">import</span> <span class="nn">wave</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">pl</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">ACF</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">flen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">acf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">flen</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">flen</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">acf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">flen</span><span class="p">]</span><span class="o">*</span><span class="n">frame</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">flen</span><span class="o">-</span><span class="n">i</span><span class="p">])</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">acf</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># ============ test the algorithm =============</span>
+</span><span class='line'><span class="c1"># read wave file and get parameters.</span>
+</span><span class='line'><span class="n">fw</span> <span class="o">=</span> <span class="n">wave</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;a.wav&#39;</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">params</span> <span class="o">=</span> <span class="n">fw</span><span class="o">.</span><span class="n">getparams</span><span class="p">()</span>
+</span><span class='line'><span class="nb">print</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><span class='line'><span class="n">nchannels</span><span class="p">,</span> <span class="n">sampwidth</span><span class="p">,</span> <span class="n">framerate</span><span class="p">,</span> <span class="n">nframes</span> <span class="o">=</span> <span class="n">params</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
+</span><span class='line'><span class="n">strData</span> <span class="o">=</span> <span class="n">fw</span><span class="o">.</span><span class="n">readframes</span><span class="p">(</span><span class="n">nframes</span><span class="p">)</span>
+</span><span class='line'><span class="n">waveData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">strData</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+</span><span class='line'><span class="n">waveData</span> <span class="o">=</span> <span class="n">waveData</span><span class="o">*</span><span class="mf">1.0</span><span class="o">/</span><span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">waveData</span><span class="p">))</span>  <span class="c1"># normalization</span>
+</span><span class='line'><span class="n">fw</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># plot the wave</span>
+</span><span class='line'><span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">waveData</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">framerate</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">frameSize</span> <span class="o">=</span> <span class="mi">512</span>
+</span><span class='line'><span class="n">idx1</span> <span class="o">=</span> <span class="mi">10000</span>
+</span><span class='line'><span class="n">idx2</span> <span class="o">=</span> <span class="n">idx1</span><span class="o">+</span><span class="n">frameSize</span>
+</span><span class='line'><span class="n">index1</span> <span class="o">=</span> <span class="n">idx1</span><span class="o">*</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">framerate</span>
+</span><span class='line'><span class="n">index2</span> <span class="o">=</span> <span class="n">idx2</span><span class="o">*</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">framerate</span>
+</span><span class='line'><span class="n">acf</span> <span class="o">=</span> <span class="n">ACF</span><span class="p">(</span><span class="n">waveData</span><span class="p">[</span><span class="n">idx1</span><span class="p">:</span><span class="n">idx2</span><span class="p">])</span>
+</span><span class='line'><span class="c1">#acf[0:10] = -acf[0]</span>
+</span><span class='line'><span class="c1">#acfmax = np.argmax(acf)</span>
+</span><span class='line'><span class="c1">#print(acfmax)</span>
+</span><span class='line'><span class="c1">#print(framerate*1.0/acfmax)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">311</span><span class="p">)</span>
+</span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">waveData</span><span class="p">)</span>
+</span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">index1</span><span class="p">,</span><span class="n">index1</span><span class="p">],[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">index2</span><span class="p">,</span><span class="n">index2</span><span class="p">],[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;time (seconds)&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Amplitude&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">312</span><span class="p">)</span>
+</span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">frameSize</span><span class="p">),</span><span class="n">waveData</span><span class="p">[</span><span class="n">idx1</span><span class="p">:</span><span class="n">idx2</span><span class="p">],</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;index in 1 frame&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Amplitude&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">313</span><span class="p">)</span>
+</span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">frameSize</span><span class="p">),</span><span class="n">acf</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;index in 1 frame&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;ACF&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="n">pl</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+程序运行结果如下图所示：
+<center><img src="/images/2013/IMAG2013052903.png"></center>
+</p>
+
+
+
+
+<p>很显然，ACF的最大值出现在第一点，这一点作为起点在任何情况下都是已知的，我们需要知道是第二个波峰。我们可以将开始的一些点的ACF值设为负无穷（这里我
+设为-acf[0]），这样可以找到第二个波峰的index为110（这一点称为pitch point，简称pp），那么对应的pitch为framerate/110 = 16000/110 = 145.455Hz.这个过程取消
+程序中第32行起的4行注释即可。这样，我们就初步自动计算出了pitch了。</p>
+
+
+
+
+<p>但是，细心的读者会发现，这里还有一个问题，那就是ACF曲线中前多少个点应该被置为负无穷？为简单起见，设人的pitch的范围为[40,1000](Hz)，那么pp的值应满足为：
+$40 < \frac{fs}{pp} < 1000$，从而得到pp的范围：$\frac{fs}{1000} < pp < \frac{fs}{40}$。这样可以部分解决问题，对于某些情况可能结果并不一定正确。</p>
+
+
+
+
+<p>另外还有一些对ACF的改进。一个主要的改进原因是，当$\tau$值变大是，两端信号的重叠部分逐渐变小，这样计算出来的ACF当然越来越小。一种改进是增加一个权值：
+<center>$acf(\tau) = \sum_{i=0}^{n-1-\tau} \frac{s(i)s(i+\tau)}{n-\tau}$.</center>
+这种方法虽然解决了上面提到的问题，但又引入了一个新的问题，那就是，在$\tau$值较大时，计算出来的acf和pitch的差异可能很大，也即出现了不稳定。另一种改进是，
+将$\tau$限制在半帧内，也即：
+<center>$acf(\tau) = \sum_{i=0}^{n/2}s(i)s(i+\tau)$.</center>
+但这样得到的acf只有一帧的一半，对于音高较低的信号就不利了，这时我们就得增大帧的长度，于是计算量也相应的增加了。</p>
+
+
+
+
+<h4>3.3 NSDF</h4>
+
+
+<p>ACF的范围是未知的，NSDF(normalized squared difference function)将ACF规整到[-1,1]之间，其定义的表达式如下：
+<center>$nsdf(\tau) = \frac{2\sum s(i)s(i+\tau)}{\sum s^{2}(i) + \sum s^{2}(i+\tau)}$.</center>
+</p>
+
+
+
+
+<h4>3.4 AMDF</h4>
+
+
+<p>AMDF (average magnitude difference function) 的定义如下：
+<center>$amdf(\tau) = \sum_{i=0}^{n-1-\tau}|s(i)-s(i+\tau)|$.</center>
+与ACF相反，这里用距离而不是相似度来计算，所以这里选取pitch point(简称pp)的标准是选最小值对应的index(实际代码中，为了与ACF进行统一，我对AMDF取了相反数)。
+相应的，也有一些对AMDF这个函数的修正，如加权值、只是用前半帧等，另外还可以将AMDF与ACF结合，将ACF除以AMDF，得到的结果可以更容易找到pitch point。
+</p>
+
+
+
+
+<h4>3.5 Pitch Tracking</h4>
+
+
+<p>能够正确计算pitch了，我们就可以对一段时序的信号进行pitch tracking了。</p>
+
+
+
+
+<p>PS：另外，还有一些频域的音高追踪方法，将在后续文章中介绍。</p>
+
+
+
+
+<h2>4.参考资料</h2>
+
+
+<p>[1]Audio Signal Processing and Recognition, Chap 7: http://neural.cs.nthu.edu.tw/jang/books/audiosignalprocessing/index.asp
+</p>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[语音信号处理之时域分析-端点检测及Python实现]]></title>
+    <link href="https://ibillxia.github.io/blog/2013/05/22/audio-signal-processing-time-domain-Voice-Activity-Detection/"/>
+    <updated>2013-05-22T22:22:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2013/05/22/audio-signal-processing-time-domain-Voice-Activity-Detection</id>
+    <content type="html"><![CDATA[<h2>端点检测</h2>
+
+
+<p>端点检测（End-Point Detection，EPD）的目标是要决定信号的语音开始和结束的位置，所以又可以称为Speech Detection或Voice Activity Detection（VAD）。
+端点检测在语音预处理中扮演着一个非常重要的角色。</p>
+
+
+
+
+<p>常见的端点检测方法大致可以分为如下两类：</br>
+（1）时域（Time Domain）的方法：计算量比较小，因此比较容易移植到计算能力较差的嵌入式平台</br>
+（a）音量：只使用音量来进行端检，是最简单的方法，但是容易对清音造成误判。另外，不同的音量计算方法得到的结果也不尽相同，至于那种方法更好也没有定论。</br>
+（b）音量和过零率：以音量为主，过零率为辅，可以对清音进行较精密的检测。</br>
+（2）频域（Frequency Domain）的方法：计算量相对较大。</br>
+（a）频谱的变化性（Variance）：有声音的频谱变化较规律，可以作为一个判断标准。</br>
+（b）频谱的Entropy：有规律的频谱的Entropy一般较小，这也可以作为一个端检的判断标准。
+</p>
+
+
+
+
+<p>下面我们分别从这两个方面来探讨端检的具体方法和过程。</p>
+
+
+
+
+<!--more-->
+
+
+
+
+<h2>时域的端检方法</h2>
+
+
+<p>时域的端检方法分为只用音量的方法和同时使用音量和过零率的方法。只使用音量的方法最简单计算量也最小，我们只需要设定一个音量阈值，任何音量小于该阈值的帧
+被认为是静音（silence）。这种方法的关键在于如何选取这个阈值，一种常用的方法是使用一些带标签的数据来训练得到一个阈值，使得误差最小。</p>
+
+
+
+
+<p>下面我们来看看最简单的、不需要训练的方法，其代码如下：
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+</pre></td><td class='code'><pre><code class='py3'><span class='line'><span></span><span class="kn">import</span> <span class="nn">wave</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">Volume</span> <span class="k">as</span> <span class="nn">vp</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">findIndex</span><span class="p">(</span><span class="n">vol</span><span class="p">,</span><span class="n">thres</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vol</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">ii</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">l</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">if</span><span class="p">((</span><span class="n">vol</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">thres</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">vol</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">thres</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">):</span>
+</span><span class='line'>            <span class="n">index</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">=</span><span class="n">i</span>
+</span><span class='line'>            <span class="n">ii</span> <span class="o">=</span> <span class="n">ii</span><span class="o">+</span><span class="mi">1</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">index</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">fw</span> <span class="o">=</span> <span class="n">wave</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;sunday.wav&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">params</span> <span class="o">=</span> <span class="n">fw</span><span class="o">.</span><span class="n">getparams</span><span class="p">()</span>
+</span><span class='line'><span class="n">nchannels</span><span class="p">,</span> <span class="n">sampwidth</span><span class="p">,</span> <span class="n">framerate</span><span class="p">,</span> <span class="n">nframes</span> <span class="o">=</span> <span class="n">params</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
+</span><span class='line'><span class="n">strData</span> <span class="o">=</span> <span class="n">fw</span><span class="o">.</span><span class="n">readframes</span><span class="p">(</span><span class="n">nframes</span><span class="p">)</span>
+</span><span class='line'><span class="n">waveData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">strData</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+</span><span class='line'><span class="n">waveData</span> <span class="o">=</span> <span class="n">waveData</span><span class="o">*</span><span class="mf">1.0</span><span class="o">/</span><span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">waveData</span><span class="p">))</span>  <span class="c1"># normalization</span>
+</span><span class='line'><span class="n">fw</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">frameSize</span> <span class="o">=</span> <span class="mi">256</span>
+</span><span class='line'><span class="n">overLap</span> <span class="o">=</span> <span class="mi">128</span>
+</span><span class='line'><span class="n">vol</span> <span class="o">=</span> <span class="n">vp</span><span class="o">.</span><span class="n">calVolume</span><span class="p">(</span><span class="n">waveData</span><span class="p">,</span><span class="n">frameSize</span><span class="p">,</span><span class="n">overLap</span><span class="p">)</span>
+</span><span class='line'><span class="n">threshold1</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">vol</span><span class="p">)</span><span class="o">*</span><span class="mf">0.10</span>
+</span><span class='line'><span class="n">threshold2</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">vol</span><span class="p">)</span><span class="o">*</span><span class="mf">10.0</span>
+</span><span class='line'><span class="n">threshold3</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">vol</span><span class="p">)</span><span class="o">*</span><span class="mf">0.05</span><span class="o">+</span><span class="nb">min</span><span class="p">(</span><span class="n">vol</span><span class="p">)</span><span class="o">*</span><span class="mf">5.0</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nframes</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">framerate</span><span class="p">)</span>
+</span><span class='line'><span class="n">frame</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">vol</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">nframes</span><span class="o">*</span><span class="mf">1.0</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">vol</span><span class="p">)</span><span class="o">/</span><span class="n">framerate</span><span class="p">)</span>
+</span><span class='line'><span class="n">index1</span> <span class="o">=</span> <span class="n">findIndex</span><span class="p">(</span><span class="n">vol</span><span class="p">,</span><span class="n">threshold1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">nframes</span><span class="o">*</span><span class="mf">1.0</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">vol</span><span class="p">)</span><span class="o">/</span><span class="n">framerate</span><span class="p">)</span>
+</span><span class='line'><span class="n">index2</span> <span class="o">=</span> <span class="n">findIndex</span><span class="p">(</span><span class="n">vol</span><span class="p">,</span><span class="n">threshold2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">nframes</span><span class="o">*</span><span class="mf">1.0</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">vol</span><span class="p">)</span><span class="o">/</span><span class="n">framerate</span><span class="p">)</span>
+</span><span class='line'><span class="n">index3</span> <span class="o">=</span> <span class="n">findIndex</span><span class="p">(</span><span class="n">vol</span><span class="p">,</span><span class="n">threshold3</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">nframes</span><span class="o">*</span><span class="mf">1.0</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">vol</span><span class="p">)</span><span class="o">/</span><span class="n">framerate</span><span class="p">)</span>
+</span><span class='line'><span class="n">end</span> <span class="o">=</span> <span class="n">nframes</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">framerate</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">211</span><span class="p">)</span>
+</span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time</span><span class="p">,</span><span class="n">waveData</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">index1</span><span class="p">,</span><span class="n">index1</span><span class="p">],[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="s1">&#39;-r&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">index2</span><span class="p">,</span><span class="n">index2</span><span class="p">],[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="s1">&#39;-g&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">index3</span><span class="p">,</span><span class="n">index3</span><span class="p">],[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="s1">&#39;-b&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Amplitude&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">212</span><span class="p">)</span>
+</span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span><span class="n">vol</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">end</span><span class="p">],[</span><span class="n">threshold1</span><span class="p">,</span><span class="n">threshold1</span><span class="p">],</span><span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;threshold 1&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">end</span><span class="p">],[</span><span class="n">threshold2</span><span class="p">,</span><span class="n">threshold2</span><span class="p">],</span><span class="s1">&#39;-g&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;threshold 2&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">end</span><span class="p">],[</span><span class="n">threshold3</span><span class="p">,</span><span class="n">threshold3</span><span class="p">],</span><span class="s1">&#39;-b&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;threshold 3&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Volume(absSum)&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time(seconds)&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+其中计算音量的函数calVolume参见<a href="http://ibillxia.github.io/blog/2013/05/15/audio-signal-process-time-domain-volume-python-realization/">
+音量及其Python实现</a>一文。程序的运行结果如下图：
+<center><img src="/images/2013/IMAG2013052201.png"></center>
+</p>
+
+
+
+
+<p>这里采用了三种设置阈值的方法，但这几种设置方法对所有的输入都是相同的，对于一些特定的语音数据可能得不到很好的结果，比如杂音较强、清音较多或音量
+变化较大等语音信号，此时单一阈值的方法的效果就不太好了，虽然我们可以通过增加帧与帧之间的重叠部分，但相对而言计算量会比较大。下面我们利用一些更多的
+特征来进行端点加测，例如使用过零率等信息，其过程如下：</br>
+（1）以较高音量阈值($\tau _{u}$)为标准，找到初步的端点；</br>
+（2）将端点前后延伸到低音量阈值($\tau _{l}$)处；</br>
+（3）再将端点前后延伸到过零率阈值($\tau _{zc}$)处，以包含语音中清音的部分。</br>
+这种方法需要确定三个阈值($\tau _{u}$,$\tau _{l}$,$\tau _{zc}$)，可以用各种搜寻方法来调整这三个参数。其示意图(参考[1])如下：
+<center><img src="/images/2013/IMAG2013052202.png"></center>
+我们在同一个图中绘制出音量和过零率的阈值图如下：
+<center><img src="/images/2013/IMAG2013052203.png"></center>
+可以看到我们可以通过过零率的阈值来把错分的清音加入到语音部分来。上图使用到的阈值还是和音量的阈值选取方法相同，比较简单直接。
+</p>
+
+
+
+
+<p>另外，我们还可以连续对波形进行微分，再计算音量，这样就可以凸显清音的部分，从而将其正确划分出来，详见参考[1]。</p>
+
+
+
+
+<h2>频域的端检方法</h2>
+
+
+<p>有声音的信号在频谱上会有重复的谐波结构，因此我们也可以使用频谱的变化性（Variation）或Entropy来进行端点检测，可以参见如下链接：
+http://neural.cs.nthu.edu.tw/jang/books/audiosignalprocessing/paper/endPointDetection/</p>
+
+
+
+
+<p>总之，端点检测是语音预处理的重头戏，其实现方法也是五花八门，本文只给出了最简单最原始也最好理解的几种方法，这些方法要真正做到实用，还需要针对一些
+特殊的情况在做一些精细的设置和处理，但对于一般的应用场景应该还是基本够用的。</p>
+
+
+
+
+<h2>参考（References）</h2>
+
+
+<p>
+[1]EPD in Time Domain: http://neural.cs.nthu.edu.tw/jang/books/audiosignalprocessing/epdTimeDomain.asp?title=6-2%20EPD%20in%20Time%20Domain</br>
+[2]EPD in Frequency Domain: http://neural.cs.nthu.edu.tw/jang/books/audiosignalprocessing/epdFreqDomain.asp?title=6-3%20EPD%20in%20Frequency%20Domain
+</p>
+
+]]></content>
+  </entry>
+  
+</feed>

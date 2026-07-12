@@ -1,0 +1,1362 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 深度学习 | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/shen-du-xue-xi/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[大模型入门指南：Transformer与Attention机制]]></title>
+    <link href="https://ibillxia.github.io/blog/2025/01/22/transformer-attention-guide/"/>
+    <updated>2025-01-22T16:51:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2025/01/22/transformer-attention-guide</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://developer.aliyun.com/article/1655110">https://developer.aliyun.com/article/1655110</a></p>
+
+<center><img src="/images/2025/IMAG2025012201.octet-stream"></center>
+
+
+<p>阿里妹导读</p>
+
+<p>本文档旨在详细阐述当前主流的大模型技术架构如Transformer架构。我们将从技术概述、架构介绍到具体模型实现等多个角度进行讲解。通过本文档，我们期望为读者提供一个全面的理解，帮助大家掌握大模型的工作原理，增强与客户沟通的技术基础。本文档适合对大模型感兴趣的人员阅读。</p>
+
+<!--more-->
+
+
+<h1>论文介绍</h1>
+
+<p>论文名称：《Attention is all you need》</p>
+
+<p>发布时间：2017/06/12</p>
+
+<p>发布单位：Google、多伦多大学</p>
+
+<p>简单摘要：所有LLM的始祖，迈向NLP新时代的基础架构</p>
+
+<p>中文摘要：传统的序列转换模型使用复杂的循环或卷积神经网络，包括编码器和解码器。表现最好的模型会透过注意力机制连接编码器和解码器。</p>
+
+<p>作者团队提出了一种新的简单网络结构，Transformer，完全基于注意力机制，不再使用循环和卷积。</p>
+
+<p>在两个机器翻译任务上进行实验，发现这些模型在质量上的表现优越，并且更容易进行平行运算，训练所需时间明显减少。</p>
+
+<p>该模型在WMT 2014年英德翻译任务上达到了28.4 BLEU，比现有最佳结果（包括整体模型）提高了超过2 BLEU。在WMT 2014年英法翻译任务中，模型在八个GPU上训练3.5天后，取得了新的单模型最佳BLEU分数41.8，训练成本仅为文献中最佳模型的一小部分。</p>
+
+<p>展示出无论是在大量或有限的训练数据下，Transformer在其他任务中的泛化能力，成功应用于英语组成句分析。</p>
+
+<p>论文链接：https://arxiv.org/pdf/1706.03762.pdf</p>
+
+<p>核心技术：模型架构（此处先留下大体印象 encode+decode）</p>
+
+<center><img src="/images/2025/IMAG2025012202.webp"></center>
+
+
+<h1>LLM 浅谈</h1>
+
+<p>很多人认为大模型可以直接回答问题或参与对话，但实际上，它们的核心功能是根据输入的文本预测下一个可能出现的词汇，即“Token”。这种预测能力使得LLM在各种应用中表现出色，包括但不限于：</p>
+
+<p>文本生成：LLM可以生成连贯且有意义的文本段落，用于写作辅助、内容创作等。</p>
+
+<p>问答系统：通过理解问题的上下文，LLM能够生成准确的回答，广泛应用于智能客服和信息检索。</p>
+
+<p>翻译：LLM可以根据上下文进行高质量的语言翻译，支持多语言交流。</p>
+
+<p>文本摘要：LLM能够提取长文档的关键内容，生成简洁的摘要，方便快速理解。</p>
+
+<p>对话系统：LLM可以模拟人类对话，提供自然流畅的互动体验，应用于聊天机器人和虚拟助手。</p>
+
+<p>通过理解Token的概念，我们可以更好地掌握LLM的工作原理及其在实际应用中的强大能力。</p>
+
+<h2>Token</h2>
+
+<h3>样例</h3>
+
+<p>谈到 token，不得不提到近期一个大模型被揪出来的低级错误“Strawberry里有几个 r”。</p>
+
+<center><img src="/images/2025/IMAG2025012203.webp"></center>
+
+
+<p>嘲笑之后，大家也冷静了下来，开始思考：低级错误背后的本质是什么？</p>
+
+<p>大家普遍认为，是 Token 化（Tokenization）的锅。</p>
+
+<p>在国内，Tokenization 经常被翻译成「分词」。这个翻译有一定的误导性，因为 Tokenization 里的 token 指的未必是词，也可以是标点符号、数字或者某个单词的一部分。比如，在 OpenAI 提供的一个工具中，我们可以看到，Strawberry 这个单词就被分为了 Str-aw-berry 三个 token。在这种情况下，你让 AI 大模型数单词里有几个 r，属实是为难它。</p>
+
+<p>为了让大家直观地看到大模型眼里的文字世界，Karpathy特地写了一个小程序，用表情符号（emoji）来表示 token。</p>
+
+<center><img src="/images/2025/IMAG2025012204.webp"></center>
+
+
+<h3>尝试</h3>
+
+<p>Token 是 LLM 理解的文本基本单位。虽然将 Token 看作单词很方便，但对 LLM 来说，目标是尽可能高效地编码文本。所以在许多情况下，Token 代表的字符序列比整个单词都要短或长。标点符号和空格也被表示为 Token，可能是单独或与其他字符组合表示。LLM 词汇中的每个 Token 都有一个唯一的标识符，通常是一个数字。LLM 使用分词器在常规文本字符串和等效的 Token 数列表之间进行转换。</p>
+
+<pre><code>import tiktoken
+# 获取适用于 GPT-2 模型的编码器
+encoding = tiktoken.encoding_for_model("gpt-2")
+# 编码示例句子
+encoded_text = encoding.encode("A journey of a thousand miles begins with a single step.")print(encoded_text)
+# 解码回原始文本
+decoded_text = encoding.decode(encoded_text)print(decoded_text)
+# 单个 token 的编码与解码
+print(encoding.decode([32]))  # 'A'
+print(encoding.decode([7002])) # ' journey'
+print(encoding.decode([286]))   # 'of'
+# 编码单词 "Payment"
+payment_encoded = encoding.encode("thousand")
+print(payment_encoded)
+# 解码 "Payment" 的编码结果
+print(encoding.decode([400])) # 'th'
+print(encoding.decode([29910]))   # 'ousand'
+[32, 7002, 286, 257, 7319, 4608, 6140, 351, 257, 2060, 2239, 13]
+A journey of a thousand miles begins with a single step.
+A 
+journey 
+of
+[400, 29910]
+th
+ousand
+</code></pre>
+
+<h3>预测下一个 Token</h3>
+
+<p>如上所述，给定一段文本，语言模型的任务是预测接下来的一个 Token。如果用 Python 伪代码来表示，这看起来就像这样：</p>
+
+<pre><code>predictions = predict_next_token(['A', 'journey', 'of', 'a'])
+</code></pre>
+
+<p>这里predict_next_token 函数接收一个由用户提供的提示词转换成的一系列输入 Token。在本例中，我们假设每个单词都构成一个单独的 Token。实际上，每个 Token 都会被编码为一个数字，而非直接以文本形式传入模型。函数的输出是一个数据结构，其中包含了词汇表中每一个可能的 Token 出现在当前输入序列之后的概率值。</p>
+
+<p>语言模型需要通过一个训练过程来学会做出这样的预测。训练过程中，模型会接触到大量的文本数据，从中学习语言模式和规则。训练完成后，模型就能够利用所学知识来估计任何给定 Token 序列之后可能出现的下一个 Token 的概率。</p>
+
+<p>要生成连续的文本，模型需要反复调用自身，每次生成一个新的 Token 并将其加入到已有的序列中，直至达到预设的长度。下面是一段更详尽的 Python 伪代码，展示了这一过程：</p>
+
+<pre><code>def generate_text(prompt, num_tokens, hyperparameters):   
+tokens = tokenize(prompt)  # 将提示转换为 Token 列表    
+for _ in range(num_tokens):  # 根据指定的 Token 数量重复执行      
+predictions = predict_next_token(tokens)  # 获取下一个 Token 的预测       
+next_token = select_next_token(predictions, hyperparameters)  # 根据概率选择下一个 Token       
+tokens.append(next_token)  # 将选中的 Token 添加到列表中   
+return ''.join(tokens)  # 将 Token 列表合并为字符串
+# 辅助函数用于选择下一个 Token
+def select_next_token(predictions, hyperparameters):  
+# 使用温度（temperature）、top-k 或 top-p 等策略调整 Token 选择 
+# 实现细节取决于具体的超参数设置    
+pass
+</code></pre>
+
+<p>在这段代码中，<code>generate_text</code> 函数接受一个提示字符串、生成 Token 的数量以及一组超参数作为输入。<code>tokenize</code> 函数负责将提示转换成 Token 列表，而 <code>select_next_token</code> 函数则根据预测的概率分布选择下一个 Token。通过调整 <code>select_next_token</code> 中的超参数，比如温度（temperature）、top-k 和 top-p，可以控制生成文本的多样性和创造性。随着循环的不断迭代，新的 Token 不断被添加到序列中，最终形成了连贯的文本输出。</p>
+
+<h2>模型训练</h2>
+
+<p>想象一下，我们要培养一个模型来预测句子中的下一个词。这就像是玩一个猜词游戏，模型需要根据已经出现的词来猜测下一个词。简化的词汇表,我们假设只有五个词：</p>
+
+<p>['I','you','love','oranges','grapes']</p>
+
+<p>我们不考虑空格和标点，只关注这些词。</p>
+
+<p>我们有三句话作为训练数据：</p>
+
+<ul>
+<li><p>I love oranges</p></li>
+<li><p>I love grapes</p></li>
+<li><p>you love oranges</p></li>
+</ul>
+
+
+<p>我们可以想象一个5x5的表格，表格中的每个格子代表一个词后面跟着另一个词的次数。这个表格可能看起来像这样：</p>
+
+<center><img src="/images/2025/IMAG2025012205.webp"></center>
+
+
+<p>在这个例子中，“I”后面跟着“love”两次，而“love”后面跟着“oranges”一次，跟着“grapes”两次。为了使这个表格有用，我们需要将这些次数转换成概率，这样模型就可以预测下一个词的可能性。例如，“love”后面跟着“oranges”的概率是 1/3（大约33.3%），而跟着“grapes”的概率是 2/3（大约66.7%）。</p>
+
+<p>但是，我们遇到了一个问题：“oranges”和“grapes”没有出现在其他词后面。这意味着，如果没有其他信息，模型将无法预测这两个词后面可能是什么。为了解决这个问题，我们可以假设每个词后面都可能跟着词汇表中的任何其他词，尽管这并不完美，但它确保了模型即使在训练数据有限的情况下也能做出预测。</p>
+
+<p>在现实世界中，大型语言模型（LLM）使用了大量的训练数据，这减少了这种“漏洞”出现的机会。然而，由于某些词的组合在训练数据中出现得较少，LLM可能在某些情况下表现不佳，导致生成的文本虽然语法上正确，但逻辑上可能存在错误或不一致。这种现象有时被称为“模型幻觉”。</p>
+
+<h2>上下文窗口</h2>
+
+<p>在之前的讨论中，我们提到使用马尔可夫链训练小模型的方法，这种方法的局限在于它只依赖最后一个 Token 来预测下一个 Token。这意味着，任何出现在最后一个 Token 之前的文本都不会影响预测结果，因此这种解决方案的上下文窗口非常小，只有一个 Token。由于上下文窗口过小，模型容易“忘记”先前的信息，导致生成的文本缺乏一致性，从一个词跳跃到另一个词。</p>
+
+<h2>改进上下文窗口</h2>
+
+<p>为了提高模型的预测质量，可以尝试增加上下文窗口的大小。例如，如果使用两个 Token 的上下文窗口，就需要构建一个更大的概率矩阵，其中每一行代表所有可能的两个 Token 序列。对于五个 Token 的词汇表，这将新增 25 行（5<sup>2</sup>）。在每次调用 predict_next_token() 函数时，将使用输入的最后两个 Token 来查找概率表中的对应行。</p>
+
+<p>然而，即使使用两个 Token 的上下文窗口，生成的文本仍可能缺乏连贯性。为了生成更加一致且有意义的文本，需要进一步增加上下文窗口的大小。例如，将上下文窗口增加到三个 Token 将使概率表的行数增加到 125 行（5<sup>3</sup>），但这仍然不足以生成高质量的文本。</p>
+
+<p>随着上下文窗口的增大，概率表的大小呈指数级增长。以 GPT-2 模型为例，它使用了 1024 个 Token 的上下文窗口。如果按上文中使用马尔可夫链来实现这样一个大的上下文窗口，每行概率表都需要代表一个长度在 1 到 1024 个 Token 之间的序列。对于一个包含 5 个 Token 的词汇表，可能的序列数量为 5<sup>1024</sup>，这是一个天文数字。这个数字太大了，以至于无法实际存储和处理如此庞大的概率表。因此，马尔可夫链在处理大规模上下文窗口时存在严重的可扩展性问题。</p>
+
+<h2>从马尔可夫链到神经网络</h2>
+
+<p>显然，使用概率表的方法在处理大规模上下文窗口时不可行。我们需要一种更高效的方法来预测下一个 Token。这就是神经网络发挥作用的地方。神经网络是一种特殊的函数，它可以接受输入数据，对其进行一系列计算，然后输出预测结果。对于语言模型而言，输入是一系列 Token，输出是下一个 Token 的概率分布。</p>
+
+<p>神经网络的关键在于其参数。这些参数在训练过程中逐渐调整，以优化模型的预测性能。训练过程涉及大量的数学运算，包括前向传播和反向传播。前向传播是指输入数据通过网络的各个层进行计算，生成预测结果；反向传播则是根据预测结果与真实标签之间的差异，调整网络的参数，以减小误差。</p>
+
+<p>现代语言模型，如 GPT-2、GPT-3 和 GPT-4，使用了非常深的神经网络，拥有数亿甚至数万亿的参数。这些模型的训练过程非常复杂，通常需要数周甚至数月的时间。尽管如此，训练有素的 LLM 能够在生成文本时保持较高的连贯性和一致性，这得益于其强大的上下文理解和生成能力。</p>
+
+<h2>Transformer 和注意力机制</h2>
+
+<p>Transformer 是目前最流行的神经网络架构之一，特别适用于自然语言处理任务。Transformer 模型的核心特点是其注意力机制。注意力机制允许模型在处理输入序列时，动态地关注序列中的不同部分，从而更好地捕捉上下文信息。</p>
+
+<p>注意力机制最初应用于机器翻译任务，目的是帮助模型识别输入序列中的关键信息。通过注意力机制，模型可以“关注”输入序列中的重要 Token，从而生成更准确的翻译结果。在语言生成任务中，注意力机制同样发挥了重要作用，使得模型能够在生成下一个 Token 时，综合考虑上下文窗口中的多个 Token，从而生成更加连贯和有意义的文本。</p>
+
+<p>总结来说，虽然马尔可夫链提供了一种简单的文本生成方法，但其在处理大规模上下文窗口时存在明显的局限性。现代语言模型通过使用神经网络和注意力机制，克服了这些局限性，实现了高效且高质量的文本生成。</p>
+
+<h1>Transformer 的输入</h1>
+
+<center><img src="/images/2025/IMAG2025012202.webp"></center>
+
+
+<p>回到框架图，Transformer中单词的输入表示x由单词Embedding和位置Embedding （Positional Encoding）相加得到。</p>
+
+<p>单词的 Embedding 有很多种方式可以获取，例如可以采用 Word2Vec、Glove 等算法预训练得到，也可以在 Transformer 中训练得到。</p>
+
+<p>Transformer 中除了单词的 Embedding，还需要使用位置 Embedding 表示单词出现在句子中的位置。因为 Transformer 不采用 RNN 的结构，而是使用全局信息，不能利用单词的顺序信息，而这部分信息对于 NLP 来说非常重要。所以 Transformer 中使用位置 Embedding 保存单词在序列中的相对或绝对位置。</p>
+
+<p>简而言之：以苹果为例</p>
+
+<p>“水果店里有苹果，香蕉”中苹果代指水果，“商店里最新推出了苹果 16”中苹果代表品牌</p>
+
+<h1>Self-Attention（自注意力机制）</h1>
+
+<center><img src="/images/2025/IMAG2025012206.webp"></center>
+
+
+<p>上图是论文中 Transformer 的内部结构图，左侧为 Encoder block，右侧为 Decoder block。红色圈中的部分为 Multi-Head Attention，是由多个 Self-Attention组成的，可以看到 Encoder block 包含一个 Multi-Head Attention，而 Decoder block 包含两个 Multi-Head Attention (其中有一个用到 Masked)。Multi-Head Attention 上方还包括一个 Add &amp; Norm 层，Add 表示残差连接 (Residual Connection) 用于防止网络退化，Norm 表示 Layer Normalization，用于对每一层的激活值进行归一化。</p>
+
+<p>因为 Self-Attention是 Transformer 的重点，所以我们重点关注 Multi-Head Attention 以及 Self-Attention，首先详细了解一下 Self-Attention 的内部逻辑。</p>
+
+<p>当然，我们可以用更简洁的方式来理解Self-Attention机制。</p>
+
+<h2>Self-Attention 简介</h2>
+
+<p>Self-Attention 是一种允许模型在处理序列数据时关注不同部分的方法，特别适用于处理长文本。它通过计算序列中每个元素与其他所有元素之间的相关性来实现这一点。</p>
+
+<h3>工作流程</h3>
+
+<ol>
+<li><p>转换：每个输入元素（比如一个词）都会被转换成三个向量：Query (查询)、Key (键) 和 Value (值)。这些向量是通过将输入向量分别乘以三个不同的权重矩阵WQ、WK 和 WV 得到的。</p></li>
+<li><p>计算注意力分数：对于每个元素，使用它的 Query 向量与所有其他元素的 Key 向量进行点积运算，得到一个分数列表。这个分数表示当前元素与其他所有元素的相关性。</p></li>
+<li><p>归一化：将这些分数通过 softmax 函数进行归一化，得到一个概率分布，表示当前元素对其他所有元素的注意力权重。</p></li>
+<li><p>加权求和：使用这些注意力权重对所有元素的 Value 向量进行加权求和，得到最终的输出向量。</p></li>
+</ol>
+
+
+<h3>公式</h3>
+
+<p>假设输入序列为 X=[x1,x2,...,xn]X，每个 xi 都是一个向量。</p>
+
+<ul>
+<li>转换：</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025012207.webp"></center>
+
+
+<ul>
+<li>计算注意力分数：   </li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025012208.webp"></center>
+
+
+<p>其中dk是Key向量的维度。</p>
+
+<ul>
+<li><p>归一化：Attention Weights=softmax(Scores)</p></li>
+<li><p>加权求和：Output=Attention Weights⋅V</p></li>
+</ul>
+
+
+<h2>Multi-Head Attention</h2>
+
+<ul>
+<li>多头注意力（Multi-Head Attention）是为了让模型从多个不同的角度捕捉信息。具体做法是并行运行多个Self-Attention层（每个称为一个“头”），然后将所有头的输出拼接在一起，再通过一个线性变换。</li>
+</ul>
+
+
+<h2>总结</h2>
+
+<ul>
+<li><p>Self-Attention 让模型能够关注序列中的不同部分，从而更好地捕捉长距离依赖关系。</p></li>
+<li><p>Multi-Head Attention 通过多个Self-Attention层增强模型的表达能力，使其能够从多个角度综合考虑信息。</p></li>
+</ul>
+
+
+<h1>Add &amp; Norm 和 Feed Forward</h1>
+
+<h2>Add &amp; Norm (残差连接与层归一化)</h2>
+
+<h3>残差连接 (Residual Connection)</h3>
+
+<ul>
+<li><p>作用：帮助模型更好地学习，防止训练过程中信息丢失。</p></li>
+<li><p>方法：把输入直接加到输出上。</p></li>
+</ul>
+
+
+<h3>层归一化 (Layer Normalization)</h3>
+
+<ul>
+<li><p>作用：让数据更稳定，加快训练速度。</p></li>
+<li><p>方法：把每个样本的特征值调整到一个标准范围内，通常是平均值为0，标准差为1。</p></li>
+</ul>
+
+
+<p>结合使用</p>
+
+<ul>
+<li><p>步骤：</p></li>
+<li><p>先计算某一层的输出 F(x)F(x)。</p></li>
+<li><p>把输入 xx 加到 F(x)F(x) 上，得到 y=F(x)+xy=F(x)+x。</p></li>
+<li><p>对 yy 进行层归一化，得到最终的输出。</p></li>
+</ul>
+
+
+<h3>Feed Forward (前馈神经网络)</h3>
+
+<p>作用</p>
+
+<ul>
+<li>增加非线性：让模型更灵活，能处理更复杂的数据。</li>
+</ul>
+
+
+<p>结构</p>
+
+<ul>
+<li><p>两层全连接网络：</p></li>
+<li><p>第一层：把输入通过一个线性变换（乘以一个矩阵），然后用 ReLU 激活函数处理。</p></li>
+<li><p>第二层：再通过一个线性变换（乘以另一个矩阵）。</p></li>
+</ul>
+
+
+<h3>总结</h3>
+
+<ul>
+<li><p>Add &amp; Norm：通过残差连接和层归一化，让模型更稳定，训练更快。</p></li>
+<li><p>Feed Forward：通过两层全连接网络增加模型的灵活性，使其能处理更复杂的数据。</p></li>
+</ul>
+
+
+<h2>Decoder 结构</h2>
+
+<center><img src="/images/2025/IMAG2025012209.webp"></center>
+
+
+<p>上图红色部分为 Transformer 的 Decoder block 结构，与 Encoder block 相似，但是存在一些区别：</p>
+
+<ul>
+<li><p>包含两个 Multi-Head Attention 层。</p></li>
+<li><p>第一个 Multi-Head Attention 层采用了 Masked 操作。</p></li>
+<li><p>第二个 Multi-Head Attention 层的K, V矩阵使用 Encoder 的编码信息矩阵C进行计算，而Q使用上一个 Decoder block 的输出计算。</p></li>
+<li><p>最后由一个 Softmax 层计算下一个翻译单词的概率。</p></li>
+</ul>
+
+
+<h1>附</h1>
+
+<pre><code># 导入必要的库
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import math
+# 定义位置编码层，用于为输入序列添加位置信息
+class PositionalEncoding(nn.Module):   
+def __init__(self, d_model, max_len=5000):       
+super(PositionalEncoding, self).__init__()       
+# 初始化位置编码张量       
+pe = torch.zeros(max_len, d_model)       
+position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)      
+div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model))        # 计算正弦和余弦值        pe[:, 0::2] = torch.sin(position * div_term)        pe[:, 1::2] = torch.cos(position * div_term)        pe = pe.unsqueeze(0).transpose(0, 1)        # 将位置编码注册为缓冲区        self.register_buffer('pe', pe)
+    def forward(self, x):      
+    # 将位置编码与输入相加      
+    x = x + self.pe[:x.size(0), :]      
+    return x
+# 定义基于Transformer的模型类
+class TransformerModel(nn.Module):   
+def __init__(self, input_dim, output_dim, d_model=512, nhead=8, num_encoder_layers=6, dim_feedforward=2048, dropout=0.1):     
+super(TransformerModel, self).__init__()       
+self.model_type = 'Transformer'        
+# 定义嵌入层        
+self.embedding = nn.Embedding(input_dim, d_model)       
+# 定义位置编码层       
+self.pos_encoder = PositionalEncoding(d_model)       
+# 定义编码器层      
+encoder_layers = nn.TransformerEncoderLayer(d_model, nhead, dim_feedforward, dropout)     
+self.transformer_encoder = nn.TransformerEncoder(encoder_layers, num_encoder_layers)     
+self.d_model = d_model     
+# 定义解码器层      
+self.decoder = nn.Linear(d_model, output_dim)     
+# 初始化权重       
+self.init_weights()
+    def init_weights(self):       
+    initrange = 0.1       
+    self.embedding.weight.data.uniform_(-initrange, initrange)     
+    self.decoder.bias.data.zero_()      
+    self.decoder.weight.data.uniform_(-initrange, initrange)
+    def forward(self, src, src_mask):       
+    # 嵌入输入并乘以根号下d_model       
+    src = self.embedding(src) * math.sqrt(self.d_model)     
+    src = self.pos_encoder(src)      
+    # 编码输入       
+    output = self.transformer_encoder(src, src_mask)    
+    # 解码输出       
+    output = self.decoder(output)      
+    return output
+# 生成一个上三角矩阵作为掩码def generate_square_subsequent_mask(sz):  
+mask = (torch.triu(torch.ones(sz, sz)) == 1).transpose(0, 1)  
+mask = mask.float().masked_fill(mask == 0, float('-inf')).masked_fill(mask == 1, float(0.0))   
+return mask
+# 示例用法
+input_dim = 1000 # 词汇表大小
+output_dim = 1000 # 输出维度
+seq_length = 10  # 序列长度
+# 创建模型实例
+model = TransformerModel(input_dim=input_dim, output_dim=output_dim)
+# 示例数据
+src = torch.randint(0, input_dim, (seq_length, 32))  # (序列长度, 批次大小)
+src_mask = generate_square_subsequent_mask(seq_length)
+# 前向传播
+output = model(src, src_mask)
+print(output.shape)  # 预期输出: [序列长度, 批次大小, 输出维度]
+# 定义简单的损失函数和优化器用于训练
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+# 示例训练循环
+for epoch in range(10):  # 迭代次数  
+optimizer.zero_grad()   
+output = model(src, src_mask)   
+loss = criterion(output.view(-1, output_dim), src.view(-1)) 
+loss.backward()   
+optimizer.step()
+print(f"Epoch {epoch+1}, Loss: {loss.item()}")
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[【凉夏】推荐模型中的门控机制与动态权重]]></title>
+    <link href="https://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation/"/>
+    <updated>2025-01-03T10:33:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/701181424">https://zhuanlan.zhihu.com/p/701181424</a></p>
+
+<p>大家好，我是凉夏同学。今天是我第一次在知乎分享我对算法模型的理解，有些生疏，还请大家多多指教。感兴趣的话，敬请关注公众号：凉夏的机器学习笔记。感恩~</p>
+
+<p>今天要讲的是最近比较火的一种网络结构，可以近乎“无脑地”加入到网络结构当中，基本上都可以带来或多或少的效果提升。这个网络结构有人叫他门控网络、门控结构，也有人叫他的英文名“gating”，也有人叫他动态权重。</p>
+
+<p>这篇文章，我会先讲一下我对门控机制的理解，然后会简单介绍几个使用门控机制的论文。</p>
+
+<h1>门控的本质</h1>
+
+<p>一直都觉得深度学习模型架构里，很多东西都是相同的，虽然很多时候他们有不同的名称、亦或是用在了不同的模型位置，但底层的思想和逻辑很可能是一致的。而我认为，门控网络结构的本质就是注意力机制。说到注意力机制，大家应该都不陌生，该结构出现在以DNN模型为基础的各种应用结构中，例如：transformer里面使用了multi-head attention（MHA）这种多头自注意力机制；用户行为序列建模DIN结构使用了target attention结构。</p>
+
+<!--more-->
+
+
+<p>那么注意力机制的本质又是什么呢？我的理解是：注意力机制就是自适应学习得到权重。所以相关结构可以再进行细分，得到三种关键元素： <br/>
+- ①输入：使用哪些信息作为注意力的输入；
+- ②结构：如何计算注意力权重；
+- ③输出：得到了权重之后，我们要作用在哪里。</p>
+
+<p>基本上，我们见到的任何注意力机制都可以归因到上面三个问题上。</p>
+
+<center><img src="/images/2025/IMAG2025010331.jpeg"></center>
+
+
+<center>transformer中的MHA结构</center>
+
+
+<p></br></p>
+
+<p>拿我们举例子的transformer中的多头注意力机制来说。如果是encoder那侧，那么则是自注意力机制，输入是同一个序列的token经过矩阵转换之后的向量；注意力计算方式是Scaled（除以根号d）的内积再softmax；输出依旧作用在当前序列上。如果是DIN结构，那输入是target poi的embedding，计算方式则是简单的内积，输出在用户序列的每个seq poi的embedding上。</p>
+
+<p>简单介绍完了注意力机制，说回来我们的门控。既然门控本质也是注意力机制，那么其三元素也是包括输入、结构、输出。只是相应的内容有一些变化，从而衍生出不同的网络结构和应用。下面介绍一些常见的。</p>
+
+<h1>LHUC结构</h1>
+
+<p>LHUC的全称是Learning Hidden Unit Contributions，最早语音识别领域所提出的，其核心的思想是：为每一个 speaker 定制一个振幅函数 (amplitude function)，作用于 DNN 的隐层之上。从公式上看非常直观：</p>
+
+<p>其中 代表哈达玛积，也就是两个向量对应位置的元素相乘。其右边代表DNN某个隐藏层输出（因为大概形式就是f(w·x+b)嘛），其左边代表振幅函数的输出。虽说名字叫做振幅函数，但整个公式的形式看起来非常符合我们上文讨论的注意力机制的形式——生成了权重乘在隐藏层的输出上。其输入就是每个speaker的信息，结构就是浅层的DNN，输出作用在DNN的多个隐藏层上。其中有一个细节是，一般来说作为权重的DNN子结构会使用sigmoid作为激活函数，使得权重在0~1之间。而LHUC在sigmoid前面乘了个固定数字“2”，使得权重在0~2之间。带来的效果是：若权重在0~1之间，则是对原有隐藏层数值的抑制；若权重在1~2之间，则是对原有数值的放大。</p>
+
+<h1>PPNet</h1>
+
+<p>PPNet的全称是Parameter Personalized Net，是快手提出的模型架构，将上述语音领域的LHUC架构搬到了推荐领域，将每一个“speaker”当做是每一个用户，从而提升模型个性化效果。</p>
+
+<center><img src="/images/2025/IMAG2025010332.jpg"></center>
+
+
+<center>快手PPNet网络架构</center>
+
+
+<p></br></p>
+
+<p>我们看下PPNet的门控结构的输入输出和网络结构。其输入的特征uid，pid，aid 分别表示 user id，photo id，author id，将这三个id输入门控网络得到全部其他隐藏层元素维度的权重，具体要作用在哪一层的时候，就直接将门控网络的输出维度设置成相同的即可。而在图的右上角我们可以看到门控网络的具体结构，是两层的MLP网络——第一层NN是以ReLU作为激活函数，第二层是sigmoid作为激活函数同时在输出之后和LHUC一样乘了“2”。PPNet 中的门控结构比较轻量化，而且很容易移植到工业界各个大厂的排序模型当中，因此在最近几年是一个比较火的网络子结构。</p>
+
+<p>这里我们简单提一下两层MLP的好处。因为要输出全部隐藏层（尤其是第一层是全部特征embedding拼接之后的维度）元素维度的权重，因此参数量一般会比较大。而两层的MLP可以通过降低第一层NN的输出维度，使得门控结构“先降维、后升维”从而降低参数量。类似的思想在SENet，或者大模型SFT的lora结构都有所体现。</p>
+
+<p>以上是门控机制在推荐模型中的一个应用实例。如前文所说，深度学习模型架构里很多东西都是相同的，后续会介绍更多使用了门控机制的网络架构，但本质上都和PPNet或者LHUC非常类似，其核心思想都是注意力机制，区别基本在于输入、输出和网络架构。</p>
+
+<h1>PEPNet</h1>
+
+<p>PEPNet全称是Parameter and Embedding Personalized Network，可以看到只在PPNet的基础上多了一个Embedding Personalized Network。体现在结构细节上，就是除了原先使用三个id特征做模型结构中间隐藏层的个性化之外，新增了使用场景特征对全部特征提前做一次个性化。</p>
+
+<center><img src="/images/2025/IMAG2025010333.jpg"></center>
+
+
+<center>PEPNet</center>
+
+
+<p></br></p>
+
+<p>如图所示，右侧依旧是PPNet，只是左下角新增了使用场景特征计算全部特征的个性化。有一个小细节就是场景特征同时作为门控的输入和主网络的输入，也就是二者共享embedding的。在其作为门控输入的时候进行stop gradient，防止其梯度影响主网络。</p>
+
+<h1>AdaSpase</h1>
+
+<p>AdaSparse，阿里2022年的论文《Learning Adaptively Sparse Structures for Multi-Domain Click-Through Rate Prediction》。文章也是使用到了门控机制，只是输入输出有一些差异，以及其中结合“稀疏”的思想体现了一些创新的出发点。模型如图所示，右侧②是门控网络的结构，可以看到输入使用了整个隐藏层的向量拼接上场景特征向量一起作为输入；网络结构结合了不同稀疏效果的设计了Binarization、Scaling、Fusion三种方法；最终也是作为权重与当前隐藏层进行元素乘，只是由于不同方法的稀疏性不同，所产生的效果不同。</p>
+
+<center><img src="/images/2025/IMAG2025010334.jpg"></center>
+
+
+<center>AdaSparse</center>
+
+
+<p></br></p>
+
+<p>AdaSparse将门控网络称之为”场景自适应的裁剪器“，其主要结构也是DNN，公式如下图：</p>
+
+<center><img src="/images/2025/IMAG2025010335.webp"></center>
+
+
+<p>第l层的隐藏层和相应的权重进行元素乘</p>
+
+<center><img src="/images/2025/IMAG2025010336.png"></center>
+
+
+<p>权重的输入是向量拼接后经过一层MLP和sigmoid，之后再输入到另一个函数S</p>
+
+<p>其中S则代表了Binarization、Scaling、Fusion三种方法。Binarization是将输入的绝对值和阈值ε输入符号函数sign中，如果输入的绝对值大于ε，那么经符号函数输出1，反之输出0。</p>
+
+<center><img src="/images/2025/IMAG2025010337.jpeg"></center>
+
+
+<p>Scaling方法则是：sigmoid之后乘上缩放因子β（类似于LHUC里面的”2“），再将符号函数的输出再乘上原来的值。大概思路是：经过符号函数变为1或者0，会损失信息，如果再乘上原来的值，不仅可以知道隐藏层对应位置的信息是否要保留（对应裁剪器同位置权重是否为1），还能知道权重的大小幅度。</p>
+
+<center><img src="/images/2025/IMAG2025010338.jpeg"></center>
+
+
+<p>Fusion方法则是将上述两种思路结合起来，我们从公式上可以看出来。</p>
+
+<center><img src="/images/2025/IMAG2025010339.png"></center>
+
+
+<p>以上是AdaSparse门控网络的几种形式，具体哪种效果好，我们可以通过实验来确定。那么其中的稀疏是如何得到的呢？论文中将是通过将L1正则项加入到loss中得到的，而这个loss会随着训练而慢慢增大，带来的效果就是训练初期参数比较稠密，最大程度保留信息；随着训练的进行，loss逐渐变大，从而得到稀疏权重。而稀疏的优点，论文中大概是说，可以提升泛化性——因为我们是将场景特征作为门控的输入的，也就是场景特征来控制哪些特征要保留——从而可以减少不同场景的互相影响，而提升泛化性吧。我个人是这么理解的。</p>
+
+<h1>M2M</h1>
+
+<p>出自阿里的论文《Leaving No One Behind: A Multi-Scenario Multi-Task Meta Learning Approach for Advertiser Modeling》，两个”M“，分别对应了多场景和多目标，其中多场景是使用门控机制来解决的，多目标使用的是传统的MMOE。而这里的门控网络并不是在输出权重作用在隐藏层上，而是通过Meta Unit模块，根据“场景”特征，动态生成权重，再reshape成一个MLP。</p>
+
+<center><img src="/images/2025/IMAG2025010340.jpg"></center>
+
+
+
+
+<center>M2M的Meta Unit结构</center>
+
+
+<p></br></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用TensorFlow、ONNX和TensorRT加速深度学习推理]]></title>
+    <link href="https://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference/"/>
+    <updated>2024-07-15T15:17:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://developer.nvidia.cn/blog/speeding-up-deep-learning-inference-using-tensorflow-onnx-and-tensorrt/">https://developer.nvidia.cn/blog/speeding-up-deep-learning-inference-using-tensorflow-onnx-and-tensorrt/</a></p>
+
+<p>从 TensorRT 7 . 0 开始， Universal Framework Format（ UFF ）被弃用。在本文中，您将学习如何使用新的 TensorFlow -ONNX- TensorRT 工作流部署经过 TensorFlow 培训的深度学习模型。图 1 显示了 TensorRT 的高级工作流。</p>
+
+<center><img src="/images/2024/IMAG2024071501.png"></center>
+
+
+<p>图 1 。 TensorRT 是一种推理加速器。</p>
+
+<!--more-->
+
+
+<p>首先，使用任何框架训练网络。网络训练后，批量大小和精度是固定的（精度为 FP32 、 FP16 或 INT8 ）。训练好的模型被传递给 TensorRT 优化器，优化器输出一个优化的运行时（也称为计划）。. plan 文件是 TensorRT 引擎的序列化文件格式。计划文件需要反序列化才能使用 TensorRT 运行时运行推断。</p>
+
+<p>要优化在 TensorFlow 中实现的模型，只需将模型转换为 ONNX 格式，并使用 TensorRT 中的 ONNX 解析器解析模型并构建 TensorRT 引擎。图 2 显示了高级 ONNX 工作流。</p>
+
+<center><img src="/images/2024/IMAG2024071502.jpeg"></center>
+
+
+<p>图 2 。 ONNX 工作流。</p>
+
+<p>在本文中，我们将讨论如何使用 ONNX 工作流创建一个 TensorRT 引擎，以及如何从 TensorRT 引擎运行推理。更具体地说，我们演示了从 Keras 或 TensorFlow 中的模型到 ONNX 的端到端推理，以及使用 ResNet-50 、语义分段和 U-Net 网络的 TensorRT 引擎。最后，我们将解释如何在其他网络上使用此工作流。</p>
+
+<p><a href="https://developer.download.nvidia.com/devblogs/tensorflow-onnx-tensorrt-code.tar.gz">下载本文中的代码示例</a>。 下载 TensorFlow -onnx- TensorRT 后 – 代码 tar . gz 文件，您还应该从 Cityscapes dataset scripts repo <a href="https://github.com/mcordts/cityscapesScripts/blob/master/cityscapesscripts/helpers/labels.py">下载 labels.py</a> ，并将其与其他脚本放在同一个文件夹中。</p>
+
+<h1>ONNX 概述</h1>
+
+<p>ONNX 是机器学习和深度学习模型的开放格式。它允许您将不同框架（如 TensorFlow 、 PyTorch 、 MATLAB 、 Caffe 和 Keras ）的深度学习和机器学习模型转换为单一格式。</p>
+
+<p>它定义了一组通用的运算符、深入学习的通用构建块集和通用文件格式。它提供计算图的定义以及内置运算符。可能有一个或多个输入或输出的 ONNX 节点列表形成一个无环图。</p>
+
+<h1>ResNet ONNX 工作流示例</h1>
+
+<p>在这个例子中，我们展示了如何在两个不同的网络上使用 ONNX 工作流并创建一个 TensorRT 引擎。第一个网络是 ResNet-50 。</p>
+
+<p>工作流包括以下步骤：</p>
+
+<ol>
+<li><p>将 TensorFlow / Keras 模型转换为. pb 文件。</p></li>
+<li><p>将. pb 文件转换为 ONNX 格式。</p></li>
+<li><p>创建 TensorRT 引擎。</p></li>
+<li><p>从 TensorRT 引擎运行推断。</p></li>
+</ol>
+
+
+<h2>将模型转换为. pb</h2>
+
+<p>第一步是将模型转换为. pb 文件。以下代码示例将 ResNet-50 模型转换为. pb 文件：</p>
+
+<pre><code>import tensorflow as tf
+import keras
+from tensorflow.keras.models import Model
+import keras.backend as K
+K.set_learning_phase(0)
+
+def keras_to_pb(model, output_filename, output_node_names):
+
+   """
+   This is the function to convert the Keras model to pb.
+
+   Args:
+      model: The Keras model.
+      output_filename: The output .pb file name.
+      output_node_names: The output nodes of the network. If None, then
+      the function gets the last layer name as the output node.
+   """
+
+   # Get the names of the input and output nodes.
+   in_name = model.layers[0].get_output_at(0).name.split(':')[0]
+
+   if output_node_names is None:
+       output_node_names = [model.layers[-1].get_output_at(0).name.split(':')[0]]
+
+   sess = keras.backend.get_session()
+
+   # The TensorFlow freeze_graph expects a comma-separated string of output node names.
+   output_node_names_tf = ','.join(output_node_names)
+
+   frozen_graph_def = tf.graph_util.convert_variables_to_constants(
+       sess,
+       sess.graph_def,
+       output_node_names)
+
+   sess.close()
+   wkdir = ''
+   tf.train.write_graph(frozen_graph_def, wkdir, output_filename, as_text=False)
+
+   return in_name, output_node_names
+
+# load the ResNet-50 model pretrained on imagenet
+model = keras.applications.resnet.ResNet50(include_top=True, weights='imagenet', input_tensor=None, input_shape=None, pooling=None, classes=1000)
+
+# Convert the Keras ResNet-50 model to a .pb file
+in_tensor_name, out_tensor_names = keras_to_pb(model, "models/resnet50.pb", None) 
+</code></pre>
+
+<p>除了 Keras ，您还可以从以下位置下载 ResNet-50 ：</p>
+
+<ul>
+<li><p><a href="https://github.com/NVIDIA/DeepLearningExamples">深度学习示例 GitHub 存储库</a>：提供最新的深度学习示例网络。您还可以看到 <a href="https://github.com/NVIDIA/DeepLearningExamples/tree/master/TensorFlow/Classification/RN50v1.5">ResNet-50</a> 分支，它包含一个脚本和方法来训练 ResNet-50v1 . 5 模型。</p></li>
+<li><p><a href="https://ngc.nvidia.com/catalog/models?orderBy=modifiedDESC&amp;pageNumber=1&amp;query=&amp;quickFilter=models&amp;filters=">NVIDIA NGC 型号</a> ：它有预训练模型的检查点列表。例如，在 ResNet-50v1 . 5 上搜索 TensorFlow ，并从 <a href="https://ngc.nvidia.com/catalog/models/nvidia:rntf_fp32">Download</a> 页面获取最新的检查点。</p></li>
+</ul>
+
+
+<h2>将. pb 文件转换为 ONNX</h2>
+
+<p>第二步是将. pb 模型转换为 ONNX 格式。为此，首先安装 <a href="https://github.com/onnx/tensorflow-onnx">tf2onnx</a> 。</p>
+
+<p>安装 tf2onnx 后，有两种方法可以将模型从. pb 文件转换为 ONNX 格式。第二种方法是使用命令行。运行以下命令：</p>
+
+<pre><code>python -m tf2onnx.convert  --input /Path/to/resnet50.pb --inputs input_1:0 --outputs probs/Softmax:0 --output resnet50.onnx
+</code></pre>
+
+<h2>从 ONNX 创建 TensorRT 引擎</h2>
+
+<p>要从 ONNX 文件创建 TensorRT 引擎，请运行以下命令：</p>
+
+<pre><code>import tensorrt as trt
+
+TRT_LOGGER = trt.Logger(trt.Logger.WARNING)
+trt_runtime = trt.Runtime(TRT_LOGGER)
+def build_engine(onnx_path, shape = [1,224,224,3]):
+
+   """
+   This is the function to create the TensorRT engine
+   Args:
+      onnx_path : Path to onnx_file. 
+      shape : Shape of the input of the ONNX file. 
+  """
+   with trt.Builder(TRT_LOGGER) as builder, builder.create_network(1) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:
+       builder.max_workspace_size = (256 &lt;&lt; 20)
+       with open(onnx_path, 'rb') as model:
+           parser.parse(model.read())
+       network.get_input(0).shape = shape
+       engine = builder.build_cuda_engine(network)
+       return engine
+
+def save_engine(engine, file_name):
+   buf = engine.serialize()
+   with open(file_name, 'wb') as f:
+       f.write(buf)
+def load_engine(trt_runtime, plan_path):
+   with open(engine_path, 'rb') as f:
+       engine_data = f.read()
+   engine = trt_runtime.deserialize_cuda_engine(engine_data)
+   return engine
+</code></pre>
+
+<p>此代码应保存在引擎. py 文件，稍后在文章中使用。</p>
+
+<p>此代码示例包含以下变量：</p>
+
+<ul>
+<li>最大工作区大小： 在执行时 ICudaEngine 可以使用的最大 GPU 临时内存。</li>
+</ul>
+
+
+<p>构建器创建一个空网络（ builder.create_network() ）， ONNX 解析器将 ONNX 文件解析到网络（ parser.parse(model.read()) ）。您可以为网络（ network.get_input(0).shape = shape ）设置输入形状，然后生成器将创建引擎（ engine = builder.build_cuda_engine(network) ）。要创建引擎，请运行以下代码示例：</p>
+
+<pre><code>import engine as eng
+import argparse
+from onnx import ModelProto
+import tensorrt as trt
+
+engine_name = “resnet50.plan”
+onnx_path = "/path/to/onnx/result/file/"
+batch_size = 1 
+
+model = ModelProto()
+with open(onnx_path, "rb") as f:
+model.ParseFromString(f.read())
+
+d0 = model.graph.input[0].type.tensor_type.shape.dim[1].dim_value
+d1 = model.graph.input[0].type.tensor_type.shape.dim[2].dim_value
+d2 = model.graph.input[0].type.tensor_type.shape.dim[3].dim_value
+shape = [batch_size , d0, d1 ,d2]
+engine = eng.build_engine(onnx_path, shape= shape)
+eng.save_engine(engine, engine_name) 
+</code></pre>
+
+<p>在这个代码示例中，首先从 ONNX 模型获取输入形状。接下来，创建引擎，然后将引擎保存在. plan 文件中。</p>
+
+<h2>运行来自 TensorRT 引擎的推理：</h2>
+
+<p>TensorRT 引擎在以下工作流中运行推理：</p>
+
+<ol>
+<li><p>为 GPU 中的输入和输出分配缓冲区。</p></li>
+<li><p>将数据从主机复制到 GPU 中分配的输入缓冲区。</p></li>
+<li><p>在 GPU 中运行推理。</p></li>
+<li><p>将结果从 GPU 复制到主机。</p></li>
+<li><p>根据需要重塑结果。</p></li>
+</ol>
+
+
+<p>下面的代码示例详细解释了这些步骤。此代码应保存在推理. py 文件，稍后将在本文中使用。</p>
+
+<pre><code>import tensorrt as trt
+import pycuda.driver as cuda
+import numpy as np
+import pycuda.autoinit
+
+def allocate_buffers(engine, batch_size, data_type):
+
+   """
+   This is the function to allocate buffers for input and output in the device
+   Args:
+      engine : The path to the TensorRT engine. 
+      batch_size : The batch size for execution time.
+      data_type: The type of the data for input and output, for example trt.float32. 
+
+   Output:
+      h_input_1: Input in the host.
+      d_input_1: Input in the device. 
+      h_output_1: Output in the host. 
+      d_output_1: Output in the device. 
+      stream: CUDA stream.
+
+   """
+
+   # Determine dimensions and create page-locked memory buffers (which won't be swapped to disk) to hold host inputs/outputs.
+   h_input_1 = cuda.pagelocked_empty(batch_size * trt.volume(engine.get_binding_shape(0)), dtype=trt.nptype(data_type))
+   h_output = cuda.pagelocked_empty(batch_size * trt.volume(engine.get_binding_shape(1)), dtype=trt.nptype(data_type))
+   # Allocate device memory for inputs and outputs.
+   d_input_1 = cuda.mem_alloc(h_input_1.nbytes)
+
+   d_output = cuda.mem_alloc(h_output.nbytes)
+   # Create a stream in which to copy inputs/outputs and run inference.
+   stream = cuda.Stream()
+   return h_input_1, d_input_1, h_output, d_output, stream
+
+def load_images_to_buffer(pics, pagelocked_buffer):
+   preprocessed = np.asarray(pics).ravel()
+   np.copyto(pagelocked_buffer, preprocessed)
+
+def do_inference(engine, pics_1, h_input_1, d_input_1, h_output, d_output, stream, batch_size, height, width):
+   """
+   This is the function to run the inference
+   Args:
+      engine : Path to the TensorRT engine 
+      pics_1 : Input images to the model.  
+      h_input_1: Input in the host         
+      d_input_1: Input in the device 
+      h_output_1: Output in the host 
+      d_output_1: Output in the device 
+      stream: CUDA stream
+      batch_size : Batch size for execution time
+      height: Height of the output image
+      width: Width of the output image
+
+   Output:
+      The list of output images
+
+   """
+
+   load_images_to_buffer(pics_1, h_input_1)
+
+   with engine.create_execution_context() as context:
+       # Transfer input data to the GPU.
+       cuda.memcpy_htod_async(d_input_1, h_input_1, stream)
+
+       # Run inference.
+
+       context.profiler = trt.Profiler()
+       context.execute(batch_size=1, bindings=[int(d_input_1), int(d_output)])
+
+       # Transfer predictions back from the GPU.
+       cuda.memcpy_dtoh_async(h_output, d_output, stream)
+       # Synchronize the stream
+       stream.synchronize()
+       # Return the host output.
+       out = h_output.reshape((batch_size,-1, height, width))
+       return out 
+</code></pre>
+
+<p>为第一个输入行和输出行确定两个维度。您可以在主机（ h_input_1 、 h_output ）中创建页锁定内存缓冲区。然后，为输入和输出分配与主机输入和输出相同大小的设备内存（ d_input_1 ， d_output ）。下一步是创建 CUDA 流，用于在设备和主机分配的内存之间复制数据。</p>
+
+<p>在这个代码示例中，在 do_inference 函数中，第一步是使用 load_images_to_buffer 函数将图像加载到主机中的缓冲区。然后将输入数据传输到 GPU （ cuda.memcpy_htod_async(d_input_1, h_input_1, stream) ），并使用 context.execute 运行推理。最后将结果从 GPU 复制到主机（ cuda.memcpy_dtoh_async(h_output, d_output, stream) ）。</p>
+
+<h1>ONNX 工作流语义分割实例</h1>
+
+<p>在本文 <a href="https://developer.nvidia.com/blog/int8-inference-autonomous-vehicles-tensorrt/">基于 TensorRT 3 的自主车辆快速 INT8 推理</a> 中，作者介绍了一个语义分割模型的 UFF 工作流过程。</p>
+
+<p>在本文中，您将使用类似的网络来运行 ONNX 工作流来进行语义分段。该网络由一个基于 VGG16 的编码器和三个使用反褶积层实现的上采样层组成。网络在 <a href="https://www.cityscapes-dataset.com/">城市景观数据集</a> 上经过大约 40000 次迭代训练</p>
+
+<p>有多种方法可以将 TensorFlow 模型转换为 ONNX 文件。一种方法是 ResNet50 部分中解释的方法。 Keras 也有自己的 Keras 到 ONNX 文件转换器。有时， TensorFlow -to-ONNX 不支持某些层，但 Keras-to-ONNX 转换器支持这些层。根据 Keras 框架和使用的层类型，您可能需要在转换器之间进行选择。</p>
+
+<p>在下面的代码示例中，使用 Keras-to-ONNX 转换器将 Keras 模型直接转换为 ONNX 。下载预先训练的语义分段文件 <a href="https://developer.download.nvidia.com/devblogs/semantic_segmentation.hdf5">semantic_segmentation.hdf5</a> 。</p>
+
+<pre><code>import keras
+import tensorflow as tf
+from keras2onnx import convert_keras
+
+def keras_to_onnx(model, output_filename):
+   onnx = convert_keras(model, output_filename)
+   with open(output_filename, "wb") as f:
+       f.write(onnx.SerializeToString())
+
+semantic_model = keras.models.load_model('/path/to/semantic_segmentation.hdf5')
+keras_to_onnx(semantic_model, 'semantic_segmentation.onnx') 
+</code></pre>
+
+<p>图 3 显示了网络的体系结构。</p>
+
+<center><img src="/images/2024/IMAG2024071503.png"></center>
+
+
+<p>图 3 。基于 VGG16 的语义分割模型。</p>
+
+<p>与前面的示例一样，使用下面的代码示例创建语义分段引擎。</p>
+
+<pre><code>import engine as eng
+from onnx import ModelProto
+import tensorrt as trt
+
+engine_name = 'semantic.plan'
+onnx_path = "semantic.onnx"
+batch_size = 1
+
+model = ModelProto()
+with open(onnx_path, "rb") as f:
+  model.ParseFromString(f.read())
+
+d0 = model.graph.input[0].type.tensor_type.shape.dim[1].dim_value
+d1 = model.graph.input[0].type.tensor_type.shape.dim[2].dim_value
+d2 = model.graph.input[0].type.tensor_type.shape.dim[3].dim_value
+shape = [batch_size , d0, d1 ,d2]
+engine = eng.build_engine(onnx_path, shape= shape)
+eng.save_engine(engine, engine_name) 
+</code></pre>
+
+<p>要测试模型的输出，请使用 <a href="https://www.cityscapes-dataset.com/">城市景观数据集</a> 。要使用城市景观，必须具有以下功能： sub_mean_chw 和 color_map 。这些函数也用于 post ， <a href="https://developer.nvidia.com/blog/int8-inference-autonomous-vehicles-tensorrt/">基于 TensorRT 3 的自主车辆快速 INT8 推理</a>.</p>
+
+<p>在下面的代码示例中， sub_mean_chw 用于从图像中减去平均值作为预处理步骤， color_map 是从类 ID 到颜色的映射。后者用于可视化。</p>
+
+<pre><code>import numpy as np
+from PIL import Image
+import tensorrt as trt
+import labels  # from cityscapes evaluation script
+import skimage.transform
+
+TRT_LOGGER = trt.Logger(trt.Logger.WARNING)
+trt_runtime = trt.Runtime(TRT_LOGGER)
+
+MEAN = (71.60167789, 82.09696889, 72.30508881)
+CLASSES = 20
+HEIGHT = 512
+WIDTH = 1024
+
+def sub_mean_chw(data):
+   data = data.transpose((1, 2, 0))  # CHW -&gt; HWC
+   data -= np.array(MEAN)  # Broadcast subtract
+   data = data.transpose((2, 0, 1))  # HWC -&gt; CHW
+   return data
+
+def rescale_image(image, output_shape, order=1):
+   image = skimage.transform.resize(image, output_shape,
+               order=order, preserve_range=True, mode='reflect')
+   return image
+
+def color_map(output):
+   output = output.reshape(CLASSES, HEIGHT, WIDTH)
+   out_col = np.zeros(shape=(HEIGHT, WIDTH), dtype=(np.uint8, 3))
+   for x in range(WIDTH):
+       for y in range(HEIGHT):
+
+           if (np.argmax(output[:, y, x] )== 19):
+               out_col[y,x] = (0, 0, 0)
+           else:
+               out_col[y, x] = labels.id2label[labels.trainId2label[np.argmax(output[:, y, x])].id].color
+   return out_col  
+</code></pre>
+
+<p>下面的代码示例是上一个示例的其余代码。必须先运行上一个块，因为需要定义的函数。使用这个例子比较 Keras 模型和 TensorRT 引擎 semantic . plan 文件的输出，然后可视化这两个输出。根据需要替换占位符 /path/to/semantic_segmentation.hdf5 和 input_file_path 。</p>
+
+<pre><code>import engine as eng
+import inference as inf
+import keras
+import tensorrt as trt
+
+input_file_path = ‘munster_000172_000019_leftImg8bit.png’
+onnx_file = "semantic.onnx"
+serialized_plan_fp32 = "semantic.plan"
+HEIGHT = 512
+WIDTH = 1024
+
+image = np.asarray(Image.open(input_file_path))
+img = rescale_image(image, (512, 1024),order=1)
+im = np.array(img, dtype=np.float32, order='C')
+im = im.transpose((2, 0, 1))
+im = sub_mean_chw(im)
+
+engine = eng.load_engine(trt_runtime, serialized_plan_fp32)
+h_input, d_input, h_output, d_output, stream = inf.allocate_buffers(engine, 1, trt.float32)
+out = inf.do_inference(engine, im, h_input, d_input, h_output, d_output, stream, 1, HEIGHT, WIDTH)
+out = color_map(out)
+
+colorImage_trt = Image.fromarray(out.astype(np.uint8))
+colorImage_trt.save(“trt_output.png”)
+
+semantic_model = keras.models.load_model('/path/to/semantic_segmentation.hdf5')
+out_keras= semantic_model.predict(im.reshape(-1, 3, HEIGHT, WIDTH))
+
+out_keras = color_map(out_keras)
+colorImage_k = Image.fromarray(out_keras.astype(np.uint8))
+colorImage_k.save(“keras_output.png”)
+</code></pre>
+
+<p>图 4 显示了实际图像和实际情况，以及 Keras 的输出与 TensorRT 引擎的输出的对比。如您所见， TensorRT 发动机的输出与 Keras 的类似。</p>
+
+<center><img src="/images/2024/IMAG2024071504.png"></center>
+
+
+<p>图 4a 原始图像 .</p>
+
+<center><img src="/images/2024/IMAG2024071505.png"></center>
+
+
+<p>图 4b 地面真相标签。</p>
+
+<center><img src="/images/2024/IMAG2024071506.png"></center>
+
+
+<p>图 4c . TensorRT 的输出。</p>
+
+<center><img src="/images/2024/IMAG2024071507.png"></center>
+
+
+<p>图 4d : Keras 的输出。</p>
+
+<h1>在其他网络上试试</h1>
+
+<p>现在您可以在其他网络上尝试 ONNX 工作流。有关分段网络的好例子的更多信息，请参阅 GitHub 上的 <a href="https://github.com/qubvel/segmentation_models">具有预训练主干的分割模型</a> 。</p>
+
+<p>作为一个例子，我们用一个 ONNX 网络来说明如何使用。本例中的网络是来自 <a href="https://github.com/qubvel/segmentation_models">segmentation_models</a> 库的 U-Net 。在这里，我们只加载模型，而没有对其进行训练。您可能需要在首选数据集上训练这些模型。</p>
+
+<p>关于这些网络的一个重要点是，当您加载这些网络时，它们的输入层大小如下所示：（ None ， None ， None ， 3 ）。要创建一个 TensorRT 引擎，您需要一个输入大小已知的 ONNX 文件。在将此模型转换为 ONNX 之前，请通过为其输入指定大小来更改网络，然后将其转换为 ONNX 格式。</p>
+
+<p>例如，从这个库（ segmentation _ models ）加载 U-Net 网络并为其输入指定大小（ 244 、 244 、 3 ）。在为推理创建了 TensorRT 引擎之后，做一个与语义分段类似的转换。根据应用程序和数据集的不同，可能需要使用不同的颜色映射。</p>
+
+<pre><code>import segmentation_models as sm
+import keras
+from keras2onnx import convert_keras
+from engine import *
+onnx_path = 'unet.onnx'
+engine_name = 'unet.plan'
+batch_size = 1
+CHANNEL = 3
+HEIGHT = 224
+WIDTH = 224
+
+model = sm.Unet()
+model._layers[0].batch_input_shape = (None, 224,224,3)
+model = keras.models.clone_model(model)
+
+onx = convert_keras(model, onnx_path)
+with open(onnx_path, "wb") as f:
+  f.write(onx.SerializeToString())
+
+shape = [batch_size , HEIGHT, WIDTH, CHANNEL]
+engine = build_engine(onnx_path, shape= shape)
+save_engine(engine, engine_name)
+</code></pre>
+
+<p>我们之前提到的另一种下载方式是从 vz6 下载。它有一个预先训练模型的检查点列表。例如，您可以在 TensorFlow 中搜索 UNet ，然后转到 <a href="https://ngc.nvidia.com/catalog/models/nvidia:unetmedtf_fp32">Download</a> 页面以获取最新的检查点。</p>
+
+<h1>总结</h1>
+
+<p>在这篇文章中，我们解释了如何使用 TensorFlow-to-ONNX-to-TensorRT 工作流来部署深度学习应用程序，并给出了几个示例。第一个例子是 ResNet-50 上的 ONNX- TensorRT ，第二个例子是在 Cityscapes 数据集上训练的基于 <a href="https://developer.nvidia.com/deep-learning-performance-training-inference">英伟达数据中心深度学习产品性能</a> 的语义分割。在文章的最后，我们演示了如何在其他网络上应用这个工作流。</p>
+
+<hr />
+
+<h1>关于作者</h1>
+
+<center><img src="/images/2024/IMAG2024071508.jpeg"></center>
+
+
+<p>关于 Houman Abbasian</p>
+
+<p>Houman 是 NVIDIA 的高级深度学习软件工程师。他一直致力于开发和生产 NVIDIA 在自动驾驶车辆中的深度学习解决方案，提高 DNN 的推理速度、精度和功耗，并实施和试验改进 NVIDIA 汽车 DNN 的新思想。他在渥太华大学获得计算机科学博士学位，专注于机器学习。</p>
+
+<center><img src="/images/2024/IMAG2024071509.jpeg"></center>
+
+
+<p>于德成简介</p>
+
+<p>于德成是 NVIDIA 自主驾驶组高级深度学习软件工程师，从事自驾领域的各种感知任务的神经结构搜索和 DNN 模型训练、压缩和部署，包括目标检测、分割、路径轨迹生成等。他于 2016 年获得卡内基梅隆大学机器人学硕士学位。</p>
+
+<center><img src="/images/2024/IMAG2024071510.jpeg"></center>
+
+
+<p>关于乔希·帕克</p>
+
+<p>Josh Park 是 NVIDIA 的汽车解决方案架构师经理。到目前为止，他一直在研究使用 DL 框架的深度学习解决方案，例如在 multi- GPUs /多节点服务器和嵌入式系统上的 TensorFlow 。此外，他一直在评估和改进各种 GPUs + x86 _ 64 / aarch64 的训练和推理性能。他在韩国大学获得理学学士和硕士学位，并在德克萨斯农工大学获得计算机科学博士学位。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[PyTorch+CUDA+显卡算力对应关系]]></title>
+    <link href="https://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility/"/>
+    <updated>2024-07-04T17:06:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility</id>
+    <content type="html"><![CDATA[<h1>Pytorch 各个GPU版本CUDA和cuDNN对应版本</h1>
+
+<p><a href="https://blog.csdn.net/weixin_45508265/article/details/122006134">https://blog.csdn.net/weixin_45508265/article/details/122006134</a></p>
+
+<p><a href="https://pytorch.org/get-started/previous-versions/">https://pytorch.org/get-started/previous-versions/</a></p>
+
+<center><img src="/images/2024/IMAG2024070401.png"></center>
+
+
+
+
+<!--more-->
+
+
+<h1>pytorch 中注意cuda版本和gpu算力匹配</h1>
+
+<p><a href="https://blog.csdn.net/m0_46483236/article/details/124112298">https://blog.csdn.net/m0_46483236/article/details/124112298</a></p>
+
+<p><a href="https://zhuanlan.zhihu.com/p/427395039">https://zhuanlan.zhihu.com/p/427395039</a></p>
+
+<p><a href="https://docs.nvidia.com/cuda/ampere-compatibility-guide/index.html#verifying-ampere-compatibility-using-cuda-11-0">https://docs.nvidia.com/cuda/ampere-compatibility-guide/index.html#verifying-ampere-compatibility-using-cuda-11-0</a></p>
+
+<p>查看GPU算力：<a href="https://developer.nvidia.com/cuda-gpus">https://developer.nvidia.com/cuda-gpus</a></p>
+
+<p><strong>只有cuda 11版本支持当前GPU 8.6算力</strong></p>
+
+<p>安装cuda 11.1覆盖cuda 10.2。</p>
+
+<p>pip3 install torch==1.9.0+cu111 torchvision==0.10.0+cu111 torchaudio==0.9.0 -f <a href="https://download.pytorch.org/whl/torch_stable.html">https://download.pytorch.org/whl/torch_stable.html</a></p>
+
+<p>查看cuda+torch版本及算力（<a href="https://developer.aliyun.com/article/1374303">https://developer.aliyun.com/article/1374303</a>）</p>
+
+<center><img src="/images/2024/IMAG2024070402.png"></center>
+
+
+<h1>nvcc和nvidia-smi显示的版本不一致？</h1>
+
+<p><a href="https://www.jianshu.com/p/eb5335708f2a">https://www.jianshu.com/p/eb5335708f2a</a></p>
+
+<p><strong>nvcc 属于CUDA的编译器，将程序编译成可执行的二进制文件。</strong></p>
+
+<p><strong>nvidia-smi 全称是 NVIDIA System Management Interface ，是一种命令行实用工具，旨在帮助管理和监控NVIDIA GPU设备。 </strong></p>
+
+<p>CUDA有 runtime api 和 driver api，两者都有对应的CUDA版本， nvcc --version 显示的就是前者对应的CUDA版本，而 nvidia-smi显示的是后者对应的CUDA版本。</p>
+
+<p>用于支持driver api的必要文件由 GPU driver installer 安装，nvidia-smi就属于这一类API；而用于支持runtime api的必要文件是由 CUDA Toolkit installer 安装的。nvcc是与CUDA Toolkit一起安装的CUDA compiler-driver tool，它只知道它自身构建时的CUDA runtime版本，并不知道安装了什么版本的GPU driver，甚至不知道是否安装了GPU driver。 CUDA Toolkit Installer通常会集成了GPU driver Installer，如果你的CUDA均通过CUDA Tooklkit Installer来安装，那么runtime api 和 driver api的版本应该是一致的，也就是说， nvcc --version 和 nvidia-smi 显示的版本应该一样。否则，你可能使用了单独的GPU driver installer来安装GPU dirver，这样就会导致 nvidia-smi 和 nvcc --version 显示的版本不一致了。</p>
+
+<p><strong>通常，driver api的版本能向下兼容runtime api的版本，即 nvidia-smi 显示的版本大于nvcc --version 的版本通常不会出现大问题。</strong></p>
+
+<p><strong>多版本CUDA切换</strong></p>
+
+<p><a href="https://baijiahao.baidu.com/s?id=1663920145053509733&amp;wfr=spider&amp;for=pc&amp;qq-pf-to=pcqq.c2c">https://baijiahao.baidu.com/s?id=1663920145053509733&amp;wfr=spider&amp;for=pc&amp;qq-pf-to=pcqq.c2c</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[工业界推荐系统技术要点总结]]></title>
+    <link href="https://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary/"/>
+    <updated>2024-05-26T11:25:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/689894486">https://zhuanlan.zhihu.com/p/689894486</a></p>
+
+<p>工业界的推荐系统技术要点有很多，想从事推荐系统相关方向的同学都建议刷一刷。</p>
+
+<h1>多目标排序模型</h1>
+
+<p>回顾一下推荐系统的链路</p>
+
+<center><img src="/images/2024/IMAG2024052601.jpg"></center>
+
+
+
+
+<!--more-->
+
+
+<p>常见的交互指标</p>
+
+<center><img src="/images/2024/IMAG2024052602.jpg"></center>
+
+
+<p>排序模型做的事情</p>
+
+<center><img src="/images/2024/IMAG2024052603.jpg"></center>
+
+
+<p>多目标模型就是要预测多个目标</p>
+
+<center><img src="/images/2024/IMAG2024052604.jpg"></center>
+
+
+<p>预测概率和实际是否交互求交叉熵损失</p>
+
+<center><img src="/images/2024/IMAG2024052605.jpg"></center>
+
+
+<p>训练时通常会遇到类别不平衡问题，可以考虑做采样</p>
+
+<center><img src="/images/2024/IMAG2024052606.jpg"></center>
+
+
+<p>采样可能导致预估点击率偏高</p>
+
+<center><img src="/images/2024/IMAG2024052607.jpg"></center>
+
+
+<p>可以通过校准公式进行校准</p>
+
+<center><img src="/images/2024/IMAG2024052608.jpg"></center>
+
+
+<p>Multi-gate Mixture-of-Experts</p>
+
+<p>几个专家就是放几个神经网络</p>
+
+<center><img src="/images/2024/IMAG2024052609.jpg"></center>
+
+
+<p>进一步考虑对多个神经网络的输出进行加权</p>
+
+<center><img src="/images/2024/IMAG2024052610.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052611.jpg"></center>
+
+
+<p>可能会出现极化的现象</p>
+
+<center><img src="/images/2024/IMAG2024052612.jpg"></center>
+
+
+<p>可以通过dropout的方式来解决极化</p>
+
+<center><img src="/images/2024/IMAG2024052613.jpg"></center>
+
+
+<p>多目标有多个预估分数就可以有不同融合方式</p>
+
+<center><img src="/images/2024/IMAG2024052614.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052615.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052616.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052617.jpg"></center>
+
+
+<p>视频播放建模</p>
+
+<center><img src="/images/2024/IMAG2024052618.jpg"></center>
+
+
+<p>播放时长建模</p>
+
+<center><img src="/images/2024/IMAG2024052619.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052620.jpg"></center>
+
+
+<p>视频完播用回归或分类都可以</p>
+
+<center><img src="/images/2024/IMAG2024052621.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052622.jpg"></center>
+
+
+<p>完播率通常和视频时长有关，不能直接把预估的完播率⽤到融分公式</p>
+
+<center><img src="/images/2024/IMAG2024052623.jpg"></center>
+
+
+<p>通常做个调整再用到融分公式</p>
+
+<center><img src="/images/2024/IMAG2024052624.jpg"></center>
+
+
+<h1>排序模型的特征</h1>
+
+<p>用户画像</p>
+
+<center><img src="/images/2024/IMAG2024052625.jpg"></center>
+
+
+<p>物品画像</p>
+
+<center><img src="/images/2024/IMAG2024052626.jpg"></center>
+
+
+<p>用户统计特征</p>
+
+<center><img src="/images/2024/IMAG2024052627.jpg"></center>
+
+
+<p>笔记统计特征</p>
+
+<center><img src="/images/2024/IMAG2024052628.jpg"></center>
+
+
+<p>场景特征</p>
+
+<center><img src="/images/2024/IMAG2024052629.jpg"></center>
+
+
+<p>特征处理</p>
+
+<center><img src="/images/2024/IMAG2024052630.jpg"></center>
+
+
+<p>特征覆盖率的概念</p>
+
+<center><img src="/images/2024/IMAG2024052631.jpg"></center>
+
+
+<p>数据服务分三步</p>
+
+<center><img src="/images/2024/IMAG2024052632.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052633.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052634.jpg"></center>
+
+
+<h1>粗排</h1>
+
+<p>精排模型的线上推理代价大</p>
+
+<center><img src="/images/2024/IMAG2024052635.jpg"></center>
+
+
+<p>双塔模型牺牲准确性换计算量</p>
+
+<center><img src="/images/2024/IMAG2024052636.jpg"></center>
+
+
+<p>粗排的三塔模型</p>
+
+<center><img src="/images/2024/IMAG2024052637.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052638.jpg"></center>
+
+
+<p>三塔模型的推理</p>
+
+<center><img src="/images/2024/IMAG2024052639.jpg"></center>
+
+]]></content>
+  </entry>
+  
+</feed>

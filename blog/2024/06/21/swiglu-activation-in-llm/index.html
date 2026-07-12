@@ -1,0 +1,416 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>为什么大型语言模型都在使用SwiGLU作为激活函数 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2024/06/21/swiglu-activation-in-llm">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(function () {
+  addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">为什么大型语言模型都在使用SwiGLU作为激活函数</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2024-06-21T11:46:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>原文链接：<a href="https://zhuanlan.zhihu.com/p/691227850">https://zhuanlan.zhihu.com/p/691227850</a></p>
+
+<p>如果你一直在关注大型语言模型的架构，你可能会在最新的模型和研究论文中看到“SwiGLU”这个词。SwiGLU可以说是在大语言模型中最常用到的激活函数，我们本篇文章就来对他进行详细的介绍。SwiGLU其实是2020年谷歌提出的激活函数，它结合了SWISH和GLU两者的特点。</p>
+
+<center><img src="/images/2024/IMAG2024062101.jpg"></center>
+
+
+<p>我们一个一个来介绍：</p>
+
+<!--more-->
+
+
+<h1>Swish</h1>
+
+<p>Swish是一个非线性激活函数，定义如下:</p>
+
+<pre><code>Swish(x)= x*sigmoid(ßx)
+</code></pre>
+
+<p>函数的曲线：</p>
+
+<center><img src="/images/2024/IMAG2024062102.jpg"></center>
+
+
+<p>其中，ß 为可学习参数。Swish可以比ReLU激活函数更好，因为它在0附近提供了更平滑的转换，这可以带来更好的优化。</p>
+
+<h1>Gated Linear Unit</h1>
+
+<p>GLU（Gated Linear Unit）定义为两个线性变换的分量积，其中一个线性变换由sigmoid激活。</p>
+
+<pre><code>GLU(x)=sigmoid(W1x+b)⊗(Vx+c)
+</code></pre>
+
+
+
+<center><img src="/images/2024/IMAG2024062103.jpg"></center>
+
+
+<p>GLU可以有效地捕获序列中的远程依赖关系，同时避免与lstm和gru等其他门控机制相关的一些梯度消失问题。</p>
+
+<h1>SwiGLU</h1>
+
+<p>上面我们已经说到SwiGLU是两者的结合。它是一个GLU，但不是将sigmoid作为激活函数，而是使用ß=1的swish，因此我们最终得到以下公式:</p>
+
+<pre><code>SwiGLU(x)=Swish(W1x+b)⊗(Vx+c)
+</code></pre>
+
+<p>我们用SwiGLU函数构造一个前馈网络</p>
+
+<pre><code>FFNSwiGLU(x)=(Swish1(xW)⊗xV)W2
+</code></pre>
+
+<h1>Pytorch的简单实现</h1>
+
+<p>如果上面的数学原理看着比较麻烦枯燥难懂，我们下面直接使用代码解释。</p>
+
+<pre><code>class SwiGLU(nn.Module): 
+
+    def __init__(self, w1, w2, w3) -&gt; None: 
+        super().__init__() 
+        self.w1 = w1 
+        self.w2 = w2 
+        self.w3 = w3 
+
+    def forward(self, x): 
+        x1 = F.linear(x, self.w1.weight) 
+        x2 = F.linear(x, self.w2.weight) 
+        hidden = F.silu(x1) * x2 
+        return F.linear(hidden, self.w3.weight)
+</code></pre>
+
+<p>我们代码使用的F.silu函数与ß=1时的swish相同的，所以就直接拿来使用了。</p>
+
+<p>代码可以看到，我们的激活函数中也有3个权重是可以训练的，这就是来自于GLU公式里的参数。</p>
+
+<h1>SwiGLU的效果对比</h1>
+
+<p>SwiGLU与其他GLU变体进行比较，我们可以看到SwiGLU在两种预训练期间都表现得更好。</p>
+
+<center><img src="/images/2024/IMAG2024062104.jpg"></center>
+
+
+<p>下游任务</p>
+
+<center><img src="/images/2024/IMAG2024062105.jpg"></center>
+
+
+<p>效果表现得最好，所以现在的llm，如LLAMA, OLMO和PALM都在其实现中采用SwiGLU。但是为什么SwiGLU比其他的好呢？</p>
+
+<p>论文中只给了测试结果而且并没有说明原因，而是说：</p>
+
+<blockquote><p>We offer no explanation as to why these architectures seem to work; we  attribute their success, as all else, to divine benevolence.</p></blockquote>
+
+<p>作者说炼丹成功了。</p>
+
+<p>但是现在已经是2024年了我们可以强行的解释一波：</p>
+
+<p>1、Swish对于负值的响应相对较小克服了 ReLU 某些神经元上输出始终为零的缺点</p>
+
+<p>2、GLU 的门控特性，这意味着它可以根据输入的情况决定哪些信息应该通过、哪些信息应该被过滤。这种机制可以使网络更有效地学习到有用的表示，有助于提高模型的泛化能力。在大语言模型中，这对于处理长序列、长距离依赖的文本特别有用。</p>
+
+<p>3、SwiGLU 中的参数 W1,W2,W3,b1,b2,b3W1,W2,W3,b1,b2,b3 可以通过训练学习，使得模型可以根据不同任务和数据集动态调整这些参数，增强了模型的灵活性和适应性。</p>
+
+<p>4、计算效率相比某些较复杂的激活函数（如 GELU）更高，同时仍能保持较好的性能。这对于大规模语言模型的训练和推理是很重要的考量因素。</p>
+
+<p>选择 SwiGLU  作为大语言模型的激活函数，主要是因为它综合了非线性能力、门控特性、梯度稳定性和可学习参数等方面的优势。在处理语言模型中复杂的语义关系、长依赖问题、以及保持训练稳定性和计算效率方面，SwiGLU 表现出色，因此被广泛采用。</p>
+
+<p>论文地址: <a href="https://arxiv.org/abs/2002.05202">https://arxiv.org/abs/2002.05202</a></p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2024/06/21/swiglu-activation-in-llm/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2024-06-21T11:46:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/大模型/'>大模型</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/llm/'>LLM</a>, <a class='tag' href='/blog/tags/swiglu/'>SwiGLU</a>, <a class='tag' href='/blog/tags/transformer/'>Transformer</a>, <a class='tag' href='/blog/tags/ji-huo-han-shu/'>激活函数</a></span>
+		
+    </p>
+    
+      
+         <div class="sharing">
+  
+  
+  
+</div>
+
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2024/05/26/recommendation-system-industry-summary/" title="Previous Post:
+        工业界推荐系统技术要点总结">&laquo; 工业界推荐系统技术要点总结</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2024/06/27/multimodal-llm-survey/"
+        title="Next Post: 多模态大语言模型调研">多模态大语言模型调研
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://ibillxia.github.io/blog/2024/06/21/swiglu-activation-in-llm/';
+        var disqus_url = 'https://ibillxia.github.io/blog/2024/06/21/swiglu-activation-in-llm/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

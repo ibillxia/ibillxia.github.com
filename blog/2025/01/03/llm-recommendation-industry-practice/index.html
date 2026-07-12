@@ -1,0 +1,698 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>【蘑菇先生】工业界大模型推荐实战经验梳理 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(function () {
+  addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">【蘑菇先生】工业界大模型推荐实战经验梳理</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2025-01-03T10:31:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>原文链接：<a href="https://zhuanlan.zhihu.com/p/7387477310">https://zhuanlan.zhihu.com/p/7387477310</a></p>
+
+<p>大家好，我是蘑菇先生。好久不见，今天盘点下2024年工业界大模型在搜广推上的实战落地型工作。业界工作大体分为两类：</p>
+
+<ul>
+<li><p>用大模型做数据和知识增强、提取表征、通过prompt将推荐转成对话驱动的任务等，本质上没有修改LLM，属于信息增强和补充方法，无法直接建模海量协同信号。</p></li>
+<li><p>修改LLM直接建模搜广推海量数据中的协同信号，对输入输出范式改造，通过预训练/微调等过程建模海量数据，让模型同时拥有通用的世界知识和垂直领域海量协同信息。是能实现搜广推大模型scaling的前提，需要更复杂的工程架构支持。</p></li>
+</ul>
+
+
+<p>第一类工作层出不穷，大部分在工业界无法惊起水花，属于学术性的探索居多。第二类工作寥寥无几，需要资源算力和业务场景等支撑，但也是搜广推值得探索的前沿方向之一。本文重点分享第二类工作。本次分享4篇文章：GRs(Meta)、HLLMs(字节)、NoteLLM(小红书)、NoteLLM-2(小红书)等工作，基本都在各自场景验证了收益，最近又重读了下，常读常新，做一些梳理分享给大家。涵盖目前推荐系统两类主流范式：</p>
+
+<ul>
+<li><p>表征学习：NoteLLM\NoteLLM-2提供了一种使用LLMs训练item表征的范式，通过海量数据中的“共现”协同信号，应用对比学习目标来微调LLMs并提取多模态的item表征。学习的item表征可以用于I2I召回、排序特征提取器等。</p></li>
+<li><p>模型预估：GRs和HLLMs通过改造输入数据为行为序列，在自回归设定下，可以建模海量用户行为，从而达到推荐的目的。二者既可以作为召回模型、也可以用作排序模型，用于CXR预估。但二者在输入、架构、目标方面存在较大差异，下文会介绍。</p></li>
+</ul>
+
+
+<!--more-->
+
+
+<h1>Meta | GRs</h1>
+
+<p>全称：Actions speak louder than words: Trillion-parameter sequential transducers for generative recommendations.</p>
+
+<p>意义：为工业级别的搜广推应用中如何借鉴LLMs的能力指明了一条新的道路。</p>
+
+<p>整体方案一言以蔽之，通过生成式框架来重新定义召回和排序任务。在该生成式框架下，改造召排任务对应的输入输出范式、损失目标建模范式，在Transfomers架构上融入推荐系统DIN/MoE/SENet等主流设计思路，并通过算力优化达到线上推理条件。模型的输入不是文本，而是推荐系统标准的ID/结构化稀疏型特征构成的序列，借鉴LLMs模型架构，但没有用到预训练权重，意味着需要海量推荐系统数据进行训练才可能达到传统推荐模型的效果。</p>
+
+<p>更多技术细节参见：行动胜过言语: Meta落地工业界首个万亿级别参数的生成式推荐系统。本文主要补充更高阶的一些问题，也可参见：Meta生成式推荐模型GRs关键问题探讨。</p>
+
+<p>有2类关键问题想讨论：</p>
+
+<ul>
+<li><p>如何用生成式框架来重新定义召回和排序任务，在该生成式框架下，如何改造输入输出范式、损失目标建模范式；</p></li>
+<li><p>离线训练和在线推理阶段，输入输出范式存在什么差异？如何跨候选复用算力，做到更低时延？</p></li>
+</ul>
+
+
+<h2>关键问题1：如何用生成式框架来重新定义召回和排序任务？</h2>
+
+<p>从传统sequential recommender问题出发，探讨GRs如何改造传统建模范式。</p>
+
+<ul>
+<li><p>Ignorance of features other than user-interacted items： 传统的序列推荐，通常只使用用户交互过的正样本item来构造序列。这里面包含两层含义，仅使用itemID来表征item、仅使用正反馈来构造序列。前者会忽略item的各类category语义信息、后者无法捕捉一些真实后验行为(如ctr)。GR通过两方面来分别解决这两个问题。a. 通过引入辅助信息并合并到主序列实现对稀疏类别特征的建模。b. 对全正负反馈超长序列的target attention来间接捕获数值统计型特征，各类后验行为均保留着，就能够通过attention近似捕捉真实后验，间接体现数值型统计特征的作用，泛化性也更好。通过实验，我们可以发现如果GRs模型仅在有交互的正样本itemID上学习，指标会下降非常多，即：2.6% NE的下降、1.3%的HitRate@100的下降。</p></li>
+<li><p>User representations are computed in a target-independent setting： 用户的表征和待预测目标item之间互相独立，表达能力弱，这个主要是传统序列模型的问题，比如GRU4Rec、SASRec、BERT4Rec等，无法在输入侧进行交互，仅仅能通过输出侧的softmax来实现和目标item的弱交互。DLRMs中的DIN等模型，引入了target-attention机制来缓解该问题。GRs通过将action看做新的模态，交错插入item和action，能够实现在causal autoregressive的设定下，使用target-aware attention实现更强的交互能力。</p></li>
+<li><p>Discriminative formulations restrict applicability of prior sequential recommender work to pointwise settings: 传统的序列推荐是判别式的，只能在pointwise的设定下发挥作用。这类工作本质上学习的是或者在给定用户状态下推荐下一个item的条件概率。但在真实的推荐系统中，实际上可以拆解为两类概率过程，a. 推荐next content (召回)，b. 用户对该content的反馈action (排序)。生成式方法是联合学习content和action，即：。个人认为这是生成式范式有可能表现更好的本质原因，能更加无损地建模原始数据分布，配合LLM的架构，可以容纳更多数据和信息。</p></li>
+</ul>
+
+
+<p>如下图所示：Next Action Token prediction对应ranking任务，自回归预测的是前一个item在action上的概率分布，也即该item的行为类型。Next content token prediction对应retrieval任务。自回归预测的是next item，即在item物料上的概率分布。还是非常优雅的，将召排任务统一成“生成任务”视角。</p>
+
+<center><img src="/images/2025/IMAG2025010301.jpg"></center>
+
+
+<center>召排范式</center>
+
+
+<p></br></p>
+
+<p>模型对比图如下，左侧是传统的序列推荐模型，action只会在输入侧构建item表征时，作为额外的信息融入；输出端自回归的仍然是item本身；右侧是GR模型，输入端显式地将action也作为1种序列组成类型，输出端item和action均能够作为监督信号，来实现自回归预测。</p>
+
+<center><img src="/images/2025/IMAG2025010302.jpeg"></center>
+
+
+<center>模型架构</center>
+
+
+<p></br></p>
+
+<p>此处召排本质上可以是统一的模型，如图中所示，在1个任务中联合建模和，此处拆成两个任务有一定取舍，可能是为了适配现有推荐系统链路。</p>
+
+<p>除此之外，这一范式不仅能更好的建模数据分布，同时在可以通过beam search来生成item序列结果。这个相比于传统listwise的重排(如DPP和RL)，会更加有优势。也就是说，该方案还能充当重排层的角色，实现listwise的预测，这样就统一了召回、排序、重排，真正实现生成式推荐。</p>
+
+<h2>关键问题2：排序任务训练和推理阶段的差异在哪，如何跨候选复用算力？</h2>
+
+<p>训练： 下图是训练示意图，看示意图是个召排统一的GR模型，输出侧的监督信号包括了item和action。这个地方和前文描述的稍有出路。前文描述的排序任务输出侧监督信号主要是action，召回任务输出侧监督信号主要是item。但不影响理解。</p>
+
+<center><img src="/images/2025/IMAG2025010303.jpeg"></center>
+
+
+<center>训练</center>
+
+
+<p></br></p>
+
+<p>推理：</p>
+
+<p>排序在推理时，正常要对所有个候选都推理一遍。假设序列长度为，复杂度为。此处作者可以复用多个候选间的算力，一次性推理多个候选的打分(分batch)。</p>
+
+<p>如下图所示：将batch为大小的候选items拼接到输入行为序列末尾，可一次性推理出每个item的预测action概率分布。多个target之间复用历史行为序列，因此历史行为序列理论上只需要1次推理即可，不同target item之间通过mask机制，阻断互相attention，这样就能够实现b_{m}个候选同时预估，同时实现候选item和历史行为item的self-attention。即时叠加多层self-attention注意力机制，由于是causal self-attention，历史行为items表征中不会耦合待预测的target items表征信息。上述操作后，复杂度为O((n+m)<sup>2</sup> d)=O(n<sup>2d</sup>)。</p>
+
+<p>这样实现的效果等价于对b_m个候选分别拼接到历史行为序列中，各自做1次前向传播，一共做b_m次，这样会导致历史行为序列的计算冗余。改进后，在1次前向传播推理中同时预估b_m个候选，最大程度复用算力。</p>
+
+<center><img src="/images/2025/IMAG2025010304.jpeg"></center>
+
+
+<center>推理</center>
+
+
+<p></br></p>
+
+<p>除了跨候选复用算力，在跨请求之间，通过KV caching机制，比如HSTU中的K(X)和V(X)可以在跨batch和跨请求之间复用。</p>
+
+<p>总结一下：GRs将用户行为组织成序列行为，纳入了曝光/点击/交互等各类行为，将item和action都视作相同模态，作为序列的组成部分，每个item使用ID和结构化的稀疏特征来表示，抛弃了LLMs的预训练权重，通过海量数据自回归训练改造的Transformer架构HSTU。最终通过M-FALCON等算力优化手段实现线上推理。</p>
+
+<p>更多技术细节参见：行动胜过言语: Meta落地工业界首个万亿级别参数的生成式推荐系统。 ‍</p>
+
+<h1>字节 | HLLM</h1>
+
+<p>全称：Enhancing Sequential Recommendations via Hierarchical Large Language Models for Item and User Modeling</p>
+
+<p>意义：HLLM是国内第一个对标Meta的GRs工作，也是今年大模型推荐的大作。</p>
+
+<p>文章主要探讨了3个方面的问题：① 发挥LLM的预训练权重价值：研究预训练大型语言模型（LLMs）中包含的世界知识和推理能力在推荐系统任务中的具体价值，这一点与GRs的不同，GRs用了LLMs的模型架构，但没有使用预训练的权重，意味着HLLMs的数据效率可能更高。② 推荐任务微调：探讨如何为推荐任务进行特定微调（fine-tuning）。③ 模型的可扩展性：验证大语言模型在推荐系统中是否同样具备scaling能力，即模型性能是否随着模型参数量的增加而提升。</p>
+
+<p>为了解决这一难题，文章也同Meta GRs一样，将推荐任务形式化为“序列推荐”。并提出了层次化大语言模型，第一级是Item LLM，使用LLM从item的文本表述中提取丰富的语义信息，此处没有使用ID信息； 第二级是User LLM，利用第一级的item表征来建模用户行为序列，预测用户的未来兴趣，此处大概率只使用用户交互的正样本。思路比较清晰。</p>
+
+<p>模型整体结构如下：</p>
+
+<center><img src="/images/2025/IMAG2025010305.jpeg"></center>
+
+
+
+
+<center>模型结构</center>
+
+
+<p></br></p>
+
+<h2>Item LLM</h2>
+
+<p>本质上是使用LLM作为item侧的特征提取器，将丰富的文本信息压缩成1个item表征。主要改进就是在文本描述末尾新增特殊标记[ITEM]。然后过LLMs模型，将最后1层[ITEM]对应位置的hidden states作为item的表征。属于基本操作，在NoteLLM中也能见到。这个[ITEM]表征联同itemLLM的参数会在下游推荐任务中进行端到端微调。</p>
+
+<h2>User LLM</h2>
+
+<p>通过item表征，可以将用户行为ID序列U={I_1, I_2,...,I_n}转成表征序列 {E_1, E_2,...,E_n}，然后套一个LLMs，就能让item序列进行充分交叉。该LLMs的输入中把LLM预训练的word embedding丢掉，使用item LLM输出的item embedding替代，然后后续的Transformers建模序列结构保持一致。</p>
+
+<h2>训练目标</h2>
+
+<ul>
+<li>生成式目标：和GRs或传统的序列推荐任务都比较像，自回归预测下一个item。和GRs的差异点包括两个方面：① 使用了预训练模型的权重。② User LLMs的输入是item LLM输出的表征(也即根源输入是text-input features)，而GRs主要是ID和结构化的稀疏特征。具体自回归预测时，使用了InfoNCE。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010306.png"></center>
+
+
+<p>j是batch内的user编号下标，i是第j个user的序列中的第i个item，E<em>{j,i}是Item LLM输出的表征，\hat{E}</em>{j,i}是User LLM预测的表征。正样本是next item，负样本从batch内非该用户序列的其他样本中采样。</p>
+
+<ul>
+<li>判别式目标：判别式目标是给定用户表征、待预测的item表征，判断用户是否对该item感兴趣。这里头有2种建模方式，1种是把用户行为序列和item拼接起来过Transformers，这样能提前交互；另一种是使用LLMs作为User序列提取器，在末尾新增[USER]作为user表征，在输出端进行弱交互，可以复用行为序列表征计算过程，在线上推理时可跨候选间复用user表征，性能好很多。前者由于过早交互，行为序列和待预测的item信息耦合在一起，导致无法跨候选复用算力。此处采用logloss，应该也是基于用户序列来构造正负样本。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010307.png"></center>
+
+
+<p>最后的损失如下，可以看到生成式目标实际是作为辅助损失的，主目标是LogLoss分类目标，和DIEN很像。</p>
+
+<center><img src="/images/2025/IMAG2025010308.png"></center>
+
+
+<p>该目标训练的过程中，能够端到端联合训练Item LLM和user LLM。item LLM的产物[ITEM]对应的表征实际上还能用于其他推荐场景：如作为item表征输入到精排建模、用于召回等。</p>
+
+<p>实验部分也是做的比较完备的，值得一看。包括几个部分：</p>
+
+<ul>
+<li>LLMs预训练权重的重要性。“使用预训练”意味着在这些预训练LLMs权重基础上进一步微调、"不使用预训练(Scratch)"意味着丢弃预训练权重，复用架构从头开始训练，就像GRs中的一样。因为HLLMs的输入是item侧文本，预训练权重信息肯定是有用的，毋庸置疑。另外文中也说明了预训练的tokens数量越大，重要性越高。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010309.jpeg"></center>
+
+
+<ul>
+<li>LLMs微调的重要性。使用生成式目标和判别式目标微调[ITEM]，[User]以及对应LLM的参数，也非常重要。例如：item侧不微调，固定参数，使用LLM输出的最后1层hidden states进行pooling作为item表征，结果非常差。user侧同理。这说明基于next token预测训练的LLMs如果作为特征提取器是非常糟糕的。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010310.jpeg"></center>
+
+
+<ul>
+<li>对比实验：SASRec和HSTU(GRs)是ID-based模型，HLLMs、LEARN是text-based模型。HLLMs效果上好不少。但是这个地方由于输入数据和建模方式差异，个人认为这么对比可能不是公平的，不能发挥出GRs的优势。下面总结的时候会再说明下原因。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010311.jpeg"></center>
+
+
+<p>最后我们再聊聊HLLMs的A/B Test部分，也是满满细节：基座是TinyLlama-1.1B，训练了HLLM-1B。由于性能的考虑，总共分为了3个部分：</p>
+
+<ul>
+<li><p>Stage I: 端到端训练所有HLLMs参数：使用判别式损失训练Item LLM和User LLM。用户行为序列长度是150。</p></li>
+<li><p>Stage II: 先用Stage I训练Item LLM来编码和存储item表征。通过检索item表征来进一步微调User LLM，只训练User LLMs，因此可以将序列长度从150拓到1000。</p></li>
+<li><p>Stage III: HLLM参数固定，基于User LLM抽取user表征，联同Item LLM的表征和已经有的线上特征，喂给精排走流式学习。</p></li>
+</ul>
+
+
+<p>线上serving的时候，item表征在新item发布的时候就会抽取表征；user表征T+1例行化更新；U/I的embedding提前存储好，用于流式训练和serving，这种情况下线上耗时几乎没变。</p>
+
+<center><img src="/images/2025/IMAG2025010312.jpeg"></center>
+
+
+<p>到此我们可以总结下HLLM和GRs的差异点：</p>
+
+<ul>
+<li><p>输入数据：GRs输入用户全周期正负反馈行为序列，数据量更大，主要基于item侧的ID和结构化稀疏特征进行学习；HLLMs输入用户正反馈行为序列，数据量小很多，主要基于item侧的文本描述，没有使用ID特征进行学习。</p></li>
+<li><p>模型架构：由于输入的差异和数据量的差异，GRs可以使用LLMs架构从头预训练，将文本模态替换为ID/action进行端到端训练。也是真正意义上的端到端模型。HLLMs主要基于预训练LLMs，能够复用LLMs预训练权重蕴含的世界知识，需要遵循LLMs的文本模态输入，无法直接建模ID，转而添加【ITEM】，【User】来适配预训练LLMs并提炼关键信息，也就意味着微调非常重要。</p></li>
+<li><p>训练目标：由于海量数据，GRs可以以自回归为主要目标进行训练，使用更大参数量的模型，其scaling的潜力更大，是能真正替代现有的DNN搜广推模型。HLLMs在传统判别式目标之上新增自回归目标，个人认为scaling的天花板是有限的，也无法真正替代现有的DNN，文中实验部分关于这块的介绍也是比较简单，说服力不足。</p></li>
+<li><p>在线推理：late fusion的HLLMs类似双塔架构，通过解耦合item和user表征，复用user侧表征，但是交叉能力比较弱；GRs在双塔和完全体Transformers之间做了个折中，引入了action和item交错编排和target-attention机制，在交叉能力上是更好的，通过causal attention和候选之间mask机制也能实现跨候选间复用“用户历史行为表征”算力，但能达到更好的交叉能力。GRs的上线难度肯定是更大的。</p></li>
+</ul>
+
+
+<p>正是因为上述的差异，在相同数据集上对比HLLMs和HSTU可能不够公平，无法达到各自最优水平进行对比。</p>
+
+<h1>小红书 | NoteLLM</h1>
+
+<p>全称：A Retrievable Large Language Model for Note Recommendation。</p>
+
+<p><strong>意义：第一个使用大模型做I2I推荐的工作。也是使用LLM兼容语义信息和协同信息，提升item embedding学习的代表性工作之一。</strong></p>
+
+<p>小红书发表在WWW 2024上的工作，基于LLM的I2I推荐。本质上是通过LLM来学习笔记的表征，该表征能同时拥有大模型的语义世界知识，还能将小红书用户行为中的协同信号注入其中。其建模的关键假设是：notes frequently read together are likely related. 利用了共现笔记通常比较相似的假设，通过I2I相关笔记对比学习任务来提升item embedding的学习。除此之外，还引入了“标签/类目”生成任务来多目标学习。</p>
+
+<p>整体架构图如下，自下而上：包含了笔记压缩prompt、相关笔记对构建、生成对比学习和标签/类目生成多目标学习、最后应用于I2I推荐、笔记hashtag生成、笔记类目打标等任务。整体工作流大致是：先通过prompt来构造LLMs的输入，同时预留着[EMB]占位符节点，用于I2I协同信号对比学习和标签/类目生成学习，这样就能让共现高的笔记的[EMB]相近，同时还能保留LLMs的语义信息。</p>
+
+<center><img src="/images/2025/IMAG2025010313.jpeg"></center>
+
+
+
+
+<center>NoteLLM模型结构</center>
+
+
+<p></br></p>
+
+<h2>Note Compression Prompt</h2>
+
+<p>首先是Note Compression Prompt：为每个笔记样本构建一个统一的笔记压缩prompt，然后通过预训练LLMs进行解码学习item表征。prompt格式如下，[EMB]占位符就是学习的目标笔记表征。</p>
+
+<center><img src="/images/2025/IMAG2025010314.png"></center>
+
+
+<p>对于类目生成任务，引入了类目$c_i$等监督信号。</p>
+
+<center><img src="/images/2025/IMAG2025010315.jpeg"></center>
+
+
+<p>对于hashtag标签生成任务，引入了hashtags $tp_i$的监督信号。</p>
+
+<center><img src="/images/2025/IMAG2025010316.jpeg"></center>
+
+
+<p>通过上述步骤装配模版成文本tokens，通过LLMs得到上述tokens的表征序列，[EMB]处的表征会作为笔记表征，通过下面的GCL和CSFT进行预训练。</p>
+
+<h2>GCL</h2>
+
+<p>全称生成对比学习。为了引入海量数据协同信号，作者构建了相关笔记对，计算所有笔记对的用户行为共现得分，并为每个笔记形成共现得分集合。并选择集合中共现得分最高的笔记作为给定笔记的相关笔记。计算相似笔记的公式借鉴了类似swing的思路：即：</p>
+
+<p>$s<em>{n_A→n_B}=\sum</em>{i}^N\frac{1}{N_i}$</p>
+
+<p>接着通过生成对比学习（GCL）使用上述压缩标记作为每个笔记的表征，并训练LLMs从in-batch的负样本中识别出相关的正样本笔记。本质是利用共现笔记中的“协同信号”，来提升这个[EMB]的学习质量，让相似的note的EMB相近。</p>
+
+<center><img src="/images/2025/IMAG2025010317.png"></center>
+
+
+<h2>CSFT</h2>
+
+<p>全称协同监督微调。笔记的category和hashtags有一些监督信号，可以用于多任务学习，使用自回归生成损失建模即可。具体而言，作者采用了一种协同监督微调（CSFT）方法来训练模型为每个笔记生成标签/分类。由于I2I笔记推荐任务和标签/分类生成任务中学习到的压缩标记都旨在提取笔记内容的关键概念，CSFT可以有效增强笔记嵌入。</p>
+
+<center><img src="/images/2025/IMAG2025010318.jpeg"></center>
+
+
+<p>最后，训练好的模型可以同时做I2I向量检索、类目打标、话题生成等任务。</p>
+
+<p>从实验部分来看，</p>
+
+<ul>
+<li><p>LLaMA 2 zero-shot：直接提取item的表征，不使用任何prompt；</p></li>
+<li><p>PromptEOL zero-shot：zero-shot的sentence embedding方法，使用了one-word limitation prompt.</p></li>
+<li><p>SentenceBERT：基于共现笔记对比学习来学习笔记相似性，也是小红书线上的基线。</p></li>
+<li><p>PromptEOL+CSE：PromptEOL基础上基于共现笔记对比学习来训练LLM。</p></li>
+<li><p>RepLLaMA：使用LLM作为双编码器的向量检索模型，类似双塔模型训练，不使用任何any prompts.</p></li>
+<li><p>NoteLLM：本文方法。</p></li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010319.jpeg"></center>
+
+
+<h1>小红书 | NoteLLM-2</h1>
+
+<p>全称：Multimodal Large Representation Models for Recommendation。</p>
+
+<p>意义：第一个<strong>直接使用LLM来提升推荐系统多模态表征质量</strong>的工作，发挥LLMs和视觉Encoder各自的优势。</p>
+
+<p>同样出自小红书的工作，提出了一个端到端训练方法，能够方便地定制集成任何现有的LLMs和视觉Encoder，以构建高效的多模态表示模型（Multimodal Large Representation Models, MLRMs）。</p>
+
+<p>NoteLLM的Item表征主要建模文本信息，这篇工作在文本表征之外，重点建模了笔记的多模态信息，并用于多模态的I2I推荐。文章重点探讨了如何充分发挥LLM的文本理解能力，来弥补传统多模态模型对文本信息的忽视，取长补短。</p>
+
+<p>具体而言，在I2I推荐任务上，提出了一种端到端训练方法，和NoteLLM一样，使用I2I共现笔记对的对比学习，来增强多模态表征的学习。所以乍一看就是在note compression prompt设计上如何引入图像表征来形成多模态表征。方法也很简单，</p>
+
+<p>在NoteLLM的prompt基础上引入了图像表征占位。是placeholder, 后面会使用从原始图像中提取的vision embedding代替。</p>
+
+<center><img src="/images/2025/IMAG2025010320.png"></center>
+
+
+<p>具体而言，先使用上述prompt过tokenizer后得到text embedding。然后text embedding中占位符对应的word embedding使用vision encoder(例如CLIP/BLIP等)经过Connector(MLP层)得到的visual embedding来替换，形成多模态表征序列。然后使用LLMs处理该多模态表征序列，得到最后的last hidden states作为note的多模态表征。然后使用和NoteLLM一样的共现item pairs进行对比学习预训练。如下所示，和NoteLLM是一样的。</p>
+
+<center><img src="/images/2025/IMAG2025010321.jpeg"></center>
+
+
+<p>但这个简单的改造会面临的问题在于：LLMs在端到端训练中倾向于忽视图像信息，被文本信息主导。为此，文章提出2种方法：包括：① 从prompt的视角区分“文本信息”和“图像信息”，其实就是优化prompt，称为mICL(multimodal in-context learning)；② 在LLM接入下游I2I任务的输出端引入late fusion机制，在结构上显式地让原始图像信息发挥更大作用。整体架构图如下：</p>
+
+<center><img src="/images/2025/IMAG2025010322.jpeg"></center>
+
+
+<h2>mICL</h2>
+
+<p>首先是mICL，将prompt改造成如下格式，和NoteLLM的主要差异点是接入下游的时候有2个表征节点，新增的，因为Causal attention机制，这个节点仅提炼了前面的图像表征信息n_i<sup>v</sup>；另一个是整个prompt节点，即prompt尾巴处，提取了文本和图像多模态表征n_i<sup>m</sup>。这两个表征在下游I2I建模时都会发挥作用，以保留图像的信息。</p>
+
+<center><img src="/images/2025/IMAG2025010323.png"></center>
+
+
+<h2>Late Fusion</h2>
+
+<p>接着是Late Fusion机制：为图像表征和多模态表征都设置了门控融合机制，来自适应融合原始vision encoder的输出v和上述图像表征和多模态表征。例如图像表征如下，其中v是visual encoder(如BLIP/CLIP等)的原始表征，n_i<sup>v</sup>是上述经过LLM后的图像表征。二者通过门控机制融合得到\hat{n}_i^{v}。同理，多模态表征节点n_i<sup>m</sup>，也和v进行门控融合。</p>
+
+<center><img src="/images/2025/IMAG2025010324.jpeg"></center>
+
+
+<p>图像表征节点和多模态表征节点，分别过对比学习损失来建模。</p>
+
+<center><img src="/images/2025/IMAG2025010325.jpeg"></center>
+
+
+
+
+<center><img src="/images/2025/IMAG2025010326.png"></center>
+
+
+
+
+<center><img src="/images/2025/IMAG2025010327.png"></center>
+
+
+<p>从实验部分，</p>
+
+<ul>
+<li><p>MTomato-Base：MTomato是小红书自研的基于LLaMA 2的LLM，配合vision encoder CLIP ViT-B进行实验。</p></li>
+<li><p>MQwen-Base：使用Qwen Chat作为LLM，vision encoder也是用的CLIP ViT-B进行实验。</p></li>
+<li><p>MQwen-bigG：使用Qwen Chat作为LLM，vision encoder替换为ViT-bigG。</p></li>
+</ul>
+
+
+<p>LLM大部分都是采用7B左右的，效果来看 MQwen-bigG>MQwen-Base>MTomato-Base，说明LLM和vision encoder都很重要。mICL和late fusion通过放大vision encoder的作用，都能起到一定作用。</p>
+
+<center><img src="/images/2025/IMAG2025010328.jpeg"></center>
+
+
+<p>NoteLLM-2和NoteLLM的差异：</p>
+
+<ul>
+<li><p>prompt组织微调任务的输入：NoteLLM引入了[EMB]特殊标记来提炼文本模态表征、NoteLLM-2引入了[IMG-EMB]图像模态和整体多模态特殊标记来提炼图像表征和多模态表征，这些特殊标记会用于下游推荐系统任务微调；</p></li>
+<li><p>协同信号微调：微调任务都使用了共现笔记对，配合生成对比学习目标进行训练。此外，NoteLLM引入了话题标签和类目生成辅助目标共同引导[EMB]的学习；NoteLLM-2专注LLM和视觉编码器的协同，基于上述两个特殊标记引入两个Loss，通过late fusion机制优化LLMs对视觉信息的关注。</p></li>
+</ul>
+
+
+<h1>总结</h1>
+
+<p>基于上述工作，我们可以大致窥探出LLMs在搜广推上应用的范式：</p>
+
+<ul>
+<li><p>借鉴LLMs的架构，不用LLMs的预训练权重，此时尽可能保留原始海量的曝光日志数据，通过组织输入样式和ID类特征，自回归的训练大模型，有可能达到推荐系统领域的scaling，这种方法个人认为短期来说上限更高，但难度更大，对应用场景、用户行为频次、供给丰富性等，都有很高的要求，现阶段能真正能落地的很少。代表性工作是GRs。</p></li>
+<li><p>借鉴LLMs的架构和预训练权重，输入模态以文本为主，无法直接输入ID等，需要下游推荐任务的微调才能真正发挥价值。由于有预训练权重的存在，数据效率更高，如何设计好的下游微调任务成为了成败的关键。为了达到更好的微调，这里面需要做两个方面工作：① 输入数据如何适配LLMs；② 用什么目标来微调。借鉴字节和小红书等内容化平台的经验，输入数据适配通常配合prompt+特殊标记，通过特殊标记作为预训练LLMs和下游推荐任务的桥梁；在微调目标选择上，要么有显式的共现关系，类似NoteLLM和NoteLLM-2中的共现item对，通过对比学习微调；要么直接基于自回归目标，如HLLMs中结合判别式和生成式自回归目标。i2i方法有一定信息损失，在I2I推荐任务中可能表现不错，但非通用方法。在数据规模足够的场景下，自回归方法更加通用一些，适配的任务可能更多。</p></li>
+</ul>
+
+
+<h1>References</h1>
+
+<p>GRs | Zhai J, Liao L, Liu X, et al. Actions speak louder than words: Trillion-parameter sequential transducers for generative recommendations[J]. arXiv preprint arXiv:2402.17152, 2024.</p>
+
+<p>HLLMs | Chen J, Chi L, Peng B, et al. HLLM: Enhancing Sequential Recommendations via Hierarchical Large Language Models for Item and User Modeling[J]. arXiv preprint arXiv:2409.12740, 2024.</p>
+
+<p>NoteLLM | Zhang C, Wu S, Zhang H, et al. NoteLLM: A Retrievable Large Language Model for Note Recommendation[C]//Companion Proceedings of the ACM on Web Conference 2024. 2024: 170-179.</p>
+
+<p>NoteLLM-2 | Zhang C, Zhang H, Wu S, et al. NoteLLM-2: Multimodal Large Representation Models for Recommendation[J]. arXiv preprint arXiv:2405.16789, 2024. ‍</p>
+
+<p>‍</p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2025-01-03T10:31:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/recsys/'>RecSys</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/llm/'>LLM</a>, <a class='tag' href='/blog/tags/da-mo-xing/'>大模型</a>, <a class='tag' href='/blog/tags/gong-cheng-shi-jian/'>工程实践</a>, <a class='tag' href='/blog/tags/tui-jian-xi-tong/'>推荐系统</a></span>
+		
+    </p>
+    
+      
+         <div class="sharing">
+  
+  
+  
+</div>
+
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2024/07/19/hulu-video-ads-algorithms/" title="Previous Post:
+        Hulu视频广告系统中的算法实践">&laquo; Hulu视频广告系统中的算法实践</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2025/01/03/gating-mechanism-in-recommendation/"
+        title="Next Post: 【凉夏】推荐模型中的门控机制与动态权重">【凉夏】推荐模型中的门控机制与动态权重
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice/';
+        var disqus_url = 'https://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

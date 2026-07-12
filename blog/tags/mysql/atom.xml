@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: MySQL | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/mysql/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[MySQL常用系统命令]]></title>
+    <link href="https://ibillxia.github.io/blog/2019/05/06/mysql-system-commands/"/>
+    <updated>2019-05-06T22:30:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2019/05/06/mysql-system-commands</id>
+    <content type="html"><![CDATA[<h1>1 show processlist</h1>
+
+<p>SHOW PROCESSLIST显示哪些线程正在运行。您也可以使用mysqladmin processlist语句得到此信息。如果您有SUPER权限，您可以看到所有线程。否则，您只能看到您自己的线程（也就是，与您正在使用的MySQL账户相关的线程）。如果有线程在update或者insert 某个表，此时进程的status为updating 或者 sending data。</p>
+
+<p>如果您得到“too many connections”错误信息，并且想要了解正在发生的情况，本语句是非常有用的。MySQL保留一个额外的连接，让拥有SUPER权限的账户使用，以确保管理员能够随时连接和检查系统（假设您没有把此权限给予所有的用户）。</p>
+
+<!-- more -->
+
+
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Checking table</td>
+<td>正在检查数据表（这是自动的）。</td>
+</tr>
+<tr>
+<td>Closing tables</td>
+<td>正在将表中修改的数据刷新到磁盘中，同时正在关闭已经用完的表。这是一个很快的操作，如果不是这样的话，就应该确认磁盘空间是否已经满了或者磁盘是否正处于重负中。</td>
+</tr>
+<tr>
+<td>Connect Out</td>
+<td>复制从服务器正在连接主服务器。</td>
+</tr>
+<tr>
+<td>Copying to tmp table on disk</td>
+<td>由于临时结果集大于tmp_table_size，正在将临时表从内存存储转为磁盘存储以此节省内存。</td>
+</tr>
+<tr>
+<td>Creating tmp table</td>
+<td>正在创建临时表以存放部分查询结果。</td>
+</tr>
+<tr>
+<td>deleting from main table</td>
+<td>服务器正在执行多表删除中的第一部分，刚删除第一个表。</td>
+</tr>
+<tr>
+<td>deleting from reference tables</td>
+<td>服务器正在执行多表删除中的第二部分，正在删除其他表的记录。</td>
+</tr>
+<tr>
+<td>Flushing tables</td>
+<td>正在执行FLUSH TABLES，等待其他线程关闭数据表。</td>
+</tr>
+<tr>
+<td>Killed</td>
+<td>发送了一个kill请求给某线程，那么这个线程将会检查kill标志位，同时会放弃下一个kill请求。MySQL会在每次的主循环中检查kill标志位，不过有些情况下该线程可能会过一小段才能死掉。如果该线程程被其他线程锁住了，那么kill请求会在锁释放时马上生效。</td>
+</tr>
+<tr>
+<td>Locked</td>
+<td>被其他查询锁住了。</td>
+</tr>
+<tr>
+<td>Sending data</td>
+<td>正在处理SELECT查询的记录，同时正在把结果发送给客户端。</td>
+</tr>
+<tr>
+<td>Sorting for group</td>
+<td>正在为GROUP BY做排序。</td>
+</tr>
+<tr>
+<td>Sorting for order</td>
+<td>正在为ORDER BY做排序。</td>
+</tr>
+<tr>
+<td>Opening tables</td>
+<td>这个过程应该会很快，除非受到其他因素的干扰。例如，在执ALTER TABLE或LOCK TABLE语句行完以前，数据表无法被其他线程打开。正尝试打开一个表。</td>
+</tr>
+<tr>
+<td>Removing duplicates</td>
+<td>正在执行一个SELECT DISTINCT方式的查询，但是MySQL无法在前一个阶段优化掉那些重复的记录。因此，MySQL需要再次去掉重复的记录，然后再把结果发送给客户端。</td>
+</tr>
+<tr>
+<td>Reopen table</td>
+<td>获得了对一个表的锁，但是必须在表结构修改之后才能获得这个锁。已经释放锁，关闭数据表，正尝试重新打开数据表。</td>
+</tr>
+<tr>
+<td>Repair by sorting</td>
+<td>修复指令正在排序以创建索引。</td>
+</tr>
+<tr>
+<td>Repair with keycache</td>
+<td>修复指令正在利用索引缓存一个一个地创建新索引。它会比Repair by sorting慢些。</td>
+</tr>
+<tr>
+<td>Searching rows for update</td>
+<td>正在讲符合条件的记录找出来以备更新。它必须在UPDATE要修改相关的记录之前就完成了。</td>
+</tr>
+<tr>
+<td>Sleeping</td>
+<td>正在等待客户端发送新请求。</td>
+</tr>
+<tr>
+<td>System lock</td>
+<td>正在等待取得一个外部的系统锁。如果当前没有运行多个mysqld服务器同时请求同一个表，那么可以通过增加--skip-external-locking参数来禁止外部系统锁。</td>
+</tr>
+<tr>
+<td>Upgrading lock</td>
+<td>INSERT DELAYED正在尝试取得一个锁表以插入新记录。</td>
+</tr>
+<tr>
+<td>Updating</td>
+<td>正在搜索匹配的记录，并且修改它们。</td>
+</tr>
+<tr>
+<td>User Lock</td>
+<td>正在等待GET_LOCK()。</td>
+</tr>
+<tr>
+<td>Waiting for tables</td>
+<td>该线程得到通知，数据表结构已经被修改了，需要重新打开数据表以取得新的结构。然后，为了能的重新打开数据表，必须等到所有其他线程关闭这个表。以下几种情况下会产生这个通知：FLUSH TABLES tbl_name, ALTER TABLE, RENAME TABLE, REPAIR TABLE, ANALYZE TABLE,或OPTIMIZE TABLE。</td>
+</tr>
+<tr>
+<td>waiting for handler insert</td>
+<td>INSERT DELAYED已经处理完了所有待处理的插入操作，正在等待新的请求。</td>
+</tr>
+</tbody>
+</table>
+
+
+<p><br>
+大部分状态对应很快的操作，只要有一个线程保持同一个状态好几秒钟，那么可能是有问题发生了，需要检查一下。还有其他的状态没在上面中列出来，不过它们大部分只是在查看服务器是否有存在错误是才用得着。</p>
+
+<h1>2 show full processlist</h1>
+
+<p><code>show processlist;</code>只列出前100条，如果想全列出请使用<code>show full processlist;</code></p>
+
+<h1>3 show open tables</h1>
+
+<p>这条命令能够查看当前有那些表是打开的。In_use列表示有多少线程正在使用某张表，Name_locked表示表名是否被锁，这一般发生在Drop或Rename命令操作这张表时。所以这条命令不能帮助解答我们常见的问题：当前某张表是否有死锁，谁拥有表上的这个锁等。
+<code>show open tables from database;</code></p>
+
+<h1>4 show status like ‘%lock%’</h1>
+
+<p>查看服务器状态。</p>
+
+<h1>5 show engine innodb status\G</h1>
+
+<p>MySQL 5.1之前的命令是：<code>show innodbstatus\G;</code>，MySQL 5.5使用上面命令即可查看innodb引擎的运行时信息。</p>
+
+<h1>6 show variables like ‘%timeout%’</h1>
+
+<p>查看服务器配置参数。</p>
+
+<h2>参考资料</h2>
+
+<p><a href="http://www.imysql.cn/node/165">mysql5.0经常出现 err=1205 - Lockwait timeout exceeded; try restarting transaction</a> <br/>
+<a href="http://www.cnblogs.com/JulyZhang/archive/2011/01/28/1947165.html">mysql show processlist命令详解</a> <br/>
+<a href="http://blog.csdn.net/c__ilikeyouma/article/details/8541195">MySQL锁</a> <br/>
+<a href="http://www.itpub.net/thread-1454597-1-1.html">SHOW INNODB STATUS提示语法错误？</a> <br/>
+<a href="http://blog.sina.com.cn/s/blog_4d1f40c00100rsse.html">SHOW OPEN TABLES – what is in your tablecache</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[MySQL乱码问题详解与解决方案]]></title>
+    <link href="https://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion/"/>
+    <updated>2015-10-28T17:12:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion</id>
+    <content type="html"><![CDATA[<p>本文节选自<a href="http://cenalulu.github.io/mysql/mysql-mojibake/">10分钟学会理解和解决MySQL乱码问题</a>   <br/>
+PS: 原文博主通过MySQL垂直深耕，成功进入Facebook了，祝福。</p>
+
+<h2>1. MySQL乱码的成因</h2>
+
+<center><img src="/images/2015/IMAG2015102801.png"></center>
+
+
+<p></p>
+
+<p>要了解为什么会出现乱码，需要理解从客户端发起请求到MySQL存储数据，再到取回客户端的过程中，哪些环节会有编码/解码的行为。</p>
+
+
+<p></p>
+
+<!--more-->   
+
+
+<h3>1.1 存入MySQL经历的编码转换</h3>
+
+<center><img src="/images/2015/IMAG2015102802.png"></center>
+
+
+<p></p>
+
+<p>存入过程有3次编码/解码：</p>
+
+
+<p></p>
+
+<p>1. Terminal根据字符编码转换成二进制流<br/>   
+2. Server通过character-set-client解码<br/>   
+3. 判断character-set-client和目标表的charset是否一致，不一致则转换</p>
+
+
+<p></p>
+
+<h3>1.2 从MySQL取出数据经历的编码转换</h3>
+
+<center><img src="/images/2015/IMAG2015102803.png"></center>
+
+
+<p></p>
+
+<p>取出过程同样有3次编码/解码：</p>
+
+
+<p></p>
+
+<p>1. 用表字符集编码进行解码<br/>   
+2. 将数据转换为character-set-client的编码<br/>   
+3. Server通过网络传输到远端client</p>
+
+
+<p></p>
+
+<h3>1.3出现乱码的原因</h3>
+
+<p>MySQL数据存入和读取过程有3次编码/解码的过程：客户端编码，MySQL Server解码，Client编码向表编码的转换   <br/>
+三步中，只要两步或者两部以上的编码有不一致就有可能出现编解码错误。   <br/>
+1. 存入和取出时对应环节的编码不一致    <br/>
+2. 单个流程中三步的编码不一致</p>
+
+<h2>2.如何避免乱码</h2>
+
+<p>理解了上面的内容，要避免乱码就显得很容易了。   <br/>
+只要做到“三位一体”，即 客户端，MySQL character-set-client，table charset三个字符集完全一致就可以保证一定不会有乱码出现了。</p>
+
+<p>最简单的方式是将客户端、连接、服务端统一设置为UTF-8（适合于还未写入数据造成乱码的情况，已经有乱码的修复见下文）：</p>
+
+<pre><code>SET NAMES 'utf8mb4';     
+-- 等同于以下三条语句：     
+SET character_set_client = utf8mb4;     
+SET character_set_results = utf8mb4;     
+SET character_set_connection = utf8mb4;     
+</code></pre>
+
+<h2>3.如何修复已经编码损坏的数据</h2>
+
+<p>原文有列举一些错误的方法，这里就略过了，直接说正确的方法</p>
+
+<h3>方法一 Dump &amp; Reload</h3>
+
+<p>这个方法比较笨，但也比较好操作和理解。简单的说分为以下三步：</p>
+
+<ul>
+<li>通过错进错出的方法，导出到文件</li>
+<li>用正确的字符集修改新表</li>
+<li>将之前导出的文件导回到新表中</li>
+</ul>
+
+
+<p>举例，我们用UTF-8将数据“错进”到latin1编码的表中。现在需要将表编码修改为UTF-8可以使用以下命令</p>
+
+<pre><code>shell&gt; mysqldump -u root -p -t --skip-set-charset --default-character-set=utf8 test charset_test_latin1 &gt; data.sql   
+#确保导出的文件用文本编辑器在UTF-8编码下查看没有乱码   
+shell&gt; mysql -uroot -p -e 'create table charset_test_latin1 (id int primary key auto_increment, char_col varchar(50)) charset = utf8' test   
+shell&gt; mysql -uroot -p  --default-character-set=utf8 test &lt; data.sql   
+</code></pre>
+
+<h3>方法二 Convert to Binary &amp; Convert Back</h3>
+
+<p>这种方法比较取巧，用的是将二进制数据作为中间数据的做法来实现的。由于，MySQL再将有编码意义的数据流，转换为无编码意义的二进制数据的时候并不做实际的数据转换。而从二进制数据准换为带编码的数据时，又会用目标编码做一次编码转换校验。通过这两个特性就相当于在MySQL内部模拟了一次“错出”，将乱码“拨乱反正”了。</p>
+
+<p>还是用上面那个例子举例，我们用UTF-8将数据“错进”到latin1编码的表中。现在需要将表编码修改为UTF-8可以使用以下命令</p>
+
+<pre><code>mysql&gt; ALTER TABLE charset_test_latin1 MODIFY COLUMN char_col VARBINARY(50);   
+mysql&gt; ALTER TABLE charset_test_latin1 MODIFY COLUMN char_col varchar(50) character set utf8;   
+</code></pre>
+
+<h2>参考资料</h2>
+
+<p>[1]<a href="https://cenalulu.github.io/mysql/mysql-mojibake/">10分钟学会理解和解决MySQL乱码问题</a><br/>
+[2]<a href="https://dev.mysql.com/doc/refman/8.0/en/charset.html">MySQL Character Sets文档</a></p>
+]]></content>
+  </entry>
+  
+</feed>

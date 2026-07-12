@@ -1,0 +1,1324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 推荐系统 | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/tui-jian-xi-tong/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[【凉夏】推荐模型中的门控机制与动态权重]]></title>
+    <link href="https://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation/"/>
+    <updated>2025-01-03T10:33:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/701181424">https://zhuanlan.zhihu.com/p/701181424</a></p>
+
+<p>大家好，我是凉夏同学。今天是我第一次在知乎分享我对算法模型的理解，有些生疏，还请大家多多指教。感兴趣的话，敬请关注公众号：凉夏的机器学习笔记。感恩~</p>
+
+<p>今天要讲的是最近比较火的一种网络结构，可以近乎“无脑地”加入到网络结构当中，基本上都可以带来或多或少的效果提升。这个网络结构有人叫他门控网络、门控结构，也有人叫他的英文名“gating”，也有人叫他动态权重。</p>
+
+<p>这篇文章，我会先讲一下我对门控机制的理解，然后会简单介绍几个使用门控机制的论文。</p>
+
+<h1>门控的本质</h1>
+
+<p>一直都觉得深度学习模型架构里，很多东西都是相同的，虽然很多时候他们有不同的名称、亦或是用在了不同的模型位置，但底层的思想和逻辑很可能是一致的。而我认为，门控网络结构的本质就是注意力机制。说到注意力机制，大家应该都不陌生，该结构出现在以DNN模型为基础的各种应用结构中，例如：transformer里面使用了multi-head attention（MHA）这种多头自注意力机制；用户行为序列建模DIN结构使用了target attention结构。</p>
+
+<!--more-->
+
+
+<p>那么注意力机制的本质又是什么呢？我的理解是：注意力机制就是自适应学习得到权重。所以相关结构可以再进行细分，得到三种关键元素： <br/>
+- ①输入：使用哪些信息作为注意力的输入；
+- ②结构：如何计算注意力权重；
+- ③输出：得到了权重之后，我们要作用在哪里。</p>
+
+<p>基本上，我们见到的任何注意力机制都可以归因到上面三个问题上。</p>
+
+<center><img src="/images/2025/IMAG2025010331.jpeg"></center>
+
+
+<center>transformer中的MHA结构</center>
+
+
+<p></br></p>
+
+<p>拿我们举例子的transformer中的多头注意力机制来说。如果是encoder那侧，那么则是自注意力机制，输入是同一个序列的token经过矩阵转换之后的向量；注意力计算方式是Scaled（除以根号d）的内积再softmax；输出依旧作用在当前序列上。如果是DIN结构，那输入是target poi的embedding，计算方式则是简单的内积，输出在用户序列的每个seq poi的embedding上。</p>
+
+<p>简单介绍完了注意力机制，说回来我们的门控。既然门控本质也是注意力机制，那么其三元素也是包括输入、结构、输出。只是相应的内容有一些变化，从而衍生出不同的网络结构和应用。下面介绍一些常见的。</p>
+
+<h1>LHUC结构</h1>
+
+<p>LHUC的全称是Learning Hidden Unit Contributions，最早语音识别领域所提出的，其核心的思想是：为每一个 speaker 定制一个振幅函数 (amplitude function)，作用于 DNN 的隐层之上。从公式上看非常直观：</p>
+
+<p>其中 代表哈达玛积，也就是两个向量对应位置的元素相乘。其右边代表DNN某个隐藏层输出（因为大概形式就是f(w·x+b)嘛），其左边代表振幅函数的输出。虽说名字叫做振幅函数，但整个公式的形式看起来非常符合我们上文讨论的注意力机制的形式——生成了权重乘在隐藏层的输出上。其输入就是每个speaker的信息，结构就是浅层的DNN，输出作用在DNN的多个隐藏层上。其中有一个细节是，一般来说作为权重的DNN子结构会使用sigmoid作为激活函数，使得权重在0~1之间。而LHUC在sigmoid前面乘了个固定数字“2”，使得权重在0~2之间。带来的效果是：若权重在0~1之间，则是对原有隐藏层数值的抑制；若权重在1~2之间，则是对原有数值的放大。</p>
+
+<h1>PPNet</h1>
+
+<p>PPNet的全称是Parameter Personalized Net，是快手提出的模型架构，将上述语音领域的LHUC架构搬到了推荐领域，将每一个“speaker”当做是每一个用户，从而提升模型个性化效果。</p>
+
+<center><img src="/images/2025/IMAG2025010332.jpg"></center>
+
+
+<center>快手PPNet网络架构</center>
+
+
+<p></br></p>
+
+<p>我们看下PPNet的门控结构的输入输出和网络结构。其输入的特征uid，pid，aid 分别表示 user id，photo id，author id，将这三个id输入门控网络得到全部其他隐藏层元素维度的权重，具体要作用在哪一层的时候，就直接将门控网络的输出维度设置成相同的即可。而在图的右上角我们可以看到门控网络的具体结构，是两层的MLP网络——第一层NN是以ReLU作为激活函数，第二层是sigmoid作为激活函数同时在输出之后和LHUC一样乘了“2”。PPNet 中的门控结构比较轻量化，而且很容易移植到工业界各个大厂的排序模型当中，因此在最近几年是一个比较火的网络子结构。</p>
+
+<p>这里我们简单提一下两层MLP的好处。因为要输出全部隐藏层（尤其是第一层是全部特征embedding拼接之后的维度）元素维度的权重，因此参数量一般会比较大。而两层的MLP可以通过降低第一层NN的输出维度，使得门控结构“先降维、后升维”从而降低参数量。类似的思想在SENet，或者大模型SFT的lora结构都有所体现。</p>
+
+<p>以上是门控机制在推荐模型中的一个应用实例。如前文所说，深度学习模型架构里很多东西都是相同的，后续会介绍更多使用了门控机制的网络架构，但本质上都和PPNet或者LHUC非常类似，其核心思想都是注意力机制，区别基本在于输入、输出和网络架构。</p>
+
+<h1>PEPNet</h1>
+
+<p>PEPNet全称是Parameter and Embedding Personalized Network，可以看到只在PPNet的基础上多了一个Embedding Personalized Network。体现在结构细节上，就是除了原先使用三个id特征做模型结构中间隐藏层的个性化之外，新增了使用场景特征对全部特征提前做一次个性化。</p>
+
+<center><img src="/images/2025/IMAG2025010333.jpg"></center>
+
+
+<center>PEPNet</center>
+
+
+<p></br></p>
+
+<p>如图所示，右侧依旧是PPNet，只是左下角新增了使用场景特征计算全部特征的个性化。有一个小细节就是场景特征同时作为门控的输入和主网络的输入，也就是二者共享embedding的。在其作为门控输入的时候进行stop gradient，防止其梯度影响主网络。</p>
+
+<h1>AdaSpase</h1>
+
+<p>AdaSparse，阿里2022年的论文《Learning Adaptively Sparse Structures for Multi-Domain Click-Through Rate Prediction》。文章也是使用到了门控机制，只是输入输出有一些差异，以及其中结合“稀疏”的思想体现了一些创新的出发点。模型如图所示，右侧②是门控网络的结构，可以看到输入使用了整个隐藏层的向量拼接上场景特征向量一起作为输入；网络结构结合了不同稀疏效果的设计了Binarization、Scaling、Fusion三种方法；最终也是作为权重与当前隐藏层进行元素乘，只是由于不同方法的稀疏性不同，所产生的效果不同。</p>
+
+<center><img src="/images/2025/IMAG2025010334.jpg"></center>
+
+
+<center>AdaSparse</center>
+
+
+<p></br></p>
+
+<p>AdaSparse将门控网络称之为”场景自适应的裁剪器“，其主要结构也是DNN，公式如下图：</p>
+
+<center><img src="/images/2025/IMAG2025010335.webp"></center>
+
+
+<p>第l层的隐藏层和相应的权重进行元素乘</p>
+
+<center><img src="/images/2025/IMAG2025010336.png"></center>
+
+
+<p>权重的输入是向量拼接后经过一层MLP和sigmoid，之后再输入到另一个函数S</p>
+
+<p>其中S则代表了Binarization、Scaling、Fusion三种方法。Binarization是将输入的绝对值和阈值ε输入符号函数sign中，如果输入的绝对值大于ε，那么经符号函数输出1，反之输出0。</p>
+
+<center><img src="/images/2025/IMAG2025010337.jpeg"></center>
+
+
+<p>Scaling方法则是：sigmoid之后乘上缩放因子β（类似于LHUC里面的”2“），再将符号函数的输出再乘上原来的值。大概思路是：经过符号函数变为1或者0，会损失信息，如果再乘上原来的值，不仅可以知道隐藏层对应位置的信息是否要保留（对应裁剪器同位置权重是否为1），还能知道权重的大小幅度。</p>
+
+<center><img src="/images/2025/IMAG2025010338.jpeg"></center>
+
+
+<p>Fusion方法则是将上述两种思路结合起来，我们从公式上可以看出来。</p>
+
+<center><img src="/images/2025/IMAG2025010339.png"></center>
+
+
+<p>以上是AdaSparse门控网络的几种形式，具体哪种效果好，我们可以通过实验来确定。那么其中的稀疏是如何得到的呢？论文中将是通过将L1正则项加入到loss中得到的，而这个loss会随着训练而慢慢增大，带来的效果就是训练初期参数比较稠密，最大程度保留信息；随着训练的进行，loss逐渐变大，从而得到稀疏权重。而稀疏的优点，论文中大概是说，可以提升泛化性——因为我们是将场景特征作为门控的输入的，也就是场景特征来控制哪些特征要保留——从而可以减少不同场景的互相影响，而提升泛化性吧。我个人是这么理解的。</p>
+
+<h1>M2M</h1>
+
+<p>出自阿里的论文《Leaving No One Behind: A Multi-Scenario Multi-Task Meta Learning Approach for Advertiser Modeling》，两个”M“，分别对应了多场景和多目标，其中多场景是使用门控机制来解决的，多目标使用的是传统的MMOE。而这里的门控网络并不是在输出权重作用在隐藏层上，而是通过Meta Unit模块，根据“场景”特征，动态生成权重，再reshape成一个MLP。</p>
+
+<center><img src="/images/2025/IMAG2025010340.jpg"></center>
+
+
+
+
+<center>M2M的Meta Unit结构</center>
+
+
+<p></br></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[【蘑菇先生】工业界大模型推荐实战经验梳理]]></title>
+    <link href="https://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice/"/>
+    <updated>2025-01-03T10:31:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/7387477310">https://zhuanlan.zhihu.com/p/7387477310</a></p>
+
+<p>大家好，我是蘑菇先生。好久不见，今天盘点下2024年工业界大模型在搜广推上的实战落地型工作。业界工作大体分为两类：</p>
+
+<ul>
+<li><p>用大模型做数据和知识增强、提取表征、通过prompt将推荐转成对话驱动的任务等，本质上没有修改LLM，属于信息增强和补充方法，无法直接建模海量协同信号。</p></li>
+<li><p>修改LLM直接建模搜广推海量数据中的协同信号，对输入输出范式改造，通过预训练/微调等过程建模海量数据，让模型同时拥有通用的世界知识和垂直领域海量协同信息。是能实现搜广推大模型scaling的前提，需要更复杂的工程架构支持。</p></li>
+</ul>
+
+
+<p>第一类工作层出不穷，大部分在工业界无法惊起水花，属于学术性的探索居多。第二类工作寥寥无几，需要资源算力和业务场景等支撑，但也是搜广推值得探索的前沿方向之一。本文重点分享第二类工作。本次分享4篇文章：GRs(Meta)、HLLMs(字节)、NoteLLM(小红书)、NoteLLM-2(小红书)等工作，基本都在各自场景验证了收益，最近又重读了下，常读常新，做一些梳理分享给大家。涵盖目前推荐系统两类主流范式：</p>
+
+<ul>
+<li><p>表征学习：NoteLLM\NoteLLM-2提供了一种使用LLMs训练item表征的范式，通过海量数据中的“共现”协同信号，应用对比学习目标来微调LLMs并提取多模态的item表征。学习的item表征可以用于I2I召回、排序特征提取器等。</p></li>
+<li><p>模型预估：GRs和HLLMs通过改造输入数据为行为序列，在自回归设定下，可以建模海量用户行为，从而达到推荐的目的。二者既可以作为召回模型、也可以用作排序模型，用于CXR预估。但二者在输入、架构、目标方面存在较大差异，下文会介绍。</p></li>
+</ul>
+
+
+<!--more-->
+
+
+<h1>Meta | GRs</h1>
+
+<p>全称：Actions speak louder than words: Trillion-parameter sequential transducers for generative recommendations.</p>
+
+<p>意义：为工业级别的搜广推应用中如何借鉴LLMs的能力指明了一条新的道路。</p>
+
+<p>整体方案一言以蔽之，通过生成式框架来重新定义召回和排序任务。在该生成式框架下，改造召排任务对应的输入输出范式、损失目标建模范式，在Transfomers架构上融入推荐系统DIN/MoE/SENet等主流设计思路，并通过算力优化达到线上推理条件。模型的输入不是文本，而是推荐系统标准的ID/结构化稀疏型特征构成的序列，借鉴LLMs模型架构，但没有用到预训练权重，意味着需要海量推荐系统数据进行训练才可能达到传统推荐模型的效果。</p>
+
+<p>更多技术细节参见：行动胜过言语: Meta落地工业界首个万亿级别参数的生成式推荐系统。本文主要补充更高阶的一些问题，也可参见：Meta生成式推荐模型GRs关键问题探讨。</p>
+
+<p>有2类关键问题想讨论：</p>
+
+<ul>
+<li><p>如何用生成式框架来重新定义召回和排序任务，在该生成式框架下，如何改造输入输出范式、损失目标建模范式；</p></li>
+<li><p>离线训练和在线推理阶段，输入输出范式存在什么差异？如何跨候选复用算力，做到更低时延？</p></li>
+</ul>
+
+
+<h2>关键问题1：如何用生成式框架来重新定义召回和排序任务？</h2>
+
+<p>从传统sequential recommender问题出发，探讨GRs如何改造传统建模范式。</p>
+
+<ul>
+<li><p>Ignorance of features other than user-interacted items： 传统的序列推荐，通常只使用用户交互过的正样本item来构造序列。这里面包含两层含义，仅使用itemID来表征item、仅使用正反馈来构造序列。前者会忽略item的各类category语义信息、后者无法捕捉一些真实后验行为(如ctr)。GR通过两方面来分别解决这两个问题。a. 通过引入辅助信息并合并到主序列实现对稀疏类别特征的建模。b. 对全正负反馈超长序列的target attention来间接捕获数值统计型特征，各类后验行为均保留着，就能够通过attention近似捕捉真实后验，间接体现数值型统计特征的作用，泛化性也更好。通过实验，我们可以发现如果GRs模型仅在有交互的正样本itemID上学习，指标会下降非常多，即：2.6% NE的下降、1.3%的HitRate@100的下降。</p></li>
+<li><p>User representations are computed in a target-independent setting： 用户的表征和待预测目标item之间互相独立，表达能力弱，这个主要是传统序列模型的问题，比如GRU4Rec、SASRec、BERT4Rec等，无法在输入侧进行交互，仅仅能通过输出侧的softmax来实现和目标item的弱交互。DLRMs中的DIN等模型，引入了target-attention机制来缓解该问题。GRs通过将action看做新的模态，交错插入item和action，能够实现在causal autoregressive的设定下，使用target-aware attention实现更强的交互能力。</p></li>
+<li><p>Discriminative formulations restrict applicability of prior sequential recommender work to pointwise settings: 传统的序列推荐是判别式的，只能在pointwise的设定下发挥作用。这类工作本质上学习的是或者在给定用户状态下推荐下一个item的条件概率。但在真实的推荐系统中，实际上可以拆解为两类概率过程，a. 推荐next content (召回)，b. 用户对该content的反馈action (排序)。生成式方法是联合学习content和action，即：。个人认为这是生成式范式有可能表现更好的本质原因，能更加无损地建模原始数据分布，配合LLM的架构，可以容纳更多数据和信息。</p></li>
+</ul>
+
+
+<p>如下图所示：Next Action Token prediction对应ranking任务，自回归预测的是前一个item在action上的概率分布，也即该item的行为类型。Next content token prediction对应retrieval任务。自回归预测的是next item，即在item物料上的概率分布。还是非常优雅的，将召排任务统一成“生成任务”视角。</p>
+
+<center><img src="/images/2025/IMAG2025010301.jpg"></center>
+
+
+<center>召排范式</center>
+
+
+<p></br></p>
+
+<p>模型对比图如下，左侧是传统的序列推荐模型，action只会在输入侧构建item表征时，作为额外的信息融入；输出端自回归的仍然是item本身；右侧是GR模型，输入端显式地将action也作为1种序列组成类型，输出端item和action均能够作为监督信号，来实现自回归预测。</p>
+
+<center><img src="/images/2025/IMAG2025010302.jpeg"></center>
+
+
+<center>模型架构</center>
+
+
+<p></br></p>
+
+<p>此处召排本质上可以是统一的模型，如图中所示，在1个任务中联合建模和，此处拆成两个任务有一定取舍，可能是为了适配现有推荐系统链路。</p>
+
+<p>除此之外，这一范式不仅能更好的建模数据分布，同时在可以通过beam search来生成item序列结果。这个相比于传统listwise的重排(如DPP和RL)，会更加有优势。也就是说，该方案还能充当重排层的角色，实现listwise的预测，这样就统一了召回、排序、重排，真正实现生成式推荐。</p>
+
+<h2>关键问题2：排序任务训练和推理阶段的差异在哪，如何跨候选复用算力？</h2>
+
+<p>训练： 下图是训练示意图，看示意图是个召排统一的GR模型，输出侧的监督信号包括了item和action。这个地方和前文描述的稍有出路。前文描述的排序任务输出侧监督信号主要是action，召回任务输出侧监督信号主要是item。但不影响理解。</p>
+
+<center><img src="/images/2025/IMAG2025010303.jpeg"></center>
+
+
+<center>训练</center>
+
+
+<p></br></p>
+
+<p>推理：</p>
+
+<p>排序在推理时，正常要对所有个候选都推理一遍。假设序列长度为，复杂度为。此处作者可以复用多个候选间的算力，一次性推理多个候选的打分(分batch)。</p>
+
+<p>如下图所示：将batch为大小的候选items拼接到输入行为序列末尾，可一次性推理出每个item的预测action概率分布。多个target之间复用历史行为序列，因此历史行为序列理论上只需要1次推理即可，不同target item之间通过mask机制，阻断互相attention，这样就能够实现b_{m}个候选同时预估，同时实现候选item和历史行为item的self-attention。即时叠加多层self-attention注意力机制，由于是causal self-attention，历史行为items表征中不会耦合待预测的target items表征信息。上述操作后，复杂度为O((n+m)<sup>2</sup> d)=O(n<sup>2d</sup>)。</p>
+
+<p>这样实现的效果等价于对b_m个候选分别拼接到历史行为序列中，各自做1次前向传播，一共做b_m次，这样会导致历史行为序列的计算冗余。改进后，在1次前向传播推理中同时预估b_m个候选，最大程度复用算力。</p>
+
+<center><img src="/images/2025/IMAG2025010304.jpeg"></center>
+
+
+<center>推理</center>
+
+
+<p></br></p>
+
+<p>除了跨候选复用算力，在跨请求之间，通过KV caching机制，比如HSTU中的K(X)和V(X)可以在跨batch和跨请求之间复用。</p>
+
+<p>总结一下：GRs将用户行为组织成序列行为，纳入了曝光/点击/交互等各类行为，将item和action都视作相同模态，作为序列的组成部分，每个item使用ID和结构化的稀疏特征来表示，抛弃了LLMs的预训练权重，通过海量数据自回归训练改造的Transformer架构HSTU。最终通过M-FALCON等算力优化手段实现线上推理。</p>
+
+<p>更多技术细节参见：行动胜过言语: Meta落地工业界首个万亿级别参数的生成式推荐系统。 ‍</p>
+
+<h1>字节 | HLLM</h1>
+
+<p>全称：Enhancing Sequential Recommendations via Hierarchical Large Language Models for Item and User Modeling</p>
+
+<p>意义：HLLM是国内第一个对标Meta的GRs工作，也是今年大模型推荐的大作。</p>
+
+<p>文章主要探讨了3个方面的问题：① 发挥LLM的预训练权重价值：研究预训练大型语言模型（LLMs）中包含的世界知识和推理能力在推荐系统任务中的具体价值，这一点与GRs的不同，GRs用了LLMs的模型架构，但没有使用预训练的权重，意味着HLLMs的数据效率可能更高。② 推荐任务微调：探讨如何为推荐任务进行特定微调（fine-tuning）。③ 模型的可扩展性：验证大语言模型在推荐系统中是否同样具备scaling能力，即模型性能是否随着模型参数量的增加而提升。</p>
+
+<p>为了解决这一难题，文章也同Meta GRs一样，将推荐任务形式化为“序列推荐”。并提出了层次化大语言模型，第一级是Item LLM，使用LLM从item的文本表述中提取丰富的语义信息，此处没有使用ID信息； 第二级是User LLM，利用第一级的item表征来建模用户行为序列，预测用户的未来兴趣，此处大概率只使用用户交互的正样本。思路比较清晰。</p>
+
+<p>模型整体结构如下：</p>
+
+<center><img src="/images/2025/IMAG2025010305.jpeg"></center>
+
+
+
+
+<center>模型结构</center>
+
+
+<p></br></p>
+
+<h2>Item LLM</h2>
+
+<p>本质上是使用LLM作为item侧的特征提取器，将丰富的文本信息压缩成1个item表征。主要改进就是在文本描述末尾新增特殊标记[ITEM]。然后过LLMs模型，将最后1层[ITEM]对应位置的hidden states作为item的表征。属于基本操作，在NoteLLM中也能见到。这个[ITEM]表征联同itemLLM的参数会在下游推荐任务中进行端到端微调。</p>
+
+<h2>User LLM</h2>
+
+<p>通过item表征，可以将用户行为ID序列U={I_1, I_2,...,I_n}转成表征序列 {E_1, E_2,...,E_n}，然后套一个LLMs，就能让item序列进行充分交叉。该LLMs的输入中把LLM预训练的word embedding丢掉，使用item LLM输出的item embedding替代，然后后续的Transformers建模序列结构保持一致。</p>
+
+<h2>训练目标</h2>
+
+<ul>
+<li>生成式目标：和GRs或传统的序列推荐任务都比较像，自回归预测下一个item。和GRs的差异点包括两个方面：① 使用了预训练模型的权重。② User LLMs的输入是item LLM输出的表征(也即根源输入是text-input features)，而GRs主要是ID和结构化的稀疏特征。具体自回归预测时，使用了InfoNCE。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010306.png"></center>
+
+
+<p>j是batch内的user编号下标，i是第j个user的序列中的第i个item，E<em>{j,i}是Item LLM输出的表征，\hat{E}</em>{j,i}是User LLM预测的表征。正样本是next item，负样本从batch内非该用户序列的其他样本中采样。</p>
+
+<ul>
+<li>判别式目标：判别式目标是给定用户表征、待预测的item表征，判断用户是否对该item感兴趣。这里头有2种建模方式，1种是把用户行为序列和item拼接起来过Transformers，这样能提前交互；另一种是使用LLMs作为User序列提取器，在末尾新增[USER]作为user表征，在输出端进行弱交互，可以复用行为序列表征计算过程，在线上推理时可跨候选间复用user表征，性能好很多。前者由于过早交互，行为序列和待预测的item信息耦合在一起，导致无法跨候选复用算力。此处采用logloss，应该也是基于用户序列来构造正负样本。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010307.png"></center>
+
+
+<p>最后的损失如下，可以看到生成式目标实际是作为辅助损失的，主目标是LogLoss分类目标，和DIEN很像。</p>
+
+<center><img src="/images/2025/IMAG2025010308.png"></center>
+
+
+<p>该目标训练的过程中，能够端到端联合训练Item LLM和user LLM。item LLM的产物[ITEM]对应的表征实际上还能用于其他推荐场景：如作为item表征输入到精排建模、用于召回等。</p>
+
+<p>实验部分也是做的比较完备的，值得一看。包括几个部分：</p>
+
+<ul>
+<li>LLMs预训练权重的重要性。“使用预训练”意味着在这些预训练LLMs权重基础上进一步微调、"不使用预训练(Scratch)"意味着丢弃预训练权重，复用架构从头开始训练，就像GRs中的一样。因为HLLMs的输入是item侧文本，预训练权重信息肯定是有用的，毋庸置疑。另外文中也说明了预训练的tokens数量越大，重要性越高。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010309.jpeg"></center>
+
+
+<ul>
+<li>LLMs微调的重要性。使用生成式目标和判别式目标微调[ITEM]，[User]以及对应LLM的参数，也非常重要。例如：item侧不微调，固定参数，使用LLM输出的最后1层hidden states进行pooling作为item表征，结果非常差。user侧同理。这说明基于next token预测训练的LLMs如果作为特征提取器是非常糟糕的。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010310.jpeg"></center>
+
+
+<ul>
+<li>对比实验：SASRec和HSTU(GRs)是ID-based模型，HLLMs、LEARN是text-based模型。HLLMs效果上好不少。但是这个地方由于输入数据和建模方式差异，个人认为这么对比可能不是公平的，不能发挥出GRs的优势。下面总结的时候会再说明下原因。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010311.jpeg"></center>
+
+
+<p>最后我们再聊聊HLLMs的A/B Test部分，也是满满细节：基座是TinyLlama-1.1B，训练了HLLM-1B。由于性能的考虑，总共分为了3个部分：</p>
+
+<ul>
+<li><p>Stage I: 端到端训练所有HLLMs参数：使用判别式损失训练Item LLM和User LLM。用户行为序列长度是150。</p></li>
+<li><p>Stage II: 先用Stage I训练Item LLM来编码和存储item表征。通过检索item表征来进一步微调User LLM，只训练User LLMs，因此可以将序列长度从150拓到1000。</p></li>
+<li><p>Stage III: HLLM参数固定，基于User LLM抽取user表征，联同Item LLM的表征和已经有的线上特征，喂给精排走流式学习。</p></li>
+</ul>
+
+
+<p>线上serving的时候，item表征在新item发布的时候就会抽取表征；user表征T+1例行化更新；U/I的embedding提前存储好，用于流式训练和serving，这种情况下线上耗时几乎没变。</p>
+
+<center><img src="/images/2025/IMAG2025010312.jpeg"></center>
+
+
+<p>到此我们可以总结下HLLM和GRs的差异点：</p>
+
+<ul>
+<li><p>输入数据：GRs输入用户全周期正负反馈行为序列，数据量更大，主要基于item侧的ID和结构化稀疏特征进行学习；HLLMs输入用户正反馈行为序列，数据量小很多，主要基于item侧的文本描述，没有使用ID特征进行学习。</p></li>
+<li><p>模型架构：由于输入的差异和数据量的差异，GRs可以使用LLMs架构从头预训练，将文本模态替换为ID/action进行端到端训练。也是真正意义上的端到端模型。HLLMs主要基于预训练LLMs，能够复用LLMs预训练权重蕴含的世界知识，需要遵循LLMs的文本模态输入，无法直接建模ID，转而添加【ITEM】，【User】来适配预训练LLMs并提炼关键信息，也就意味着微调非常重要。</p></li>
+<li><p>训练目标：由于海量数据，GRs可以以自回归为主要目标进行训练，使用更大参数量的模型，其scaling的潜力更大，是能真正替代现有的DNN搜广推模型。HLLMs在传统判别式目标之上新增自回归目标，个人认为scaling的天花板是有限的，也无法真正替代现有的DNN，文中实验部分关于这块的介绍也是比较简单，说服力不足。</p></li>
+<li><p>在线推理：late fusion的HLLMs类似双塔架构，通过解耦合item和user表征，复用user侧表征，但是交叉能力比较弱；GRs在双塔和完全体Transformers之间做了个折中，引入了action和item交错编排和target-attention机制，在交叉能力上是更好的，通过causal attention和候选之间mask机制也能实现跨候选间复用“用户历史行为表征”算力，但能达到更好的交叉能力。GRs的上线难度肯定是更大的。</p></li>
+</ul>
+
+
+<p>正是因为上述的差异，在相同数据集上对比HLLMs和HSTU可能不够公平，无法达到各自最优水平进行对比。</p>
+
+<h1>小红书 | NoteLLM</h1>
+
+<p>全称：A Retrievable Large Language Model for Note Recommendation。</p>
+
+<p><strong>意义：第一个使用大模型做I2I推荐的工作。也是使用LLM兼容语义信息和协同信息，提升item embedding学习的代表性工作之一。</strong></p>
+
+<p>小红书发表在WWW 2024上的工作，基于LLM的I2I推荐。本质上是通过LLM来学习笔记的表征，该表征能同时拥有大模型的语义世界知识，还能将小红书用户行为中的协同信号注入其中。其建模的关键假设是：notes frequently read together are likely related. 利用了共现笔记通常比较相似的假设，通过I2I相关笔记对比学习任务来提升item embedding的学习。除此之外，还引入了“标签/类目”生成任务来多目标学习。</p>
+
+<p>整体架构图如下，自下而上：包含了笔记压缩prompt、相关笔记对构建、生成对比学习和标签/类目生成多目标学习、最后应用于I2I推荐、笔记hashtag生成、笔记类目打标等任务。整体工作流大致是：先通过prompt来构造LLMs的输入，同时预留着[EMB]占位符节点，用于I2I协同信号对比学习和标签/类目生成学习，这样就能让共现高的笔记的[EMB]相近，同时还能保留LLMs的语义信息。</p>
+
+<center><img src="/images/2025/IMAG2025010313.jpeg"></center>
+
+
+
+
+<center>NoteLLM模型结构</center>
+
+
+<p></br></p>
+
+<h2>Note Compression Prompt</h2>
+
+<p>首先是Note Compression Prompt：为每个笔记样本构建一个统一的笔记压缩prompt，然后通过预训练LLMs进行解码学习item表征。prompt格式如下，[EMB]占位符就是学习的目标笔记表征。</p>
+
+<center><img src="/images/2025/IMAG2025010314.png"></center>
+
+
+<p>对于类目生成任务，引入了类目$c_i$等监督信号。</p>
+
+<center><img src="/images/2025/IMAG2025010315.jpeg"></center>
+
+
+<p>对于hashtag标签生成任务，引入了hashtags $tp_i$的监督信号。</p>
+
+<center><img src="/images/2025/IMAG2025010316.jpeg"></center>
+
+
+<p>通过上述步骤装配模版成文本tokens，通过LLMs得到上述tokens的表征序列，[EMB]处的表征会作为笔记表征，通过下面的GCL和CSFT进行预训练。</p>
+
+<h2>GCL</h2>
+
+<p>全称生成对比学习。为了引入海量数据协同信号，作者构建了相关笔记对，计算所有笔记对的用户行为共现得分，并为每个笔记形成共现得分集合。并选择集合中共现得分最高的笔记作为给定笔记的相关笔记。计算相似笔记的公式借鉴了类似swing的思路：即：</p>
+
+<p>$s<em>{n_A→n_B}=\sum</em>{i}^N\frac{1}{N_i}$</p>
+
+<p>接着通过生成对比学习（GCL）使用上述压缩标记作为每个笔记的表征，并训练LLMs从in-batch的负样本中识别出相关的正样本笔记。本质是利用共现笔记中的“协同信号”，来提升这个[EMB]的学习质量，让相似的note的EMB相近。</p>
+
+<center><img src="/images/2025/IMAG2025010317.png"></center>
+
+
+<h2>CSFT</h2>
+
+<p>全称协同监督微调。笔记的category和hashtags有一些监督信号，可以用于多任务学习，使用自回归生成损失建模即可。具体而言，作者采用了一种协同监督微调（CSFT）方法来训练模型为每个笔记生成标签/分类。由于I2I笔记推荐任务和标签/分类生成任务中学习到的压缩标记都旨在提取笔记内容的关键概念，CSFT可以有效增强笔记嵌入。</p>
+
+<center><img src="/images/2025/IMAG2025010318.jpeg"></center>
+
+
+<p>最后，训练好的模型可以同时做I2I向量检索、类目打标、话题生成等任务。</p>
+
+<p>从实验部分来看，</p>
+
+<ul>
+<li><p>LLaMA 2 zero-shot：直接提取item的表征，不使用任何prompt；</p></li>
+<li><p>PromptEOL zero-shot：zero-shot的sentence embedding方法，使用了one-word limitation prompt.</p></li>
+<li><p>SentenceBERT：基于共现笔记对比学习来学习笔记相似性，也是小红书线上的基线。</p></li>
+<li><p>PromptEOL+CSE：PromptEOL基础上基于共现笔记对比学习来训练LLM。</p></li>
+<li><p>RepLLaMA：使用LLM作为双编码器的向量检索模型，类似双塔模型训练，不使用任何any prompts.</p></li>
+<li><p>NoteLLM：本文方法。</p></li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010319.jpeg"></center>
+
+
+<h1>小红书 | NoteLLM-2</h1>
+
+<p>全称：Multimodal Large Representation Models for Recommendation。</p>
+
+<p>意义：第一个<strong>直接使用LLM来提升推荐系统多模态表征质量</strong>的工作，发挥LLMs和视觉Encoder各自的优势。</p>
+
+<p>同样出自小红书的工作，提出了一个端到端训练方法，能够方便地定制集成任何现有的LLMs和视觉Encoder，以构建高效的多模态表示模型（Multimodal Large Representation Models, MLRMs）。</p>
+
+<p>NoteLLM的Item表征主要建模文本信息，这篇工作在文本表征之外，重点建模了笔记的多模态信息，并用于多模态的I2I推荐。文章重点探讨了如何充分发挥LLM的文本理解能力，来弥补传统多模态模型对文本信息的忽视，取长补短。</p>
+
+<p>具体而言，在I2I推荐任务上，提出了一种端到端训练方法，和NoteLLM一样，使用I2I共现笔记对的对比学习，来增强多模态表征的学习。所以乍一看就是在note compression prompt设计上如何引入图像表征来形成多模态表征。方法也很简单，</p>
+
+<p>在NoteLLM的prompt基础上引入了图像表征占位。是placeholder, 后面会使用从原始图像中提取的vision embedding代替。</p>
+
+<center><img src="/images/2025/IMAG2025010320.png"></center>
+
+
+<p>具体而言，先使用上述prompt过tokenizer后得到text embedding。然后text embedding中占位符对应的word embedding使用vision encoder(例如CLIP/BLIP等)经过Connector(MLP层)得到的visual embedding来替换，形成多模态表征序列。然后使用LLMs处理该多模态表征序列，得到最后的last hidden states作为note的多模态表征。然后使用和NoteLLM一样的共现item pairs进行对比学习预训练。如下所示，和NoteLLM是一样的。</p>
+
+<center><img src="/images/2025/IMAG2025010321.jpeg"></center>
+
+
+<p>但这个简单的改造会面临的问题在于：LLMs在端到端训练中倾向于忽视图像信息，被文本信息主导。为此，文章提出2种方法：包括：① 从prompt的视角区分“文本信息”和“图像信息”，其实就是优化prompt，称为mICL(multimodal in-context learning)；② 在LLM接入下游I2I任务的输出端引入late fusion机制，在结构上显式地让原始图像信息发挥更大作用。整体架构图如下：</p>
+
+<center><img src="/images/2025/IMAG2025010322.jpeg"></center>
+
+
+<h2>mICL</h2>
+
+<p>首先是mICL，将prompt改造成如下格式，和NoteLLM的主要差异点是接入下游的时候有2个表征节点，新增的，因为Causal attention机制，这个节点仅提炼了前面的图像表征信息n_i<sup>v</sup>；另一个是整个prompt节点，即prompt尾巴处，提取了文本和图像多模态表征n_i<sup>m</sup>。这两个表征在下游I2I建模时都会发挥作用，以保留图像的信息。</p>
+
+<center><img src="/images/2025/IMAG2025010323.png"></center>
+
+
+<h2>Late Fusion</h2>
+
+<p>接着是Late Fusion机制：为图像表征和多模态表征都设置了门控融合机制，来自适应融合原始vision encoder的输出v和上述图像表征和多模态表征。例如图像表征如下，其中v是visual encoder(如BLIP/CLIP等)的原始表征，n_i<sup>v</sup>是上述经过LLM后的图像表征。二者通过门控机制融合得到\hat{n}_i^{v}。同理，多模态表征节点n_i<sup>m</sup>，也和v进行门控融合。</p>
+
+<center><img src="/images/2025/IMAG2025010324.jpeg"></center>
+
+
+<p>图像表征节点和多模态表征节点，分别过对比学习损失来建模。</p>
+
+<center><img src="/images/2025/IMAG2025010325.jpeg"></center>
+
+
+
+
+<center><img src="/images/2025/IMAG2025010326.png"></center>
+
+
+
+
+<center><img src="/images/2025/IMAG2025010327.png"></center>
+
+
+<p>从实验部分，</p>
+
+<ul>
+<li><p>MTomato-Base：MTomato是小红书自研的基于LLaMA 2的LLM，配合vision encoder CLIP ViT-B进行实验。</p></li>
+<li><p>MQwen-Base：使用Qwen Chat作为LLM，vision encoder也是用的CLIP ViT-B进行实验。</p></li>
+<li><p>MQwen-bigG：使用Qwen Chat作为LLM，vision encoder替换为ViT-bigG。</p></li>
+</ul>
+
+
+<p>LLM大部分都是采用7B左右的，效果来看 MQwen-bigG>MQwen-Base>MTomato-Base，说明LLM和vision encoder都很重要。mICL和late fusion通过放大vision encoder的作用，都能起到一定作用。</p>
+
+<center><img src="/images/2025/IMAG2025010328.jpeg"></center>
+
+
+<p>NoteLLM-2和NoteLLM的差异：</p>
+
+<ul>
+<li><p>prompt组织微调任务的输入：NoteLLM引入了[EMB]特殊标记来提炼文本模态表征、NoteLLM-2引入了[IMG-EMB]图像模态和整体多模态特殊标记来提炼图像表征和多模态表征，这些特殊标记会用于下游推荐系统任务微调；</p></li>
+<li><p>协同信号微调：微调任务都使用了共现笔记对，配合生成对比学习目标进行训练。此外，NoteLLM引入了话题标签和类目生成辅助目标共同引导[EMB]的学习；NoteLLM-2专注LLM和视觉编码器的协同，基于上述两个特殊标记引入两个Loss，通过late fusion机制优化LLMs对视觉信息的关注。</p></li>
+</ul>
+
+
+<h1>总结</h1>
+
+<p>基于上述工作，我们可以大致窥探出LLMs在搜广推上应用的范式：</p>
+
+<ul>
+<li><p>借鉴LLMs的架构，不用LLMs的预训练权重，此时尽可能保留原始海量的曝光日志数据，通过组织输入样式和ID类特征，自回归的训练大模型，有可能达到推荐系统领域的scaling，这种方法个人认为短期来说上限更高，但难度更大，对应用场景、用户行为频次、供给丰富性等，都有很高的要求，现阶段能真正能落地的很少。代表性工作是GRs。</p></li>
+<li><p>借鉴LLMs的架构和预训练权重，输入模态以文本为主，无法直接输入ID等，需要下游推荐任务的微调才能真正发挥价值。由于有预训练权重的存在，数据效率更高，如何设计好的下游微调任务成为了成败的关键。为了达到更好的微调，这里面需要做两个方面工作：① 输入数据如何适配LLMs；② 用什么目标来微调。借鉴字节和小红书等内容化平台的经验，输入数据适配通常配合prompt+特殊标记，通过特殊标记作为预训练LLMs和下游推荐任务的桥梁；在微调目标选择上，要么有显式的共现关系，类似NoteLLM和NoteLLM-2中的共现item对，通过对比学习微调；要么直接基于自回归目标，如HLLMs中结合判别式和生成式自回归目标。i2i方法有一定信息损失，在I2I推荐任务中可能表现不错，但非通用方法。在数据规模足够的场景下，自回归方法更加通用一些，适配的任务可能更多。</p></li>
+</ul>
+
+
+<h1>References</h1>
+
+<p>GRs | Zhai J, Liao L, Liu X, et al. Actions speak louder than words: Trillion-parameter sequential transducers for generative recommendations[J]. arXiv preprint arXiv:2402.17152, 2024.</p>
+
+<p>HLLMs | Chen J, Chi L, Peng B, et al. HLLM: Enhancing Sequential Recommendations via Hierarchical Large Language Models for Item and User Modeling[J]. arXiv preprint arXiv:2409.12740, 2024.</p>
+
+<p>NoteLLM | Zhang C, Wu S, Zhang H, et al. NoteLLM: A Retrievable Large Language Model for Note Recommendation[C]//Companion Proceedings of the ACM on Web Conference 2024. 2024: 170-179.</p>
+
+<p>NoteLLM-2 | Zhang C, Zhang H, Wu S, et al. NoteLLM-2: Multimodal Large Representation Models for Recommendation[J]. arXiv preprint arXiv:2405.16789, 2024. ‍</p>
+
+<p>‍</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Hulu视频广告系统中的算法实践]]></title>
+    <link href="https://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms/"/>
+    <updated>2024-07-19T14:40:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://www.infoq.cn/article/ko9yxouspj4kuoh9jut4">https://www.infoq.cn/article/ko9yxouspj4kuoh9jut4</a></p>
+
+<h1>概述</h1>
+
+<h2>Hulu 的广告产品</h2>
+
+<p>首先介绍一下 Hulu 以及 Hulu 的广告产品形态。</p>
+
+<p>Hulu 是一家美国的提供专业视频点播与直播的服务平台，成立于 2006 年，目前由迪士尼控股，拥有近 3000 万付费订阅用户，是全美用户数量增长最快的流媒体平台。</p>
+
+<p>① 产品形态：点播，直播，回看等；</p>
+
+<p>② 广告形态：以视频流中的 15 秒、30 秒的视频广告短片为主；</p>
+
+<p>③ 广告特点：</p>
+
+<ul>
+<li><p>以品牌类广告为主，品牌类广告看重长期效果，品牌的曝光度，用户认知等等；</p></li>
+<li><p>采用 CPM ( Cost Per Mille，千次展示 ) 方式计费，即无论用户是否点击，按照展示次数计价；</p></li>
+<li><p>以担保式广告订单为主，广告主希望其品牌曝光有一定量的保障，例如，某品牌希望在指定地区给指定用户群投放指定的次数；</p></li>
+<li><p>质量要求非常高，包括清晰度、创意、制作的精良程度等等。</p></li>
+</ul>
+
+
+<center><img src="/images/2024/IMAG2024071901.png"></center>
+
+
+
+
+<!--more-->
+
+
+<h2>核心算法问题</h2>
+
+<p>上面简单介绍了 Hulu 和 Hulu 的广告产品形态，接下来介绍下广告系统中我们主要面对的核心算法问题有哪些，以及算法发挥的主要作用。</p>
+
+<p><strong>广告生态系统有三个核心要素：广告主，用户，媒体方 ( Hulu )。每个要素都有自己的优化目标。</strong></p>
+
+<h3>广告主：</h3>
+
+<p>广告主的核心优化目标是广告的投放效率、有效性，以及 ROAS ( Return-On-Ad-Spend，广告支出回报率 )，算法的主要应用为：</p>
+
+<p>① 广告定向：使用机器学习算法进行受众定向、基于上下文的定向、lookalike 定向等；</p>
+
+<p>② 订单及价格优化：给广告主一些订单定向条件及价格的建议，使其在 Hulu 上更好的进行订单的购买和投放；</p>
+
+<p>③ 转化率优化：越来越多的品牌类的广告主也开始在意短期或者长期的转化率，使用机器学习方法提高转化率，把正确的广告投给正确的用户；</p>
+
+<h3>用户：</h3>
+
+<p>对于用户的核心优化目标是优化用户体验，尽可能减少广告对用户的干扰，给用户更有连贯性的观看体验，算法的主要应用为：</p>
+
+<p>① 个性化广告：给用户推荐更感兴趣，更相关的广告</p>
+
+<p>② 情景式广告：使用 AI 技术进行图像音频的识别、广告创意的生成，为用户带来浸入式广告体验</p>
+
+<p>③ 个性化频次控制：为用户提供个性化频次控制，避免重复及过量广告为用户带来的反感</p>
+
+<h3>媒体方（Hulu）：</h3>
+
+<p>最终的优化目标：广告收入最大化，吸引更多的广告商和用户；与此同时我们也会进行生产环境的工作效率优化，算法的主要应用为：</p>
+
+<p>① 库存预估：这是在担保式广告里面是一个必不可少的环节，在售卖广告以及做广告预算时发挥重要作用</p>
+
+<p>② 广告流量匹配：对广告订单与用户流量进行匹配，保证担保式广告能够按时按量且均匀的进行投放</p>
+
+<p>③ 定价策略优化：根据流量的热门程度及售卖压力，进行动态的定价，让整个系统得到一个收入的最大化。</p>
+
+<p>下图总结了在 Hulu 的视频广告系统中的 <strong>核心算法问题</strong>，也是我们研究员每天在做的事情：</p>
+
+<center><img src="/images/2024/IMAG2024071902.png"></center>
+
+
+<p>① 广告定向，涉及到：</p>
+
+<ul>
+<li><p>预估模型：例如用户标签的补全，构建 lookalike 模型等等</p></li>
+<li><p>主题模型：使用无监督方式挖掘用户属性</p></li>
+<li><p>图像识别技术：识别视频内容中物体、场景、氛围等等，投放上下文相关视频广告</p></li>
+</ul>
+
+
+<p>② 库存预估，涉及到：</p>
+
+<ul>
+<li>时序预测算法：库存预估一般被建模成时序预测问题</li>
+</ul>
+
+
+<p>③ 流量匹配，涉及到：</p>
+
+<ul>
+<li><p>凸优化：使用凸优化进行离线流量匹配</p></li>
+<li><p>自动化控制理论 ( PID Controller )：使用自动化控制理论进行线上动态调整</p></li>
+</ul>
+
+
+<p>④ 转化率优化，涉及到：</p>
+
+<ul>
+<li><p>CVR 预估模型</p></li>
+<li><p>Casual Inference ( 因果推断 )：使用因果推断，得到一个更加公正、有效的指标来评估转化是否有效。</p></li>
+<li><p>Bandit/增强学习：使用 Bandit 以及增强学习的方式来解决广告冷启动的问题</p></li>
+</ul>
+
+
+<p>⑤ 程序化交易广告，涉及到：</p>
+
+<ul>
+<li><p>RTB ( Real time bidding ) 策略研究</p></li>
+<li><p>流量预估/CVR 预估/投放节奏控制</p></li>
+</ul>
+
+
+<p>⑥ 用户/广告体验分析，涉及到：</p>
+
+<ul>
+<li><p>统计理论</p></li>
+<li><p>Casual Inference ( 因果推断 )</p></li>
+</ul>
+
+
+<p>⑦ 价格机制设计，涉及到：</p>
+
+<ul>
+<li><p>博弈问题</p></li>
+<li><p>增强学习</p></li>
+</ul>
+
+
+<h1>核心业务场景中的算法实践</h1>
+
+<p>由于篇幅有限，这里着重讲一下在三个比较核心的业务场景下，算法在 Hulu 广告系统中的实践与落地。</p>
+
+<h2>1. Ad Targeting 广告定向</h2>
+
+<center><img src="/images/2024/IMAG2024071903.png"></center>
+
+
+<p>广告定向在品牌类广告中，是最最重要的一个环节。</p>
+
+<p>在 Hulu 的场景下，主要有三种类型的广告定向：</p>
+
+<p>① 上下文相关：例如用户用的设备，在什么位置，在哪个频道，看什么样的视频内容，插播广告点前后的视频内容是什么情景等等。</p>
+
+<p>② 用户相关：例如用户年龄性别、用户基本属性以及根据用户历史行为挖掘出来的属性等。</p>
+
+<p>③ 用户广告交互相关：</p>
+
+<ul>
+<li><p>Remarketing ( 再营销 )：例如投放广告给最近访问过广告商网站的用户，为他加深品牌印象；</p></li>
+<li><p>Look-alike Targeting ( 相似访客定向 )：投放广告给与种子用户相似的受众，扩大受众人数，以及挖掘具有潜能的用户。</p></li>
+</ul>
+
+
+<p>下面分别介绍一下针对这三种类型的广告定向使用到的核心算法：</p>
+
+<center><img src="/images/2024/IMAG2024071904.png"></center>
+
+
+<h3>a. 用户相关定向：</h3>
+
+<p>我们构建了用户画像系统作为用户定向的基础。底层是一个核心用户平台，负责用户数据的管理，版本控制，每天的 ETL 等等。注入的数据来自三种数据源：</p>
+
+<p>① 来自第三方数据平台的用户标签、属性，</p>
+
+<p>② Hulu 自己本身的一些标签，这里有两类工作：</p>
+
+<ul>
+<li><p>第一类是工作是标签的补全，我们会用一些例如 XGBoost、DNN 的预测模型来对这些缺失标签的用户进行一个预估，得到用户具有哪些标签，以及概率是多少。</p></li>
+<li><p>第二类是无监督模式，我们从用户的历史行为以及其他属性中进行挖掘，挖掘出一些新的属性出来，会涉及聚类、主题模型、user2vec 的方式来生成用户的标签。</p></li>
+</ul>
+
+
+<p>③ 广告商提供的用户标签，针对这种标签最常用的就是进行 Lookalike 定向，我们会用机器学习的方式来进行预测，找到与种子用户相似的用户群体。</p>
+
+<h3>b. 上下文相关定向：</h3>
+
+<center><img src="/images/2024/IMAG2024071905.png"></center>
+
+
+<p>这里主要介绍一下 AI 在视频内容上下文情景广告中的应用。视频广告会插播在视频内容播放前以及播放中， 投放与视频上下文情节比较相关的广告，会减少广告对用户的干扰，举个例子：用户当前所看的是婚礼视频，如果此时投放的广告是珠宝广告，那就毫无违和感，甚至会激起用户的购买欲望。另外，我们需要探测视频中的的一些暴力血腥画面，在这些地方不适合投放广告。</p>
+
+<p>这个问题的核心是使用图像识别技术检测出视频每帧都出现了什么样的实体、情景以及氛围等。Hulu 结合业界的标准构建了自己的 Taxonomy 体系，分为情绪、物体、场景、位置以及声音几个大的分类。</p>
+
+<p>简要介绍一下图像检测大致流程：考虑到获取大量数据样本的人力物力成本较大，我们最开始会借助于公开数据集 ( 比如 Open Iamge、Places 365 等 )，使用 Inception V3、VGG 等模型去生成一些标签，接下来会根据 Hulu 的场景进行少量的人工标注，对模型进行 Finetune 以及使用多模型融合决定最终的标签。</p>
+
+<h3>c. 转化率优化：</h3>
+
+<center><img src="/images/2024/IMAG2024071906.png"></center>
+
+
+<p>虽然品牌类的广告点击率没有那么重要，但是越来越多的广告商开始和 Hulu 谈，我把我的转化数据给你，你帮我计算下我这次投放的转化率是多少。这就带来了另外一个问题，广告商最终还是希望优化自己广告的转化率，所以我们最近开始了这方面的研究。目前开展的研究是基于 Hulu 自己的广告的转化率优化，Hulu 在自己的视频里面也会放一些推广新剧的广告内容，例如一个 15 秒的预告，希望这些广告能投放给正确的用户，得到比较高的转化率。这个问题被建模成为 CVR 预估的问题，根据投放数据以及转化数据，通过机器学习来建模用户看到广告后的 7 天内、30 天内的转化率，再投放的时候把正确的广告投放给正确的用户。</p>
+
+<ul>
+<li>转化率优化中的特征 &amp; 模型</li>
+</ul>
+
+
+<center><img src="/images/2024/IMAG2024071907.png"></center>
+
+
+<p>特征主要分为三块：</p>
+
+<ul>
+<li><p>User related：基本的用户属性，如位置，活跃度，留存时间等，以及一些重要的历史行为，比如曾经看过哪些内容，搜索过哪些内容，收藏过哪些内容。</p></li>
+<li><p>Ad related：广告本身的属性，如行业、剧目本身的信息等等。</p></li>
+<li><p>User-Ad：用户这个广告看过多少次了，通过多次投放使用户加深印象。</p></li>
+</ul>
+
+
+<p>模型方面我们目前使用了 DIN + FM 模型进行建模，同时也在探索更好的模型优化。</p>
+
+<h3>d. 广告定向中不可忽视的问题：因果推断和共享账号</h3>
+
+<ul>
+<li>因果推断</li>
+</ul>
+
+
+<center><img src="/images/2024/IMAG2024071908.png"></center>
+
+
+<p>我们在评估广告转化率的时候，会考虑评估是否正确，广告是否有效，举个例子：假如有一群用户，不论你对不对他投放广告，他都会去买这辆车，如果把广告投放给这样的用户，最后评估广告的转化率的时候会评估的非常高，其实广告效果一般，因为你投不投他都会去买，其实是白白消耗了这次投放。这就需要引入 Casual Inference 作为评估指标，其核心思想是：评估这个用户看这个广告和不看这个广告的收益分别是怎么样，最后将两者之间的差作为评估指标，使用 Doubly Robust Estimator 进行建模。除此，更加重要的问题是怎么根据 Casual Inference 作为目标去进行转化率的优化，怎么找到这些广告增益最大的用户，然后把广告投放给这些用户。</p>
+
+<ul>
+<li>共享账号</li>
+</ul>
+
+
+<center><img src="/images/2024/IMAG2024071909.png"></center>
+
+
+<p>接下来是用户共享账号的问题，例如：一个账号，孩子晚上 8 点左右看动画片，妈妈晚上 10 点左右看综艺节目，爸爸周末看体育视频，妈妈使用该账号的时候，发现推荐的都是动画片，找不到自己喜欢看的内容。这个在推荐以及广告定向中都是非常重要的问题，例如有的广告商，希望这个体育类广告只推荐给家庭中的爸爸，如果是小孩和妈妈看是没有效果的。</p>
+
+<p>这个问题规划到三个方面来解决：</p>
+
+<p>① 探测这个账号背后有多少个虚拟用户</p>
+
+<p>② 给每个虚拟用户打上标签，预测他的行为模式</p>
+
+<p>③ 用户来到 app 的时候预估是哪个虚拟用户，推荐对应的广告和内容</p>
+
+<p>这个问题核心是一些聚类的算法和预估模型的问题，这也是我们目前正在解决的问题。</p>
+
+<h2>2. Inventory Prediction 流量预估</h2>
+
+<p>流量预估在担保式广告中是非常重要的环节，广告在售卖之前都要检查是否有足够多的库存余量卖给广告主，以保证售出的广告都能够保量完成投放。</p>
+
+<p>问题简单描述为：给定未来的一段时间，一些定向条件的组合，预估有多少广告流量库存。</p>
+
+<center><img src="/images/2024/IMAG2024071910.png"></center>
+
+
+<p>这个问题可以建模成时序预估的问题，通常有以下两个步骤：</p>
+
+<p>第一步：用时序预估模型来预估总的流量是多少；</p>
+
+<p>第二步：根据历史分布把流量分配到不同的排列组合，不同的维度上。</p>
+
+<ul>
+<li>Time Series Model</li>
+</ul>
+
+
+<p>我们目前尝试过以下三类模型：</p>
+
+<p>第一个是 ARIMA ( Autoregressive Integrated Moving Average model )，稳定时序预估中最常用的模型，第二个是来自 Facebook 的 Prophet 模型，第三个是 LSTM。</p>
+
+<p>ARIMA 作为最为直接简单的稳定时序预估模型，在我们的实验中，在短期时序的预估准确率很不错，但是对长期的预估相对来说就不那么稳定了。原因在于，以下一些因素都会影响到长期的广告流量时序数据：</p>
+
+<ul>
+<li><p>用户增长的因素</p></li>
+<li><p>季节性的因素</p></li>
+<li><p>每周的波动</p></li>
+<li><p>节假日和特殊事件</p></li>
+</ul>
+
+
+<p>Prophe 模型是专门为具有这几种特性的时序数据而设计的时序预估模型。</p>
+
+<center><img src="/images/2024/IMAG2024071911.png"></center>
+
+
+<p>Prophet 把时序数据拆成了三部分：趋势部分，周期性和季节性部分，节假日部分，每一部分会单独做预测模型，最后合到一起得到最终的预测结果。</p>
+
+<center><img src="/images/2024/IMAG2024071912.png"></center>
+
+
+<p>例如，上图为 Prophet 模型产生的几种因素的分解：左上角为趋势，左下角为节假日，右边为季度性，分别为每个月和每周的变化，可以观察到淡季和旺季的变化。目前，我们采用的是 Prophet 模型，在 Hulu 的广告流量预估问题上表现稳健。</p>
+
+<h2>3. Inventory Allocation 流量匹配</h2>
+
+<p>流量匹配在担保式广告的投放环节发挥着重要的作用，保证所有广告订单都可以按时按量并且节奏均匀的投放完成。</p>
+
+<center><img src="/images/2024/IMAG2024071913.png"></center>
+
+
+<p>流量匹配算法会分为以下几个步骤：</p>
+
+<p>第一步，把广告订单的投放目标拆分到每个小时，这个拆分会根据我们预估的流量和紧俏程度来进行分配；</p>
+
+<p>第二步，进行 Offline Solving，把问题建模成一个二步图匹配算法，然后使用优化算法进行压缩解的求解；</p>
+
+<p>第三步，进行线上调控，采用 PID ( Proportion Integration Differentiation ) 控制，根据真实的流量实时进行调控。</p>
+
+<p>第一个步骤比较简单，下面简单介绍一下第二、三步中具体用到的算法。</p>
+
+<center><img src="/images/2024/IMAG2024071914.png"></center>
+
+
+<p>在离线匹配中，我们把问题建模成一个二部图匹配问题。</p>
+
+<p>在广告中最主要有 SUPPLY 与 DEMAND 端的两个限制条件：上图中左边 SUPPLY 表示用户带来的流量，流量上会有一些标签，表示用户及广告位的属性，右边 DEMAND 表示广告商的订单，订单上也会有些属性，比如投给男性，或者某个地区的；SUPPLY 与 DEMAND 之间的连线表示这个广告位可以投放的广告。SUPPLY 端的限制条件为最多只有这么多的库存可以使用，DEMAND 端的限制条件为需要将每个广告订单都保量投放完成。</p>
+
+<p>之后可以根据二部图建模优化问题，求解目标是每个边的权重，表示该流量以多大的比例分配给某个广告订单。</p>
+
+<center><img src="/images/2024/IMAG2024071915.png"></center>
+
+
+<p>首先会将原始优化问题转化为拉格朗日对偶问题，求解得到对偶变量 αj​ 和 betaj​，表示的分别是广告的对偶变量和流量的对偶变量。根据最优解满足 KKT 条件，我们可以只将相对数量级较低的广告对偶变量 αj​ 记下来，提高存储效率，线上再根据 KKT 条件计算 betaj​ 和 xij​。αj​ 可以被看做各个订单重要程度影响因子，作为线上选择订单的权重。</p>
+
+<center><img src="/images/2024/IMAG2024071916.png"></center>
+
+
+<p>但是这里还是存在一个问题，这里全部都是用的预估的流量和订单来进行匹配，但实际上会发生一些变化。所以需要第三步，线上实时调控。第一可以保证适应真实的线上流量， 第二也可以进一步保证投放节奏的稳定性。一般使用 PID ( Proportion Integration Differentiation ) 控制技术，这是常用于机械、电气系统中的一种应用非常广泛的自动控制技术，分为比例调节、积分调节、微分调节这 3 项的调节，根据线上广告真实投放的快慢来调控接下来应该投放的速度。</p>
+
+<h1>作者介绍：</h1>
+
+<p>韦春阳，2012 年从北京大学硕士毕业后加入 Hulu，目前担任智能广告算法团队负责人。有 7 年的计算广告领域的从业经验，致力于利用机器学习、人工智能技术来推动 Hulu 广告业务的发展，负责包括精准广告定向、广告流量匹配、广告库存预估、广告转化率优化等项目。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[工业界推荐系统技术要点总结]]></title>
+    <link href="https://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary/"/>
+    <updated>2024-05-26T11:25:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/689894486">https://zhuanlan.zhihu.com/p/689894486</a></p>
+
+<p>工业界的推荐系统技术要点有很多，想从事推荐系统相关方向的同学都建议刷一刷。</p>
+
+<h1>多目标排序模型</h1>
+
+<p>回顾一下推荐系统的链路</p>
+
+<center><img src="/images/2024/IMAG2024052601.jpg"></center>
+
+
+
+
+<!--more-->
+
+
+<p>常见的交互指标</p>
+
+<center><img src="/images/2024/IMAG2024052602.jpg"></center>
+
+
+<p>排序模型做的事情</p>
+
+<center><img src="/images/2024/IMAG2024052603.jpg"></center>
+
+
+<p>多目标模型就是要预测多个目标</p>
+
+<center><img src="/images/2024/IMAG2024052604.jpg"></center>
+
+
+<p>预测概率和实际是否交互求交叉熵损失</p>
+
+<center><img src="/images/2024/IMAG2024052605.jpg"></center>
+
+
+<p>训练时通常会遇到类别不平衡问题，可以考虑做采样</p>
+
+<center><img src="/images/2024/IMAG2024052606.jpg"></center>
+
+
+<p>采样可能导致预估点击率偏高</p>
+
+<center><img src="/images/2024/IMAG2024052607.jpg"></center>
+
+
+<p>可以通过校准公式进行校准</p>
+
+<center><img src="/images/2024/IMAG2024052608.jpg"></center>
+
+
+<p>Multi-gate Mixture-of-Experts</p>
+
+<p>几个专家就是放几个神经网络</p>
+
+<center><img src="/images/2024/IMAG2024052609.jpg"></center>
+
+
+<p>进一步考虑对多个神经网络的输出进行加权</p>
+
+<center><img src="/images/2024/IMAG2024052610.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052611.jpg"></center>
+
+
+<p>可能会出现极化的现象</p>
+
+<center><img src="/images/2024/IMAG2024052612.jpg"></center>
+
+
+<p>可以通过dropout的方式来解决极化</p>
+
+<center><img src="/images/2024/IMAG2024052613.jpg"></center>
+
+
+<p>多目标有多个预估分数就可以有不同融合方式</p>
+
+<center><img src="/images/2024/IMAG2024052614.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052615.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052616.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052617.jpg"></center>
+
+
+<p>视频播放建模</p>
+
+<center><img src="/images/2024/IMAG2024052618.jpg"></center>
+
+
+<p>播放时长建模</p>
+
+<center><img src="/images/2024/IMAG2024052619.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052620.jpg"></center>
+
+
+<p>视频完播用回归或分类都可以</p>
+
+<center><img src="/images/2024/IMAG2024052621.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052622.jpg"></center>
+
+
+<p>完播率通常和视频时长有关，不能直接把预估的完播率⽤到融分公式</p>
+
+<center><img src="/images/2024/IMAG2024052623.jpg"></center>
+
+
+<p>通常做个调整再用到融分公式</p>
+
+<center><img src="/images/2024/IMAG2024052624.jpg"></center>
+
+
+<h1>排序模型的特征</h1>
+
+<p>用户画像</p>
+
+<center><img src="/images/2024/IMAG2024052625.jpg"></center>
+
+
+<p>物品画像</p>
+
+<center><img src="/images/2024/IMAG2024052626.jpg"></center>
+
+
+<p>用户统计特征</p>
+
+<center><img src="/images/2024/IMAG2024052627.jpg"></center>
+
+
+<p>笔记统计特征</p>
+
+<center><img src="/images/2024/IMAG2024052628.jpg"></center>
+
+
+<p>场景特征</p>
+
+<center><img src="/images/2024/IMAG2024052629.jpg"></center>
+
+
+<p>特征处理</p>
+
+<center><img src="/images/2024/IMAG2024052630.jpg"></center>
+
+
+<p>特征覆盖率的概念</p>
+
+<center><img src="/images/2024/IMAG2024052631.jpg"></center>
+
+
+<p>数据服务分三步</p>
+
+<center><img src="/images/2024/IMAG2024052632.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052633.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052634.jpg"></center>
+
+
+<h1>粗排</h1>
+
+<p>精排模型的线上推理代价大</p>
+
+<center><img src="/images/2024/IMAG2024052635.jpg"></center>
+
+
+<p>双塔模型牺牲准确性换计算量</p>
+
+<center><img src="/images/2024/IMAG2024052636.jpg"></center>
+
+
+<p>粗排的三塔模型</p>
+
+<center><img src="/images/2024/IMAG2024052637.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052638.jpg"></center>
+
+
+<p>三塔模型的推理</p>
+
+<center><img src="/images/2024/IMAG2024052639.jpg"></center>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[【DataFun】因果推断在微视激励和供需场景的应用]]></title>
+    <link href="https://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application/"/>
+    <updated>2023-12-27T16:16:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application</id>
+    <content type="html"><![CDATA[<center><img src="/images/2023/IMAG2023122701.png"></center>
+
+
+<h1>一、因果推断与激励算法</h1>
+
+<h2>1、业务背景与业务建模</h2>
+
+<p>首先简单地介绍一下腾讯微视的红包激励业务背景。与其他的产品和场景类似，在给定的预算之下，我们向腾讯微视的用户发放一些现金激励，希望通过现金激励最大化用户的次日留存和当天使用时长。现金激励的形式主要是以不定的时间间隔为用户发放不定数量和不定金额的现金红包。以上提到的 3 个“不定”最终由算法来确定。这三个“不定”也称红包激励策略的三要素。</p>
+
+<!--more-->
+
+
+<p>接下来讲一下不同的现金激励策略的抽象形式。第一种以红包序列的形式来表示策略，比如对红包序列进行编号，然后用 one-hot 的形式为每个 treatment 独立编号。它的优点是能够刻画更多细节，例如每一个红包之间的金额等细致的策略，以及相对应的效果。但是这必然会需要更多的变量来表示策略，策略的探索空间非常大，另外在进行策略的探索和择优时，也会需要更多的计算量。而第二种形式，也就是使用三要素的向量来表示策略，其形式更灵活，探索的效率也会更高，但是它确实会忽略了一些细节。第三种方式更数学一点，即红包序列直接变成一个关于时间 t 的函数，函数里的参数可以构成向量，从而表示策略。因果问题的建模和策略的表示，极大程度地决定了因果效应估计的准确性和效率。</p>
+
+<p>假设我们有了一个良好的策略抽象和向量表示之后，接下来要做的就是选择算法框架。在这里有三种框架。第一种框架在业界比较成熟，即使用因果推断结合多目标约束优化的方式来做策略的分配和优化。这种框架中，因果推断主要负责的是估计不同策略对应的用户核心指标，也就是我们所说的用户次日留存和时长的收益提升。估计之后，我们利用多目标的约束优化来做离线的预算策略分配以满足预算约束。第二种就是离线强化学习结合多目标约束优化方法。这个方法我个人认为是比较有前景的，主要原因有两个。第一个原因是在实际应用场景当中，策略非常多，强化学习本身是可以高效地进行策略空间探索的，同时，由于我们的策略是有依赖的，而强化学习可以建模策略间的依赖；第二个原因是因为离线强化学本质实际上是一个反事实估计（contrafactual estimation）的问题，其本身具有很强的因果属性。然而遗憾的是，在我们的场景当中曾经尝试离线强化学习的方法，但它在线上效果没有达到理想的效果。究其原因，一方面是我们的方法问题，另外一方面主要受限于数据。要想训练一个好的离线强化学习模型，需要数据中的策略分布足够广，或者叫策略分布的足够均匀。也就是说，我们使用的随机数据也好，或者是观测数据也好，希望能够尽可能地探索到更多的这种策略，并且分布的相对来说会均匀一些，这样才能够减少做反事实估计的方差。最后一种算法框架在广告场景当中比较成熟，我们通过在线强化学习方式做流量控制和预算控制。这种方法的优势是可以及时地、快速地响应线上的突发事件，同时对于预算的控制相对更加准确。在引入因果之后，我们做流量选择或控制的指标就不再是 ECPM 指标了，可能就是我们现在估计的次留和时长的一个提升量。经过我们一系列的实践尝试，最终选择了第一种算法框架，也就是因果推断结合多目标约束优化，原因是它更稳定且更可控，同时它对线上工程的依赖也更少。</p>
+
+<p>第一种算法框架的 Pipeline 如下图所示。首先离线计算用户特征，然后用因果模型去预估用户在不同策略下核心指标的提升量，也就是所谓的 uplift。基于预估的提升量，我们利用多目标优化来求解，从而分配最优策略。为了加速整个过程的计算，我们在结构化时，会提前对人群进行聚类，也就是说我们认为这一簇里边的人具有相同的因果，相应的，我们给同一簇人分配同样的策略。</p>
+
+<center><img src="/images/2023/IMAG2023122702.png"></center>
+
+
+<h2>2、策略假设与因果图</h2>
+
+<p>基于上述讨论，接下来重点讨论一下怎么做策略的抽象。首先来看我们如何抽象因果图。在红包激励场景中需要建模的因果，体现在多天与多个红包之间。因为前一个红包肯定会影响下一个红包是否要领取，因此它本质上就是一个 Time-Varying Treatment Effect 问题，抽象成时序因果图由如右图所示。</p>
+
+<p>以一天内多个红包为例，T 所有下标都代表的是红包的一个序号。此时的 T 代表的是当前红包的金额，以及距离上一个红包发放的时间间隔所组成的向量。Y 是用户的红包下发之后的当次使用时长，和次日留存的提升量。X 是截止到当前时刻观察到的混淆变量，例如用户的观看行为或人口属性等。当然还会有很多未观测的混淆变量，用 U 来表示，例如用户偶发的停留，或是偶发的停止领。一个重要的未观测混淆变量是用户的心智，主要包括用户对红包激励的金额的价值评估。而这些所谓的心智，是很难通过系统内的一些统计量或统计特征来表示的。</p>
+
+<p>如果以时间序列的形式去做建模红包策略会非常复杂，因此我们做了一些合理的简化。比如假设 U 只影响当前时刻的 T，X 和 Y，并且它只影响下一时刻的 U，即用户心智。也就是说它只会通过影响下一刻的价值评估或者心智来影响未来的 Y。但是即使做了一系列简化，我们也会发现整个时序因果图依然很稠密，从而很难做合理的估计。并且当使用 G-methods 的方法解决 time Varying Trend Effect 时，需要大量数据去训练，然而现实中我们得到的数据非常稀疏，所以很难在线上取得一个很好的效果。因此最终我们做了大量简化，得到右下图这样的叉状结构（Fork）。我们把所有当天的红包的策略做了一个聚合，它是由策略三要素（红包激励总金额、总时间、总个数）所构成的向量，用 T 来表示。X 是 T-1 时刻的一个混淆变量，也就截止到当天之前用户的历史行为和人口属性。Y 代表的是当天用户的使用时长，就是用户的次日留存或当次使用时长指标。虽然这种方法看起来忽略了很多细节，例如红包之间的相互影响。但从宏观的角度来说，这个策略更稳定也能更好衡量其效果。</p>
+
+<center><img src="/images/2023/IMAG2023122703.png"></center>
+
+
+<h2>3、策略表示与因果模型</h2>
+
+<p>基于上面讨论，接下来就是核心问题，也就是如何表示策略（treatment）。之前我们尝试了使用 One-Hot 对三要素向量独立编号，以及将三要素分开，用时间函数构造 multi-variable treatment。前面这两种策略表示方法比较好理解，接下来介绍最后一种方法。大家看上面这张图。我们分别构造了三要素关于 t 的正弦函数，也就是给定一个时刻 T，我们能分别得到金额、时间间隔和个数。我们用这些函数对应的参数作为新向量的元素，类似于策略三要素的表示。我们用函数的方式来表示策略的目的是期望保留更多的细节，因为前两种方法只能通过策略组合知道红包金额、发放间隔的平均值，而用函数可能表示得更细致。但是这种方式有可能引入更多的变量，使计算更加复杂。</p>
+
+<p>有了策略表示之后，就可以针对性地去选择因果模型来去估计因果效应。在用 One-Hot 表示 T 的三要素的形式下，我们采用 x-Learner 的模型对每个策略建模，并将总金额最小的策略作为基准策略，从而计算和评估所有策略的 treatment effect。在这种情况下，大家可能感觉到它的效率是非常低的，而且模型缺乏泛化性。因此我们进一步采用刚才提到的第三种策略表示，即用正弦函数要素的向量去构成一个 treatment。接下来用单个 DML 模型来估计所有策略相对于基准策略的效果。此外，我们还做了一个优化 DML，假设 y 是混淆变量和因果效应的线性加权，也就是 y 等于 treatment effect 加上混淆变量。这样就人工构造了向量要素之间的交叉项和高阶项。相当于构造了 polynomial kernel function 来引入非线性函数。在这个基础上 DML 相对于基准策略有了很大的提升。由右下图的分析可以发现，DML 模型花了更少的钱并且提高了 ROI，这意味着我们能够更高效地去利用资源。</p>
+
+<p>前面我们主要讨论了一些方法上的抽象和模型的选择，在实践过程当中，还会发现一些比较偏业务方面的问题，比如做 One-Hot 时 treatment 怎么办？这时候，我们做了一个逐批扩量的策略。首先通过策略三要素做种子策略，然后人工筛选和保留优质的种子之后，对它进行一个扩展。在扩展之后，我们会基于一段时间，比如先在上线的前两周分批地上线新的策略，并且保证每个策略的随机流量大小是一致的，或是可比的。在这个过程当中，确实会忽略时间因素的影响，并且不断替换效果较差的策略，从而把策略的集合丰富起来。另外，由于时间因素一定会影响随机流量的策略是否可比。因此我们构建了类似于时间片轮转的方法，保证其覆盖的时间片是一致的，从而消除时间因素对策略的影响，这样得到的随机流量就可以用来训练模型了。</p>
+
+<p>还有就是新的策略大概如何生成？一种简单的方法是用 grade search，或者做遗传算法，这些是比较常见的搜索的通用算法。另外我们可以结合了人工剪枝，比如剪去一些不可取的红包序列类型。还有一种方法是使用 BanditNet，也就是一种离线强化学习的方法去计算没见过的策略，即估计反事实（counterfactual）的效果的估计，然后用估计的值来做策略的选择。当然我们最终也需要用线上随机流量去验证的，原因是这种离线强化学习的方法，其方差大概率会非常的大。</p>
+
+<center><img src="/images/2023/IMAG2023122704.png"></center>
+
+
+<h2>4、策略问题与迭代</h2>
+
+<p>除了以上提到的问题，我们也还会遇到一些偏业务的问题。第一个问题是用户策略的更新周期是怎样的？是不是所有的用户策略都是频繁地更新会更好？对此，我们实践的经验是因人而异。例如高频用户的策略变化应该更缓慢一些。一方面是因为高频用户已经很熟悉我们的形态了，包括激励金额，如果红包金额剧烈的变化，一定会影响相应的指标。所以我们对高频用户其实是保持一个周更新的策略，一周更新一次；但是对于新用户来讲，更新周期是更短的。原因是我们对新用户了解很少，我们希望能够更快速地去探索合适的策略，并且根据用户交互情况快速响应做出策略变化。由于新用户的行为也很稀疏，所以在这种情况下，我们就会用天级别对新用户或者一些低频用户去做更新。另外，我们也需要对策略的稳定性做监控，从而避免特征噪声造成的影响，我们搭建的 Pipeline 如右图所示。这里我们会监控 treatment effect 是否稳定，同时也会对用户最终分配的策略进行天级别的监控，比如今天的策略和昨天策略差异有多大，包括金额和个数。我们也会对线上的策略定期的做快照，主要是为了去做 debug，同时也能够快速回放，从而保证策略的稳定。另外我们还会对小流量做实验，监控其稳定性，只有达到稳定性要求的小流量实验，才会被用于替换现成的策略。</p>
+
+<p>第二个问题是针对新用户以及一些特殊用户的策略是否为独立的？答案是确定的，比如新用户，我们会先对他进行一个较强的激励，而后激励强度随时间衰减。当用户进入正常的生命周期之后，我们才会对他进行常规的激励策略。同时，对于特殊的敏感人群，他们金额上会有限制策略，对此我们也会训练独立的模型去适应这类人群。</p>
+
+<p>第三个问题大家可能会问到，也就是因果推断在整个算法框架当中到底有多重要？从理论角度，我们认为因果推断是核心，因为它在激励算法中是带来很大的收益。相对于回归与分类模型来说，因果推断与业务目标一致，它天生就是面向 ROI 的，所以它会带来关于提升量的优化目标。但是要提醒大家的是，我们在做预算分配的时候，不能够为每一个用户都选择最优的策略，而且因果效应相对于个人来说是相对较小的。当我们做预算分配的时候，很有可能会把一些用户因果效应的差异消除了。在这种时候，我们约束优化会极大地影响策略效果。因此，在做聚类的时候，我们也尝试了更多的聚类方法，例如深度聚类 SCCL 方法获得了更好的聚类结果。我们也进行了一些深度因果模型的迭代，比如像 BNN 或 Dragonnet 等等。</p>
+
+<p>我们发现在实践的过程中，深度因果模型的离线指标确实有不错的提升，但是其在线上的效果还不够稳定，主要的原因是有缺失值的出现。同时我们也发现，特征的规划方法很影响深度学习线上模型的稳定性，所以最终我们还是会倾向于稳定的去使用 DML 方法。</p>
+
+<p>在激励场景的分享就这么多，接下来也请我们团队的另外两位同学和大家分享一下在供需调优场景的一些实践和理论的探索。</p>
+
+<center><img src="/images/2023/IMAG2023122705.png"></center>
+
+
+<h1>二、因果推断与供需调节</h1>
+
+<h2>1、业务背景与业务建模</h2>
+
+<p>接下来介绍一下腾讯微视在供需方面的一个业务背景。作为一个短视频平台，微视有许多个不同品类的视频。对于有时候不同观看兴趣的用户群体，我们需要根据不同的用户特征去合适地分配各个品类的曝光占比或者是库存占比，目标则是为了提升用户的体验和用户的观看时长，其中用户的体验可以根据 3 秒快划率指标来进行衡量，观看时长主要根据总的播放时长来去衡量。如何去调节视频品类的曝光占比或者库存占比？我们主要考虑的方式按比例去对一些品类进行增加或者减少。增减的比例是一个预设的数值。</p>
+
+<p>接下来我们需要通过算法解决如何决定哪些品类增，哪些品类减，去使得用户体验和观看时长可以最大化，同时还需要满足比如总曝光有限制的一些约束条件。这个地方总结了三个主要的建模思路。第一个是比较直接的想法，就是我们直接把增和减作为一个 0 和 1 的 treatment 变量，我们去估计它的因果效应，随后再进行一个多目标的约束优化，去得到一个最终的策略。第二种思路就对 treatment 建模得更精细一些。我们把 treatment 当作一个连续的变量，比如品类的曝光占比，就是一个 0 到 1 之间连续变化的变量。然后去拟合一个相应的因果效应的曲线或者因果效应函数，接下来再进行多目标的约束优化，最后得到最终的策略。可以注意到，刚刚提到的两种方法都是两阶段的方法。第三种思路，我们将约束条件带入到因果效应的估计当中，从而得到一个满足约束条件的最优策略。这也是稍后希望和大家分享的研究内容。</p>
+
+<p>首先还是先关注前两种建模的思路，有几个建模的要点需要注意一下。第一个点是，为了保证因果效应估计的准确性，我们需要划分人群，在每个人群上做二值 Treatment 或是连续 Treatment 的因果效应估计。刚刚郑老师也有提过分人群的方法，比如用  Kmeans 聚类，或者是一些深度聚类。第二点则是如何在非随机实验数据上评估模型效果。比如我们需要在不做 AB test 的情况下，离线评估一下模型的效果。关于这个问题，可以参考 PPT 上面索引的这篇论文中提到的一些指标，用来做离线的评估。第三点需要注意的是，我们应该尽可能考虑品类之间的关联和相互影响，比如相似品类之间的一些挤占的问题等等。如果能把这些因素纳入到因果效应的估计当中，应该可以取得更好的效果。</p>
+
+<center><img src="/images/2023/IMAG2023122706.png"></center>
+
+
+<h2>2、单人群 × 品类曝光占比调节策略</h2>
+
+<p>接下来我们就具体展开这几种建模思路。首先第一种建模方式就是定义一个 0 和 1 的 treatment，用来代表增加或者减少这两种干预的手段，可以参考左侧的简要因果图，这里 x 代表用户的一些特征，比如历史操作行为相关的统计特征，以及其他的用户属性等等。y 就是我们所关心的目标，也就是 3 秒快化率或者播放总时长。除此之外，还需要注意的是一些未观测的混淆变量，比如用户的偶发、快滑和退出，以及同一个用户可能实际上会有多个人在使用，这也是用户多重身份的一个问题。另外就是推荐策略的不断迭代和更新也会对观测数据构成影响，还有另外用户兴趣的迁移也是观测之外的。这些未观测的混淆变量，可能会对因果效应的估计造成一定程度上的影响。</p>
+
+<p>对于这样的建模方式，常见的因果效应估计方法都可以解决。比如可以考虑 T-Learner 或者是 X-Learner，或者是 DML，这些都可以进行因果效应估计。当然，这种简单的建模方式也存在一些问题，比如我们用二值 treatment 进行建模会太过于简化。另外，在这种方式之下，每一个品类是单独进行考虑的，没有考虑品类之间的相关性。最后一个问题就是我们整个问题里边没有考虑到曝光的顺序，以及内容的质量这些具体的因素。</p>
+
+<p>接下来再介绍一下第二种建模的思路。我们把所有品类放在一起考虑，比如我们有 k 个视频品类，令 treatment 是一个 k 维的原因向量。向量的每一个位置就代表一个品类，比如影视综艺或者 MOBA 赛事等，0 和 1 仍然是代表增加或者减少。这时候多维向量的 treatment 的因果效应估计可以通过 DML 算法来解决。我们通常是把全为 0 的 treatment 向量作为 control。这种方式虽然解决了各品类没有被单独考虑的问题，但是它依然存在一些潜在的问题。首先是品类过多时所带来的维度爆炸的问题，并且随着维度的增加，由于每个位置上都有 0 和 1 两种情况，所以潜在的排列组合数量会指数级增加，这些都会对因果效应估计的准确性造成干扰。另外，前面所提到的曝光顺序和内容等等这些因素也没有考虑到。</p>
+
+<center><img src="/images/2023/IMAG2023122707.png"></center>
+
+
+<p>分享完二值变量 treatment 的建模思路之后，接下来可以对 treatment 进行更精细，也更符合其本身特点的建模。我们注意到，曝光占比本身是一个连续的变量，因此我们用连续的 treatment 去进行建模会更加的合理。在这种建模思路之下，我们首先还是需要划分人群。对每个人群，我们对每个品类进行单独地建模，得到一个单人群*单品类的因果效应曲线。就像左图显示的这样，因果效应曲线代表的是不同品类占比对我们所关心的目标产生的影响。为了估计这样的因果效应曲线，我主要分享两种可行的算法，一个是 DR-Net，一个是 VC-Net，这两种算法都属于深度学习的范畴。模型的结构就像右图展示的这样。</p>
+
+<p>首先介绍一下 DR-Net。模型的输入 x 首先会经过几个全连接层，从而得到一个隐含的表示，叫做 z。DR-Net 采取了一种离散化的策略，它将连续的 treatment 离散成多个 block，然后每个 block 分别训练一个子网络来进行目标变量的预测。由于 DR-Net 采用了离散化的策略，所以它最终得到的因果效应曲线并不是严格连续的，但随着离散化的分段越细，最终的估计会越接近于连续的曲线。当然，随着理想化的分段越细，由此带来的就是更多的参数量以及更高的过拟合的风险。</p>
+
+<p>接下来再分享一下 VC-Net。VC-Net 一定程度上改进了 DR-Net 的缺点。首先 VC-Net 模型的输入还是 X，也是用户的特征。它首先也是经过几个全连接层之后得到一个隐含的表示 Z。但是在 Z 这个地方，首先会接一个预测 Propensity Score 的一个模块。在连续的 Treatment 条件下， Propensity 就是给定 X 条件下 Treatment t 的一个概率密度，也是图上所表示的 π。接下来我们看一下 Z 之后的网络结构，不同于 DR-Net 进行离散化的操作，VC-Net 采用的是一个变系数的网络结构，也就是 Z 之后的每一个模型参数，都是一个关于 t 的函数。我们这里提到的文献作者采用了基函数的手段，把每个函数表示成一个基函数的线性组合，也就这写的 θ（t）。这样一来，函数的估计也就变为了对基函数线性组合的参数估计。所以这样一来，模型的参数优化就不成问题了，同时VC-Net 所得到的因果效应曲线也是一条连续的曲线。关于 VC-Net 要求解的目标函数由几部分组成。一方面，它是由最后对目标的预测的平方损失构成，也就是图中的 μ。另一方面，它也由 propensity 的概率密度的对数损失来构成。除了这两部分之外，作者在目标函数里边还加入了一个叫做 targeted regularization 的惩罚项，由此可以得到双重稳健的估计性质。具体细节，感兴趣的朋友可以参见一下上面索引的 2 篇原论文，去获得更多的细节。</p>
+
+<center><img src="/images/2023/IMAG2023122708.png"></center>
+
+
+<p>最后，再为即将与大家分享的一篇我们的研究做个铺垫。我们注意到，各个视频品类的曝光占比是一个多维连续的向量。它之所以多维，是在于我们有多个视频品类，每个维度就代表一个视频品类。它之所以是连续的，主要就在于每个视频品类的曝光占比都是连续的，其取值都在 0 和 1 之间。同时还有一个很自然的约束条件，就是我们所有的视频品类的曝光占比加起来一定是等于 1。所以我们可以考虑这样一个多维连续的向量去作为 treatment。</p>
+
+<p>右图展示的向量就是这样的例子。我们的目标是找到最优的曝光占比，使得我们总播放时长最大化。在传统的因果框架上，算法很难解决这样一个多维连续并且待约束的问题。接下来分享一下我们对这样的问题做的研究。</p>
+
+<center><img src="/images/2023/IMAG2023122709.png"></center>
+
+
+<h1>三、带约束的连续多变量因果模型分享</h1>
+
+<p>MDPP Forest 这项工作是团队在研究供需问题的时候做的一个方法探索和问题的创新解决。我们团队当时发现，在面对如何解决为每个用户去分配最佳的视频类目曝光比的问题上，其他现有的常用方法都没有办法得到一个比较符合预期的结果。因此经过一段时间的尝试与改进，我们团队设计的方法能在离线上取得了不错的效果，然后与推荐进行合作，最后也取得了一定的策略收益。随后我们把这项工作整理成了论文，也有幸发表在了 KDD 2022 上。</p>
+
+<center><img src="/images/2023/IMAG2023122710.png"></center>
+
+
+<p> ## 1、背景与挑战</p>
+
+<p>首先介绍问题背景。在供需问题中，我们将短视频根据内容划分为不同类目，比如科普、影视、户外美食等。视频类目曝光比即指这些不同类目的视频各自所占一位用户观看的所有视频的比例。用户对不同类目的偏好有很大的差别，平台也往往需要因人而异地去确定每个类目的最优曝光比例。在重排序阶段，对各类视频的推荐加以控制。公司面临的一大挑战是如何分配最佳的视频曝光比，从而最大限度地延长每个用户在平台上的使用时长。</p>
+
+<center><img src="/images/2023/IMAG2023122711.png"></center>
+
+
+<p>这样一个问题的主要难点在于以下的三点。第一个就是短视频的推荐系统中，每个用户看到的视频和他自身的特征会有非常强的相关关系，这就是一个存在的选择性偏差。因此我们需要用因果推断相关的算法来消除偏差。第二个是视频类目曝光比是一种连续、多维并且带约束的 treatment。这样的复杂问题在因果推断和策略优化领域目前是没有非常成熟的方法的。第三是在离线数据上，我们并不能先验地知道每个人的真实最优曝光比，因此很难去评估这个方法。在真实环境下，它只是推荐中的一个子环节。最终实验结果也不能判断这个方法对它本身的计算目标的准确度。因此，这个场景的问题我们很难去准确地评估它。我们会在后续介绍我们是如何进行效果评估的。</p>
+
+<center><img src="/images/2023/IMAG2023122712.png"></center>
+
+
+<h2>2、问题定义</h2>
+
+<p>我们先把数据抽象成一个统计学中的因果图。其中 X 是用户特征，包含了许多同时影响当前视频曝光以及用户时长的混淆变量；T 是视频类目曝光比，它也是 treatment，在这个问题中具有比较高的维度，例如它是一个 20 维的向量。Y 是用户的观看时长，也就是任务目标的响应。我们建模的目标就是在特定的用户特征 X 下，给一个高维的最优视频类目曝光比，从而使用户的观看时长期望达到最大。这个问题看似可以简单地用一个因果三元图来表示它，但有一个很大的问题，也就是前面提到的，我们的 treatment 是多个类目的曝光比，它是由品类曝光占比构建的多维连续取值且向量和为 1 的向量。这样的问题就比较复杂了。</p>
+
+<center><img src="/images/2023/IMAG2023122713.png"></center>
+
+
+<h2>3、方法简介 —— Maximum Difference Point of Preference (MDP2) Forest</h2>
+
+<p>对此，我们的方法也是基于因果决策森林（causal forest）的。一般的因果决策树只能解决具有一维离散值的 treatment 问题。而我们通过改进中间分裂准则函数的计算，在分裂的时候增加一些高维连续的信息，使它可以解决高维连续值并且带约束 treatment 的问题。</p>
+
+<center><img src="/images/2023/IMAG2023122714.png"></center>
+
+
+<h3>① 方法简介——连续问题</h3>
+
+<p>首先，我们解决的是连续 treatment 问题。如图中所示，T 对 Y 的影响是一条连续的曲线。我们先假设这是一条单调递增的曲线。对于数据中所有的 Treatment 取值，我们去遍历它，计算左右样本的 Y 均值，从而找到左边 Y 均值和右边 Y 均值差异最大的点，也就是平均因果效益最大的点。我们把这个点称为 Maximum Difference Point，也就是连续 Treatment 空间上效率最高的点，代表了 Treatment 能够显著地让 Y 发生改变。Maximum Difference Point 就是我们在单维度上想去得到的点。</p>
+
+<center><img src="/images/2023/IMAG2023122715.png"></center>
+
+
+<p>然而，我们刚才提到的方法只适用于单调递增的曲线。但事实上，大部分问题都没有那么美好，特别是曝光比的问题。在这个问题上，效应曲线一般来说是山形的，即先增后减。因为多推荐用户喜爱的视频，可以使得用户增加观看时长，但是这个类型推得过多了，整个视频的推荐就会变得非常单调乏味，并且还会挤占其他用户喜欢的视频类型的曝光空间。所以曲线一般来说是山形的，也有可能是其他形状的。为了适应任意形状的T 曲线，我们需要进行积分的操作，也就是找值域区间进行累加。在累加后的曲线上，我们同样计算左右两边均值，以及两边均值之差最大的点，比如图里的五角星。这个点就可以称我们称为 maximum difference point of preference，也就是我们的 MDPP。</p>
+
+<center><img src="/images/2023/IMAG2023122716.png"></center>
+
+
+<h3>② 方法简介——高维问题</h3>
+
+<p>上面我们介绍了如何解决连续问题，而刚才所说的曲线只是一维的，对应单一的视频类目。接下来我们采用启发式维度遍历的思想去解决多维的问题。在计算分类得分的时候，我们采用启发式的思想，将 K 个维度随机排序，在每个维度上去计算一个 D 指标的聚合，也就是进行求和的操作。得到 D* 作为一个高维信息熵，再来考虑约束，约束是所有的 MDPP 之和为1。这里我们要考虑下面两种情况，一种是如果 K 维度遍历完以后，它 MDPP 之和也没有达到 1。针对这个情况，我们会把所有的 MDPP 之和加起来对它们去做归一化，拉到 1。第二个情况是，如果我们只遍历了 K’ 维小于 K 维，但MDPP 之和就已经达到 1。对此，我们将停止遍历，并且把 MDPP 设置为剩余的“资源量”，即 1 减之前已经算出来 MDPP 值之和，这样就可以去考虑到约束。</p>
+
+<center><img src="/images/2023/IMAG2023122717.png"></center>
+
+
+<p>另外，我们也会在上述的树结构上引入 forest，因为它主要有两大意义。第一个是我们传统的 bagging 集成思想，它可以用多个学习器增强模型的鲁棒性。第二个是在维度遍历中，每次节点分裂只会计算到 K’ 个维度，有些维度没有被算进去。为了使每个维度都能以平等的机会参与到分裂中，我们需要建立多棵树。</p>
+
+<center><img src="/images/2023/IMAG2023122718.png"></center>
+
+
+<h3>③ 方法简介——算法加速</h3>
+
+<p>另外还有一个问题，由于算法包含了三层的遍历，所有树模型都需要特征值的遍历，还有额外引入的维度遍历以及搜寻 MDPP 的遍历。这样的三层遍历使得效率非常低下。因此我们对特征值的遍历和 MDPP 遍历用了加权分位数图的方法，只在分位数点去计算相应的结果，这样就可以大大地降低算法复杂度。同时，我们也找到了这些分位点作为“累加值域”的边界点，这样可以大大减小计算量和储存量。假设有 q 个分位点，我们只需要计算 q 次得出每段分位区间内的样本数量和 y 的均值，这样每次计算两边均值之差 d 的时候，只需要把 q 值分为左边和右边两部分，分别把每一个区间里的均值做一个加权求和就可以了。我们不需要再重新计算分位点左右两边所有样本的均值。我们下面进入实验部分。</p>
+
+<center><img src="/images/2023/IMAG2023122719.png"></center>
+
+
+<h2>4、实验设计</h2>
+
+<h3>① 实验设计-Metric</h3>
+
+<p>我们实验评估本质上就是一个策略评估问题，因此我们引入了策略评估相关的指标。第一个是 Main Regret，它用于衡量整体策略的收益和理论最优收益之间的差距。另一个是 Main Treatment Square Error，用于衡量多维 Treatment 下每一个 Treatment 维度的预估值和最优值之间的差距。这两个指标都是越小越好的。然而，定下这两个评估指标带来的最大问题就是我们怎么去确定最优值。</p>
+
+<center><img src="/images/2023/IMAG2023122720.png"></center>
+
+
+<h3>② 实验设计-对比方法</h3>
+
+<p>介绍一下我们的对比方法。首先是因果推断中的两种常用方法，一个是具有完备统计学理论的 DML，还有另外是网络模型 DR-Net 和 VC-Net。这些方法只能处理一维的问题，但在本文的问题上，我们进行了一些调整去应对多维问题，也就是先计算每一维的绝对值，再去做归一化。还有下面两篇论文中策略优化的方法，我们称之为 OPE 和OCMD。这两篇文章中有陈述其方法适用于多维问题，但是同时也指出，当维度过多时，这些方法就很难生效了。</p>
+
+<center><img src="/images/2023/IMAG2023122721.png"></center>
+
+
+<h3>③ 实验设计-模拟数据集</h3>
+
+<p>为了简单直接地去比较模型效果，我们模拟了真实世界的问题，生成了一个简化版的模拟数据集。特征空间 x 表示 6 个维度的用户特征和 2 个行为特征。还有对于不同特征的样本，我们先假定它的最优策略。如图所示，比如一个年龄小于 45 岁，教育程度大于 2，有一个行为特征大于 0.5 的用户，他在 6 个视频类目上最优。借助左边公式，先随机生成一个对用户的曝光策略，接下来算出曝光策略和真实最优策略之间的一个差距，以及模拟用户时长是多少。如果策略越贴近用户的最优策略，用户的时长 y 就会越长。这样我们就生成了这么一个数据集。这个模拟数据集的好处就是我们直接假设了最优值，非常方便评估，另外一个是数据比较简单，可以方便我们分析算法的结果。</p>
+
+<center><img src="/images/2023/IMAG2023122722.png"></center>
+
+
+<p>来看看模拟数据集上的实验结果，对于刚才我们提到的那类人群，提供了各种方法计算出对应的 treatment 的均值。第一行是理论最优，第二行是我们 MDPP forest，第三行基于 MDPP forest 在分裂准则里面又加了一些惩罚项的方法。可以看到我们方法和理论最优的差距都会非常小。另外的其他几种方法就不是特别极端，而是比较均匀。另外，从右图 MR 和 MTSE 来看，我们的两种方法也具有非常明显的优势。</p>
+
+<center><img src="/images/2023/IMAG2023122723.png"></center>
+
+
+<h3>④ 实验设计-半合成数据集</h3>
+
+<p>除了模拟数据集之外，我们也根据真实的业务数据构造了一个半合成数据。数据来自腾讯微视平台。Xi 表示用户的 20 维特征，treatment ti 表示多维的视频类目曝光比构成了10 维向量， yi（ti）表示第 i 个用户的使用时长。实际场景的一个特点是，我们并不能知道用户真实的最优视频曝光比。所以我们根据聚类中心规则去构造函数，生成虚拟的 y 来代替真实的 y，从而使得样本的 y 具有更好的规律性。这里具体公式我就不再赘述了，有兴趣的同学可以看一下原文。为什么可以这样做呢？因为我们算法的关键是它要能够解决 x 和 t 之间的一些混杂的影响，也就是线上用户受到有偏策略的影响。为了去评估策略的效果，我们只保留了 x 和 t 而改变了 y，从而更好地对问题进行评估。</p>
+
+<center><img src="/images/2023/IMAG2023122724.png"></center>
+
+
+<p>在半合成数据上，我们的算法效果也明显更好，并且比模拟数据集上的优势会更加的大。由此说明了在数据复杂的情况下，我们 MDPP forests 算法是更加的稳定的。另外，我们在合成数据上看一下超参数，也就是森林的规模。在右下图我们可以看到，随着森林规模的增加，两种分裂准则处理下指标收敛的都比较好，带惩罚项的一个始终会更好一些，它在 100 棵树的时候达到比较好的效果，250 棵树的时候达到最优效果，再之后会有一些过拟合。</p>
+
+<center><img src="/images/2023/IMAG2023122725.png"></center>
+
+
+<h1>四、问答环节</h1>
+
+<h2>Q：为什么遍历曝光度超过 1 的时候，归一化是可以 work 的？</h2>
+
+<p>A：我的理解是这样，因为我们做的是一个曝光占比约束的优化，在这个过程当中，我们是一个相对值。我们在遍历的过程当中，是寻找最优的一个分裂点，找到应该优先给哪个品类曝光更多的比例。在这个过程当中，我们只要能够保证它是等比缩放的，就是可以的。</p>
+
+<p>我也是同样观点，是等比缩放就可以。因为 1 是一个强的约束限制，我们一开始算出来的肯定不完全为 1，会低一些或者高一些。如果多了很多，没有办法去让它达到强约束唯一的条件，也是比较自然地用到一个归一化的思考。因为我们考虑到各个类目之间相对大小关系。我觉得相对大小关系是比较重要的，而不是一个绝对值的问题。</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,395 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>【美团】数据驱动精准化营销在大众点评的实践 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2016/09/11/data-driven-precision-marketing">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(function () {
+  addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">【美团】数据驱动精准化营销在大众点评的实践</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2016-09-11T23:25:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>精准化营销一直以来都是互联网营销业务在细分市场下快速获取用户和提高转化的利器。在移动互联网爆发的今天，数据量呈指数增长，如何在移动和大数据场景下用数据驱动进行精准营销，从而提高营销效能，成为营销业务部门的主要挑战之一，同时也是大数据应用的一个重要研究方向。本文通过数据体系架构和技术实现案例，分享美团大众点评数据应用团队在这个方向上的一些尝试和实践经验。</p>
+
+<h2>总体框架</h2>
+
+<p>在介绍数据体系和框架前，为了方便大家理解，先简单阐述一下O2O营销的基本组成：O2O营销是由营销发生的渠道（站内，站外）与营销的主题业务（流量，交易）两个维度组成的，其中产生了多种营销的形态，如精准化用户营销活动、DSP的精准投放、渠道价值排名和反作弊等，数据分析和挖掘在这些环节都能发挥很大的价值。本文主要阐述站内的精准化用户营销活动。</p>
+
+<p>一个站内用户运营活动的生命周期大概可以归纳为：确定目标、选取活动对象、设计活动方案、活动配置与上线、线上精准营销与动态优化以及效果监控与评估六个环节。如下图所示。</p>
+
+<center><img src="/images/2016/IMAG2016091101.png"></center>
+
+
+
+
+<!--more-->
+
+
+<p>在这个周期中，数据都有巨大的发挥空间与价值。我们在项目启动后与业务充分沟通，了解其业务痛点，确定一期主要尝试从数据上帮助运营和财务同事解决以下几个问题：</p>
+
+<p>① 营销活动前：确定目标和选取活动对象</p>
+
+<p>② 营销活动中：效果监控和跟踪；用户和商户端策略的输出</p>
+
+<p>③ 营销活动后：效果评估和优化建议</p>
+
+<p>对于①的目标确定，以前更多是拍脑袋决定，缺乏一套稳定的分析框架和模型。而活动对象，包括用户和商户/团单选取，需要业务和BI同学每次人工跑数据得出，效率低下。</p>
+
+<p>而对②和③，更是缺乏一套公司的营销监控平台，时常出现预算花超不可控的情况。活动结束后，效果数据也是各个业务方自己给出，口径不一致导致难以整体评估效果。</p>
+
+<h2>系统架构</h2>
+
+<p>基于上述的业务场景和需求，我们用分层的金字塔架构设计了一套营销数据系统和服务，有效满足了业务的诉求并具有很好的平台扩展性。</p>
+
+<center><img src="/images/2016/IMAG2016091102.png"></center>
+
+
+<p>最底层是我们的数据仓库和模型层，这里又大致可以分为三个主题：画像，运营和营销，流量。这三个都是运营活动必不可少的数据组成部分。</p>
+
+<p>对于画像，我们的做法是部分自主建设，同时集成业务方如搜索、广告和风控团队开发的画像标签，形成统一的画像宽表。目前我们的用户标签体系覆盖了包括：基本信息、设备信息、消费浏览以及特征人群等5个大类的180多个标签。在标签的实现上，我们也秉承从需求出发的原则逐步迭代，从最初的以统计和基本的营销模型如RFM为主，到现在在潜在用户挖掘和用户偏好上开始探索使用机器学习的挖掘方法。</p>
+
+<p>在营销运营集市上，我们与财务和支付系统协作，开发了一套公司预算流水号系统。运营人员在配置活动时，从财务申请预算流水号，并在优惠后台配置与对应活动关联，用户享受优惠的每一笔订单都会在业务表中进行打点，做到在最细粒度上的预算监控。同时在用户、商品等维度建模后，形成了营销交易评估的指标体系：新用户成本，新老用户分布，7天、30天购买留存等。</p>
+
+<p>活动评估的另一个维度就是流量：活动页的点击、转化漏斗、不同渠道来源等指标是运营人员无时无刻不关心的，这部分模型作为数据中心数据仓库中核心的一环。我们参考了其他公司的做法，建立了自己的PV、UV、Session以及路径树转化等模型，可以很好地满足运营需求。</p>
+
+<p>在数据仓库之上，我们建立了数据服务层。在统一使用公司高性能的RPC框架之上，针对不同的应用选择了差异化的数据存储和查询引擎。比如在画像服务中，需求是满足线上业务系统的实时访问需求，要求毫秒级的并发和延迟，因此我们选用了Redis作为存储。而相较之下，分析类产品对并发和延迟要求相对较低，但对数据在不同维度上的聚合操作要求较高，在对比了Kylin、ElasticSearch（以下简称ES）、Druid后，我们决定使用ES作为存储和查询引擎，主要有2个理由：一是我们有留存等指标，需要重刷数据，而对于Kylin来说，无法使用其提供的自动增量cube机制，重建数据代价较大，同时ES在同样的维度上，空间膨胀度上比Kylin少近一半；二是ES整个系统设计和架构非常简洁，运维方案简单，也有专门的工具支持，对于当时没有专职运维的开发团队来说是一个捷径。</p>
+
+<p>最上层是数据产品和应用，针对前面提到的运营活动的不同阶段提供数据平台和工具：</p>
+
+<ul>
+<li><p>人群分析平台（Hoek）：用户可以通过选择画像服务提供的不同的标签组合快速创建人群包，创建的人群包可以提供给其他不同业务和形态的营销工具，如push，促销工具等。</p></li>
+<li><p>智能发券引擎（Cord）：通过配置后台和Hoek平台，运营人员就可以完成定向活动受众和策略的配置，而无需开发接入。具体细节在后面的案例分享中再详细介绍。</p></li>
+<li><p>云图/星图：完成活动效果数据查询和分析的工具平台，构建基于ES的查询引擎，提供多维度的实时指标查询。</p></li>
+</ul>
+
+
+<p>除了系统化的建设外，在运营活动的迭代中，我们与业务合作，进行了大大小小20多个专题分析，产出了包括闪惠预算动态分配、闪惠立减梯度优化、用户价值分以及免费吃喝玩乐选单等主题模型。帮助业务提高预算使用率30%，同时更好地评估拉新带来的用户价值。</p>
+
+<p>整体的架构最终是为精准化营销服务，下面就结合两个案例具体介绍。</p>
+
+<h2>案例分享</h2>
+
+<h3>外卖潜在用户挖掘</h3>
+
+<p>精准营销一个主要的方向就是潜在客户挖掘，特别是在点评这个平台上，目前已有包括美食、外卖、丽人、教育等近20个业务，如何在平台近一亿的活跃用户中挖掘垂直频道的潜在用户就成了精准化营销的一个很现实的问题。Facebook和腾讯的广告系统都提供类似的Lookalike功能，帮助客户找出和投放人群相似的用户群，其广告的点击率和转化率都高于一般针对广泛受众的广告。</p>
+
+<p>目前常用的潜在用户挖掘方案主要就是基于画像或者关系链的挖掘，我们团队从需求出发，结合点评的画像体系从关联规则、聚类和分类模型三个算法上进行了探索。</p>
+
+<p>未来我们除了在分类和聚类上进一步优化外，还计划利用点评好友关系，使用Spark的GraphX建立标签传播的算法进一步深挖高质量的相似用户。</p>
+
+<h3>微信红包精准优惠券引擎</h3>
+
+<p>另外一个精准营销的案例是智能发券引擎Cord，背景是点评会在微信群/朋友圈中用红包发各种优惠券，当好友来领券时，如何决定发哪个业务什么面值的券更容易转化。本质上是一个简化的推荐问题，我们也参照广告系统的架构设计了Cord引擎。主要包含分流模块（用于灰度发布和AB测试）、召回模块（负责从画像服务和优惠配置系统获取人和券的物料信息）、过滤模块（负责进行两者的匹配）、推荐模块（可以根据业务规则或者我们挖掘的策略对结果进行排序，返回給活动系统最合适的优惠券进行发放）。整个系统实现完全服务化和可配置化，外部的活动系统可以根据配置的开关启用或者在特殊场景下禁用Cord服务；而Cord内部，也可以根据配置中心的设置，动态调整推荐策略。在数据挖掘上，目前除了业务配置规则外，我们针对公司主流的运营方式，基于画像中的用户偏好和优惠敏感等标签进行综合打分，抽象了以GMV为目的和以拉新用户为目的的推荐策略。</p>
+
+<h2>总结</h2>
+
+<p>精准营销是目前大数据落地的一个公认的场景，但随着移动互联网和O2O的发展，这一领域也会有新的问题和挑战出现。结合我们这一年多的实践经验，团队也归纳了一套数据系统架构的设计原则：</p>
+
+<ul>
+<li><p>在数据架构和建设上，从需求出发，建立准确和易用的数据底层模型，统一指标体系和口径。</p></li>
+<li><p>在数据服务上，通过分层和SOA的思想，解耦与业务系统的逻辑。同时针对不同需求和场景选择适合的技术组件。</p></li>
+</ul>
+
+
+<p>展望未来，在数据上如何快速地进行挖掘模型的开发，在架构和产品上满足更多场景，让数据在营销上发挥更大的价值，是下一步的重点方向。</p>
+
+<h2>参考资料</h2>
+
+<p>[1]<a href="https://zhuanlan.zhihu.com/p/22326041">数据驱动精准化营销在大众点评的实践 - 美团点评技术团队</a></p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2016/09/11/data-driven-precision-marketing/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2016-09-11T23:25:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/engineering/'>Engineering</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a>, <a class='tag' href='/blog/tags/shu-ju-wa-jue/'>数据挖掘</a>, <a class='tag' href='/blog/tags/jing-zhun-ying-xiao/'>精准营销</a>, <a class='tag' href='/blog/tags/mei-tuan-dian-ping/'>美团点评</a></span>
+		
+    </p>
+    
+      
+         <div class="sharing">
+  
+  
+  
+</div>
+
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2016/06/08/neural-network-parameter-settings/" title="Previous Post:
+        神经网络模型中参数设置的一些经验">&laquo; 神经网络模型中参数设置的一些经验</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2016/09/22/hive-join-usage-guide/"
+        title="Next Post: 【简单之美】Hive JOIN使用详解">【简单之美】Hive JOIN使用详解
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://ibillxia.github.io/blog/2016/09/11/data-driven-precision-marketing/';
+        var disqus_url = 'https://ibillxia.github.io/blog/2016/09/11/data-driven-precision-marketing/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

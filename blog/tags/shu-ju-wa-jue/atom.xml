@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 数据挖掘 | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/shu-ju-wa-jue/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[探秘Spotify的Echo Nest]]></title>
+    <link href="https://ibillxia.github.io/blog/2018/08/14/spotify-echo-nest/"/>
+    <updated>2018-08-14T12:00:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2018/08/14/spotify-echo-nest</id>
+    <content type="html"><![CDATA[<center><img src="/images/2018/IMAG201808101.jpeg"></center>
+
+
+<p><br></p>
+
+<p>他们将其称作 TrufflePig，它是专门的播放列表生成工具。输入诸如“伴舞适合程度”、年代范围或者情感的参数，Truffle Pig 就会呈现与你的“Lovesick 90s Party Starters”歌单相符的推荐歌曲。</p>
+
+<p>Truffle Pig 只是 Spotify1 亿美元收购回来的 The Echo Nest 秘密工作室的新音乐发明之一。该团队在 Spotify 纽约总部给我接受了并入 The Echo Nest 的 Spotify 打算如何做推荐服务，如何利用正版音乐整合其它的应用，如何通过融合人工 DJ 与算法来呈现最好的歌曲。</p>
+
+<!--more-->
+
+
+
+
+<center><img src="/images/2018/IMAG201808102.png"></center>
+
+
+<p><br></p>
+
+<p>Spotify 花了很长一段时间才做好基础工作进入这一实验阶段。它的发展史记录在其纽约总部大堂的一副长壁画上。其发展过程中的每一个里程碑都有展示，从两位创始人丹尼尔•艾克（Daniel Ek）和马丁•罗伦松（Martin Lorentzon）2006 年在瑞典首都斯德哥尔摩创立该公司，到金属乐队（Metallica）加入服务，再到目前有 4000 万听众。该艺术品让人可以感觉得到 Napster 引发盗版潮之后让数字音乐重新合法化的困难。该壁画唯一缺少的信息是，Spotify超过 5 亿美元 的 累积融资额 。</p>
+
+<p>Spotify 2011 年年中在 Facebook 的帮助下登陆美国市场的时候，它是少数几项获得各大唱片公司版权的流媒体音乐服务之一。而 3 年后，该市场的竞争却异常激烈，竞争者包括苹果/Beats、谷歌/ Songza、Rdio、亚马逊、Deezer 等等。</p>
+
+<center><img src="/images/2018/IMAG201808103.jpeg"></center>
+
+
+<p><br></p>
+
+<p>Spotify 拥有最大的音乐库之一，其提供的歌曲总量超过 2000 万首，日增 2 万首。不过，该类服务重要的并不是你的音乐库规模，而是透过音乐库你能够提供什么功能服务。用户可能会觉得歌曲太多无从选择，需要服务商的策展筛选出最好的音乐。因此，各项服务都在力图在音乐发现上实现差异化。</p>
+
+<p>这也是 Spotify 为什么收购 The Echo Nest 的原因。The Echo Nest 可谓基本的音乐智能构件，它的元数据库和个性化推荐引擎曾驱动多项服务的发现功能，包括 Spotify、Rdio、Beats Music、SiriusXM 等等。因此，为了确保比竞争对手更加了解人们的听歌偏好，Spotify 以 1 亿美元的价格买下该马萨诸塞州创业公司，主要是通过股票形式进行收购。</p>
+
+<h1>品味档案</h1>
+
+<center><img src="/images/2018/IMAG201808104.jpeg"></center>
+
+
+<center>Echo Nest CEO 吉姆•卢切斯（Jim Lucchese）</center>
+
+
+<p><br></p>
+
+<p>在整合 The Echo Nest 数个月后，Spotify 让我了解了一下他们当前的工作。在一个密室里，我见到了 Spotify 产品副总裁查理•赫尔曼（Charlie Hellman）和 The Echo Nest 的 CEO 吉姆•卢切斯（Jim Lucchese）。很多人都自称是狂热的音乐迷，但鲜少人会像他们两个那样通过怒吼来表达其对音乐的热情。</p>
+
+<p>“我们的理念是，打造最好的听歌体验，”卢切斯说道，“触及每一位热情的音乐迷，让休闲乐迷变得更加投入更有热情。”幸运的是，Spotify 的商业模式并不是出售硬件或者搜索广告。它的利益与用户一致，它的服务做得好，用户就能受益。赫尔曼解释道，“人们在 Spotify 平台上呆的时间越久，他们就越有可能购买高级服务。”Spotify 主要通过高级服务赚钱。</p>
+
+<p>激起人们热情的关键在于，理解他们的个人音乐偏好，从而给他们推荐合适的歌曲。所以，The Echo Nest 的第一项工作就是研究 Spotify 所有的数据。“我们最活跃的用户一个月有 20 多天使用我们的服务，一次收听 1 个小时。期间会产生很多的数据，甚至多过听众的想象。”卢切斯说道，“我们的目标是，深入了解你这位音乐迷，而这种深入程度是我们两家公司走在一起之前各自都无法实现的。”</p>
+
+<p>数据挖掘的产物就是 Spotify 所说的“Taste Profiles”（品味档案），那是一个目前仅面向 Spotify 员工的偏好分析和视觉化工具。通过访问你的歌曲收听方面的元数据，Spotify 能够判断出各种特性，其中包括：</p>
+
+<p>•主流程度 ——你听的歌曲有多流行？</p>
+
+<p>•新鲜度 ——你是否更喜欢新鲜出炉的音乐？</p>
+
+<p>•多元性 ——你对新歌曲的接受程度如何？你每隔多久给你的播放列表添加歌曲？</p>
+
+<p>•热门程度 ——在潮流引领者当中，你播放的歌曲有多热门？</p>
+
+<p>•可发现性 ——你听的歌曲多久之后流行起来？</p>
+
+<p>Taste Profile 工具会针对上面的每一项指标对你的听歌习惯进行测量，然后拿你跟其他用户比较，再得出诸如“你听的歌曲新鲜度比平均水平高出 6.6%”的结论。这些数据本身颇为有趣，而且有助于 Spotify 判断是否该给你推荐主流音乐，继续推荐经典音乐还是呈现最新的歌曲，是否应该借助你的专业品味给其他用户推荐热门音乐。</p>
+
+<p>“分辨用户是音乐行家还是休闲听众非常重要。”赫尔曼向我表示，“因为我们想要给那两类用户提供不同的体验。”</p>
+
+<center><img src="/images/2018/IMAG201808105.png"></center>
+
+
+<p><br></p>
+
+<p>Spotify 还能够利用你喜欢的音乐类型和歌手视觉化你的音乐“Clusters”（集群）。这些群集是另一个展示你的听歌习惯的元素。我的音乐品味分成了“Indietronica”集群（如 HotChip、Geographer 和 Robert Delong），“Nu Disco/Retro Electro”（如 Goldroom、Poolside 和 Touch Sensitive），以及“Shiver Pop”（如 James Blake、Disclosure 和 SBTRKT）。</p>
+
+<p>那些分类我基本上都能够搞懂，唯独“R-Neg-B”让我觉得一头雾水。一开始我以为它就是“R&amp;B”，只是“&amp;”渲染错了。但赫尔曼解释道，“Neg”指的是不喜欢传统来说安全的 R&amp;B 题材，而偏爱探索诸如同性恋、禁欲主义的题材音乐。Spotify 会不断在语义网络上抓取信息，以此来尝试确定歌曲的这些模糊类别。</p>
+
+<p>Clusters 还可以用于生成不同的播放列表，包括含有某一类别最热门的歌曲、你喜欢的风格艺人的流行歌曲或者你可能喜欢的新歌手作品的播放列表。</p>
+
+<p>Taste Profile 和 Clusters 均依靠算法聚合和编辑知识来将歌手分门别类。赫尔曼称，“这充分说明机器和人工并不冲突，相反可以很好地共存。”这些功能仍在秘密孵化当中，不过你可以通过它们驱动的 Spotify 浏览和电台栏目来试听一下那些推荐歌曲。</p>
+
+<h1>TrufflePig</h1>
+
+<p>Pandora 以能够无需人工干预播放你可能喜欢的歌曲而自豪。而 Spotify 则试图拥抱一种传统的发现方式：询问无所不晓的唱片商店店员。不过，Spotify 的秘密团队并没有完全依靠人脑，而是设计了一种工具将它的人工编辑变成可制作播放列表的机器人。也就是 Truffle Pig。</p>
+
+<center><img src="/images/2018/IMAG201808106.png"></center>
+
+
+<p><br></p>
+
+<p>“播放列表处于其生命周期的下一个阶段。”赫尔曼指出，“它最初只有你的收藏库歌曲或者你从广播录下来的音乐。”而现在，得益于唱片公司的一整个音乐目录，播放列表变得不一样了，Spotify 为浏览功能制作播放列表的团队需要一种方式来整理它的 2000 万首歌曲。TrufflePig 形成了一个高级的搜索引擎，该引擎能够返回可轻易整理成精确的播放列表的搜索结果。</p>
+
+<center><img src="/images/2018/IMAG201808107.jpeg"></center>
+
+
+<center>Spotify 产品副总裁查理•赫尔曼（Charlie Hellman）</center>
+
+
+<p><br></p>
+
+<p>借助 The EchoNest 对每一首 Spotify 歌曲的详尽分析，编辑可以通过输入与热门程度等 Taste Profile 特性或者像拍子这样的可量化元素对应的参数来筛选音乐。而更酷的是，他们能够根据实际声音特点来呈现歌曲，如“原生”或者“响度”。</p>
+
+<p>想要做一个无言歌播放列表一边工作一边听，但又不想听高科技舞曲和古典音乐？编辑可以从过去 60 年的音乐中搜索出无言、高声和高能量的歌曲，来生成来自 Rodrigo Y Gabriela 等西班牙吉他手激励人心但又不会让人分心的音乐组成的播放列表。觉得很愤怒但厌恶重金属摇滚乐？那就设置好伴舞适合程度，将情感设置为“愤怒”，然后排除掉任何 1980 年代的歌曲。Spotify 会密切注意生成的歌单的互动情况，以进行适当的修改，以及看看谁生成的歌单最受欢迎。</p>
+
+<p>“没有人比 Spotify 更认真对待播放列表问题。”赫尔曼解释道，“编辑们会相互吐槽各自的播放列表歌曲被跳过的比例，相互嘲笑各自歌单中有表现很糟糕的歌曲但却没被拿掉。”Spotify 想要通过强化歌单生成规模化地提供策展功能，而 Truffle Pig 就是催化剂。该人工策展工具，再加上来自朋友的社交推荐和算法，有望让 Spotify变成一个无所不能的自动点唱机 。</p>
+
+<p>不过，Truffle Pig 现在还没有正式推出，但赫尔曼称，Spotify 在探讨明年如何让用户能够接触到其社区中的潮流引领者和最热门的业余歌单制作者。</p>
+
+<h1>正版音乐的主干网</h1>
+
+<p>即使有庞大的曲目库和 The Echo Nest 的数据支持，Spotify 也无法覆盖所有的功能服务。音乐的整理、发现和播放方式多种多样。该公司在创立之初就认识到了这一点，因而在 2011 年 11 月在其桌面软件中推出了一个面向第三方应用的平台。但是由于第三方应用实在太多，不易发现，很多用户甚至都没看到像情感共鸣音乐发现应用 MoodAgent、有关喜爱歌手附近的演唱会的 Songkick 这样的应用。由于那些应用完全寄生于 Spotify，并没有登陆移动端，它们很难进行货币化，开发者不愿拥抱该平台，Spotify 也不再接受新应用的入驻。</p>
+
+<center><img src="/images/2018/IMAG201808108.png"></center>
+
+
+<p><br></p>
+
+<p>但这种模式有着巨大的机会。Spotify 花费了大量资金和人力从各大唱片公司获得了版权——这一点对于小型音乐创业公司来说难度很大。所以，Spotify 收购 The Echo Nest 的时候，我曾建议它开发一个 API（应用程序接口）允许人们通过 Spotify 账号登陆第三方音乐应用， 让他们能够在各种服务上使用或播放 Spotify 的正版音乐 。这会让 Spotify 成为整个行业的正版音乐主干网，就像 Facebook 通过让你登陆其它应用和提供社交图谱成为网络通行证那样。</p>
+
+<center><img src="/images/2018/IMAG201808109.png"></center>
+
+
+<p><br></p>
+
+<p>Spotify 可以成为一个真正的音乐平台，基于它的音乐库提供多种多样的界面服务，而不是像竞争对手那样成为一款孤立的“一码通吃”式音乐应用。我认为，每多一款支持播放 Spotify 音乐的应用，你就进一步被锁定在 Spotify 平台上，就更有可能付费使用它的服务。</p>
+
+<p>Spotify 显然也有同样的想法。几个月后，它宣布 联手两款移动 DJ 应用 DJay 和 Pacemaker，第一次正式达成 API 合作 。那两款应用支持用 Spotify 账号登陆，开始让用户从 Spotify 的音乐库混制歌曲，而不是像 iTunes 那样仅允许用户混制存储于本地设备的音乐。The Echo Nest 数据还能够检测 BPM（每分钟节拍数）、伴舞适合程度和在播歌曲的音调，以及建议混制的曲目。</p>
+
+<p>这种 API 的影响力再强调也不为过。忽然之间，你几乎可以用任何的歌曲进行 DJ，而不仅仅是使用自己手头的歌曲。这可以给音乐表演带来很大的影响。你只需要每月花 9.99 美元订阅 Spotify 的高级服务，就可以享用各种功能服务。</p>
+
+<p>“我们兴旺发展的模式是，如果人们发现更多更好听的歌曲，他们就能够从这一生态系统中获得更多的价值。”赫尔曼说道。如果你要在各款音乐流媒体服务中选择订阅其中一款，Spotify 希望你会选择那款拥有一整个应用生态系统的服务。</p>
+
+<h1>短板：社交</h1>
+
+<p>Spotify 拥有 1000 万付费订户，一系列秘密开发当中的未来产品也有望给它带来更多的订户，不过它还不知道该如何做社交这一块。</p>
+
+<center><img src="/images/2018/IMAG201808110.png"></center>
+
+
+<p><br></p>
+
+<p>首先，它允许 Facebook 的收录器 将你播放的每一首歌的动态分享给朋友。很多人都很讨厌这一功能。它干扰性很大，且令人乏味，令 Facebook 信息流充斥着很多有关你的收听习惯的动态，却鲜有有用的东西。</p>
+
+<p>后来，Spotify 改造了它在桌面端的收录器，让你可以 关注歌手和名人的听歌习惯 。该功能藏在该应用的一个已被遗忘的角落，因而鲜少被使用。人们唯一真正关注到的是 Hipster International——Spotify 总监、Napster 创始人西恩•帕克（Sean Parker）领导的团队生成的公共歌单。新歌曲会定期添加到界面顶端，从而让你一直都有新鲜的歌曲听。</p>
+
+<p>虽然社交功能在 Spotify 上做得并不好，但它仍然是 Spotify 最重要的元素之一。“最能吸引休闲听众使用 Spotify 的就是朋友。”卢切斯向我表示。</p>
+
+<p>正因为此，我觉得 Spotify 应当同时完善好收录器、浏览栏目和 Hipster International 来生成我所说的 PlayFeed（播放流），而不是打造小小的音乐版 Twitter。</p>
+
+<center><img src="/images/2018/IMAG201808111.png"></center>
+
+
+<p><br></p>
+
+<p>这一想法是，根据朋友在听歌曲、来自你喜欢的歌手和类别的新音乐、排行榜和 Spotify 编辑团队挑选的歌曲提供不断更新的个性化播放列表。如果说 Spotify 的浏览功能既有博客属性，又有动态消息属性，需要你的充分注意，那么 PlayFeed 就是人们所熟悉的音乐为先的、“即发即弃”式播放列表。它们并非保持静态，也不需要你手动添加歌曲，而是依据 The Echo Nest 的所有数据自动在上方添加歌曲。</p>
+
+<p>你随时都可以点击播放来获得连续不断的新歌推荐，或者翻回你之前喜欢的原有推荐。这会有助于 Spotify 的社交、算法和编辑策展融合成一站式的音乐发现平台。做得好的话，它有望变得跟我们其它的信息流那么让人上瘾，帮助歌手扩大听众，通过社交图谱锁定订户，并给 Spotify 带来一个差异点。</p>
+
+<p>流媒体服务沦为赠品？</p>
+
+<center><img src="/images/2018/IMAG201808112.png"></center>
+
+
+<p><br></p>
+
+<p>Spotify 面临的一大问题在于，它在流媒体市场的 竞争对手主业均非音乐业务 。苹果利用音乐软件来销售 iPhone 和 MacBook。谷歌音乐服务旨在将人们锁定在它充斥着广告的生态系统当中。亚马逊将其音乐服务与年费 99 美元的 Prime 配送服务“免费”捆绑起来， 以此吸引你更多地在它的网站上购物 。</p>
+
+<p>这些公司提供的音乐服务比 Spotify 便宜，因为它们是从其它业务赚钱。未来，流媒体音乐服务有可能会成为手机或者移动操作系统的赠品。大多数的音乐听众都不算挑剔的铁杆听众，因而不需要也不懂得识别比一款“足够好”的服务更好的用户界面或者音乐库。</p>
+
+<p>要战胜其它对手，Spotify 将需要做出最好的应用，需要尝试相对简单的广告支持模式。卢切斯指出，“我认为，在当前的应用经济中，没有所谓的‘足够好’的东西。如果不满意手机配送的服务，用户很容易就会去尝试新的服务体验。”</p>
+
+<p>竞争对手们得处理产品整合问题，得尝试确定音乐对它们而言的价值，而 Spotify 则只需要不断改良它的产品即可。卢切斯总结道，“我们抱着‘我们的工作远未结束’的心态。”</p>
+
+<p>翻译：羽腾</p>
+
+<p>Inside The Spotify – Echo Nest Skunkworks</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[【美团】数据驱动精准化营销在大众点评的实践]]></title>
+    <link href="https://ibillxia.github.io/blog/2016/09/11/data-driven-precision-marketing/"/>
+    <updated>2016-09-11T23:25:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2016/09/11/data-driven-precision-marketing</id>
+    <content type="html"><![CDATA[<p>精准化营销一直以来都是互联网营销业务在细分市场下快速获取用户和提高转化的利器。在移动互联网爆发的今天，数据量呈指数增长，如何在移动和大数据场景下用数据驱动进行精准营销，从而提高营销效能，成为营销业务部门的主要挑战之一，同时也是大数据应用的一个重要研究方向。本文通过数据体系架构和技术实现案例，分享美团大众点评数据应用团队在这个方向上的一些尝试和实践经验。</p>
+
+<h2>总体框架</h2>
+
+<p>在介绍数据体系和框架前，为了方便大家理解，先简单阐述一下O2O营销的基本组成：O2O营销是由营销发生的渠道（站内，站外）与营销的主题业务（流量，交易）两个维度组成的，其中产生了多种营销的形态，如精准化用户营销活动、DSP的精准投放、渠道价值排名和反作弊等，数据分析和挖掘在这些环节都能发挥很大的价值。本文主要阐述站内的精准化用户营销活动。</p>
+
+<p>一个站内用户运营活动的生命周期大概可以归纳为：确定目标、选取活动对象、设计活动方案、活动配置与上线、线上精准营销与动态优化以及效果监控与评估六个环节。如下图所示。</p>
+
+<center><img src="/images/2016/IMAG2016091101.png"></center>
+
+
+
+
+<!--more-->
+
+
+<p>在这个周期中，数据都有巨大的发挥空间与价值。我们在项目启动后与业务充分沟通，了解其业务痛点，确定一期主要尝试从数据上帮助运营和财务同事解决以下几个问题：</p>
+
+<p>① 营销活动前：确定目标和选取活动对象</p>
+
+<p>② 营销活动中：效果监控和跟踪；用户和商户端策略的输出</p>
+
+<p>③ 营销活动后：效果评估和优化建议</p>
+
+<p>对于①的目标确定，以前更多是拍脑袋决定，缺乏一套稳定的分析框架和模型。而活动对象，包括用户和商户/团单选取，需要业务和BI同学每次人工跑数据得出，效率低下。</p>
+
+<p>而对②和③，更是缺乏一套公司的营销监控平台，时常出现预算花超不可控的情况。活动结束后，效果数据也是各个业务方自己给出，口径不一致导致难以整体评估效果。</p>
+
+<h2>系统架构</h2>
+
+<p>基于上述的业务场景和需求，我们用分层的金字塔架构设计了一套营销数据系统和服务，有效满足了业务的诉求并具有很好的平台扩展性。</p>
+
+<center><img src="/images/2016/IMAG2016091102.png"></center>
+
+
+<p>最底层是我们的数据仓库和模型层，这里又大致可以分为三个主题：画像，运营和营销，流量。这三个都是运营活动必不可少的数据组成部分。</p>
+
+<p>对于画像，我们的做法是部分自主建设，同时集成业务方如搜索、广告和风控团队开发的画像标签，形成统一的画像宽表。目前我们的用户标签体系覆盖了包括：基本信息、设备信息、消费浏览以及特征人群等5个大类的180多个标签。在标签的实现上，我们也秉承从需求出发的原则逐步迭代，从最初的以统计和基本的营销模型如RFM为主，到现在在潜在用户挖掘和用户偏好上开始探索使用机器学习的挖掘方法。</p>
+
+<p>在营销运营集市上，我们与财务和支付系统协作，开发了一套公司预算流水号系统。运营人员在配置活动时，从财务申请预算流水号，并在优惠后台配置与对应活动关联，用户享受优惠的每一笔订单都会在业务表中进行打点，做到在最细粒度上的预算监控。同时在用户、商品等维度建模后，形成了营销交易评估的指标体系：新用户成本，新老用户分布，7天、30天购买留存等。</p>
+
+<p>活动评估的另一个维度就是流量：活动页的点击、转化漏斗、不同渠道来源等指标是运营人员无时无刻不关心的，这部分模型作为数据中心数据仓库中核心的一环。我们参考了其他公司的做法，建立了自己的PV、UV、Session以及路径树转化等模型，可以很好地满足运营需求。</p>
+
+<p>在数据仓库之上，我们建立了数据服务层。在统一使用公司高性能的RPC框架之上，针对不同的应用选择了差异化的数据存储和查询引擎。比如在画像服务中，需求是满足线上业务系统的实时访问需求，要求毫秒级的并发和延迟，因此我们选用了Redis作为存储。而相较之下，分析类产品对并发和延迟要求相对较低，但对数据在不同维度上的聚合操作要求较高，在对比了Kylin、ElasticSearch（以下简称ES）、Druid后，我们决定使用ES作为存储和查询引擎，主要有2个理由：一是我们有留存等指标，需要重刷数据，而对于Kylin来说，无法使用其提供的自动增量cube机制，重建数据代价较大，同时ES在同样的维度上，空间膨胀度上比Kylin少近一半；二是ES整个系统设计和架构非常简洁，运维方案简单，也有专门的工具支持，对于当时没有专职运维的开发团队来说是一个捷径。</p>
+
+<p>最上层是数据产品和应用，针对前面提到的运营活动的不同阶段提供数据平台和工具：</p>
+
+<ul>
+<li><p>人群分析平台（Hoek）：用户可以通过选择画像服务提供的不同的标签组合快速创建人群包，创建的人群包可以提供给其他不同业务和形态的营销工具，如push，促销工具等。</p></li>
+<li><p>智能发券引擎（Cord）：通过配置后台和Hoek平台，运营人员就可以完成定向活动受众和策略的配置，而无需开发接入。具体细节在后面的案例分享中再详细介绍。</p></li>
+<li><p>云图/星图：完成活动效果数据查询和分析的工具平台，构建基于ES的查询引擎，提供多维度的实时指标查询。</p></li>
+</ul>
+
+
+<p>除了系统化的建设外，在运营活动的迭代中，我们与业务合作，进行了大大小小20多个专题分析，产出了包括闪惠预算动态分配、闪惠立减梯度优化、用户价值分以及免费吃喝玩乐选单等主题模型。帮助业务提高预算使用率30%，同时更好地评估拉新带来的用户价值。</p>
+
+<p>整体的架构最终是为精准化营销服务，下面就结合两个案例具体介绍。</p>
+
+<h2>案例分享</h2>
+
+<h3>外卖潜在用户挖掘</h3>
+
+<p>精准营销一个主要的方向就是潜在客户挖掘，特别是在点评这个平台上，目前已有包括美食、外卖、丽人、教育等近20个业务，如何在平台近一亿的活跃用户中挖掘垂直频道的潜在用户就成了精准化营销的一个很现实的问题。Facebook和腾讯的广告系统都提供类似的Lookalike功能，帮助客户找出和投放人群相似的用户群，其广告的点击率和转化率都高于一般针对广泛受众的广告。</p>
+
+<p>目前常用的潜在用户挖掘方案主要就是基于画像或者关系链的挖掘，我们团队从需求出发，结合点评的画像体系从关联规则、聚类和分类模型三个算法上进行了探索。</p>
+
+<p>未来我们除了在分类和聚类上进一步优化外，还计划利用点评好友关系，使用Spark的GraphX建立标签传播的算法进一步深挖高质量的相似用户。</p>
+
+<h3>微信红包精准优惠券引擎</h3>
+
+<p>另外一个精准营销的案例是智能发券引擎Cord，背景是点评会在微信群/朋友圈中用红包发各种优惠券，当好友来领券时，如何决定发哪个业务什么面值的券更容易转化。本质上是一个简化的推荐问题，我们也参照广告系统的架构设计了Cord引擎。主要包含分流模块（用于灰度发布和AB测试）、召回模块（负责从画像服务和优惠配置系统获取人和券的物料信息）、过滤模块（负责进行两者的匹配）、推荐模块（可以根据业务规则或者我们挖掘的策略对结果进行排序，返回給活动系统最合适的优惠券进行发放）。整个系统实现完全服务化和可配置化，外部的活动系统可以根据配置的开关启用或者在特殊场景下禁用Cord服务；而Cord内部，也可以根据配置中心的设置，动态调整推荐策略。在数据挖掘上，目前除了业务配置规则外，我们针对公司主流的运营方式，基于画像中的用户偏好和优惠敏感等标签进行综合打分，抽象了以GMV为目的和以拉新用户为目的的推荐策略。</p>
+
+<h2>总结</h2>
+
+<p>精准营销是目前大数据落地的一个公认的场景，但随着移动互联网和O2O的发展，这一领域也会有新的问题和挑战出现。结合我们这一年多的实践经验，团队也归纳了一套数据系统架构的设计原则：</p>
+
+<ul>
+<li><p>在数据架构和建设上，从需求出发，建立准确和易用的数据底层模型，统一指标体系和口径。</p></li>
+<li><p>在数据服务上，通过分层和SOA的思想，解耦与业务系统的逻辑。同时针对不同需求和场景选择适合的技术组件。</p></li>
+</ul>
+
+
+<p>展望未来，在数据上如何快速地进行挖掘模型的开发，在架构和产品上满足更多场景，让数据在营销上发挥更大的价值，是下一步的重点方向。</p>
+
+<h2>参考资料</h2>
+
+<p>[1]<a href="https://zhuanlan.zhihu.com/p/22326041">数据驱动精准化营销在大众点评的实践 - 美团点评技术团队</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[TOP 10开源的推荐系统简介]]></title>
+    <link href="https://ibillxia.github.io/blog/2014/03/10/top-10-open-source-recommendation-systems/"/>
+    <updated>2014-03-10T22:29:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2014/03/10/top-10-open-source-recommendation-systems</id>
+    <content type="html"><![CDATA[<p>最近这两年推荐系统特别火，本文搜集整理了一些比较好的开源推荐系统，即有轻量级的适用于做研究的SVDFeature、LibMF、LibFM等，也有重量级的适用于工业系统的
+Mahout、Oryx、EasyRecd等，供大家参考。PS：这里的top 10仅代表个人观点。</p>
+
+
+<h2>#1.SVDFeature</h2>
+
+
+<center><img src="/images/2014/IMAG2014031001.png"></center>
+
+
+<p>主页：<a href="http://svdfeature.apexlab.org/wiki/Main_Page">http://svdfeature.apexlab.org/wiki/Main_Page</a> 语言：C++</br>
+一个feature-based协同过滤和排序工具，由上海交大Apex实验室开发，代码质量较高。在KDD Cup 2012中获得第一名，KDD Cup 2011中获得第三名，相关论文
+发表在2012的JMLR中，这足以说明它的高大上。</br>
+SVDFeature包含一个很灵活的Matrix Factorization推荐框架，能方便的实现SVD、SVD++等方法, 是单模型推荐算法中精度最高的一种。SVDFeature代码精炼，可以用
+相对较少的内存实现较大规模的单机版矩阵分解运算。另外含有Logistic regression的model，可以很方便的用来进行ensemble。</p>
+
+
+
+
+<!--more-->
+
+
+
+
+<h2>#2.LibMF</h2>
+
+
+<center><img src="/images/2014/IMAG2014031002.gif"></center>
+
+
+<p>主页：<a href="http://www.csie.ntu.edu.tw/~cjlin/libmf/">http://www.csie.ntu.edu.tw/~cjlin/libmf/</a> 语言：C++</br>
+作者<a href="http://www.csie.ntu.edu.tw/~cjlin/">Chih-Jen Lin</a>来自大名鼎鼎的台湾国立大学，他们在机器学习领域享有盛名，近年连续多届KDD Cup竞赛上均
+获得优异成绩，并曾连续多年获得冠军。台湾大学的风格非常务实，业界常用的LibSVM， Liblinear等都是他们开发的，开源代码的效率和质量都非常高。</br>
+LibMF在矩阵分解的并行化方面作出了很好的贡献，针对SGD（随即梯度下降）优化方法在并行计算中存在的locking problem和memory discontinuity问题，提出了一种
+矩阵分解的高效算法FPSGD（Fast Parallel SGD），根据计算节点的个数来划分评分矩阵block，并分配计算节点。系统介绍可以见这篇
+<a href="http://www.csie.ntu.edu.tw/~cjlin/papers/libmf.pdf">论文</a>（ACM Recsys 2013的 Best paper Award）。</p>
+
+
+
+
+<h2>#3.LibFM</h2>
+
+
+<center><img src="/images/2014/IMAG2014031003.jpg"></center>
+
+
+<p>主页：<a href="http://www.libfm.org/">http://www.libfm.org/</a> 语言：C++</br>
+作者是德国Konstanz大学的Steffen Rendle，他用LibFM同时玩转KDD Cup 2012 Track1和Track2两个子竞赛单元，都取得了很好的成绩，说明LibFM是非常管用的利器。</br>
+LibFM是专门用于矩阵分解的利器，尤其是其中实现了MCMC（Markov Chain Monte Carlo）优化算法，比常见的SGD优化方法精度要高，但运算速度要慢一些。当然LibFM中还
+实现了SGD、SGDA（Adaptive SGD）、ALS（Alternating Least Squares）等算法。</p>
+
+
+
+
+<h2>#4.Lenskit</h2>
+
+
+<center><img src="/images/2014/IMAG2014031004.png"></center>
+
+
+<p><p>主页：<a href="http://lenskit.grouplens.org/">http://lenskit.grouplens.org/</a> 语言Java</br>
+<p>这个Java开发的开源推荐系统，来自美国的明尼苏达大学的GroupLens团队，也是推荐领域知名的测试数据集Movielens的作者。</br>
+该源码托管在GitHub上，<a href="https://github.com/grouplens/lenskit">https://github.com/grouplens/lenskit</a>。主要包含lenskit-api,lenskit-core,
+lenskit-knn,lenskit-svd,lenskit-slopone,lenskit-parent,lenskit-data-structures,lenskit-eval,lenskit-test等模块，主要实现了k-NN，SVD，Slope-One等
+典型的推荐系统算法。</p></p>
+
+<h2>#5.GraphLab</h2>
+
+
+<center><img src="/images/2014/IMAG2014031005.png"></center>
+
+
+<p>主页：<a href="http://docs.graphlab.org/collaborative_filtering.html">GraphLab - Collaborative Filtering</a> 语言：C++</br>
+Graphlab是基于C++开发的一个高性能分布式graph处理挖掘系统，特点是对迭代的并行计算处理能力强（这方面是hadoop的弱项），由于功能独到，GraphLab在业界名声很响。
+用GraphLab来进行大数据量的random walk或graph-based的推荐算法非常有效。Graphlab虽然名气比较响亮（CMU开发），但是对一般数据量的应用来说可能还用不上。</br>
+GraphLab主要实现了ALS，CCD++，SGD，Bias-SGD，SVD++，Weighted-ALS，Sparse-ALS，Non-negative Matrix Factorization，Restarted Lanczos Algorithm等算法。</p>
+
+
+<h2>#6.Mahout</h2>
+
+
+<center><img src="/images/2014/IMAG2014031006.png"></center>
+
+
+<p>主页：<a href="http://mahout.apache.org/">http://mahout.apache.org/</a> 语言：Java</br>
+Mahout 是 Apache Software Foundation (ASF) 开发的一个全新的开源项目，其主要目标是创建一些可伸缩的机器学习算法，供开发人员在 Apache 在许可下免费
+使用。Mahout项目是由 Apache Lucene社区中对机器学习感兴趣的一些成员发起的，他们希望建立一个可靠、文档翔实、可伸缩的项目，在其中实现一些常见的用于
+聚类和分类的机器学习算法。该社区最初基于 Ngetal. 的文章 “Map-Reduce for Machine Learning on Multicore”，但此后在发展中又并入了更多广泛的机器学习
+方法，包括Collaborative Filtering（CF），Dimensionality Reduction，Topic Models等。此外，通过使用 Apache Hadoop 库，Mahout 可以有效地扩展到云中。</br>
+在Mahout的Recommendation类算法中，主要有User-Based CF，Item-Based CF，ALS，ALS on Implicit Feedback，Weighted MF，SVD++，Parallel SGD等。</p>
+
+
+<h2>#7.Myrrix</h2>
+
+
+<center><img src="/images/2014/IMAG2014031007.png"></center>
+
+
+<p>主页：<a href="http://myrrix.com/">http://myrrix.com/</a> 语言：Java</br>
+Myrrix最初是Mahout的作者之一Sean Owen基于Mahout开发的一个试验性质的推荐系统。目前Myrrix已经是一个完整的、实时的、可扩展的集群和推荐系统，主要
+架构分为两部分：服务层：在线服务，响应请求、数据读入、提供实时推荐；计算层：用于分布式离线计算，在后台使用分布式机器学习算法为服务层更新机器学习
+模型。Myrrix使用这两个层构建了一个完整的推荐系统，服务层是一个HTTP服务器，能够接收更新，并在毫秒级别内计算出更新结果。服务层可以单独使用，无需
+计算层，它会在本地运行机器学习算法。计算层也可以单独使用，其本质是一系列的Hadoop jobs。目前Myrrix以被 Cloudera 并入Oryx项目。</p>
+
+
+<h2>#8.EasyRec</h2>
+
+
+<center><img src="/images/2014/IMAG2014031008.png"></center>
+
+
+<p>主页：<a href="http://easyrec.org/">http://easyrec.org/</a> 语言：Java</br>
+EasyRec是一个易集成、易扩展、功能强大且具有可视化管理的推荐系统，更像一个完整的推荐产品，包括了数据录入模块、管理模块、推荐挖掘、离线分析等。
+EasyRec可以同时给多个不同的网站提供推荐服务，通过tenant来区分不同的网站。架设EasyRec服务器，为网站申请tenant，通过tenant就可以很方便的集成到
+网站中。通过各种不同的数据收集（view,buy.rating）API收集到网站的用户行为，EasyRec通过离线分析，就可以产生推荐信息，您的网站就可以通过
+Recommendations和Community Rankings来进行推荐业务的实现。</p>
+
+
+<h2>#9.Waffles</h2>
+
+
+<center><img src="/images/2014/IMAG2014031009.png"></center>
+
+
+<p>主页：<a href="http://waffles.sourceforge.net/">http://waffles.sourceforge.net/</a> 语言：C++</br>
+Waffles英文原意是蜂蜜甜饼，在这里却指代一个非常强大的机器学习的开源工具包。Waffles里包含的算法特别多，涉及机器学习的方方面面，推荐系统位于
+其中的Waffles_recommend tool，大概只占整个Waffles的1/10的内容，其它还有分类、聚类、采样、降维、数据可视化、音频处理等许许多多工具包，估计
+能与之媲美的也就数Weka了。</p>
+
+
+<h2>#10.RapidMiner</h2>
+
+
+<center><img src="/images/2014/IMAG2014031010.png"></center>
+
+
+<p>主页：<a href="http://rapidminer.com/">http://rapidminer.com/</a> 语言：Java</br>
+RapidMiner（前身是Yale）是一个比较成熟的数据挖掘解决方案，包括常见的机器学习、NLP、推荐、预测等方法（推荐只占其中很小一部分），而且带有GUI的
+数据分析环境，数据ETL、预处理、可视化、评估、部署等整套系统都有。另外RapidMiner提供commercial license，提供R语言接口，感觉在向着一个商用的
+数据挖掘公司的方向在前进。</br>
+======================================分割线======================================</p>
+
+
+<p>开源的推荐系统大大小小的还有很多，以上只是介绍了一些在学术界和工业界比较流行的TOP 10，而且基本上都是用C++/Java实现的，在参考资料[1]、[2]中还提
+到的有Crab（Python）、CofiRank（C++）、MyMediaLite（.NET/C#）、PREA（Java）、Python-recsys（Python）、Recommendable（Ruby）、Recommenderlab（R）、
+Oryx（Java）、recommendify（Ruby）、RecDB（SQL）等等，当然GitHub上还有更多。。。即有适合单机运行的，也有适合集群的。虽然使用的编程语言不同，但实现
+的算法都大同小异，主要是SVD、SGD、ALS、MF、CF及其改进算法等。</p>
+
+
+<h2>参考资料</h2>
+
+
+<p>[1]<a href="http://blog.csdn.net/cserchen/article/details/14231153">推荐系统开源软件列表汇总和点评</a></br>
+[2]<a href="http://www.oschina.net/search?scope=project&tag1=0&tag2=0&lang=0&os=0&q=%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F">开源中国社区 - 搜索：推荐系统</a>
+</p>
+
+]]></content>
+  </entry>
+  
+</feed>

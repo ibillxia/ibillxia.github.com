@@ -1,0 +1,1129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: LLM | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/llm/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[大模型入门指南：Transformer与Attention机制]]></title>
+    <link href="https://ibillxia.github.io/blog/2025/01/22/transformer-attention-guide/"/>
+    <updated>2025-01-22T16:51:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2025/01/22/transformer-attention-guide</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://developer.aliyun.com/article/1655110">https://developer.aliyun.com/article/1655110</a></p>
+
+<center><img src="/images/2025/IMAG2025012201.octet-stream"></center>
+
+
+<p>阿里妹导读</p>
+
+<p>本文档旨在详细阐述当前主流的大模型技术架构如Transformer架构。我们将从技术概述、架构介绍到具体模型实现等多个角度进行讲解。通过本文档，我们期望为读者提供一个全面的理解，帮助大家掌握大模型的工作原理，增强与客户沟通的技术基础。本文档适合对大模型感兴趣的人员阅读。</p>
+
+<!--more-->
+
+
+<h1>论文介绍</h1>
+
+<p>论文名称：《Attention is all you need》</p>
+
+<p>发布时间：2017/06/12</p>
+
+<p>发布单位：Google、多伦多大学</p>
+
+<p>简单摘要：所有LLM的始祖，迈向NLP新时代的基础架构</p>
+
+<p>中文摘要：传统的序列转换模型使用复杂的循环或卷积神经网络，包括编码器和解码器。表现最好的模型会透过注意力机制连接编码器和解码器。</p>
+
+<p>作者团队提出了一种新的简单网络结构，Transformer，完全基于注意力机制，不再使用循环和卷积。</p>
+
+<p>在两个机器翻译任务上进行实验，发现这些模型在质量上的表现优越，并且更容易进行平行运算，训练所需时间明显减少。</p>
+
+<p>该模型在WMT 2014年英德翻译任务上达到了28.4 BLEU，比现有最佳结果（包括整体模型）提高了超过2 BLEU。在WMT 2014年英法翻译任务中，模型在八个GPU上训练3.5天后，取得了新的单模型最佳BLEU分数41.8，训练成本仅为文献中最佳模型的一小部分。</p>
+
+<p>展示出无论是在大量或有限的训练数据下，Transformer在其他任务中的泛化能力，成功应用于英语组成句分析。</p>
+
+<p>论文链接：https://arxiv.org/pdf/1706.03762.pdf</p>
+
+<p>核心技术：模型架构（此处先留下大体印象 encode+decode）</p>
+
+<center><img src="/images/2025/IMAG2025012202.webp"></center>
+
+
+<h1>LLM 浅谈</h1>
+
+<p>很多人认为大模型可以直接回答问题或参与对话，但实际上，它们的核心功能是根据输入的文本预测下一个可能出现的词汇，即“Token”。这种预测能力使得LLM在各种应用中表现出色，包括但不限于：</p>
+
+<p>文本生成：LLM可以生成连贯且有意义的文本段落，用于写作辅助、内容创作等。</p>
+
+<p>问答系统：通过理解问题的上下文，LLM能够生成准确的回答，广泛应用于智能客服和信息检索。</p>
+
+<p>翻译：LLM可以根据上下文进行高质量的语言翻译，支持多语言交流。</p>
+
+<p>文本摘要：LLM能够提取长文档的关键内容，生成简洁的摘要，方便快速理解。</p>
+
+<p>对话系统：LLM可以模拟人类对话，提供自然流畅的互动体验，应用于聊天机器人和虚拟助手。</p>
+
+<p>通过理解Token的概念，我们可以更好地掌握LLM的工作原理及其在实际应用中的强大能力。</p>
+
+<h2>Token</h2>
+
+<h3>样例</h3>
+
+<p>谈到 token，不得不提到近期一个大模型被揪出来的低级错误“Strawberry里有几个 r”。</p>
+
+<center><img src="/images/2025/IMAG2025012203.webp"></center>
+
+
+<p>嘲笑之后，大家也冷静了下来，开始思考：低级错误背后的本质是什么？</p>
+
+<p>大家普遍认为，是 Token 化（Tokenization）的锅。</p>
+
+<p>在国内，Tokenization 经常被翻译成「分词」。这个翻译有一定的误导性，因为 Tokenization 里的 token 指的未必是词，也可以是标点符号、数字或者某个单词的一部分。比如，在 OpenAI 提供的一个工具中，我们可以看到，Strawberry 这个单词就被分为了 Str-aw-berry 三个 token。在这种情况下，你让 AI 大模型数单词里有几个 r，属实是为难它。</p>
+
+<p>为了让大家直观地看到大模型眼里的文字世界，Karpathy特地写了一个小程序，用表情符号（emoji）来表示 token。</p>
+
+<center><img src="/images/2025/IMAG2025012204.webp"></center>
+
+
+<h3>尝试</h3>
+
+<p>Token 是 LLM 理解的文本基本单位。虽然将 Token 看作单词很方便，但对 LLM 来说，目标是尽可能高效地编码文本。所以在许多情况下，Token 代表的字符序列比整个单词都要短或长。标点符号和空格也被表示为 Token，可能是单独或与其他字符组合表示。LLM 词汇中的每个 Token 都有一个唯一的标识符，通常是一个数字。LLM 使用分词器在常规文本字符串和等效的 Token 数列表之间进行转换。</p>
+
+<pre><code>import tiktoken
+# 获取适用于 GPT-2 模型的编码器
+encoding = tiktoken.encoding_for_model("gpt-2")
+# 编码示例句子
+encoded_text = encoding.encode("A journey of a thousand miles begins with a single step.")print(encoded_text)
+# 解码回原始文本
+decoded_text = encoding.decode(encoded_text)print(decoded_text)
+# 单个 token 的编码与解码
+print(encoding.decode([32]))  # 'A'
+print(encoding.decode([7002])) # ' journey'
+print(encoding.decode([286]))   # 'of'
+# 编码单词 "Payment"
+payment_encoded = encoding.encode("thousand")
+print(payment_encoded)
+# 解码 "Payment" 的编码结果
+print(encoding.decode([400])) # 'th'
+print(encoding.decode([29910]))   # 'ousand'
+[32, 7002, 286, 257, 7319, 4608, 6140, 351, 257, 2060, 2239, 13]
+A journey of a thousand miles begins with a single step.
+A 
+journey 
+of
+[400, 29910]
+th
+ousand
+</code></pre>
+
+<h3>预测下一个 Token</h3>
+
+<p>如上所述，给定一段文本，语言模型的任务是预测接下来的一个 Token。如果用 Python 伪代码来表示，这看起来就像这样：</p>
+
+<pre><code>predictions = predict_next_token(['A', 'journey', 'of', 'a'])
+</code></pre>
+
+<p>这里predict_next_token 函数接收一个由用户提供的提示词转换成的一系列输入 Token。在本例中，我们假设每个单词都构成一个单独的 Token。实际上，每个 Token 都会被编码为一个数字，而非直接以文本形式传入模型。函数的输出是一个数据结构，其中包含了词汇表中每一个可能的 Token 出现在当前输入序列之后的概率值。</p>
+
+<p>语言模型需要通过一个训练过程来学会做出这样的预测。训练过程中，模型会接触到大量的文本数据，从中学习语言模式和规则。训练完成后，模型就能够利用所学知识来估计任何给定 Token 序列之后可能出现的下一个 Token 的概率。</p>
+
+<p>要生成连续的文本，模型需要反复调用自身，每次生成一个新的 Token 并将其加入到已有的序列中，直至达到预设的长度。下面是一段更详尽的 Python 伪代码，展示了这一过程：</p>
+
+<pre><code>def generate_text(prompt, num_tokens, hyperparameters):   
+tokens = tokenize(prompt)  # 将提示转换为 Token 列表    
+for _ in range(num_tokens):  # 根据指定的 Token 数量重复执行      
+predictions = predict_next_token(tokens)  # 获取下一个 Token 的预测       
+next_token = select_next_token(predictions, hyperparameters)  # 根据概率选择下一个 Token       
+tokens.append(next_token)  # 将选中的 Token 添加到列表中   
+return ''.join(tokens)  # 将 Token 列表合并为字符串
+# 辅助函数用于选择下一个 Token
+def select_next_token(predictions, hyperparameters):  
+# 使用温度（temperature）、top-k 或 top-p 等策略调整 Token 选择 
+# 实现细节取决于具体的超参数设置    
+pass
+</code></pre>
+
+<p>在这段代码中，<code>generate_text</code> 函数接受一个提示字符串、生成 Token 的数量以及一组超参数作为输入。<code>tokenize</code> 函数负责将提示转换成 Token 列表，而 <code>select_next_token</code> 函数则根据预测的概率分布选择下一个 Token。通过调整 <code>select_next_token</code> 中的超参数，比如温度（temperature）、top-k 和 top-p，可以控制生成文本的多样性和创造性。随着循环的不断迭代，新的 Token 不断被添加到序列中，最终形成了连贯的文本输出。</p>
+
+<h2>模型训练</h2>
+
+<p>想象一下，我们要培养一个模型来预测句子中的下一个词。这就像是玩一个猜词游戏，模型需要根据已经出现的词来猜测下一个词。简化的词汇表,我们假设只有五个词：</p>
+
+<p>['I','you','love','oranges','grapes']</p>
+
+<p>我们不考虑空格和标点，只关注这些词。</p>
+
+<p>我们有三句话作为训练数据：</p>
+
+<ul>
+<li><p>I love oranges</p></li>
+<li><p>I love grapes</p></li>
+<li><p>you love oranges</p></li>
+</ul>
+
+
+<p>我们可以想象一个5x5的表格，表格中的每个格子代表一个词后面跟着另一个词的次数。这个表格可能看起来像这样：</p>
+
+<center><img src="/images/2025/IMAG2025012205.webp"></center>
+
+
+<p>在这个例子中，“I”后面跟着“love”两次，而“love”后面跟着“oranges”一次，跟着“grapes”两次。为了使这个表格有用，我们需要将这些次数转换成概率，这样模型就可以预测下一个词的可能性。例如，“love”后面跟着“oranges”的概率是 1/3（大约33.3%），而跟着“grapes”的概率是 2/3（大约66.7%）。</p>
+
+<p>但是，我们遇到了一个问题：“oranges”和“grapes”没有出现在其他词后面。这意味着，如果没有其他信息，模型将无法预测这两个词后面可能是什么。为了解决这个问题，我们可以假设每个词后面都可能跟着词汇表中的任何其他词，尽管这并不完美，但它确保了模型即使在训练数据有限的情况下也能做出预测。</p>
+
+<p>在现实世界中，大型语言模型（LLM）使用了大量的训练数据，这减少了这种“漏洞”出现的机会。然而，由于某些词的组合在训练数据中出现得较少，LLM可能在某些情况下表现不佳，导致生成的文本虽然语法上正确，但逻辑上可能存在错误或不一致。这种现象有时被称为“模型幻觉”。</p>
+
+<h2>上下文窗口</h2>
+
+<p>在之前的讨论中，我们提到使用马尔可夫链训练小模型的方法，这种方法的局限在于它只依赖最后一个 Token 来预测下一个 Token。这意味着，任何出现在最后一个 Token 之前的文本都不会影响预测结果，因此这种解决方案的上下文窗口非常小，只有一个 Token。由于上下文窗口过小，模型容易“忘记”先前的信息，导致生成的文本缺乏一致性，从一个词跳跃到另一个词。</p>
+
+<h2>改进上下文窗口</h2>
+
+<p>为了提高模型的预测质量，可以尝试增加上下文窗口的大小。例如，如果使用两个 Token 的上下文窗口，就需要构建一个更大的概率矩阵，其中每一行代表所有可能的两个 Token 序列。对于五个 Token 的词汇表，这将新增 25 行（5<sup>2</sup>）。在每次调用 predict_next_token() 函数时，将使用输入的最后两个 Token 来查找概率表中的对应行。</p>
+
+<p>然而，即使使用两个 Token 的上下文窗口，生成的文本仍可能缺乏连贯性。为了生成更加一致且有意义的文本，需要进一步增加上下文窗口的大小。例如，将上下文窗口增加到三个 Token 将使概率表的行数增加到 125 行（5<sup>3</sup>），但这仍然不足以生成高质量的文本。</p>
+
+<p>随着上下文窗口的增大，概率表的大小呈指数级增长。以 GPT-2 模型为例，它使用了 1024 个 Token 的上下文窗口。如果按上文中使用马尔可夫链来实现这样一个大的上下文窗口，每行概率表都需要代表一个长度在 1 到 1024 个 Token 之间的序列。对于一个包含 5 个 Token 的词汇表，可能的序列数量为 5<sup>1024</sup>，这是一个天文数字。这个数字太大了，以至于无法实际存储和处理如此庞大的概率表。因此，马尔可夫链在处理大规模上下文窗口时存在严重的可扩展性问题。</p>
+
+<h2>从马尔可夫链到神经网络</h2>
+
+<p>显然，使用概率表的方法在处理大规模上下文窗口时不可行。我们需要一种更高效的方法来预测下一个 Token。这就是神经网络发挥作用的地方。神经网络是一种特殊的函数，它可以接受输入数据，对其进行一系列计算，然后输出预测结果。对于语言模型而言，输入是一系列 Token，输出是下一个 Token 的概率分布。</p>
+
+<p>神经网络的关键在于其参数。这些参数在训练过程中逐渐调整，以优化模型的预测性能。训练过程涉及大量的数学运算，包括前向传播和反向传播。前向传播是指输入数据通过网络的各个层进行计算，生成预测结果；反向传播则是根据预测结果与真实标签之间的差异，调整网络的参数，以减小误差。</p>
+
+<p>现代语言模型，如 GPT-2、GPT-3 和 GPT-4，使用了非常深的神经网络，拥有数亿甚至数万亿的参数。这些模型的训练过程非常复杂，通常需要数周甚至数月的时间。尽管如此，训练有素的 LLM 能够在生成文本时保持较高的连贯性和一致性，这得益于其强大的上下文理解和生成能力。</p>
+
+<h2>Transformer 和注意力机制</h2>
+
+<p>Transformer 是目前最流行的神经网络架构之一，特别适用于自然语言处理任务。Transformer 模型的核心特点是其注意力机制。注意力机制允许模型在处理输入序列时，动态地关注序列中的不同部分，从而更好地捕捉上下文信息。</p>
+
+<p>注意力机制最初应用于机器翻译任务，目的是帮助模型识别输入序列中的关键信息。通过注意力机制，模型可以“关注”输入序列中的重要 Token，从而生成更准确的翻译结果。在语言生成任务中，注意力机制同样发挥了重要作用，使得模型能够在生成下一个 Token 时，综合考虑上下文窗口中的多个 Token，从而生成更加连贯和有意义的文本。</p>
+
+<p>总结来说，虽然马尔可夫链提供了一种简单的文本生成方法，但其在处理大规模上下文窗口时存在明显的局限性。现代语言模型通过使用神经网络和注意力机制，克服了这些局限性，实现了高效且高质量的文本生成。</p>
+
+<h1>Transformer 的输入</h1>
+
+<center><img src="/images/2025/IMAG2025012202.webp"></center>
+
+
+<p>回到框架图，Transformer中单词的输入表示x由单词Embedding和位置Embedding （Positional Encoding）相加得到。</p>
+
+<p>单词的 Embedding 有很多种方式可以获取，例如可以采用 Word2Vec、Glove 等算法预训练得到，也可以在 Transformer 中训练得到。</p>
+
+<p>Transformer 中除了单词的 Embedding，还需要使用位置 Embedding 表示单词出现在句子中的位置。因为 Transformer 不采用 RNN 的结构，而是使用全局信息，不能利用单词的顺序信息，而这部分信息对于 NLP 来说非常重要。所以 Transformer 中使用位置 Embedding 保存单词在序列中的相对或绝对位置。</p>
+
+<p>简而言之：以苹果为例</p>
+
+<p>“水果店里有苹果，香蕉”中苹果代指水果，“商店里最新推出了苹果 16”中苹果代表品牌</p>
+
+<h1>Self-Attention（自注意力机制）</h1>
+
+<center><img src="/images/2025/IMAG2025012206.webp"></center>
+
+
+<p>上图是论文中 Transformer 的内部结构图，左侧为 Encoder block，右侧为 Decoder block。红色圈中的部分为 Multi-Head Attention，是由多个 Self-Attention组成的，可以看到 Encoder block 包含一个 Multi-Head Attention，而 Decoder block 包含两个 Multi-Head Attention (其中有一个用到 Masked)。Multi-Head Attention 上方还包括一个 Add &amp; Norm 层，Add 表示残差连接 (Residual Connection) 用于防止网络退化，Norm 表示 Layer Normalization，用于对每一层的激活值进行归一化。</p>
+
+<p>因为 Self-Attention是 Transformer 的重点，所以我们重点关注 Multi-Head Attention 以及 Self-Attention，首先详细了解一下 Self-Attention 的内部逻辑。</p>
+
+<p>当然，我们可以用更简洁的方式来理解Self-Attention机制。</p>
+
+<h2>Self-Attention 简介</h2>
+
+<p>Self-Attention 是一种允许模型在处理序列数据时关注不同部分的方法，特别适用于处理长文本。它通过计算序列中每个元素与其他所有元素之间的相关性来实现这一点。</p>
+
+<h3>工作流程</h3>
+
+<ol>
+<li><p>转换：每个输入元素（比如一个词）都会被转换成三个向量：Query (查询)、Key (键) 和 Value (值)。这些向量是通过将输入向量分别乘以三个不同的权重矩阵WQ、WK 和 WV 得到的。</p></li>
+<li><p>计算注意力分数：对于每个元素，使用它的 Query 向量与所有其他元素的 Key 向量进行点积运算，得到一个分数列表。这个分数表示当前元素与其他所有元素的相关性。</p></li>
+<li><p>归一化：将这些分数通过 softmax 函数进行归一化，得到一个概率分布，表示当前元素对其他所有元素的注意力权重。</p></li>
+<li><p>加权求和：使用这些注意力权重对所有元素的 Value 向量进行加权求和，得到最终的输出向量。</p></li>
+</ol>
+
+
+<h3>公式</h3>
+
+<p>假设输入序列为 X=[x1,x2,...,xn]X，每个 xi 都是一个向量。</p>
+
+<ul>
+<li>转换：</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025012207.webp"></center>
+
+
+<ul>
+<li>计算注意力分数：   </li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025012208.webp"></center>
+
+
+<p>其中dk是Key向量的维度。</p>
+
+<ul>
+<li><p>归一化：Attention Weights=softmax(Scores)</p></li>
+<li><p>加权求和：Output=Attention Weights⋅V</p></li>
+</ul>
+
+
+<h2>Multi-Head Attention</h2>
+
+<ul>
+<li>多头注意力（Multi-Head Attention）是为了让模型从多个不同的角度捕捉信息。具体做法是并行运行多个Self-Attention层（每个称为一个“头”），然后将所有头的输出拼接在一起，再通过一个线性变换。</li>
+</ul>
+
+
+<h2>总结</h2>
+
+<ul>
+<li><p>Self-Attention 让模型能够关注序列中的不同部分，从而更好地捕捉长距离依赖关系。</p></li>
+<li><p>Multi-Head Attention 通过多个Self-Attention层增强模型的表达能力，使其能够从多个角度综合考虑信息。</p></li>
+</ul>
+
+
+<h1>Add &amp; Norm 和 Feed Forward</h1>
+
+<h2>Add &amp; Norm (残差连接与层归一化)</h2>
+
+<h3>残差连接 (Residual Connection)</h3>
+
+<ul>
+<li><p>作用：帮助模型更好地学习，防止训练过程中信息丢失。</p></li>
+<li><p>方法：把输入直接加到输出上。</p></li>
+</ul>
+
+
+<h3>层归一化 (Layer Normalization)</h3>
+
+<ul>
+<li><p>作用：让数据更稳定，加快训练速度。</p></li>
+<li><p>方法：把每个样本的特征值调整到一个标准范围内，通常是平均值为0，标准差为1。</p></li>
+</ul>
+
+
+<p>结合使用</p>
+
+<ul>
+<li><p>步骤：</p></li>
+<li><p>先计算某一层的输出 F(x)F(x)。</p></li>
+<li><p>把输入 xx 加到 F(x)F(x) 上，得到 y=F(x)+xy=F(x)+x。</p></li>
+<li><p>对 yy 进行层归一化，得到最终的输出。</p></li>
+</ul>
+
+
+<h3>Feed Forward (前馈神经网络)</h3>
+
+<p>作用</p>
+
+<ul>
+<li>增加非线性：让模型更灵活，能处理更复杂的数据。</li>
+</ul>
+
+
+<p>结构</p>
+
+<ul>
+<li><p>两层全连接网络：</p></li>
+<li><p>第一层：把输入通过一个线性变换（乘以一个矩阵），然后用 ReLU 激活函数处理。</p></li>
+<li><p>第二层：再通过一个线性变换（乘以另一个矩阵）。</p></li>
+</ul>
+
+
+<h3>总结</h3>
+
+<ul>
+<li><p>Add &amp; Norm：通过残差连接和层归一化，让模型更稳定，训练更快。</p></li>
+<li><p>Feed Forward：通过两层全连接网络增加模型的灵活性，使其能处理更复杂的数据。</p></li>
+</ul>
+
+
+<h2>Decoder 结构</h2>
+
+<center><img src="/images/2025/IMAG2025012209.webp"></center>
+
+
+<p>上图红色部分为 Transformer 的 Decoder block 结构，与 Encoder block 相似，但是存在一些区别：</p>
+
+<ul>
+<li><p>包含两个 Multi-Head Attention 层。</p></li>
+<li><p>第一个 Multi-Head Attention 层采用了 Masked 操作。</p></li>
+<li><p>第二个 Multi-Head Attention 层的K, V矩阵使用 Encoder 的编码信息矩阵C进行计算，而Q使用上一个 Decoder block 的输出计算。</p></li>
+<li><p>最后由一个 Softmax 层计算下一个翻译单词的概率。</p></li>
+</ul>
+
+
+<h1>附</h1>
+
+<pre><code># 导入必要的库
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import math
+# 定义位置编码层，用于为输入序列添加位置信息
+class PositionalEncoding(nn.Module):   
+def __init__(self, d_model, max_len=5000):       
+super(PositionalEncoding, self).__init__()       
+# 初始化位置编码张量       
+pe = torch.zeros(max_len, d_model)       
+position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)      
+div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model))        # 计算正弦和余弦值        pe[:, 0::2] = torch.sin(position * div_term)        pe[:, 1::2] = torch.cos(position * div_term)        pe = pe.unsqueeze(0).transpose(0, 1)        # 将位置编码注册为缓冲区        self.register_buffer('pe', pe)
+    def forward(self, x):      
+    # 将位置编码与输入相加      
+    x = x + self.pe[:x.size(0), :]      
+    return x
+# 定义基于Transformer的模型类
+class TransformerModel(nn.Module):   
+def __init__(self, input_dim, output_dim, d_model=512, nhead=8, num_encoder_layers=6, dim_feedforward=2048, dropout=0.1):     
+super(TransformerModel, self).__init__()       
+self.model_type = 'Transformer'        
+# 定义嵌入层        
+self.embedding = nn.Embedding(input_dim, d_model)       
+# 定义位置编码层       
+self.pos_encoder = PositionalEncoding(d_model)       
+# 定义编码器层      
+encoder_layers = nn.TransformerEncoderLayer(d_model, nhead, dim_feedforward, dropout)     
+self.transformer_encoder = nn.TransformerEncoder(encoder_layers, num_encoder_layers)     
+self.d_model = d_model     
+# 定义解码器层      
+self.decoder = nn.Linear(d_model, output_dim)     
+# 初始化权重       
+self.init_weights()
+    def init_weights(self):       
+    initrange = 0.1       
+    self.embedding.weight.data.uniform_(-initrange, initrange)     
+    self.decoder.bias.data.zero_()      
+    self.decoder.weight.data.uniform_(-initrange, initrange)
+    def forward(self, src, src_mask):       
+    # 嵌入输入并乘以根号下d_model       
+    src = self.embedding(src) * math.sqrt(self.d_model)     
+    src = self.pos_encoder(src)      
+    # 编码输入       
+    output = self.transformer_encoder(src, src_mask)    
+    # 解码输出       
+    output = self.decoder(output)      
+    return output
+# 生成一个上三角矩阵作为掩码def generate_square_subsequent_mask(sz):  
+mask = (torch.triu(torch.ones(sz, sz)) == 1).transpose(0, 1)  
+mask = mask.float().masked_fill(mask == 0, float('-inf')).masked_fill(mask == 1, float(0.0))   
+return mask
+# 示例用法
+input_dim = 1000 # 词汇表大小
+output_dim = 1000 # 输出维度
+seq_length = 10  # 序列长度
+# 创建模型实例
+model = TransformerModel(input_dim=input_dim, output_dim=output_dim)
+# 示例数据
+src = torch.randint(0, input_dim, (seq_length, 32))  # (序列长度, 批次大小)
+src_mask = generate_square_subsequent_mask(seq_length)
+# 前向传播
+output = model(src, src_mask)
+print(output.shape)  # 预期输出: [序列长度, 批次大小, 输出维度]
+# 定义简单的损失函数和优化器用于训练
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+# 示例训练循环
+for epoch in range(10):  # 迭代次数  
+optimizer.zero_grad()   
+output = model(src, src_mask)   
+loss = criterion(output.view(-1, output_dim), src.view(-1)) 
+loss.backward()   
+optimizer.step()
+print(f"Epoch {epoch+1}, Loss: {loss.item()}")
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[【蘑菇先生】工业界大模型推荐实战经验梳理]]></title>
+    <link href="https://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice/"/>
+    <updated>2025-01-03T10:31:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/7387477310">https://zhuanlan.zhihu.com/p/7387477310</a></p>
+
+<p>大家好，我是蘑菇先生。好久不见，今天盘点下2024年工业界大模型在搜广推上的实战落地型工作。业界工作大体分为两类：</p>
+
+<ul>
+<li><p>用大模型做数据和知识增强、提取表征、通过prompt将推荐转成对话驱动的任务等，本质上没有修改LLM，属于信息增强和补充方法，无法直接建模海量协同信号。</p></li>
+<li><p>修改LLM直接建模搜广推海量数据中的协同信号，对输入输出范式改造，通过预训练/微调等过程建模海量数据，让模型同时拥有通用的世界知识和垂直领域海量协同信息。是能实现搜广推大模型scaling的前提，需要更复杂的工程架构支持。</p></li>
+</ul>
+
+
+<p>第一类工作层出不穷，大部分在工业界无法惊起水花，属于学术性的探索居多。第二类工作寥寥无几，需要资源算力和业务场景等支撑，但也是搜广推值得探索的前沿方向之一。本文重点分享第二类工作。本次分享4篇文章：GRs(Meta)、HLLMs(字节)、NoteLLM(小红书)、NoteLLM-2(小红书)等工作，基本都在各自场景验证了收益，最近又重读了下，常读常新，做一些梳理分享给大家。涵盖目前推荐系统两类主流范式：</p>
+
+<ul>
+<li><p>表征学习：NoteLLM\NoteLLM-2提供了一种使用LLMs训练item表征的范式，通过海量数据中的“共现”协同信号，应用对比学习目标来微调LLMs并提取多模态的item表征。学习的item表征可以用于I2I召回、排序特征提取器等。</p></li>
+<li><p>模型预估：GRs和HLLMs通过改造输入数据为行为序列，在自回归设定下，可以建模海量用户行为，从而达到推荐的目的。二者既可以作为召回模型、也可以用作排序模型，用于CXR预估。但二者在输入、架构、目标方面存在较大差异，下文会介绍。</p></li>
+</ul>
+
+
+<!--more-->
+
+
+<h1>Meta | GRs</h1>
+
+<p>全称：Actions speak louder than words: Trillion-parameter sequential transducers for generative recommendations.</p>
+
+<p>意义：为工业级别的搜广推应用中如何借鉴LLMs的能力指明了一条新的道路。</p>
+
+<p>整体方案一言以蔽之，通过生成式框架来重新定义召回和排序任务。在该生成式框架下，改造召排任务对应的输入输出范式、损失目标建模范式，在Transfomers架构上融入推荐系统DIN/MoE/SENet等主流设计思路，并通过算力优化达到线上推理条件。模型的输入不是文本，而是推荐系统标准的ID/结构化稀疏型特征构成的序列，借鉴LLMs模型架构，但没有用到预训练权重，意味着需要海量推荐系统数据进行训练才可能达到传统推荐模型的效果。</p>
+
+<p>更多技术细节参见：行动胜过言语: Meta落地工业界首个万亿级别参数的生成式推荐系统。本文主要补充更高阶的一些问题，也可参见：Meta生成式推荐模型GRs关键问题探讨。</p>
+
+<p>有2类关键问题想讨论：</p>
+
+<ul>
+<li><p>如何用生成式框架来重新定义召回和排序任务，在该生成式框架下，如何改造输入输出范式、损失目标建模范式；</p></li>
+<li><p>离线训练和在线推理阶段，输入输出范式存在什么差异？如何跨候选复用算力，做到更低时延？</p></li>
+</ul>
+
+
+<h2>关键问题1：如何用生成式框架来重新定义召回和排序任务？</h2>
+
+<p>从传统sequential recommender问题出发，探讨GRs如何改造传统建模范式。</p>
+
+<ul>
+<li><p>Ignorance of features other than user-interacted items： 传统的序列推荐，通常只使用用户交互过的正样本item来构造序列。这里面包含两层含义，仅使用itemID来表征item、仅使用正反馈来构造序列。前者会忽略item的各类category语义信息、后者无法捕捉一些真实后验行为(如ctr)。GR通过两方面来分别解决这两个问题。a. 通过引入辅助信息并合并到主序列实现对稀疏类别特征的建模。b. 对全正负反馈超长序列的target attention来间接捕获数值统计型特征，各类后验行为均保留着，就能够通过attention近似捕捉真实后验，间接体现数值型统计特征的作用，泛化性也更好。通过实验，我们可以发现如果GRs模型仅在有交互的正样本itemID上学习，指标会下降非常多，即：2.6% NE的下降、1.3%的HitRate@100的下降。</p></li>
+<li><p>User representations are computed in a target-independent setting： 用户的表征和待预测目标item之间互相独立，表达能力弱，这个主要是传统序列模型的问题，比如GRU4Rec、SASRec、BERT4Rec等，无法在输入侧进行交互，仅仅能通过输出侧的softmax来实现和目标item的弱交互。DLRMs中的DIN等模型，引入了target-attention机制来缓解该问题。GRs通过将action看做新的模态，交错插入item和action，能够实现在causal autoregressive的设定下，使用target-aware attention实现更强的交互能力。</p></li>
+<li><p>Discriminative formulations restrict applicability of prior sequential recommender work to pointwise settings: 传统的序列推荐是判别式的，只能在pointwise的设定下发挥作用。这类工作本质上学习的是或者在给定用户状态下推荐下一个item的条件概率。但在真实的推荐系统中，实际上可以拆解为两类概率过程，a. 推荐next content (召回)，b. 用户对该content的反馈action (排序)。生成式方法是联合学习content和action，即：。个人认为这是生成式范式有可能表现更好的本质原因，能更加无损地建模原始数据分布，配合LLM的架构，可以容纳更多数据和信息。</p></li>
+</ul>
+
+
+<p>如下图所示：Next Action Token prediction对应ranking任务，自回归预测的是前一个item在action上的概率分布，也即该item的行为类型。Next content token prediction对应retrieval任务。自回归预测的是next item，即在item物料上的概率分布。还是非常优雅的，将召排任务统一成“生成任务”视角。</p>
+
+<center><img src="/images/2025/IMAG2025010301.jpg"></center>
+
+
+<center>召排范式</center>
+
+
+<p></br></p>
+
+<p>模型对比图如下，左侧是传统的序列推荐模型，action只会在输入侧构建item表征时，作为额外的信息融入；输出端自回归的仍然是item本身；右侧是GR模型，输入端显式地将action也作为1种序列组成类型，输出端item和action均能够作为监督信号，来实现自回归预测。</p>
+
+<center><img src="/images/2025/IMAG2025010302.jpeg"></center>
+
+
+<center>模型架构</center>
+
+
+<p></br></p>
+
+<p>此处召排本质上可以是统一的模型，如图中所示，在1个任务中联合建模和，此处拆成两个任务有一定取舍，可能是为了适配现有推荐系统链路。</p>
+
+<p>除此之外，这一范式不仅能更好的建模数据分布，同时在可以通过beam search来生成item序列结果。这个相比于传统listwise的重排(如DPP和RL)，会更加有优势。也就是说，该方案还能充当重排层的角色，实现listwise的预测，这样就统一了召回、排序、重排，真正实现生成式推荐。</p>
+
+<h2>关键问题2：排序任务训练和推理阶段的差异在哪，如何跨候选复用算力？</h2>
+
+<p>训练： 下图是训练示意图，看示意图是个召排统一的GR模型，输出侧的监督信号包括了item和action。这个地方和前文描述的稍有出路。前文描述的排序任务输出侧监督信号主要是action，召回任务输出侧监督信号主要是item。但不影响理解。</p>
+
+<center><img src="/images/2025/IMAG2025010303.jpeg"></center>
+
+
+<center>训练</center>
+
+
+<p></br></p>
+
+<p>推理：</p>
+
+<p>排序在推理时，正常要对所有个候选都推理一遍。假设序列长度为，复杂度为。此处作者可以复用多个候选间的算力，一次性推理多个候选的打分(分batch)。</p>
+
+<p>如下图所示：将batch为大小的候选items拼接到输入行为序列末尾，可一次性推理出每个item的预测action概率分布。多个target之间复用历史行为序列，因此历史行为序列理论上只需要1次推理即可，不同target item之间通过mask机制，阻断互相attention，这样就能够实现b_{m}个候选同时预估，同时实现候选item和历史行为item的self-attention。即时叠加多层self-attention注意力机制，由于是causal self-attention，历史行为items表征中不会耦合待预测的target items表征信息。上述操作后，复杂度为O((n+m)<sup>2</sup> d)=O(n<sup>2d</sup>)。</p>
+
+<p>这样实现的效果等价于对b_m个候选分别拼接到历史行为序列中，各自做1次前向传播，一共做b_m次，这样会导致历史行为序列的计算冗余。改进后，在1次前向传播推理中同时预估b_m个候选，最大程度复用算力。</p>
+
+<center><img src="/images/2025/IMAG2025010304.jpeg"></center>
+
+
+<center>推理</center>
+
+
+<p></br></p>
+
+<p>除了跨候选复用算力，在跨请求之间，通过KV caching机制，比如HSTU中的K(X)和V(X)可以在跨batch和跨请求之间复用。</p>
+
+<p>总结一下：GRs将用户行为组织成序列行为，纳入了曝光/点击/交互等各类行为，将item和action都视作相同模态，作为序列的组成部分，每个item使用ID和结构化的稀疏特征来表示，抛弃了LLMs的预训练权重，通过海量数据自回归训练改造的Transformer架构HSTU。最终通过M-FALCON等算力优化手段实现线上推理。</p>
+
+<p>更多技术细节参见：行动胜过言语: Meta落地工业界首个万亿级别参数的生成式推荐系统。 ‍</p>
+
+<h1>字节 | HLLM</h1>
+
+<p>全称：Enhancing Sequential Recommendations via Hierarchical Large Language Models for Item and User Modeling</p>
+
+<p>意义：HLLM是国内第一个对标Meta的GRs工作，也是今年大模型推荐的大作。</p>
+
+<p>文章主要探讨了3个方面的问题：① 发挥LLM的预训练权重价值：研究预训练大型语言模型（LLMs）中包含的世界知识和推理能力在推荐系统任务中的具体价值，这一点与GRs的不同，GRs用了LLMs的模型架构，但没有使用预训练的权重，意味着HLLMs的数据效率可能更高。② 推荐任务微调：探讨如何为推荐任务进行特定微调（fine-tuning）。③ 模型的可扩展性：验证大语言模型在推荐系统中是否同样具备scaling能力，即模型性能是否随着模型参数量的增加而提升。</p>
+
+<p>为了解决这一难题，文章也同Meta GRs一样，将推荐任务形式化为“序列推荐”。并提出了层次化大语言模型，第一级是Item LLM，使用LLM从item的文本表述中提取丰富的语义信息，此处没有使用ID信息； 第二级是User LLM，利用第一级的item表征来建模用户行为序列，预测用户的未来兴趣，此处大概率只使用用户交互的正样本。思路比较清晰。</p>
+
+<p>模型整体结构如下：</p>
+
+<center><img src="/images/2025/IMAG2025010305.jpeg"></center>
+
+
+
+
+<center>模型结构</center>
+
+
+<p></br></p>
+
+<h2>Item LLM</h2>
+
+<p>本质上是使用LLM作为item侧的特征提取器，将丰富的文本信息压缩成1个item表征。主要改进就是在文本描述末尾新增特殊标记[ITEM]。然后过LLMs模型，将最后1层[ITEM]对应位置的hidden states作为item的表征。属于基本操作，在NoteLLM中也能见到。这个[ITEM]表征联同itemLLM的参数会在下游推荐任务中进行端到端微调。</p>
+
+<h2>User LLM</h2>
+
+<p>通过item表征，可以将用户行为ID序列U={I_1, I_2,...,I_n}转成表征序列 {E_1, E_2,...,E_n}，然后套一个LLMs，就能让item序列进行充分交叉。该LLMs的输入中把LLM预训练的word embedding丢掉，使用item LLM输出的item embedding替代，然后后续的Transformers建模序列结构保持一致。</p>
+
+<h2>训练目标</h2>
+
+<ul>
+<li>生成式目标：和GRs或传统的序列推荐任务都比较像，自回归预测下一个item。和GRs的差异点包括两个方面：① 使用了预训练模型的权重。② User LLMs的输入是item LLM输出的表征(也即根源输入是text-input features)，而GRs主要是ID和结构化的稀疏特征。具体自回归预测时，使用了InfoNCE。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010306.png"></center>
+
+
+<p>j是batch内的user编号下标，i是第j个user的序列中的第i个item，E<em>{j,i}是Item LLM输出的表征，\hat{E}</em>{j,i}是User LLM预测的表征。正样本是next item，负样本从batch内非该用户序列的其他样本中采样。</p>
+
+<ul>
+<li>判别式目标：判别式目标是给定用户表征、待预测的item表征，判断用户是否对该item感兴趣。这里头有2种建模方式，1种是把用户行为序列和item拼接起来过Transformers，这样能提前交互；另一种是使用LLMs作为User序列提取器，在末尾新增[USER]作为user表征，在输出端进行弱交互，可以复用行为序列表征计算过程，在线上推理时可跨候选间复用user表征，性能好很多。前者由于过早交互，行为序列和待预测的item信息耦合在一起，导致无法跨候选复用算力。此处采用logloss，应该也是基于用户序列来构造正负样本。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010307.png"></center>
+
+
+<p>最后的损失如下，可以看到生成式目标实际是作为辅助损失的，主目标是LogLoss分类目标，和DIEN很像。</p>
+
+<center><img src="/images/2025/IMAG2025010308.png"></center>
+
+
+<p>该目标训练的过程中，能够端到端联合训练Item LLM和user LLM。item LLM的产物[ITEM]对应的表征实际上还能用于其他推荐场景：如作为item表征输入到精排建模、用于召回等。</p>
+
+<p>实验部分也是做的比较完备的，值得一看。包括几个部分：</p>
+
+<ul>
+<li>LLMs预训练权重的重要性。“使用预训练”意味着在这些预训练LLMs权重基础上进一步微调、"不使用预训练(Scratch)"意味着丢弃预训练权重，复用架构从头开始训练，就像GRs中的一样。因为HLLMs的输入是item侧文本，预训练权重信息肯定是有用的，毋庸置疑。另外文中也说明了预训练的tokens数量越大，重要性越高。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010309.jpeg"></center>
+
+
+<ul>
+<li>LLMs微调的重要性。使用生成式目标和判别式目标微调[ITEM]，[User]以及对应LLM的参数，也非常重要。例如：item侧不微调，固定参数，使用LLM输出的最后1层hidden states进行pooling作为item表征，结果非常差。user侧同理。这说明基于next token预测训练的LLMs如果作为特征提取器是非常糟糕的。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010310.jpeg"></center>
+
+
+<ul>
+<li>对比实验：SASRec和HSTU(GRs)是ID-based模型，HLLMs、LEARN是text-based模型。HLLMs效果上好不少。但是这个地方由于输入数据和建模方式差异，个人认为这么对比可能不是公平的，不能发挥出GRs的优势。下面总结的时候会再说明下原因。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010311.jpeg"></center>
+
+
+<p>最后我们再聊聊HLLMs的A/B Test部分，也是满满细节：基座是TinyLlama-1.1B，训练了HLLM-1B。由于性能的考虑，总共分为了3个部分：</p>
+
+<ul>
+<li><p>Stage I: 端到端训练所有HLLMs参数：使用判别式损失训练Item LLM和User LLM。用户行为序列长度是150。</p></li>
+<li><p>Stage II: 先用Stage I训练Item LLM来编码和存储item表征。通过检索item表征来进一步微调User LLM，只训练User LLMs，因此可以将序列长度从150拓到1000。</p></li>
+<li><p>Stage III: HLLM参数固定，基于User LLM抽取user表征，联同Item LLM的表征和已经有的线上特征，喂给精排走流式学习。</p></li>
+</ul>
+
+
+<p>线上serving的时候，item表征在新item发布的时候就会抽取表征；user表征T+1例行化更新；U/I的embedding提前存储好，用于流式训练和serving，这种情况下线上耗时几乎没变。</p>
+
+<center><img src="/images/2025/IMAG2025010312.jpeg"></center>
+
+
+<p>到此我们可以总结下HLLM和GRs的差异点：</p>
+
+<ul>
+<li><p>输入数据：GRs输入用户全周期正负反馈行为序列，数据量更大，主要基于item侧的ID和结构化稀疏特征进行学习；HLLMs输入用户正反馈行为序列，数据量小很多，主要基于item侧的文本描述，没有使用ID特征进行学习。</p></li>
+<li><p>模型架构：由于输入的差异和数据量的差异，GRs可以使用LLMs架构从头预训练，将文本模态替换为ID/action进行端到端训练。也是真正意义上的端到端模型。HLLMs主要基于预训练LLMs，能够复用LLMs预训练权重蕴含的世界知识，需要遵循LLMs的文本模态输入，无法直接建模ID，转而添加【ITEM】，【User】来适配预训练LLMs并提炼关键信息，也就意味着微调非常重要。</p></li>
+<li><p>训练目标：由于海量数据，GRs可以以自回归为主要目标进行训练，使用更大参数量的模型，其scaling的潜力更大，是能真正替代现有的DNN搜广推模型。HLLMs在传统判别式目标之上新增自回归目标，个人认为scaling的天花板是有限的，也无法真正替代现有的DNN，文中实验部分关于这块的介绍也是比较简单，说服力不足。</p></li>
+<li><p>在线推理：late fusion的HLLMs类似双塔架构，通过解耦合item和user表征，复用user侧表征，但是交叉能力比较弱；GRs在双塔和完全体Transformers之间做了个折中，引入了action和item交错编排和target-attention机制，在交叉能力上是更好的，通过causal attention和候选之间mask机制也能实现跨候选间复用“用户历史行为表征”算力，但能达到更好的交叉能力。GRs的上线难度肯定是更大的。</p></li>
+</ul>
+
+
+<p>正是因为上述的差异，在相同数据集上对比HLLMs和HSTU可能不够公平，无法达到各自最优水平进行对比。</p>
+
+<h1>小红书 | NoteLLM</h1>
+
+<p>全称：A Retrievable Large Language Model for Note Recommendation。</p>
+
+<p><strong>意义：第一个使用大模型做I2I推荐的工作。也是使用LLM兼容语义信息和协同信息，提升item embedding学习的代表性工作之一。</strong></p>
+
+<p>小红书发表在WWW 2024上的工作，基于LLM的I2I推荐。本质上是通过LLM来学习笔记的表征，该表征能同时拥有大模型的语义世界知识，还能将小红书用户行为中的协同信号注入其中。其建模的关键假设是：notes frequently read together are likely related. 利用了共现笔记通常比较相似的假设，通过I2I相关笔记对比学习任务来提升item embedding的学习。除此之外，还引入了“标签/类目”生成任务来多目标学习。</p>
+
+<p>整体架构图如下，自下而上：包含了笔记压缩prompt、相关笔记对构建、生成对比学习和标签/类目生成多目标学习、最后应用于I2I推荐、笔记hashtag生成、笔记类目打标等任务。整体工作流大致是：先通过prompt来构造LLMs的输入，同时预留着[EMB]占位符节点，用于I2I协同信号对比学习和标签/类目生成学习，这样就能让共现高的笔记的[EMB]相近，同时还能保留LLMs的语义信息。</p>
+
+<center><img src="/images/2025/IMAG2025010313.jpeg"></center>
+
+
+
+
+<center>NoteLLM模型结构</center>
+
+
+<p></br></p>
+
+<h2>Note Compression Prompt</h2>
+
+<p>首先是Note Compression Prompt：为每个笔记样本构建一个统一的笔记压缩prompt，然后通过预训练LLMs进行解码学习item表征。prompt格式如下，[EMB]占位符就是学习的目标笔记表征。</p>
+
+<center><img src="/images/2025/IMAG2025010314.png"></center>
+
+
+<p>对于类目生成任务，引入了类目$c_i$等监督信号。</p>
+
+<center><img src="/images/2025/IMAG2025010315.jpeg"></center>
+
+
+<p>对于hashtag标签生成任务，引入了hashtags $tp_i$的监督信号。</p>
+
+<center><img src="/images/2025/IMAG2025010316.jpeg"></center>
+
+
+<p>通过上述步骤装配模版成文本tokens，通过LLMs得到上述tokens的表征序列，[EMB]处的表征会作为笔记表征，通过下面的GCL和CSFT进行预训练。</p>
+
+<h2>GCL</h2>
+
+<p>全称生成对比学习。为了引入海量数据协同信号，作者构建了相关笔记对，计算所有笔记对的用户行为共现得分，并为每个笔记形成共现得分集合。并选择集合中共现得分最高的笔记作为给定笔记的相关笔记。计算相似笔记的公式借鉴了类似swing的思路：即：</p>
+
+<p>$s<em>{n_A→n_B}=\sum</em>{i}^N\frac{1}{N_i}$</p>
+
+<p>接着通过生成对比学习（GCL）使用上述压缩标记作为每个笔记的表征，并训练LLMs从in-batch的负样本中识别出相关的正样本笔记。本质是利用共现笔记中的“协同信号”，来提升这个[EMB]的学习质量，让相似的note的EMB相近。</p>
+
+<center><img src="/images/2025/IMAG2025010317.png"></center>
+
+
+<h2>CSFT</h2>
+
+<p>全称协同监督微调。笔记的category和hashtags有一些监督信号，可以用于多任务学习，使用自回归生成损失建模即可。具体而言，作者采用了一种协同监督微调（CSFT）方法来训练模型为每个笔记生成标签/分类。由于I2I笔记推荐任务和标签/分类生成任务中学习到的压缩标记都旨在提取笔记内容的关键概念，CSFT可以有效增强笔记嵌入。</p>
+
+<center><img src="/images/2025/IMAG2025010318.jpeg"></center>
+
+
+<p>最后，训练好的模型可以同时做I2I向量检索、类目打标、话题生成等任务。</p>
+
+<p>从实验部分来看，</p>
+
+<ul>
+<li><p>LLaMA 2 zero-shot：直接提取item的表征，不使用任何prompt；</p></li>
+<li><p>PromptEOL zero-shot：zero-shot的sentence embedding方法，使用了one-word limitation prompt.</p></li>
+<li><p>SentenceBERT：基于共现笔记对比学习来学习笔记相似性，也是小红书线上的基线。</p></li>
+<li><p>PromptEOL+CSE：PromptEOL基础上基于共现笔记对比学习来训练LLM。</p></li>
+<li><p>RepLLaMA：使用LLM作为双编码器的向量检索模型，类似双塔模型训练，不使用任何any prompts.</p></li>
+<li><p>NoteLLM：本文方法。</p></li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010319.jpeg"></center>
+
+
+<h1>小红书 | NoteLLM-2</h1>
+
+<p>全称：Multimodal Large Representation Models for Recommendation。</p>
+
+<p>意义：第一个<strong>直接使用LLM来提升推荐系统多模态表征质量</strong>的工作，发挥LLMs和视觉Encoder各自的优势。</p>
+
+<p>同样出自小红书的工作，提出了一个端到端训练方法，能够方便地定制集成任何现有的LLMs和视觉Encoder，以构建高效的多模态表示模型（Multimodal Large Representation Models, MLRMs）。</p>
+
+<p>NoteLLM的Item表征主要建模文本信息，这篇工作在文本表征之外，重点建模了笔记的多模态信息，并用于多模态的I2I推荐。文章重点探讨了如何充分发挥LLM的文本理解能力，来弥补传统多模态模型对文本信息的忽视，取长补短。</p>
+
+<p>具体而言，在I2I推荐任务上，提出了一种端到端训练方法，和NoteLLM一样，使用I2I共现笔记对的对比学习，来增强多模态表征的学习。所以乍一看就是在note compression prompt设计上如何引入图像表征来形成多模态表征。方法也很简单，</p>
+
+<p>在NoteLLM的prompt基础上引入了图像表征占位。是placeholder, 后面会使用从原始图像中提取的vision embedding代替。</p>
+
+<center><img src="/images/2025/IMAG2025010320.png"></center>
+
+
+<p>具体而言，先使用上述prompt过tokenizer后得到text embedding。然后text embedding中占位符对应的word embedding使用vision encoder(例如CLIP/BLIP等)经过Connector(MLP层)得到的visual embedding来替换，形成多模态表征序列。然后使用LLMs处理该多模态表征序列，得到最后的last hidden states作为note的多模态表征。然后使用和NoteLLM一样的共现item pairs进行对比学习预训练。如下所示，和NoteLLM是一样的。</p>
+
+<center><img src="/images/2025/IMAG2025010321.jpeg"></center>
+
+
+<p>但这个简单的改造会面临的问题在于：LLMs在端到端训练中倾向于忽视图像信息，被文本信息主导。为此，文章提出2种方法：包括：① 从prompt的视角区分“文本信息”和“图像信息”，其实就是优化prompt，称为mICL(multimodal in-context learning)；② 在LLM接入下游I2I任务的输出端引入late fusion机制，在结构上显式地让原始图像信息发挥更大作用。整体架构图如下：</p>
+
+<center><img src="/images/2025/IMAG2025010322.jpeg"></center>
+
+
+<h2>mICL</h2>
+
+<p>首先是mICL，将prompt改造成如下格式，和NoteLLM的主要差异点是接入下游的时候有2个表征节点，新增的，因为Causal attention机制，这个节点仅提炼了前面的图像表征信息n_i<sup>v</sup>；另一个是整个prompt节点，即prompt尾巴处，提取了文本和图像多模态表征n_i<sup>m</sup>。这两个表征在下游I2I建模时都会发挥作用，以保留图像的信息。</p>
+
+<center><img src="/images/2025/IMAG2025010323.png"></center>
+
+
+<h2>Late Fusion</h2>
+
+<p>接着是Late Fusion机制：为图像表征和多模态表征都设置了门控融合机制，来自适应融合原始vision encoder的输出v和上述图像表征和多模态表征。例如图像表征如下，其中v是visual encoder(如BLIP/CLIP等)的原始表征，n_i<sup>v</sup>是上述经过LLM后的图像表征。二者通过门控机制融合得到\hat{n}_i^{v}。同理，多模态表征节点n_i<sup>m</sup>，也和v进行门控融合。</p>
+
+<center><img src="/images/2025/IMAG2025010324.jpeg"></center>
+
+
+<p>图像表征节点和多模态表征节点，分别过对比学习损失来建模。</p>
+
+<center><img src="/images/2025/IMAG2025010325.jpeg"></center>
+
+
+
+
+<center><img src="/images/2025/IMAG2025010326.png"></center>
+
+
+
+
+<center><img src="/images/2025/IMAG2025010327.png"></center>
+
+
+<p>从实验部分，</p>
+
+<ul>
+<li><p>MTomato-Base：MTomato是小红书自研的基于LLaMA 2的LLM，配合vision encoder CLIP ViT-B进行实验。</p></li>
+<li><p>MQwen-Base：使用Qwen Chat作为LLM，vision encoder也是用的CLIP ViT-B进行实验。</p></li>
+<li><p>MQwen-bigG：使用Qwen Chat作为LLM，vision encoder替换为ViT-bigG。</p></li>
+</ul>
+
+
+<p>LLM大部分都是采用7B左右的，效果来看 MQwen-bigG>MQwen-Base>MTomato-Base，说明LLM和vision encoder都很重要。mICL和late fusion通过放大vision encoder的作用，都能起到一定作用。</p>
+
+<center><img src="/images/2025/IMAG2025010328.jpeg"></center>
+
+
+<p>NoteLLM-2和NoteLLM的差异：</p>
+
+<ul>
+<li><p>prompt组织微调任务的输入：NoteLLM引入了[EMB]特殊标记来提炼文本模态表征、NoteLLM-2引入了[IMG-EMB]图像模态和整体多模态特殊标记来提炼图像表征和多模态表征，这些特殊标记会用于下游推荐系统任务微调；</p></li>
+<li><p>协同信号微调：微调任务都使用了共现笔记对，配合生成对比学习目标进行训练。此外，NoteLLM引入了话题标签和类目生成辅助目标共同引导[EMB]的学习；NoteLLM-2专注LLM和视觉编码器的协同，基于上述两个特殊标记引入两个Loss，通过late fusion机制优化LLMs对视觉信息的关注。</p></li>
+</ul>
+
+
+<h1>总结</h1>
+
+<p>基于上述工作，我们可以大致窥探出LLMs在搜广推上应用的范式：</p>
+
+<ul>
+<li><p>借鉴LLMs的架构，不用LLMs的预训练权重，此时尽可能保留原始海量的曝光日志数据，通过组织输入样式和ID类特征，自回归的训练大模型，有可能达到推荐系统领域的scaling，这种方法个人认为短期来说上限更高，但难度更大，对应用场景、用户行为频次、供给丰富性等，都有很高的要求，现阶段能真正能落地的很少。代表性工作是GRs。</p></li>
+<li><p>借鉴LLMs的架构和预训练权重，输入模态以文本为主，无法直接输入ID等，需要下游推荐任务的微调才能真正发挥价值。由于有预训练权重的存在，数据效率更高，如何设计好的下游微调任务成为了成败的关键。为了达到更好的微调，这里面需要做两个方面工作：① 输入数据如何适配LLMs；② 用什么目标来微调。借鉴字节和小红书等内容化平台的经验，输入数据适配通常配合prompt+特殊标记，通过特殊标记作为预训练LLMs和下游推荐任务的桥梁；在微调目标选择上，要么有显式的共现关系，类似NoteLLM和NoteLLM-2中的共现item对，通过对比学习微调；要么直接基于自回归目标，如HLLMs中结合判别式和生成式自回归目标。i2i方法有一定信息损失，在I2I推荐任务中可能表现不错，但非通用方法。在数据规模足够的场景下，自回归方法更加通用一些，适配的任务可能更多。</p></li>
+</ul>
+
+
+<h1>References</h1>
+
+<p>GRs | Zhai J, Liao L, Liu X, et al. Actions speak louder than words: Trillion-parameter sequential transducers for generative recommendations[J]. arXiv preprint arXiv:2402.17152, 2024.</p>
+
+<p>HLLMs | Chen J, Chi L, Peng B, et al. HLLM: Enhancing Sequential Recommendations via Hierarchical Large Language Models for Item and User Modeling[J]. arXiv preprint arXiv:2409.12740, 2024.</p>
+
+<p>NoteLLM | Zhang C, Wu S, Zhang H, et al. NoteLLM: A Retrievable Large Language Model for Note Recommendation[C]//Companion Proceedings of the ACM on Web Conference 2024. 2024: 170-179.</p>
+
+<p>NoteLLM-2 | Zhang C, Zhang H, Wu S, et al. NoteLLM-2: Multimodal Large Representation Models for Recommendation[J]. arXiv preprint arXiv:2405.16789, 2024. ‍</p>
+
+<p>‍</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[多模态大语言模型调研]]></title>
+    <link href="https://ibillxia.github.io/blog/2024/06/27/multimodal-llm-survey/"/>
+    <updated>2024-06-27T10:53:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2024/06/27/multimodal-llm-survey</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/689385182">https://zhuanlan.zhihu.com/p/689385182</a></p>
+
+<p>本文是关于论文《MM-LLMs: Recent Advances in MultiModal Large Language Models》的简要介绍。大型语言模型沿着多模态方向发展成为目前越来越受关注的研究领域，这篇论文从方法角度整理了2022年到2024年2月的经典多模态大语言模型，并从技术角度给出了一些前瞻思路。本文主要按照作者提供的框架和案例进行介绍。</p>
+
+<p>有关本专栏的更多内容，请参考大语言模型文献调研专栏目录</p>
+
+<h1>1. 文章简介</h1>
+
+<h2>1.1 基本信息</h2>
+
+<p>题目：MM-LLMs: Recent Advances in MultiModal Large Language Models</p>
+
+<p>论文：https://arxiv.org/pdf/2401.13601.pdf?trk=public_post_comment-text</p>
+
+<p>项目主页：https://mm-llms.github.io/</p>
+
+<p>论文引用：</p>
+
+<pre><code>@article{zhang2024mm,
+  title={Mm-llms: Recent advances in multimodal large language models},
+  author={Zhang, Duzhen and Yu, Yahan and Li, Chenxing and Dong, Jiahua and Su, Dan and Chu, Chenhui and Yu, Dong},
+  journal={arXiv preprint arXiv:2401.13601},
+  year={2024}
+}
+</code></pre>
+
+
+
+<!--more-->
+
+
+<h2>1.2 多模态大语言模型简介</h2>
+
+<p>GPT诞生以来，一向以强大的自然语言处理能力而著称，人们试着将大型语言模型（Large Language Models，LLM）的强大推理和生成能力在除文本以外的模态数据上应用起来。例如图像、视频、音频、3D点云等。得益于各个模态的数据都已经有各自的高质量的编码器和生成器，再加上LLM的加持，可以实现很多有趣的任务，多模态的大语言模型（Multi-modal Large Language Models， MM-LLMs）由此而来。</p>
+
+<p>多模态大语言模型的关键是如何将各个模态的模型（例如图像编码器，视频生成器等）与大语言模型结合起来，因为不同的模态是原生的不兼容的。这就涉及到多模态领域中的一个概念：对齐（Alignment）。这就对MM-LLMs框架提出了要求，一方面，各个模态的编码器、生成器所使用的编码，要和大语言模型中所使用的编码（也就是token）进行对齐，另一方面，在人机交互时，需要模型的功能能够对齐用户的意图，而非答非所问。</p>
+
+<h2>1.3 多模态大语言模型的简要历史</h2>
+
+<p>自从GPT-4和Gemini诞生后，多模态大语言模型吸引众多研究者加入；早期框架还是致力于用LLM辅助特定模态的理解，例如LLaVA、BLIP-2、Video-ChatGPT等；后续陆陆续续有研究关注多模态生成任务，例如MiniGPT-5、SpeechGPT、AudioPaLM等；近期最新成果关注和人类类似的从任意到任意（Any-to-Any）模态的交互，例如AudioGPT、NExt-GPT等。很多公司和机构高也在布局大语言模型以服务于特定的业务需要。</p>
+
+<center><img src="/images/2024/IMAG2024062701.png"></center>
+
+
+<h1>2. 多模态大语言模型的整体架构</h1>
+
+<p>目前的多模态大语言模型采取并联式的框架，以NExtGPT为例，多模态数据送到各自模态的编码器后得到各自模态的编码，这些编码通过各自模态的输入转换器（Input Projection）后得到对齐到大语言模型的文本编码，经过大语言模型处理后的输出，经过限定模态的输出转换器（Output Projection）以及生成器得到多模态的数据。通常的，Input Projection和Output Projection是需要训练的，这些模块占整个框架的参数量的比例很小，通常在2%左右。其他模块多是现成的经过大量数据训练过的，可以固定参数，也可以跟随Projection模块一起微调。</p>
+
+<center><img src="/images/2024/IMAG2024062702.png"></center>
+
+
+<h2>2.1 各个模态的编码器</h2>
+
+<p>各个模态的编码器用于将特定模态的数据转换成编码，现在已经有很多成熟的编码器可以解决这些问题，除了文本模态之外：</p>
+
+<ul>
+<li><p>视觉编码器：例如CLIP ViT、SAM HQ、DiNoV2等；</p></li>
+<li><p>语音编码器：例如CFormer、Whisper、CLAP等；</p></li>
+<li><p>3D编码器：例如ULIP2；</p></li>
+<li><p>联合编码器：各种模态均可处理，例如ImageBind；</p></li>
+</ul>
+
+
+<h2>2.2 输入转换器</h2>
+
+<p>用于模态对齐，将多模态数据编码对齐到文本空间，也是多模态融合的关键，这一模块是需要训练的。通常的转换器可以采取的形式有：</p>
+
+<ul>
+<li><p>一个简单的线性层；</p></li>
+<li><p>多层感知机</p></li>
+<li><p>其他类型，例如Cross-Attention、Q-former等</p></li>
+</ul>
+
+
+<h2>2.3 大型语言模型底座</h2>
+
+<p>这一部分可以独自的进行文本到文本的转换，当有其他模态的数据加入时，大型语言模型会将这些模态的数据也认定为一种文本，输出的模态也是以文本的形式，交给后续解码器处理。常见的用于多模态的大语言模型有ChatGLM、PaLM、Vicuna等。</p>
+
+<h2>2.4 输出转换器</h2>
+
+<p>用于将大语言模型的输出转换成多模态生成器空间中所使用的输入编码。与输入转换器形态类似。</p>
+
+<h2>2.5 多模态生成器</h2>
+
+<p>针对不同模态，目前已经有比较成熟的生成解决方案，可以直接拿来使用。例如</p>
+
+<ul>
+<li><p>图像生成：Stable Diffusion</p></li>
+<li><p>视频生成：ZeroScope</p></li>
+<li><p>语音生成：AudioLDM-2</p></li>
+</ul>
+
+
+<h2>2.6 多模态大语言模型的训练框架</h2>
+
+<p>根据训练数据类型的不同，目前的多模态大语言模型通常采用两种训练框架，MMPT和MMIT。前者使用X-文本对形式的输入数据，这里X就是各种模态的输入。例如图像-文本、视频-文本、语音-文本；MMIT使用指令形式的数据，将有监督微调（SFT）和强化学习结合起来。</p>
+
+<h1>3. 目前经典的多模态大语言模型的及其评测</h1>
+
+<h2>3.1 当前经典的大语言模型</h2>
+
+<p>分类。作者根据设计思路将多模态大语言模型按照功能和设计进行分类。</p>
+
+<center><img src="/images/2024/IMAG2024062703.png"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024062704.png"></center>
+
+
+<p>目前的大语言模型表现出以下趋势：</p>
+
+<ol>
+<li><p>从多模态理解到多模态生成，如MiniGPT-4=>MiniGPT-5=>NExtGPT；</p></li>
+<li><p>更好的对齐人的意图以及更好的交互，如BLIP-2=>InstructBLIP=>DRESS；</p></li>
+<li><p>扩展更多的模态类型；</p></li>
+<li><p>使用更高质量的多模态数据；</p></li>
+<li><p>更高效的网络结构；</p></li>
+</ol>
+
+
+<h2>3.2 目前SOTA多模态大语言模型及其在特定领域的性能</h2>
+
+<p>作者以视觉-语言任务为例，提供了多模态大语言模型在18个benchmark上的性能：</p>
+
+<center><img src="/images/2024/IMAG2024062705.png"></center>
+
+
+<p>并且有一些发现：</p>
+
+<ol>
+<li><p>更高的视觉分辨率可以获得更好的更细节的多模态性能；</p></li>
+<li><p>高质量的有监督微调数据集可以促进特定任务中的多模态性能；</p></li>
+<li><p>在LLM上使用PEFT可以促进编码对齐</p></li>
+<li><p>交叉使用图像和文本比使用图像-文本对效果更好</p></li>
+<li><p>使用多模态的有监督微调可以改善特定多模态任务中的性能，但是文本-文本单模态任务中性能下降</p></li>
+</ol>
+
+
+<h1>4. 后续方向</h1>
+
+<p>作者提供了后续多模态大模型发展的一些方向：</p>
+
+<ol>
+<li><p>更加强大的模型结构，可以引入网页、热力图或图表之类的更多模态来增加模型对更多模态的处理能力，也可以使用更高质量的多模态数据来改善模型性能，或者得到更强大的各个模态的生成模型；</p></li>
+<li><p>更多有挑战的Benchmark，例如像MathVista一样衡量视觉任务中的推理能力，或者像MMMU这样的通用智能多学科专家系统；</p></li>
+<li><p>轻量化部署，目前已经有一些工作在做，例如Mobile VLM、TinyGPT-V或Mobile-Agent，提高推理效率；</p></li>
+<li><p>嵌入式智能：使得MM-LLMs可以应对真实世界并与之交互，例如PaLM-E或者EmbodiedGPT；</p></li>
+<li><p>持续学习：根据当前使用环境进行持续参数更新；</p></li>
+<li><p>缓解幻觉现象：改善GPT一本正经的胡说八道的问题；</p></li>
+</ol>
+
+
+<h1>附录：论文的思维导图（大图，请在新标签页打开查阅）</h1>
+
+<center><img src="/images/2024/IMAG2024062706.png"></center>
+
+
+<p>有关本专栏的更多内容，请参考<a href="https://zhuanlan.zhihu.com/p/690590730">大语言模型文献调研专栏</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[为什么大型语言模型都在使用SwiGLU作为激活函数]]></title>
+    <link href="https://ibillxia.github.io/blog/2024/06/21/swiglu-activation-in-llm/"/>
+    <updated>2024-06-21T11:46:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2024/06/21/swiglu-activation-in-llm</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/691227850">https://zhuanlan.zhihu.com/p/691227850</a></p>
+
+<p>如果你一直在关注大型语言模型的架构，你可能会在最新的模型和研究论文中看到“SwiGLU”这个词。SwiGLU可以说是在大语言模型中最常用到的激活函数，我们本篇文章就来对他进行详细的介绍。SwiGLU其实是2020年谷歌提出的激活函数，它结合了SWISH和GLU两者的特点。</p>
+
+<center><img src="/images/2024/IMAG2024062101.jpg"></center>
+
+
+<p>我们一个一个来介绍：</p>
+
+<!--more-->
+
+
+<h1>Swish</h1>
+
+<p>Swish是一个非线性激活函数，定义如下:</p>
+
+<pre><code>Swish(x)= x*sigmoid(ßx)
+</code></pre>
+
+<p>函数的曲线：</p>
+
+<center><img src="/images/2024/IMAG2024062102.jpg"></center>
+
+
+<p>其中，ß 为可学习参数。Swish可以比ReLU激活函数更好，因为它在0附近提供了更平滑的转换，这可以带来更好的优化。</p>
+
+<h1>Gated Linear Unit</h1>
+
+<p>GLU（Gated Linear Unit）定义为两个线性变换的分量积，其中一个线性变换由sigmoid激活。</p>
+
+<pre><code>GLU(x)=sigmoid(W1x+b)⊗(Vx+c)
+</code></pre>
+
+
+
+<center><img src="/images/2024/IMAG2024062103.jpg"></center>
+
+
+<p>GLU可以有效地捕获序列中的远程依赖关系，同时避免与lstm和gru等其他门控机制相关的一些梯度消失问题。</p>
+
+<h1>SwiGLU</h1>
+
+<p>上面我们已经说到SwiGLU是两者的结合。它是一个GLU，但不是将sigmoid作为激活函数，而是使用ß=1的swish，因此我们最终得到以下公式:</p>
+
+<pre><code>SwiGLU(x)=Swish(W1x+b)⊗(Vx+c)
+</code></pre>
+
+<p>我们用SwiGLU函数构造一个前馈网络</p>
+
+<pre><code>FFNSwiGLU(x)=(Swish1(xW)⊗xV)W2
+</code></pre>
+
+<h1>Pytorch的简单实现</h1>
+
+<p>如果上面的数学原理看着比较麻烦枯燥难懂，我们下面直接使用代码解释。</p>
+
+<pre><code>class SwiGLU(nn.Module): 
+
+    def __init__(self, w1, w2, w3) -&gt; None: 
+        super().__init__() 
+        self.w1 = w1 
+        self.w2 = w2 
+        self.w3 = w3 
+
+    def forward(self, x): 
+        x1 = F.linear(x, self.w1.weight) 
+        x2 = F.linear(x, self.w2.weight) 
+        hidden = F.silu(x1) * x2 
+        return F.linear(hidden, self.w3.weight)
+</code></pre>
+
+<p>我们代码使用的F.silu函数与ß=1时的swish相同的，所以就直接拿来使用了。</p>
+
+<p>代码可以看到，我们的激活函数中也有3个权重是可以训练的，这就是来自于GLU公式里的参数。</p>
+
+<h1>SwiGLU的效果对比</h1>
+
+<p>SwiGLU与其他GLU变体进行比较，我们可以看到SwiGLU在两种预训练期间都表现得更好。</p>
+
+<center><img src="/images/2024/IMAG2024062104.jpg"></center>
+
+
+<p>下游任务</p>
+
+<center><img src="/images/2024/IMAG2024062105.jpg"></center>
+
+
+<p>效果表现得最好，所以现在的llm，如LLAMA, OLMO和PALM都在其实现中采用SwiGLU。但是为什么SwiGLU比其他的好呢？</p>
+
+<p>论文中只给了测试结果而且并没有说明原因，而是说：</p>
+
+<blockquote><p>We offer no explanation as to why these architectures seem to work; we  attribute their success, as all else, to divine benevolence.</p></blockquote>
+
+<p>作者说炼丹成功了。</p>
+
+<p>但是现在已经是2024年了我们可以强行的解释一波：</p>
+
+<p>1、Swish对于负值的响应相对较小克服了 ReLU 某些神经元上输出始终为零的缺点</p>
+
+<p>2、GLU 的门控特性，这意味着它可以根据输入的情况决定哪些信息应该通过、哪些信息应该被过滤。这种机制可以使网络更有效地学习到有用的表示，有助于提高模型的泛化能力。在大语言模型中，这对于处理长序列、长距离依赖的文本特别有用。</p>
+
+<p>3、SwiGLU 中的参数 W1,W2,W3,b1,b2,b3W1,W2,W3,b1,b2,b3 可以通过训练学习，使得模型可以根据不同任务和数据集动态调整这些参数，增强了模型的灵活性和适应性。</p>
+
+<p>4、计算效率相比某些较复杂的激活函数（如 GELU）更高，同时仍能保持较好的性能。这对于大规模语言模型的训练和推理是很重要的考量因素。</p>
+
+<p>选择 SwiGLU  作为大语言模型的激活函数，主要是因为它综合了非线性能力、门控特性、梯度稳定性和可学习参数等方面的优势。在处理语言模型中复杂的语义关系、长依赖问题、以及保持训练稳定性和计算效率方面，SwiGLU 表现出色，因此被广泛采用。</p>
+
+<p>论文地址: <a href="https://arxiv.org/abs/2002.05202">https://arxiv.org/abs/2002.05202</a></p>
+]]></content>
+  </entry>
+  
+</feed>

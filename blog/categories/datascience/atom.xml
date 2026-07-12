@@ -1,0 +1,1282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: DataScience | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/categories/datascience/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[数据科学与机器学习2026年趋势展望]]></title>
+    <link href="https://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026/"/>
+    <updated>2025-12-12T10:27:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026</id>
+    <content type="html"><![CDATA[<p>分享两篇关于数据科学与机器学习趋势的文章，供大家参考。总结下来，最最重要的两大趋势：</p>
+
+<ul>
+<li><p>实际应用中，<strong>小模型</strong>（Qwen-8B etc）将越来越受到关注</p></li>
+<li><p><strong>Agent和AutoML</strong>将越来越受到关注</p></li>
+</ul>
+
+
+<h1><a href="https://towardsdatascience.com/data-science-in-2026-is-it-still-worth-it/">1. Data Science in 2026: Is It Still Worth It?</a></h1>
+
+<center><img src="/images/2025/IMAG2025121201.png"></center>
+
+
+<p>Are you thinking about switching to Data Science in 2026?</p>
+
+<p>If the answer is “yes,” this article is for you.</p>
+
+<!--more-->
+
+
+<p>I’m Sabrine. I have spent the last 10 years working in the AI field across Europe—from big companies and startups to research labs. And if I had to start over again today, I would honestly still choose this field. Why?</p>
+
+<p>For the same reasons that brought many of us here: the intellectual challenge, the impact you can have, the love for mathematics and code, and the possibility to solve real-life problems.</p>
+
+<p>But looking toward 2026… is it still worth it?</p>
+
+<p>If you scroll through LinkedIn, you will see two teams fighting: one saying “Data Science is dead,” and the other saying it is growing thanks to the AI trend.</p>
+
+<p>When I look around me, I personally think we will always need computational skills. We will always need people who can understand data and help make decisions. Numbers have always been everywhere, and why would they disappear in 2026?</p>
+
+<p>However, the market has changed. And to navigate it now, you need good guidance and clear information.</p>
+
+<p>In this article, I’ll share my own experience from working in research and industry, and from mentoring more than 200 Data Scientists over the last few years.</p>
+
+<h2>So what is happening in the market now?</h2>
+
+<p>I will be honest and not sell you any dream about it.</p>
+
+<p>The goal is not to introduce biases, but to give you enough information to make your own decision.</p>
+
+<h2>Is the Data Science job family broader than ever?</h2>
+
+<p>Source: <a href="https://pixabay.com/photos/sea-wave-splash-big-wave-ocean-5499649/">pixabay</a> (Kanenori)</p>
+
+<center><img src="/images/2025/IMAG2025121201.jpeg"></center>
+
+
+<p>One of the biggest mistakes of junior Data Scientists is thinking Data Science is one single job.</p>
+
+<p>In 2026, Data Science is a large family of roles. Before writing a single line of code, you need to understand where you fit.</p>
+
+<p>People are fascinated by AI: how ChatGPT talks, how Neuralink stimulates brains, and how algorithms affect health and security. But let’s be honest: not all aspiring Data Scientists will build these types of projects.</p>
+
+<p>These roles need strong applied math and advanced coding skills. Does that mean you will never reach them? No. But they are often for people with PhDs, computational scientists, and engineers trained exactly for these niche jobs.</p>
+
+<p>Let’s take a real example: a Machine Learning/Data Scientist job offer I saw today (Nov 27) at a GAFAM company.</p>
+
+<p><em>Screenshot taken by the author</em></p>
+
+<center><img src="/images/2025/IMAG2025121202.png"></center>
+
+
+<p>If you look at the description, they ask for:</p>
+
+<ul>
+<li><p>Patents</p></li>
+<li><p>First-author publications</p></li>
+<li><p>Research contributions</p></li>
+</ul>
+
+
+<p>Does everyone interested in Data Science have a patent or a publication? Of course not.</p>
+
+<p>This is why you must avoid moving blindly.</p>
+
+<p>If you just finished a bootcamp or are early in your studies, applying for jobs that explicitly require research publications will only bring frustration. These very specialized jobs are usually for people with advanced academic backgrounds (PhD, post-doc, or computational engineering).</p>
+
+<p>My advice: be strategic. Focus on roles that match your skills.</p>
+
+<p>Don’t waste time applying everywhere.</p>
+
+<p>Use your energy to build a portfolio that aligns with your goals.</p>
+
+<p>You must understand the different sub-fields inside Data Science and choose what fits your background. For example:</p>
+
+<ul>
+<li><p><strong>Product Data Analyst / Scientist:</strong> product lifecycle and user needs</p></li>
+<li><p><strong>Machine Learning Engineer:</strong> deploying models</p></li>
+<li><p><strong>GenAI Engineer:</strong> works on LLMs</p></li>
+<li><p><strong>Classic Data Scientist:</strong> inference and prediction</p></li>
+</ul>
+
+
+<p>If you look at a Product Data Scientist role at Meta, the technical level is often more adapted to most Data Scientists on the market compared to a Core AI Research Engineer or Senior Data Scientist role.</p>
+
+<p>These roles are more realistic for someone without a PhD.</p>
+
+<center><img src="/images/2025/IMAG2025121203.png"></center>
+
+
+<p><em>Screenshot taken by the author</em></p>
+
+<center><img src="/images/2025/IMAG2025121204.png"></center>
+
+
+<p>Even if you don’t want to work at GAFAM, keep in mind:</p>
+
+<p><strong>They set the direction. What they require today becomes the norm everywhere else tomorrow.</strong></p>
+
+<h2>Now, how about coding and math in 2026?</h2>
+
+<p>Source: <a href="https://pixabay.com/photos/heart-couple-together-1731755/">pixabay</a> (NoName_13)</p>
+
+<center><img src="/images/2025/IMAG2025121205.jpeg"></center>
+
+
+<p>Here is a controversial but honest truth for 2026: <strong>Analytical and mathematical skills matter more than just coding.</strong></p>
+
+<p>Why? Almost every company now uses AI tools to help write code. But AI cannot replace your ability to:</p>
+
+<ul>
+<li><p>understand trends</p></li>
+<li><p>explain where the value comes from</p></li>
+<li><p>design a valid experiment</p></li>
+<li><p>interpret a model in a real context</p></li>
+</ul>
+
+
+<p>Coding is still important, but you cannot be a “General Importer”—someone who only imports sklearn and runs .fit() and .predict().</p>
+
+<p>Very soon, an AI agent may do that part for us.</p>
+
+<p>But your math and analytical skills are still important, and will always be.</p>
+
+<p>A simple example:</p>
+
+<p>You can ask an AI: <em>“Explain PCA like I’m 2 years old.”</em></p>
+
+<p>But your real value as a Data Scientist comes when you ask something like:</p>
+
+<p>“I need to optimize the water production of my company in a specific region. This region is facing issues that make the network unavailable in specific patterns. I have hundreds of features about this state of the network. How can I use PCA and be sure the most important variables are represented in the PC I’m using?”</p>
+
+<p>-> This human context is your value.</p>
+
+<p>-> AI writes the code.</p>
+
+<p>-> You bring the logic.</p>
+
+<h2>And how about the Data Science toolbox?</h2>
+
+<p>Let’s start with Python. As a programming language with a large data community, Python is still essential and probably the first language to learn as a future Data Scientist.</p>
+
+<p>The same for Scikit-learn, a classic library for machine learning tasks.</p>
+
+<p><em>Screenshot taken by the author</em></p>
+
+<center><img src="/images/2025/IMAG2025121206.png"></center>
+
+
+<p>We can also see on Google Trends (late 2025) that:</p>
+
+<ul>
+<li><p>PyTorch is now more popular than TensorFlow</p></li>
+<li><p>GenAI integration is growing much faster than classical libraries</p></li>
+<li><p>Data Analyst interest stays stable</p></li>
+<li><p>Data Engineer and AI Specialist roles interested more people than general Data Scientist roles</p></li>
+</ul>
+
+
+<p>Don’t ignore these patterns; they are very helpful for making decisions.</p>
+
+<p>You need to stay flexible.</p>
+
+<p><em>If the market wants PyTorch and GenAI, don’t stay stuck with only Keras and old NLP.</em></p>
+
+<h2>And what about the new stack for 2026?</h2>
+
+<p>This is where the 2026 roadmap is different from 2020.</p>
+
+<p>To get hired today, you need to be <strong>production-ready</strong>.</p>
+
+<p><strong>Version Control (Git):</strong> You will use it daily. And to be honest, this is one of the first skills you need to learn at the beginning. It helps you organize your projects and everything you learn.</p>
+
+<p>Whether you are starting a Master’s program or beginning a bootcamp, please don’t forget to create your first GitHub repository and learn a few basic commands before going further.</p>
+
+<p><strong>AutoML:</strong> Understand how it works and when to use it. Some companies use AutoML tools, especially for Data Scientists who are more product-oriented.</p>
+
+<p>The tool I have in mind, and that you can access for free, is <strong>Dataiku</strong>. They have a great academy with free certifications. It is one of the AutoML tools that has exploded in the market in the last two years.</p>
+
+<p>If you don’t know what AutoML is: it is a tool that lets you build ML models <em>without coding</em>. Yes, it exists.</p>
+
+<p>Remember what I said earlier about coding? This is one of the reasons why other skills are becoming more important, especially if you are a product-oriented Data Scientist.</p>
+
+<p><strong>MLOps:</strong> Notebooks are not enough anymore. This applies to everyone. Notebooks are good for exploration, but if at some point you need to deploy your model in production, you must learn other tools.</p>
+
+<p>And even if you don’t like data engineering, you still need to understand these tools so you can communicate with data engineers and work together.</p>
+
+<p>When I talk about this, I think about tools like <strong>Docker</strong> (<a href="https://medium.com/code-like-a-girl/mlops-fundamentals-a-beginners-guide-to-docker-containerization-4f5a984e7117">check out my article</a>), <strong>MLflow</strong> (<a href="https://towardsdatascience.com/model-management-with-mlflow-azure-and-docker-2920b51a5bdd/">link here</a>), and <strong>FastAPI</strong>.</p>
+
+<p><strong>LLMs and RAG:</strong> You don’t need to be an expert, but you should know the basics: how the LangChain API works, how to train a small language model, what RAG means, and how to implement it. This will really help you stand out in the market and maybe move further if you need to build a project that involves an AI Agent.</p>
+
+<h2>Portfolio: Quality over quantity</h2>
+
+<p>In this fast and competitive market, how can you prove you can do the job? I remember I’ve written an article about how to create a portfolio 2 years ago and what I’m going to say here can look a bit contradictory, but let me explain. Before ChatGPT and AI tools flooded the market, having a portfolio with a bunch of projects to show your different skills like data cleaning and data processing was very important, but today all these basic steps are often done using AI tools that are ready for that, so we will focus more on building something that will make you different and make the recruiter want to meet you.</p>
+
+<p><strong><em>I would say: “Avoid burnout. Build smart.”</em></strong></p>
+
+<p>Don’t think you need 10 projects. If you’re a student or a junior, one or two good projects are enough.</p>
+
+<p>Take advantage of the time you have during your internship or your final bootcamp project to build it. Please don’t use simple Kaggle datasets. Look online: you can find a huge amount of real use-case data, or research datasets that are more often used in industry and labs to build new architectures.</p>
+
+<p>If your goal is not to go deep into the technical side, you can still show other skills in your portfolio: slides, articles, explanations of how you thought about the business value, what results you got, and how these results can be used in reality. Your portfolio depends on the job you want.</p>
+
+<ul>
+<li><p>If your goal is more math-oriented, the recruiter will probably want to see your literature review and how you implemented the latest architecture on your data.</p></li>
+<li><p>If you are more product-oriented, I would be more interested in your slides and how you interpret your ML results than in the quality of your code.</p></li>
+<li><p>If you are more MLOps-oriented, the recruiter will look at how you deployed, monitored, and tracked your model in production.</p></li>
+</ul>
+
+
+<p>To finish, I want to remind you that the market is changing fast, but it is not the end of Data Science. It just means you need to be more aware of where you fit, what skills you want to grow, and how you present yourself.</p>
+
+<p>Keep learning, and build a portfolio that truly reflects who you are. You will find your place</p>
+
+<p>If you enjoyed this article, feel free to follow me on LinkedIn for more honest insights about AI, Data Science, and careers.</p>
+
+<p> <strong>LinkedIn:</strong> <em>Sabrine Bendimerad</em></p>
+
+<p> <strong>Medium:</strong> <a href="https://medium.com/@sabrine.bendimerad1">https://medium.com/@sabrine.bendimerad1</a></p>
+
+<hr />
+
+<h1><a href="https://medium.com/data-science-collective/whats-trending-in-data-science-and-ml-preparing-for-2026-7b6983b2866d">2. What's Trending in Data Science and ML Preparing for 2026</a></h1>
+
+<p><em>Was it time well spent?</em></p>
+
+<p>Last week, I attended the <em>Nordic DS/ML Summit 2025</em> in Stockholm 🇸🇪, a two-day event bringing together industry leaders, researchers, and practitioners to share how data science and machine learning are evolving.</p>
+
+<p>The lineup included big names like Meta, NVIDIA, and Google DeepMind.</p>
+
+<p>And of course, the hottest topic was….🥁… <strong>Agentic AI</strong> (no surprise there)<a href="https://substackcdn.com/image/fetch/$s_!SSnz!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fca699d07-a7ec-4eaa-9fc7-1a36f9bd3faf_3200x2408.jpeg"></a></p>
+
+<center><img src="/images/2025/IMAG2025121210.jpeg"></center>
+
+
+<p>Panel discussion on the topic of “Building the Future of AI: Scaling Foundation Models and Agents for Real-World Applications“. Image by NDSML.</p>
+
+<p>This photo is from an interesting panel discussion featuring:</p>
+
+<ul>
+<li><p>Chi Wang, Senior Staff Research Scientist at Google DeepMind and Founder of AutoGen (now AG2)</p></li>
+<li><p>Rohit Patel, Director at Meta Superintelligence Labs</p></li>
+<li><p>Sepideh Pashami, Acting Director of Data Analysis at RISE Research Institutes of Sweden</p></li>
+</ul>
+
+
+<p><em>So I would say yes, it was definitely time well spent!</em></p>
+
+<p>Today, I’m going to break down my learnings, the key trends I observed, and,<strong> towards the end,</strong> tie it all back to what we, Data Scientists, should pay attention to as we enter 2026.</p>
+
+<p>Let’s get to it!</p>
+
+<h1>Three key trends that stood out (to me) the most</h1>
+
+<center><img src="/images/2025/IMAG2025121211.jpeg"></center>
+
+
+<p>Cartoon depicting the motivation behind AutoGen. Image by AutoGen.</p>
+
+<p>These are the trends that stuck with me during the event, and that, in some way or another, have gained enough momentum to be worth following closely.</p>
+
+<h3>1）. From traditional analytics to <em>agentic analytics</em></h3>
+
+<p>We’re entering a new phase of analytics. One where dashboards and static reports aren’t enough anymore.</p>
+
+<p><em>I foresee this will become an even bigger topic by the beginning of 2026</em>.</p>
+
+<p>The focus will be on creating more dynamic systems that can speed up the path from data to insight, making analytics more adaptive and less dependent on manual exploration, which many are starting to refer to as Agentic Analytics.</p>
+
+<blockquote><p>💡 One thing is clear, the companies who will lead the way in this Agentic Analytics shift, will be those who have the foresight to build a strong data engineering foundation and invest in their semantic modeling. That’s ultimately what will enable AI agents to interact with their data in meaningful ways. <em>More on this later in the article.</em></p></blockquote>
+
+<h3>2）. Small language models are the next big thing</h3>
+
+<p>Small language models (sLMs) are becoming surprisingly capable.</p>
+
+<p>Models like <strong>Phi-3</strong>, <strong>Mistral</strong>, and <strong>Llama 3 8B</strong> show that you don’t need massive infrastructure to get strong performance. With some fine-tuning, they can even outperform larger models on focused tasks.</p>
+
+<blockquote><p>💡 For developers and smaller teams, this also means we can now run fast, private, and low-cost models, on a regular laptop or even a phone.</p></blockquote>
+
+<h3>3）. The rise of specialized multi-agent systems</h3>
+
+<p>A big theme that kept coming up was the move toward <strong>hierarchical multi-agent systems</strong>. Instead of relying on a single agent to handle an entire workflow, newer architectures now use an <strong>orchestrator agent</strong> that breaks tasks into smaller pieces and delegates them to specialized sub-agents.</p>
+
+<p>Each sub-agent focuses on one tiny, well-defined task, like cleaning data, summarizing findings, or generating code, and becomes extremely good at that single thing. Together, they form a coordinated system that’s faster, cheaper, and more reliable than one general-purpose agent working alone.</p>
+
+<blockquote><p>💡 This “divide and conquer” approach also opens the door for <strong>sLMs</strong> to play a bigger role. Since each sub-agent only needs to handle a narrow task, even lightweight models can perform well when combined in a well-orchestrated system.</p></blockquote>
+
+<p>It’s a design pattern we’ll likely see more of as agentic systems mature and move into production use.</p>
+
+<h2>What should Data Scientists pay attention to?</h2>
+
+<p>My recommendation, especially to mid-senior data scientists who want to take the next leap in their career growth: <strong>Lead the way in the Agentic Analytics shift at your company.</strong></p>
+
+<p>From what I’ve seen, most organizations are still just waking up to this change.</p>
+
+<p>That means you have a real opportunity to lead, whether it’s by championing modern enterprise tools that enable agentic analytics or by building your own agents that make analysis faster, more interactive, and closer to decision-making.</p>
+
+<p>The people who learn to bridge that gap early, between AI agents and analytics, will be the ones shaping how Data Science is practiced in the next decade.</p>
+
+<h3>Five real-world agentic AI use cases in Data Science</h3>
+
+<center><img src="/images/2025/IMAG2025121212.jpeg"></center>
+
+
+<p>Diagram of how TimeGPT takes the historical values of the target values and additional exogenous variables as inputs to produce the forecasts. Image by TimeGPT.</p>
+
+<p>These are some use cases where GenAI and Agentic AI are already starting to make an impact:</p>
+
+<ol>
+<li><p><strong>Conversational dashboards for fast insights</strong>Think dashboards you can talk to, ask questions in plain English, and get instant summaries or visualizations. Power BI Copilot and Tableau Pulse are early examples, but the concept applies to any workflow where non-technical users need fast answers from data.</p></li>
+<li><p><strong>EDA and data cleaning agents</strong>AI agents are starting to automate the time-consuming work of detecting outliers, normalizing data, and generating initial visualizations during EDA. Tools like Tableau’s Data Pro hint at how you can build agents to accelerate your data prep process.</p></li>
+<li><p><strong>Foundation models for analytics</strong>Instead of training a new model for every metric or product, foundation models like TimeGPT are starting to handle forecasting, anomaly detection, and other analytic tasks straight from raw data. This makes advanced analytics more accessible, even for teams without deep expertise in time series or model building.</p></li>
+<li><p><strong>Agentic monitoring and proactive analytics</strong>Rather than waiting for a human to check a dashboard, agentic systems can watch KPIs, detect shifts, and trigger alerts or recommendations. Tableau Inspector and Adverity are pushing this, but it’s a pattern any analyst can explore with the right setup.</p></li>
+<li><p><strong>Multi-agent orchestration of the ML workflow</strong>Platforms like causaLens are an example of what’s possible with AI agents that collaborate, some clean the data, others build models, and others explain results. It’s not just automation, it’s coordination, and it’s a glimpse of how future ML workflows could run.</p></li>
+</ol>
+
+
+<h3>🔑 Don’t ignore this: The Semantic Layer</h3>
+
+<p>I wanted to mention this concept again since I feel it might get overlooked by a lot of you reading this article, and that would be a BIG mistake.<a href="https://substackcdn.com/image/fetch/$s_!mQOI!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F6ed5744b-a2a4-4fc4-826f-e455a91c5818_960x498.png"></a></p>
+
+<center><img src="/images/2025/IMAG2025121213.png"></center>
+
+
+<p>Semantic Layer architecture. Image by Tallius.</p>
+
+<p>Over the past 6 months or so, I’ve been spending more time building my own AI workflows to optimise and automate much of my data science work. And recently, I deployed a talk-to-your-data Slackbot that is slowly redefining the meaning of self-serve analytics at my company.</p>
+
+<p>One of the keys to the success of these tools has been defining the semantic layer.</p>
+
+<blockquote><p><em>📌 </em>This is also why I’m teaching it to the 22 Data Scientists currently enrolled in my</p></blockquote>
+
+<p>The idea is simple: the semantic layer creates a shared definition of metrics and business logic so data scientists, stakeholders, and most importantly, AI agents, all work from the same source of truth.<a href="https://substackcdn.com/image/fetch/$s_!KeLe!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc2b78cee-94e2-45fc-a05f-8803027a9b2d_1072x814.webp"></a></p>
+
+<center><img src="/images/2025/IMAG2025121214.jpeg"></center>
+
+
+<p>Example of a semantic layer YAML file. Image by dbt.</p>
+
+<p>And believe me, you don’t need to be a data engineer to start building a semantic layer to enhance your AI agents.</p>
+
+<p><a href="https://read.futureproofds.com/p/whats-trending-in-data-science-and-ml-2026#poll-395619"></a></p>
+
+<p>POLL</p>
+
+<h3>Should I write an entire article on this topic?</h3>
+
+<p>Yes</p>
+
+<p>96%</p>
+
+<p>No, I’m good</p>
+
+<p>4%</p>
+
+<p>45 VOTES · POLL CLOSED</p>
+
+<h2>Honorable mentions</h2>
+
+<p>Here are some cool tools and products I didn’t get to cover, but thought deserved at least a quick mention:</p>
+
+<ul>
+<li><p>Orion: An on-device autonomous agent that orchestrates your AI tools and runs locally for cross-platform automation.</p></li>
+<li><p>AG2: Open-source framework (formerly AutoGen) for building and orchestrating multi-agent systems.</p></li>
+<li><p>HP ZGX Nan AI Station: A nano AI workstation for prototyping and fine-tuning inference models of up to 200B parameters locally.</p></li>
+</ul>
+
+
+<h1>Closing thoughts</h1>
+
+<p>If there’s one thing this year’s summit made clear, it’s that the gap between <em>AI research</em> and <em>real-world data science</em> is closing faster than ever.</p>
+
+<p>Agentic systems, small models, and better data foundations aren’t just trends; they’re signals that our field is evolving into something more intelligent.</p>
+
+<p>For data scientists, this next phase isn’t about chasing every new tool that comes out. It’s about understanding the direction we’re heading and learning how to apply these ideas where they actually create impact.</p>
+
+<p>If you do that, if you stay curious, experiment with these concepts, and think beyond your notebook, you won’t just keep up with the changes. You’ll help shape what data science looks like in 2026 and beyond.</p>
+
+<h2>A couple of other great resources:</h2>
+
+<ul>
+<li><p><strong>🚀 Ready to take the next step? </strong>Build real</p></li>
+<li><p>💼 <strong>Job searching?</strong></p></li>
+<li><p><strong>🤖 Struggling to keep up with AI/ML?</strong></p></li>
+</ul>
+
+
+<p><em>Thank you for reading! I hope these insights give you a competitive advantage as we prepare to enter 2026.</em></p>
+
+<p><em>- Andres Vourakis</em></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用TensorFlow、ONNX和TensorRT加速深度学习推理]]></title>
+    <link href="https://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference/"/>
+    <updated>2024-07-15T15:17:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://developer.nvidia.cn/blog/speeding-up-deep-learning-inference-using-tensorflow-onnx-and-tensorrt/">https://developer.nvidia.cn/blog/speeding-up-deep-learning-inference-using-tensorflow-onnx-and-tensorrt/</a></p>
+
+<p>从 TensorRT 7 . 0 开始， Universal Framework Format（ UFF ）被弃用。在本文中，您将学习如何使用新的 TensorFlow -ONNX- TensorRT 工作流部署经过 TensorFlow 培训的深度学习模型。图 1 显示了 TensorRT 的高级工作流。</p>
+
+<center><img src="/images/2024/IMAG2024071501.png"></center>
+
+
+<p>图 1 。 TensorRT 是一种推理加速器。</p>
+
+<!--more-->
+
+
+<p>首先，使用任何框架训练网络。网络训练后，批量大小和精度是固定的（精度为 FP32 、 FP16 或 INT8 ）。训练好的模型被传递给 TensorRT 优化器，优化器输出一个优化的运行时（也称为计划）。. plan 文件是 TensorRT 引擎的序列化文件格式。计划文件需要反序列化才能使用 TensorRT 运行时运行推断。</p>
+
+<p>要优化在 TensorFlow 中实现的模型，只需将模型转换为 ONNX 格式，并使用 TensorRT 中的 ONNX 解析器解析模型并构建 TensorRT 引擎。图 2 显示了高级 ONNX 工作流。</p>
+
+<center><img src="/images/2024/IMAG2024071502.jpeg"></center>
+
+
+<p>图 2 。 ONNX 工作流。</p>
+
+<p>在本文中，我们将讨论如何使用 ONNX 工作流创建一个 TensorRT 引擎，以及如何从 TensorRT 引擎运行推理。更具体地说，我们演示了从 Keras 或 TensorFlow 中的模型到 ONNX 的端到端推理，以及使用 ResNet-50 、语义分段和 U-Net 网络的 TensorRT 引擎。最后，我们将解释如何在其他网络上使用此工作流。</p>
+
+<p><a href="https://developer.download.nvidia.com/devblogs/tensorflow-onnx-tensorrt-code.tar.gz">下载本文中的代码示例</a>。 下载 TensorFlow -onnx- TensorRT 后 – 代码 tar . gz 文件，您还应该从 Cityscapes dataset scripts repo <a href="https://github.com/mcordts/cityscapesScripts/blob/master/cityscapesscripts/helpers/labels.py">下载 labels.py</a> ，并将其与其他脚本放在同一个文件夹中。</p>
+
+<h1>ONNX 概述</h1>
+
+<p>ONNX 是机器学习和深度学习模型的开放格式。它允许您将不同框架（如 TensorFlow 、 PyTorch 、 MATLAB 、 Caffe 和 Keras ）的深度学习和机器学习模型转换为单一格式。</p>
+
+<p>它定义了一组通用的运算符、深入学习的通用构建块集和通用文件格式。它提供计算图的定义以及内置运算符。可能有一个或多个输入或输出的 ONNX 节点列表形成一个无环图。</p>
+
+<h1>ResNet ONNX 工作流示例</h1>
+
+<p>在这个例子中，我们展示了如何在两个不同的网络上使用 ONNX 工作流并创建一个 TensorRT 引擎。第一个网络是 ResNet-50 。</p>
+
+<p>工作流包括以下步骤：</p>
+
+<ol>
+<li><p>将 TensorFlow / Keras 模型转换为. pb 文件。</p></li>
+<li><p>将. pb 文件转换为 ONNX 格式。</p></li>
+<li><p>创建 TensorRT 引擎。</p></li>
+<li><p>从 TensorRT 引擎运行推断。</p></li>
+</ol>
+
+
+<h2>将模型转换为. pb</h2>
+
+<p>第一步是将模型转换为. pb 文件。以下代码示例将 ResNet-50 模型转换为. pb 文件：</p>
+
+<pre><code>import tensorflow as tf
+import keras
+from tensorflow.keras.models import Model
+import keras.backend as K
+K.set_learning_phase(0)
+
+def keras_to_pb(model, output_filename, output_node_names):
+
+   """
+   This is the function to convert the Keras model to pb.
+
+   Args:
+      model: The Keras model.
+      output_filename: The output .pb file name.
+      output_node_names: The output nodes of the network. If None, then
+      the function gets the last layer name as the output node.
+   """
+
+   # Get the names of the input and output nodes.
+   in_name = model.layers[0].get_output_at(0).name.split(':')[0]
+
+   if output_node_names is None:
+       output_node_names = [model.layers[-1].get_output_at(0).name.split(':')[0]]
+
+   sess = keras.backend.get_session()
+
+   # The TensorFlow freeze_graph expects a comma-separated string of output node names.
+   output_node_names_tf = ','.join(output_node_names)
+
+   frozen_graph_def = tf.graph_util.convert_variables_to_constants(
+       sess,
+       sess.graph_def,
+       output_node_names)
+
+   sess.close()
+   wkdir = ''
+   tf.train.write_graph(frozen_graph_def, wkdir, output_filename, as_text=False)
+
+   return in_name, output_node_names
+
+# load the ResNet-50 model pretrained on imagenet
+model = keras.applications.resnet.ResNet50(include_top=True, weights='imagenet', input_tensor=None, input_shape=None, pooling=None, classes=1000)
+
+# Convert the Keras ResNet-50 model to a .pb file
+in_tensor_name, out_tensor_names = keras_to_pb(model, "models/resnet50.pb", None) 
+</code></pre>
+
+<p>除了 Keras ，您还可以从以下位置下载 ResNet-50 ：</p>
+
+<ul>
+<li><p><a href="https://github.com/NVIDIA/DeepLearningExamples">深度学习示例 GitHub 存储库</a>：提供最新的深度学习示例网络。您还可以看到 <a href="https://github.com/NVIDIA/DeepLearningExamples/tree/master/TensorFlow/Classification/RN50v1.5">ResNet-50</a> 分支，它包含一个脚本和方法来训练 ResNet-50v1 . 5 模型。</p></li>
+<li><p><a href="https://ngc.nvidia.com/catalog/models?orderBy=modifiedDESC&amp;pageNumber=1&amp;query=&amp;quickFilter=models&amp;filters=">NVIDIA NGC 型号</a> ：它有预训练模型的检查点列表。例如，在 ResNet-50v1 . 5 上搜索 TensorFlow ，并从 <a href="https://ngc.nvidia.com/catalog/models/nvidia:rntf_fp32">Download</a> 页面获取最新的检查点。</p></li>
+</ul>
+
+
+<h2>将. pb 文件转换为 ONNX</h2>
+
+<p>第二步是将. pb 模型转换为 ONNX 格式。为此，首先安装 <a href="https://github.com/onnx/tensorflow-onnx">tf2onnx</a> 。</p>
+
+<p>安装 tf2onnx 后，有两种方法可以将模型从. pb 文件转换为 ONNX 格式。第二种方法是使用命令行。运行以下命令：</p>
+
+<pre><code>python -m tf2onnx.convert  --input /Path/to/resnet50.pb --inputs input_1:0 --outputs probs/Softmax:0 --output resnet50.onnx
+</code></pre>
+
+<h2>从 ONNX 创建 TensorRT 引擎</h2>
+
+<p>要从 ONNX 文件创建 TensorRT 引擎，请运行以下命令：</p>
+
+<pre><code>import tensorrt as trt
+
+TRT_LOGGER = trt.Logger(trt.Logger.WARNING)
+trt_runtime = trt.Runtime(TRT_LOGGER)
+def build_engine(onnx_path, shape = [1,224,224,3]):
+
+   """
+   This is the function to create the TensorRT engine
+   Args:
+      onnx_path : Path to onnx_file. 
+      shape : Shape of the input of the ONNX file. 
+  """
+   with trt.Builder(TRT_LOGGER) as builder, builder.create_network(1) as network, trt.OnnxParser(network, TRT_LOGGER) as parser:
+       builder.max_workspace_size = (256 &lt;&lt; 20)
+       with open(onnx_path, 'rb') as model:
+           parser.parse(model.read())
+       network.get_input(0).shape = shape
+       engine = builder.build_cuda_engine(network)
+       return engine
+
+def save_engine(engine, file_name):
+   buf = engine.serialize()
+   with open(file_name, 'wb') as f:
+       f.write(buf)
+def load_engine(trt_runtime, plan_path):
+   with open(engine_path, 'rb') as f:
+       engine_data = f.read()
+   engine = trt_runtime.deserialize_cuda_engine(engine_data)
+   return engine
+</code></pre>
+
+<p>此代码应保存在引擎. py 文件，稍后在文章中使用。</p>
+
+<p>此代码示例包含以下变量：</p>
+
+<ul>
+<li>最大工作区大小： 在执行时 ICudaEngine 可以使用的最大 GPU 临时内存。</li>
+</ul>
+
+
+<p>构建器创建一个空网络（ builder.create_network() ）， ONNX 解析器将 ONNX 文件解析到网络（ parser.parse(model.read()) ）。您可以为网络（ network.get_input(0).shape = shape ）设置输入形状，然后生成器将创建引擎（ engine = builder.build_cuda_engine(network) ）。要创建引擎，请运行以下代码示例：</p>
+
+<pre><code>import engine as eng
+import argparse
+from onnx import ModelProto
+import tensorrt as trt
+
+engine_name = “resnet50.plan”
+onnx_path = "/path/to/onnx/result/file/"
+batch_size = 1 
+
+model = ModelProto()
+with open(onnx_path, "rb") as f:
+model.ParseFromString(f.read())
+
+d0 = model.graph.input[0].type.tensor_type.shape.dim[1].dim_value
+d1 = model.graph.input[0].type.tensor_type.shape.dim[2].dim_value
+d2 = model.graph.input[0].type.tensor_type.shape.dim[3].dim_value
+shape = [batch_size , d0, d1 ,d2]
+engine = eng.build_engine(onnx_path, shape= shape)
+eng.save_engine(engine, engine_name) 
+</code></pre>
+
+<p>在这个代码示例中，首先从 ONNX 模型获取输入形状。接下来，创建引擎，然后将引擎保存在. plan 文件中。</p>
+
+<h2>运行来自 TensorRT 引擎的推理：</h2>
+
+<p>TensorRT 引擎在以下工作流中运行推理：</p>
+
+<ol>
+<li><p>为 GPU 中的输入和输出分配缓冲区。</p></li>
+<li><p>将数据从主机复制到 GPU 中分配的输入缓冲区。</p></li>
+<li><p>在 GPU 中运行推理。</p></li>
+<li><p>将结果从 GPU 复制到主机。</p></li>
+<li><p>根据需要重塑结果。</p></li>
+</ol>
+
+
+<p>下面的代码示例详细解释了这些步骤。此代码应保存在推理. py 文件，稍后将在本文中使用。</p>
+
+<pre><code>import tensorrt as trt
+import pycuda.driver as cuda
+import numpy as np
+import pycuda.autoinit
+
+def allocate_buffers(engine, batch_size, data_type):
+
+   """
+   This is the function to allocate buffers for input and output in the device
+   Args:
+      engine : The path to the TensorRT engine. 
+      batch_size : The batch size for execution time.
+      data_type: The type of the data for input and output, for example trt.float32. 
+
+   Output:
+      h_input_1: Input in the host.
+      d_input_1: Input in the device. 
+      h_output_1: Output in the host. 
+      d_output_1: Output in the device. 
+      stream: CUDA stream.
+
+   """
+
+   # Determine dimensions and create page-locked memory buffers (which won't be swapped to disk) to hold host inputs/outputs.
+   h_input_1 = cuda.pagelocked_empty(batch_size * trt.volume(engine.get_binding_shape(0)), dtype=trt.nptype(data_type))
+   h_output = cuda.pagelocked_empty(batch_size * trt.volume(engine.get_binding_shape(1)), dtype=trt.nptype(data_type))
+   # Allocate device memory for inputs and outputs.
+   d_input_1 = cuda.mem_alloc(h_input_1.nbytes)
+
+   d_output = cuda.mem_alloc(h_output.nbytes)
+   # Create a stream in which to copy inputs/outputs and run inference.
+   stream = cuda.Stream()
+   return h_input_1, d_input_1, h_output, d_output, stream
+
+def load_images_to_buffer(pics, pagelocked_buffer):
+   preprocessed = np.asarray(pics).ravel()
+   np.copyto(pagelocked_buffer, preprocessed)
+
+def do_inference(engine, pics_1, h_input_1, d_input_1, h_output, d_output, stream, batch_size, height, width):
+   """
+   This is the function to run the inference
+   Args:
+      engine : Path to the TensorRT engine 
+      pics_1 : Input images to the model.  
+      h_input_1: Input in the host         
+      d_input_1: Input in the device 
+      h_output_1: Output in the host 
+      d_output_1: Output in the device 
+      stream: CUDA stream
+      batch_size : Batch size for execution time
+      height: Height of the output image
+      width: Width of the output image
+
+   Output:
+      The list of output images
+
+   """
+
+   load_images_to_buffer(pics_1, h_input_1)
+
+   with engine.create_execution_context() as context:
+       # Transfer input data to the GPU.
+       cuda.memcpy_htod_async(d_input_1, h_input_1, stream)
+
+       # Run inference.
+
+       context.profiler = trt.Profiler()
+       context.execute(batch_size=1, bindings=[int(d_input_1), int(d_output)])
+
+       # Transfer predictions back from the GPU.
+       cuda.memcpy_dtoh_async(h_output, d_output, stream)
+       # Synchronize the stream
+       stream.synchronize()
+       # Return the host output.
+       out = h_output.reshape((batch_size,-1, height, width))
+       return out 
+</code></pre>
+
+<p>为第一个输入行和输出行确定两个维度。您可以在主机（ h_input_1 、 h_output ）中创建页锁定内存缓冲区。然后，为输入和输出分配与主机输入和输出相同大小的设备内存（ d_input_1 ， d_output ）。下一步是创建 CUDA 流，用于在设备和主机分配的内存之间复制数据。</p>
+
+<p>在这个代码示例中，在 do_inference 函数中，第一步是使用 load_images_to_buffer 函数将图像加载到主机中的缓冲区。然后将输入数据传输到 GPU （ cuda.memcpy_htod_async(d_input_1, h_input_1, stream) ），并使用 context.execute 运行推理。最后将结果从 GPU 复制到主机（ cuda.memcpy_dtoh_async(h_output, d_output, stream) ）。</p>
+
+<h1>ONNX 工作流语义分割实例</h1>
+
+<p>在本文 <a href="https://developer.nvidia.com/blog/int8-inference-autonomous-vehicles-tensorrt/">基于 TensorRT 3 的自主车辆快速 INT8 推理</a> 中，作者介绍了一个语义分割模型的 UFF 工作流过程。</p>
+
+<p>在本文中，您将使用类似的网络来运行 ONNX 工作流来进行语义分段。该网络由一个基于 VGG16 的编码器和三个使用反褶积层实现的上采样层组成。网络在 <a href="https://www.cityscapes-dataset.com/">城市景观数据集</a> 上经过大约 40000 次迭代训练</p>
+
+<p>有多种方法可以将 TensorFlow 模型转换为 ONNX 文件。一种方法是 ResNet50 部分中解释的方法。 Keras 也有自己的 Keras 到 ONNX 文件转换器。有时， TensorFlow -to-ONNX 不支持某些层，但 Keras-to-ONNX 转换器支持这些层。根据 Keras 框架和使用的层类型，您可能需要在转换器之间进行选择。</p>
+
+<p>在下面的代码示例中，使用 Keras-to-ONNX 转换器将 Keras 模型直接转换为 ONNX 。下载预先训练的语义分段文件 <a href="https://developer.download.nvidia.com/devblogs/semantic_segmentation.hdf5">semantic_segmentation.hdf5</a> 。</p>
+
+<pre><code>import keras
+import tensorflow as tf
+from keras2onnx import convert_keras
+
+def keras_to_onnx(model, output_filename):
+   onnx = convert_keras(model, output_filename)
+   with open(output_filename, "wb") as f:
+       f.write(onnx.SerializeToString())
+
+semantic_model = keras.models.load_model('/path/to/semantic_segmentation.hdf5')
+keras_to_onnx(semantic_model, 'semantic_segmentation.onnx') 
+</code></pre>
+
+<p>图 3 显示了网络的体系结构。</p>
+
+<center><img src="/images/2024/IMAG2024071503.png"></center>
+
+
+<p>图 3 。基于 VGG16 的语义分割模型。</p>
+
+<p>与前面的示例一样，使用下面的代码示例创建语义分段引擎。</p>
+
+<pre><code>import engine as eng
+from onnx import ModelProto
+import tensorrt as trt
+
+engine_name = 'semantic.plan'
+onnx_path = "semantic.onnx"
+batch_size = 1
+
+model = ModelProto()
+with open(onnx_path, "rb") as f:
+  model.ParseFromString(f.read())
+
+d0 = model.graph.input[0].type.tensor_type.shape.dim[1].dim_value
+d1 = model.graph.input[0].type.tensor_type.shape.dim[2].dim_value
+d2 = model.graph.input[0].type.tensor_type.shape.dim[3].dim_value
+shape = [batch_size , d0, d1 ,d2]
+engine = eng.build_engine(onnx_path, shape= shape)
+eng.save_engine(engine, engine_name) 
+</code></pre>
+
+<p>要测试模型的输出，请使用 <a href="https://www.cityscapes-dataset.com/">城市景观数据集</a> 。要使用城市景观，必须具有以下功能： sub_mean_chw 和 color_map 。这些函数也用于 post ， <a href="https://developer.nvidia.com/blog/int8-inference-autonomous-vehicles-tensorrt/">基于 TensorRT 3 的自主车辆快速 INT8 推理</a>.</p>
+
+<p>在下面的代码示例中， sub_mean_chw 用于从图像中减去平均值作为预处理步骤， color_map 是从类 ID 到颜色的映射。后者用于可视化。</p>
+
+<pre><code>import numpy as np
+from PIL import Image
+import tensorrt as trt
+import labels  # from cityscapes evaluation script
+import skimage.transform
+
+TRT_LOGGER = trt.Logger(trt.Logger.WARNING)
+trt_runtime = trt.Runtime(TRT_LOGGER)
+
+MEAN = (71.60167789, 82.09696889, 72.30508881)
+CLASSES = 20
+HEIGHT = 512
+WIDTH = 1024
+
+def sub_mean_chw(data):
+   data = data.transpose((1, 2, 0))  # CHW -&gt; HWC
+   data -= np.array(MEAN)  # Broadcast subtract
+   data = data.transpose((2, 0, 1))  # HWC -&gt; CHW
+   return data
+
+def rescale_image(image, output_shape, order=1):
+   image = skimage.transform.resize(image, output_shape,
+               order=order, preserve_range=True, mode='reflect')
+   return image
+
+def color_map(output):
+   output = output.reshape(CLASSES, HEIGHT, WIDTH)
+   out_col = np.zeros(shape=(HEIGHT, WIDTH), dtype=(np.uint8, 3))
+   for x in range(WIDTH):
+       for y in range(HEIGHT):
+
+           if (np.argmax(output[:, y, x] )== 19):
+               out_col[y,x] = (0, 0, 0)
+           else:
+               out_col[y, x] = labels.id2label[labels.trainId2label[np.argmax(output[:, y, x])].id].color
+   return out_col  
+</code></pre>
+
+<p>下面的代码示例是上一个示例的其余代码。必须先运行上一个块，因为需要定义的函数。使用这个例子比较 Keras 模型和 TensorRT 引擎 semantic . plan 文件的输出，然后可视化这两个输出。根据需要替换占位符 /path/to/semantic_segmentation.hdf5 和 input_file_path 。</p>
+
+<pre><code>import engine as eng
+import inference as inf
+import keras
+import tensorrt as trt
+
+input_file_path = ‘munster_000172_000019_leftImg8bit.png’
+onnx_file = "semantic.onnx"
+serialized_plan_fp32 = "semantic.plan"
+HEIGHT = 512
+WIDTH = 1024
+
+image = np.asarray(Image.open(input_file_path))
+img = rescale_image(image, (512, 1024),order=1)
+im = np.array(img, dtype=np.float32, order='C')
+im = im.transpose((2, 0, 1))
+im = sub_mean_chw(im)
+
+engine = eng.load_engine(trt_runtime, serialized_plan_fp32)
+h_input, d_input, h_output, d_output, stream = inf.allocate_buffers(engine, 1, trt.float32)
+out = inf.do_inference(engine, im, h_input, d_input, h_output, d_output, stream, 1, HEIGHT, WIDTH)
+out = color_map(out)
+
+colorImage_trt = Image.fromarray(out.astype(np.uint8))
+colorImage_trt.save(“trt_output.png”)
+
+semantic_model = keras.models.load_model('/path/to/semantic_segmentation.hdf5')
+out_keras= semantic_model.predict(im.reshape(-1, 3, HEIGHT, WIDTH))
+
+out_keras = color_map(out_keras)
+colorImage_k = Image.fromarray(out_keras.astype(np.uint8))
+colorImage_k.save(“keras_output.png”)
+</code></pre>
+
+<p>图 4 显示了实际图像和实际情况，以及 Keras 的输出与 TensorRT 引擎的输出的对比。如您所见， TensorRT 发动机的输出与 Keras 的类似。</p>
+
+<center><img src="/images/2024/IMAG2024071504.png"></center>
+
+
+<p>图 4a 原始图像 .</p>
+
+<center><img src="/images/2024/IMAG2024071505.png"></center>
+
+
+<p>图 4b 地面真相标签。</p>
+
+<center><img src="/images/2024/IMAG2024071506.png"></center>
+
+
+<p>图 4c . TensorRT 的输出。</p>
+
+<center><img src="/images/2024/IMAG2024071507.png"></center>
+
+
+<p>图 4d : Keras 的输出。</p>
+
+<h1>在其他网络上试试</h1>
+
+<p>现在您可以在其他网络上尝试 ONNX 工作流。有关分段网络的好例子的更多信息，请参阅 GitHub 上的 <a href="https://github.com/qubvel/segmentation_models">具有预训练主干的分割模型</a> 。</p>
+
+<p>作为一个例子，我们用一个 ONNX 网络来说明如何使用。本例中的网络是来自 <a href="https://github.com/qubvel/segmentation_models">segmentation_models</a> 库的 U-Net 。在这里，我们只加载模型，而没有对其进行训练。您可能需要在首选数据集上训练这些模型。</p>
+
+<p>关于这些网络的一个重要点是，当您加载这些网络时，它们的输入层大小如下所示：（ None ， None ， None ， 3 ）。要创建一个 TensorRT 引擎，您需要一个输入大小已知的 ONNX 文件。在将此模型转换为 ONNX 之前，请通过为其输入指定大小来更改网络，然后将其转换为 ONNX 格式。</p>
+
+<p>例如，从这个库（ segmentation _ models ）加载 U-Net 网络并为其输入指定大小（ 244 、 244 、 3 ）。在为推理创建了 TensorRT 引擎之后，做一个与语义分段类似的转换。根据应用程序和数据集的不同，可能需要使用不同的颜色映射。</p>
+
+<pre><code>import segmentation_models as sm
+import keras
+from keras2onnx import convert_keras
+from engine import *
+onnx_path = 'unet.onnx'
+engine_name = 'unet.plan'
+batch_size = 1
+CHANNEL = 3
+HEIGHT = 224
+WIDTH = 224
+
+model = sm.Unet()
+model._layers[0].batch_input_shape = (None, 224,224,3)
+model = keras.models.clone_model(model)
+
+onx = convert_keras(model, onnx_path)
+with open(onnx_path, "wb") as f:
+  f.write(onx.SerializeToString())
+
+shape = [batch_size , HEIGHT, WIDTH, CHANNEL]
+engine = build_engine(onnx_path, shape= shape)
+save_engine(engine, engine_name)
+</code></pre>
+
+<p>我们之前提到的另一种下载方式是从 vz6 下载。它有一个预先训练模型的检查点列表。例如，您可以在 TensorFlow 中搜索 UNet ，然后转到 <a href="https://ngc.nvidia.com/catalog/models/nvidia:unetmedtf_fp32">Download</a> 页面以获取最新的检查点。</p>
+
+<h1>总结</h1>
+
+<p>在这篇文章中，我们解释了如何使用 TensorFlow-to-ONNX-to-TensorRT 工作流来部署深度学习应用程序，并给出了几个示例。第一个例子是 ResNet-50 上的 ONNX- TensorRT ，第二个例子是在 Cityscapes 数据集上训练的基于 <a href="https://developer.nvidia.com/deep-learning-performance-training-inference">英伟达数据中心深度学习产品性能</a> 的语义分割。在文章的最后，我们演示了如何在其他网络上应用这个工作流。</p>
+
+<hr />
+
+<h1>关于作者</h1>
+
+<center><img src="/images/2024/IMAG2024071508.jpeg"></center>
+
+
+<p>关于 Houman Abbasian</p>
+
+<p>Houman 是 NVIDIA 的高级深度学习软件工程师。他一直致力于开发和生产 NVIDIA 在自动驾驶车辆中的深度学习解决方案，提高 DNN 的推理速度、精度和功耗，并实施和试验改进 NVIDIA 汽车 DNN 的新思想。他在渥太华大学获得计算机科学博士学位，专注于机器学习。</p>
+
+<center><img src="/images/2024/IMAG2024071509.jpeg"></center>
+
+
+<p>于德成简介</p>
+
+<p>于德成是 NVIDIA 自主驾驶组高级深度学习软件工程师，从事自驾领域的各种感知任务的神经结构搜索和 DNN 模型训练、压缩和部署，包括目标检测、分割、路径轨迹生成等。他于 2016 年获得卡内基梅隆大学机器人学硕士学位。</p>
+
+<center><img src="/images/2024/IMAG2024071510.jpeg"></center>
+
+
+<p>关于乔希·帕克</p>
+
+<p>Josh Park 是 NVIDIA 的汽车解决方案架构师经理。到目前为止，他一直在研究使用 DL 框架的深度学习解决方案，例如在 multi- GPUs /多节点服务器和嵌入式系统上的 TensorFlow 。此外，他一直在评估和改进各种 GPUs + x86 _ 64 / aarch64 的训练和推理性能。他在韩国大学获得理学学士和硕士学位，并在德克萨斯农工大学获得计算机科学博士学位。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[【DataFun】因果推断与复杂AB测试]]></title>
+    <link href="https://ibillxia.github.io/blog/2024/07/09/causal-inference-complex-ab-testing/"/>
+    <updated>2024-07-09T15:51:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2024/07/09/causal-inference-complex-ab-testing</id>
+    <content type="html"><![CDATA[<h2>24年7月5-6北京站</h2>
+
+<h2><strong>eBay 基于Uplift Model的优惠券分发优化</strong></h2>
+
+<p><a href="https://drive.weixin.qq.com/s?k=AJEAIQdfAAoRew3eteAZgAQAbMAKM#/preview?fileId=s.1970325010981265.7204251960EC_f.720425750F67V">https://drive.weixin.qq.com/s?k=AJEAIQdfAAoRew3eteAZgAQAbMAKM#/preview?fileId=s.1970325010981265.7204251960EC_f.720425750F67V</a></p>
+
+<center><img src="/images/2024/IMAG2024070901.png"></center>
+
+
+
+
+<!--more-->
+
+
+
+
+<center><img src="/images/2024/IMAG2024070902.png"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024070903.png"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024070904.png"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024070905.png"></center>
+
+
+<h2><strong>字节 推荐场景下的复杂AB实验设计</strong></h2>
+
+<p><a href="https://drive.weixin.qq.com/s?k=AJEAIQdfAAo5EtQJwpAZgAQAbMAKM">DataFunCon2024-推荐场景的复杂AB实验设计.pdf</a>（抢先版）</p>
+
+<p><a href="https://drive.weixin.qq.com/s?k=AJEAIQdfAAosvCrHVWAZgAQAbMAKM">刘小可-抖音.pdf</a>（正式版）</p>
+
+<p>⼀、双边效应导致的策略效果评估有偏问题</p>
+
+<center><img src="/images/2024/IMAG2024070906.png"></center>
+
+
+<p>⼆、⽹络效应导致的策略效果评估有偏问题</p>
+
+<center><img src="/images/2024/IMAG2024070907.png"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024070908.png"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024070909.png"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024070910.png"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024070911.png"></center>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[PyTorch+CUDA+显卡算力对应关系]]></title>
+    <link href="https://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility/"/>
+    <updated>2024-07-04T17:06:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility</id>
+    <content type="html"><![CDATA[<h1>Pytorch 各个GPU版本CUDA和cuDNN对应版本</h1>
+
+<p><a href="https://blog.csdn.net/weixin_45508265/article/details/122006134">https://blog.csdn.net/weixin_45508265/article/details/122006134</a></p>
+
+<p><a href="https://pytorch.org/get-started/previous-versions/">https://pytorch.org/get-started/previous-versions/</a></p>
+
+<center><img src="/images/2024/IMAG2024070401.png"></center>
+
+
+
+
+<!--more-->
+
+
+<h1>pytorch 中注意cuda版本和gpu算力匹配</h1>
+
+<p><a href="https://blog.csdn.net/m0_46483236/article/details/124112298">https://blog.csdn.net/m0_46483236/article/details/124112298</a></p>
+
+<p><a href="https://zhuanlan.zhihu.com/p/427395039">https://zhuanlan.zhihu.com/p/427395039</a></p>
+
+<p><a href="https://docs.nvidia.com/cuda/ampere-compatibility-guide/index.html#verifying-ampere-compatibility-using-cuda-11-0">https://docs.nvidia.com/cuda/ampere-compatibility-guide/index.html#verifying-ampere-compatibility-using-cuda-11-0</a></p>
+
+<p>查看GPU算力：<a href="https://developer.nvidia.com/cuda-gpus">https://developer.nvidia.com/cuda-gpus</a></p>
+
+<p><strong>只有cuda 11版本支持当前GPU 8.6算力</strong></p>
+
+<p>安装cuda 11.1覆盖cuda 10.2。</p>
+
+<p>pip3 install torch==1.9.0+cu111 torchvision==0.10.0+cu111 torchaudio==0.9.0 -f <a href="https://download.pytorch.org/whl/torch_stable.html">https://download.pytorch.org/whl/torch_stable.html</a></p>
+
+<p>查看cuda+torch版本及算力（<a href="https://developer.aliyun.com/article/1374303">https://developer.aliyun.com/article/1374303</a>）</p>
+
+<center><img src="/images/2024/IMAG2024070402.png"></center>
+
+
+<h1>nvcc和nvidia-smi显示的版本不一致？</h1>
+
+<p><a href="https://www.jianshu.com/p/eb5335708f2a">https://www.jianshu.com/p/eb5335708f2a</a></p>
+
+<p><strong>nvcc 属于CUDA的编译器，将程序编译成可执行的二进制文件。</strong></p>
+
+<p><strong>nvidia-smi 全称是 NVIDIA System Management Interface ，是一种命令行实用工具，旨在帮助管理和监控NVIDIA GPU设备。 </strong></p>
+
+<p>CUDA有 runtime api 和 driver api，两者都有对应的CUDA版本， nvcc --version 显示的就是前者对应的CUDA版本，而 nvidia-smi显示的是后者对应的CUDA版本。</p>
+
+<p>用于支持driver api的必要文件由 GPU driver installer 安装，nvidia-smi就属于这一类API；而用于支持runtime api的必要文件是由 CUDA Toolkit installer 安装的。nvcc是与CUDA Toolkit一起安装的CUDA compiler-driver tool，它只知道它自身构建时的CUDA runtime版本，并不知道安装了什么版本的GPU driver，甚至不知道是否安装了GPU driver。 CUDA Toolkit Installer通常会集成了GPU driver Installer，如果你的CUDA均通过CUDA Tooklkit Installer来安装，那么runtime api 和 driver api的版本应该是一致的，也就是说， nvcc --version 和 nvidia-smi 显示的版本应该一样。否则，你可能使用了单独的GPU driver installer来安装GPU dirver，这样就会导致 nvidia-smi 和 nvcc --version 显示的版本不一致了。</p>
+
+<p><strong>通常，driver api的版本能向下兼容runtime api的版本，即 nvidia-smi 显示的版本大于nvcc --version 的版本通常不会出现大问题。</strong></p>
+
+<p><strong>多版本CUDA切换</strong></p>
+
+<p><a href="https://baijiahao.baidu.com/s?id=1663920145053509733&amp;wfr=spider&amp;for=pc&amp;qq-pf-to=pcqq.c2c">https://baijiahao.baidu.com/s?id=1663920145053509733&amp;wfr=spider&amp;for=pc&amp;qq-pf-to=pcqq.c2c</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[【DataFun】因果推断在微视激励和供需场景的应用]]></title>
+    <link href="https://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application/"/>
+    <updated>2023-12-27T16:16:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application</id>
+    <content type="html"><![CDATA[<center><img src="/images/2023/IMAG2023122701.png"></center>
+
+
+<h1>一、因果推断与激励算法</h1>
+
+<h2>1、业务背景与业务建模</h2>
+
+<p>首先简单地介绍一下腾讯微视的红包激励业务背景。与其他的产品和场景类似，在给定的预算之下，我们向腾讯微视的用户发放一些现金激励，希望通过现金激励最大化用户的次日留存和当天使用时长。现金激励的形式主要是以不定的时间间隔为用户发放不定数量和不定金额的现金红包。以上提到的 3 个“不定”最终由算法来确定。这三个“不定”也称红包激励策略的三要素。</p>
+
+<!--more-->
+
+
+<p>接下来讲一下不同的现金激励策略的抽象形式。第一种以红包序列的形式来表示策略，比如对红包序列进行编号，然后用 one-hot 的形式为每个 treatment 独立编号。它的优点是能够刻画更多细节，例如每一个红包之间的金额等细致的策略，以及相对应的效果。但是这必然会需要更多的变量来表示策略，策略的探索空间非常大，另外在进行策略的探索和择优时，也会需要更多的计算量。而第二种形式，也就是使用三要素的向量来表示策略，其形式更灵活，探索的效率也会更高，但是它确实会忽略了一些细节。第三种方式更数学一点，即红包序列直接变成一个关于时间 t 的函数，函数里的参数可以构成向量，从而表示策略。因果问题的建模和策略的表示，极大程度地决定了因果效应估计的准确性和效率。</p>
+
+<p>假设我们有了一个良好的策略抽象和向量表示之后，接下来要做的就是选择算法框架。在这里有三种框架。第一种框架在业界比较成熟，即使用因果推断结合多目标约束优化的方式来做策略的分配和优化。这种框架中，因果推断主要负责的是估计不同策略对应的用户核心指标，也就是我们所说的用户次日留存和时长的收益提升。估计之后，我们利用多目标的约束优化来做离线的预算策略分配以满足预算约束。第二种就是离线强化学习结合多目标约束优化方法。这个方法我个人认为是比较有前景的，主要原因有两个。第一个原因是在实际应用场景当中，策略非常多，强化学习本身是可以高效地进行策略空间探索的，同时，由于我们的策略是有依赖的，而强化学习可以建模策略间的依赖；第二个原因是因为离线强化学本质实际上是一个反事实估计（contrafactual estimation）的问题，其本身具有很强的因果属性。然而遗憾的是，在我们的场景当中曾经尝试离线强化学习的方法，但它在线上效果没有达到理想的效果。究其原因，一方面是我们的方法问题，另外一方面主要受限于数据。要想训练一个好的离线强化学习模型，需要数据中的策略分布足够广，或者叫策略分布的足够均匀。也就是说，我们使用的随机数据也好，或者是观测数据也好，希望能够尽可能地探索到更多的这种策略，并且分布的相对来说会均匀一些，这样才能够减少做反事实估计的方差。最后一种算法框架在广告场景当中比较成熟，我们通过在线强化学习方式做流量控制和预算控制。这种方法的优势是可以及时地、快速地响应线上的突发事件，同时对于预算的控制相对更加准确。在引入因果之后，我们做流量选择或控制的指标就不再是 ECPM 指标了，可能就是我们现在估计的次留和时长的一个提升量。经过我们一系列的实践尝试，最终选择了第一种算法框架，也就是因果推断结合多目标约束优化，原因是它更稳定且更可控，同时它对线上工程的依赖也更少。</p>
+
+<p>第一种算法框架的 Pipeline 如下图所示。首先离线计算用户特征，然后用因果模型去预估用户在不同策略下核心指标的提升量，也就是所谓的 uplift。基于预估的提升量，我们利用多目标优化来求解，从而分配最优策略。为了加速整个过程的计算，我们在结构化时，会提前对人群进行聚类，也就是说我们认为这一簇里边的人具有相同的因果，相应的，我们给同一簇人分配同样的策略。</p>
+
+<center><img src="/images/2023/IMAG2023122702.png"></center>
+
+
+<h2>2、策略假设与因果图</h2>
+
+<p>基于上述讨论，接下来重点讨论一下怎么做策略的抽象。首先来看我们如何抽象因果图。在红包激励场景中需要建模的因果，体现在多天与多个红包之间。因为前一个红包肯定会影响下一个红包是否要领取，因此它本质上就是一个 Time-Varying Treatment Effect 问题，抽象成时序因果图由如右图所示。</p>
+
+<p>以一天内多个红包为例，T 所有下标都代表的是红包的一个序号。此时的 T 代表的是当前红包的金额，以及距离上一个红包发放的时间间隔所组成的向量。Y 是用户的红包下发之后的当次使用时长，和次日留存的提升量。X 是截止到当前时刻观察到的混淆变量，例如用户的观看行为或人口属性等。当然还会有很多未观测的混淆变量，用 U 来表示，例如用户偶发的停留，或是偶发的停止领。一个重要的未观测混淆变量是用户的心智，主要包括用户对红包激励的金额的价值评估。而这些所谓的心智，是很难通过系统内的一些统计量或统计特征来表示的。</p>
+
+<p>如果以时间序列的形式去做建模红包策略会非常复杂，因此我们做了一些合理的简化。比如假设 U 只影响当前时刻的 T，X 和 Y，并且它只影响下一时刻的 U，即用户心智。也就是说它只会通过影响下一刻的价值评估或者心智来影响未来的 Y。但是即使做了一系列简化，我们也会发现整个时序因果图依然很稠密，从而很难做合理的估计。并且当使用 G-methods 的方法解决 time Varying Trend Effect 时，需要大量数据去训练，然而现实中我们得到的数据非常稀疏，所以很难在线上取得一个很好的效果。因此最终我们做了大量简化，得到右下图这样的叉状结构（Fork）。我们把所有当天的红包的策略做了一个聚合，它是由策略三要素（红包激励总金额、总时间、总个数）所构成的向量，用 T 来表示。X 是 T-1 时刻的一个混淆变量，也就截止到当天之前用户的历史行为和人口属性。Y 代表的是当天用户的使用时长，就是用户的次日留存或当次使用时长指标。虽然这种方法看起来忽略了很多细节，例如红包之间的相互影响。但从宏观的角度来说，这个策略更稳定也能更好衡量其效果。</p>
+
+<center><img src="/images/2023/IMAG2023122703.png"></center>
+
+
+<h2>3、策略表示与因果模型</h2>
+
+<p>基于上面讨论，接下来就是核心问题，也就是如何表示策略（treatment）。之前我们尝试了使用 One-Hot 对三要素向量独立编号，以及将三要素分开，用时间函数构造 multi-variable treatment。前面这两种策略表示方法比较好理解，接下来介绍最后一种方法。大家看上面这张图。我们分别构造了三要素关于 t 的正弦函数，也就是给定一个时刻 T，我们能分别得到金额、时间间隔和个数。我们用这些函数对应的参数作为新向量的元素，类似于策略三要素的表示。我们用函数的方式来表示策略的目的是期望保留更多的细节，因为前两种方法只能通过策略组合知道红包金额、发放间隔的平均值，而用函数可能表示得更细致。但是这种方式有可能引入更多的变量，使计算更加复杂。</p>
+
+<p>有了策略表示之后，就可以针对性地去选择因果模型来去估计因果效应。在用 One-Hot 表示 T 的三要素的形式下，我们采用 x-Learner 的模型对每个策略建模，并将总金额最小的策略作为基准策略，从而计算和评估所有策略的 treatment effect。在这种情况下，大家可能感觉到它的效率是非常低的，而且模型缺乏泛化性。因此我们进一步采用刚才提到的第三种策略表示，即用正弦函数要素的向量去构成一个 treatment。接下来用单个 DML 模型来估计所有策略相对于基准策略的效果。此外，我们还做了一个优化 DML，假设 y 是混淆变量和因果效应的线性加权，也就是 y 等于 treatment effect 加上混淆变量。这样就人工构造了向量要素之间的交叉项和高阶项。相当于构造了 polynomial kernel function 来引入非线性函数。在这个基础上 DML 相对于基准策略有了很大的提升。由右下图的分析可以发现，DML 模型花了更少的钱并且提高了 ROI，这意味着我们能够更高效地去利用资源。</p>
+
+<p>前面我们主要讨论了一些方法上的抽象和模型的选择，在实践过程当中，还会发现一些比较偏业务方面的问题，比如做 One-Hot 时 treatment 怎么办？这时候，我们做了一个逐批扩量的策略。首先通过策略三要素做种子策略，然后人工筛选和保留优质的种子之后，对它进行一个扩展。在扩展之后，我们会基于一段时间，比如先在上线的前两周分批地上线新的策略，并且保证每个策略的随机流量大小是一致的，或是可比的。在这个过程当中，确实会忽略时间因素的影响，并且不断替换效果较差的策略，从而把策略的集合丰富起来。另外，由于时间因素一定会影响随机流量的策略是否可比。因此我们构建了类似于时间片轮转的方法，保证其覆盖的时间片是一致的，从而消除时间因素对策略的影响，这样得到的随机流量就可以用来训练模型了。</p>
+
+<p>还有就是新的策略大概如何生成？一种简单的方法是用 grade search，或者做遗传算法，这些是比较常见的搜索的通用算法。另外我们可以结合了人工剪枝，比如剪去一些不可取的红包序列类型。还有一种方法是使用 BanditNet，也就是一种离线强化学习的方法去计算没见过的策略，即估计反事实（counterfactual）的效果的估计，然后用估计的值来做策略的选择。当然我们最终也需要用线上随机流量去验证的，原因是这种离线强化学习的方法，其方差大概率会非常的大。</p>
+
+<center><img src="/images/2023/IMAG2023122704.png"></center>
+
+
+<h2>4、策略问题与迭代</h2>
+
+<p>除了以上提到的问题，我们也还会遇到一些偏业务的问题。第一个问题是用户策略的更新周期是怎样的？是不是所有的用户策略都是频繁地更新会更好？对此，我们实践的经验是因人而异。例如高频用户的策略变化应该更缓慢一些。一方面是因为高频用户已经很熟悉我们的形态了，包括激励金额，如果红包金额剧烈的变化，一定会影响相应的指标。所以我们对高频用户其实是保持一个周更新的策略，一周更新一次；但是对于新用户来讲，更新周期是更短的。原因是我们对新用户了解很少，我们希望能够更快速地去探索合适的策略，并且根据用户交互情况快速响应做出策略变化。由于新用户的行为也很稀疏，所以在这种情况下，我们就会用天级别对新用户或者一些低频用户去做更新。另外，我们也需要对策略的稳定性做监控，从而避免特征噪声造成的影响，我们搭建的 Pipeline 如右图所示。这里我们会监控 treatment effect 是否稳定，同时也会对用户最终分配的策略进行天级别的监控，比如今天的策略和昨天策略差异有多大，包括金额和个数。我们也会对线上的策略定期的做快照，主要是为了去做 debug，同时也能够快速回放，从而保证策略的稳定。另外我们还会对小流量做实验，监控其稳定性，只有达到稳定性要求的小流量实验，才会被用于替换现成的策略。</p>
+
+<p>第二个问题是针对新用户以及一些特殊用户的策略是否为独立的？答案是确定的，比如新用户，我们会先对他进行一个较强的激励，而后激励强度随时间衰减。当用户进入正常的生命周期之后，我们才会对他进行常规的激励策略。同时，对于特殊的敏感人群，他们金额上会有限制策略，对此我们也会训练独立的模型去适应这类人群。</p>
+
+<p>第三个问题大家可能会问到，也就是因果推断在整个算法框架当中到底有多重要？从理论角度，我们认为因果推断是核心，因为它在激励算法中是带来很大的收益。相对于回归与分类模型来说，因果推断与业务目标一致，它天生就是面向 ROI 的，所以它会带来关于提升量的优化目标。但是要提醒大家的是，我们在做预算分配的时候，不能够为每一个用户都选择最优的策略，而且因果效应相对于个人来说是相对较小的。当我们做预算分配的时候，很有可能会把一些用户因果效应的差异消除了。在这种时候，我们约束优化会极大地影响策略效果。因此，在做聚类的时候，我们也尝试了更多的聚类方法，例如深度聚类 SCCL 方法获得了更好的聚类结果。我们也进行了一些深度因果模型的迭代，比如像 BNN 或 Dragonnet 等等。</p>
+
+<p>我们发现在实践的过程中，深度因果模型的离线指标确实有不错的提升，但是其在线上的效果还不够稳定，主要的原因是有缺失值的出现。同时我们也发现，特征的规划方法很影响深度学习线上模型的稳定性，所以最终我们还是会倾向于稳定的去使用 DML 方法。</p>
+
+<p>在激励场景的分享就这么多，接下来也请我们团队的另外两位同学和大家分享一下在供需调优场景的一些实践和理论的探索。</p>
+
+<center><img src="/images/2023/IMAG2023122705.png"></center>
+
+
+<h1>二、因果推断与供需调节</h1>
+
+<h2>1、业务背景与业务建模</h2>
+
+<p>接下来介绍一下腾讯微视在供需方面的一个业务背景。作为一个短视频平台，微视有许多个不同品类的视频。对于有时候不同观看兴趣的用户群体，我们需要根据不同的用户特征去合适地分配各个品类的曝光占比或者是库存占比，目标则是为了提升用户的体验和用户的观看时长，其中用户的体验可以根据 3 秒快划率指标来进行衡量，观看时长主要根据总的播放时长来去衡量。如何去调节视频品类的曝光占比或者库存占比？我们主要考虑的方式按比例去对一些品类进行增加或者减少。增减的比例是一个预设的数值。</p>
+
+<p>接下来我们需要通过算法解决如何决定哪些品类增，哪些品类减，去使得用户体验和观看时长可以最大化，同时还需要满足比如总曝光有限制的一些约束条件。这个地方总结了三个主要的建模思路。第一个是比较直接的想法，就是我们直接把增和减作为一个 0 和 1 的 treatment 变量，我们去估计它的因果效应，随后再进行一个多目标的约束优化，去得到一个最终的策略。第二种思路就对 treatment 建模得更精细一些。我们把 treatment 当作一个连续的变量，比如品类的曝光占比，就是一个 0 到 1 之间连续变化的变量。然后去拟合一个相应的因果效应的曲线或者因果效应函数，接下来再进行多目标的约束优化，最后得到最终的策略。可以注意到，刚刚提到的两种方法都是两阶段的方法。第三种思路，我们将约束条件带入到因果效应的估计当中，从而得到一个满足约束条件的最优策略。这也是稍后希望和大家分享的研究内容。</p>
+
+<p>首先还是先关注前两种建模的思路，有几个建模的要点需要注意一下。第一个点是，为了保证因果效应估计的准确性，我们需要划分人群，在每个人群上做二值 Treatment 或是连续 Treatment 的因果效应估计。刚刚郑老师也有提过分人群的方法，比如用  Kmeans 聚类，或者是一些深度聚类。第二点则是如何在非随机实验数据上评估模型效果。比如我们需要在不做 AB test 的情况下，离线评估一下模型的效果。关于这个问题，可以参考 PPT 上面索引的这篇论文中提到的一些指标，用来做离线的评估。第三点需要注意的是，我们应该尽可能考虑品类之间的关联和相互影响，比如相似品类之间的一些挤占的问题等等。如果能把这些因素纳入到因果效应的估计当中，应该可以取得更好的效果。</p>
+
+<center><img src="/images/2023/IMAG2023122706.png"></center>
+
+
+<h2>2、单人群 × 品类曝光占比调节策略</h2>
+
+<p>接下来我们就具体展开这几种建模思路。首先第一种建模方式就是定义一个 0 和 1 的 treatment，用来代表增加或者减少这两种干预的手段，可以参考左侧的简要因果图，这里 x 代表用户的一些特征，比如历史操作行为相关的统计特征，以及其他的用户属性等等。y 就是我们所关心的目标，也就是 3 秒快化率或者播放总时长。除此之外，还需要注意的是一些未观测的混淆变量，比如用户的偶发、快滑和退出，以及同一个用户可能实际上会有多个人在使用，这也是用户多重身份的一个问题。另外就是推荐策略的不断迭代和更新也会对观测数据构成影响，还有另外用户兴趣的迁移也是观测之外的。这些未观测的混淆变量，可能会对因果效应的估计造成一定程度上的影响。</p>
+
+<p>对于这样的建模方式，常见的因果效应估计方法都可以解决。比如可以考虑 T-Learner 或者是 X-Learner，或者是 DML，这些都可以进行因果效应估计。当然，这种简单的建模方式也存在一些问题，比如我们用二值 treatment 进行建模会太过于简化。另外，在这种方式之下，每一个品类是单独进行考虑的，没有考虑品类之间的相关性。最后一个问题就是我们整个问题里边没有考虑到曝光的顺序，以及内容的质量这些具体的因素。</p>
+
+<p>接下来再介绍一下第二种建模的思路。我们把所有品类放在一起考虑，比如我们有 k 个视频品类，令 treatment 是一个 k 维的原因向量。向量的每一个位置就代表一个品类，比如影视综艺或者 MOBA 赛事等，0 和 1 仍然是代表增加或者减少。这时候多维向量的 treatment 的因果效应估计可以通过 DML 算法来解决。我们通常是把全为 0 的 treatment 向量作为 control。这种方式虽然解决了各品类没有被单独考虑的问题，但是它依然存在一些潜在的问题。首先是品类过多时所带来的维度爆炸的问题，并且随着维度的增加，由于每个位置上都有 0 和 1 两种情况，所以潜在的排列组合数量会指数级增加，这些都会对因果效应估计的准确性造成干扰。另外，前面所提到的曝光顺序和内容等等这些因素也没有考虑到。</p>
+
+<center><img src="/images/2023/IMAG2023122707.png"></center>
+
+
+<p>分享完二值变量 treatment 的建模思路之后，接下来可以对 treatment 进行更精细，也更符合其本身特点的建模。我们注意到，曝光占比本身是一个连续的变量，因此我们用连续的 treatment 去进行建模会更加的合理。在这种建模思路之下，我们首先还是需要划分人群。对每个人群，我们对每个品类进行单独地建模，得到一个单人群*单品类的因果效应曲线。就像左图显示的这样，因果效应曲线代表的是不同品类占比对我们所关心的目标产生的影响。为了估计这样的因果效应曲线，我主要分享两种可行的算法，一个是 DR-Net，一个是 VC-Net，这两种算法都属于深度学习的范畴。模型的结构就像右图展示的这样。</p>
+
+<p>首先介绍一下 DR-Net。模型的输入 x 首先会经过几个全连接层，从而得到一个隐含的表示，叫做 z。DR-Net 采取了一种离散化的策略，它将连续的 treatment 离散成多个 block，然后每个 block 分别训练一个子网络来进行目标变量的预测。由于 DR-Net 采用了离散化的策略，所以它最终得到的因果效应曲线并不是严格连续的，但随着离散化的分段越细，最终的估计会越接近于连续的曲线。当然，随着理想化的分段越细，由此带来的就是更多的参数量以及更高的过拟合的风险。</p>
+
+<p>接下来再分享一下 VC-Net。VC-Net 一定程度上改进了 DR-Net 的缺点。首先 VC-Net 模型的输入还是 X，也是用户的特征。它首先也是经过几个全连接层之后得到一个隐含的表示 Z。但是在 Z 这个地方，首先会接一个预测 Propensity Score 的一个模块。在连续的 Treatment 条件下， Propensity 就是给定 X 条件下 Treatment t 的一个概率密度，也是图上所表示的 π。接下来我们看一下 Z 之后的网络结构，不同于 DR-Net 进行离散化的操作，VC-Net 采用的是一个变系数的网络结构，也就是 Z 之后的每一个模型参数，都是一个关于 t 的函数。我们这里提到的文献作者采用了基函数的手段，把每个函数表示成一个基函数的线性组合，也就这写的 θ（t）。这样一来，函数的估计也就变为了对基函数线性组合的参数估计。所以这样一来，模型的参数优化就不成问题了，同时VC-Net 所得到的因果效应曲线也是一条连续的曲线。关于 VC-Net 要求解的目标函数由几部分组成。一方面，它是由最后对目标的预测的平方损失构成，也就是图中的 μ。另一方面，它也由 propensity 的概率密度的对数损失来构成。除了这两部分之外，作者在目标函数里边还加入了一个叫做 targeted regularization 的惩罚项，由此可以得到双重稳健的估计性质。具体细节，感兴趣的朋友可以参见一下上面索引的 2 篇原论文，去获得更多的细节。</p>
+
+<center><img src="/images/2023/IMAG2023122708.png"></center>
+
+
+<p>最后，再为即将与大家分享的一篇我们的研究做个铺垫。我们注意到，各个视频品类的曝光占比是一个多维连续的向量。它之所以多维，是在于我们有多个视频品类，每个维度就代表一个视频品类。它之所以是连续的，主要就在于每个视频品类的曝光占比都是连续的，其取值都在 0 和 1 之间。同时还有一个很自然的约束条件，就是我们所有的视频品类的曝光占比加起来一定是等于 1。所以我们可以考虑这样一个多维连续的向量去作为 treatment。</p>
+
+<p>右图展示的向量就是这样的例子。我们的目标是找到最优的曝光占比，使得我们总播放时长最大化。在传统的因果框架上，算法很难解决这样一个多维连续并且待约束的问题。接下来分享一下我们对这样的问题做的研究。</p>
+
+<center><img src="/images/2023/IMAG2023122709.png"></center>
+
+
+<h1>三、带约束的连续多变量因果模型分享</h1>
+
+<p>MDPP Forest 这项工作是团队在研究供需问题的时候做的一个方法探索和问题的创新解决。我们团队当时发现，在面对如何解决为每个用户去分配最佳的视频类目曝光比的问题上，其他现有的常用方法都没有办法得到一个比较符合预期的结果。因此经过一段时间的尝试与改进，我们团队设计的方法能在离线上取得了不错的效果，然后与推荐进行合作，最后也取得了一定的策略收益。随后我们把这项工作整理成了论文，也有幸发表在了 KDD 2022 上。</p>
+
+<center><img src="/images/2023/IMAG2023122710.png"></center>
+
+
+<p> ## 1、背景与挑战</p>
+
+<p>首先介绍问题背景。在供需问题中，我们将短视频根据内容划分为不同类目，比如科普、影视、户外美食等。视频类目曝光比即指这些不同类目的视频各自所占一位用户观看的所有视频的比例。用户对不同类目的偏好有很大的差别，平台也往往需要因人而异地去确定每个类目的最优曝光比例。在重排序阶段，对各类视频的推荐加以控制。公司面临的一大挑战是如何分配最佳的视频曝光比，从而最大限度地延长每个用户在平台上的使用时长。</p>
+
+<center><img src="/images/2023/IMAG2023122711.png"></center>
+
+
+<p>这样一个问题的主要难点在于以下的三点。第一个就是短视频的推荐系统中，每个用户看到的视频和他自身的特征会有非常强的相关关系，这就是一个存在的选择性偏差。因此我们需要用因果推断相关的算法来消除偏差。第二个是视频类目曝光比是一种连续、多维并且带约束的 treatment。这样的复杂问题在因果推断和策略优化领域目前是没有非常成熟的方法的。第三是在离线数据上，我们并不能先验地知道每个人的真实最优曝光比，因此很难去评估这个方法。在真实环境下，它只是推荐中的一个子环节。最终实验结果也不能判断这个方法对它本身的计算目标的准确度。因此，这个场景的问题我们很难去准确地评估它。我们会在后续介绍我们是如何进行效果评估的。</p>
+
+<center><img src="/images/2023/IMAG2023122712.png"></center>
+
+
+<h2>2、问题定义</h2>
+
+<p>我们先把数据抽象成一个统计学中的因果图。其中 X 是用户特征，包含了许多同时影响当前视频曝光以及用户时长的混淆变量；T 是视频类目曝光比，它也是 treatment，在这个问题中具有比较高的维度，例如它是一个 20 维的向量。Y 是用户的观看时长，也就是任务目标的响应。我们建模的目标就是在特定的用户特征 X 下，给一个高维的最优视频类目曝光比，从而使用户的观看时长期望达到最大。这个问题看似可以简单地用一个因果三元图来表示它，但有一个很大的问题，也就是前面提到的，我们的 treatment 是多个类目的曝光比，它是由品类曝光占比构建的多维连续取值且向量和为 1 的向量。这样的问题就比较复杂了。</p>
+
+<center><img src="/images/2023/IMAG2023122713.png"></center>
+
+
+<h2>3、方法简介 —— Maximum Difference Point of Preference (MDP2) Forest</h2>
+
+<p>对此，我们的方法也是基于因果决策森林（causal forest）的。一般的因果决策树只能解决具有一维离散值的 treatment 问题。而我们通过改进中间分裂准则函数的计算，在分裂的时候增加一些高维连续的信息，使它可以解决高维连续值并且带约束 treatment 的问题。</p>
+
+<center><img src="/images/2023/IMAG2023122714.png"></center>
+
+
+<h3>① 方法简介——连续问题</h3>
+
+<p>首先，我们解决的是连续 treatment 问题。如图中所示，T 对 Y 的影响是一条连续的曲线。我们先假设这是一条单调递增的曲线。对于数据中所有的 Treatment 取值，我们去遍历它，计算左右样本的 Y 均值，从而找到左边 Y 均值和右边 Y 均值差异最大的点，也就是平均因果效益最大的点。我们把这个点称为 Maximum Difference Point，也就是连续 Treatment 空间上效率最高的点，代表了 Treatment 能够显著地让 Y 发生改变。Maximum Difference Point 就是我们在单维度上想去得到的点。</p>
+
+<center><img src="/images/2023/IMAG2023122715.png"></center>
+
+
+<p>然而，我们刚才提到的方法只适用于单调递增的曲线。但事实上，大部分问题都没有那么美好，特别是曝光比的问题。在这个问题上，效应曲线一般来说是山形的，即先增后减。因为多推荐用户喜爱的视频，可以使得用户增加观看时长，但是这个类型推得过多了，整个视频的推荐就会变得非常单调乏味，并且还会挤占其他用户喜欢的视频类型的曝光空间。所以曲线一般来说是山形的，也有可能是其他形状的。为了适应任意形状的T 曲线，我们需要进行积分的操作，也就是找值域区间进行累加。在累加后的曲线上，我们同样计算左右两边均值，以及两边均值之差最大的点，比如图里的五角星。这个点就可以称我们称为 maximum difference point of preference，也就是我们的 MDPP。</p>
+
+<center><img src="/images/2023/IMAG2023122716.png"></center>
+
+
+<h3>② 方法简介——高维问题</h3>
+
+<p>上面我们介绍了如何解决连续问题，而刚才所说的曲线只是一维的，对应单一的视频类目。接下来我们采用启发式维度遍历的思想去解决多维的问题。在计算分类得分的时候，我们采用启发式的思想，将 K 个维度随机排序，在每个维度上去计算一个 D 指标的聚合，也就是进行求和的操作。得到 D* 作为一个高维信息熵，再来考虑约束，约束是所有的 MDPP 之和为1。这里我们要考虑下面两种情况，一种是如果 K 维度遍历完以后，它 MDPP 之和也没有达到 1。针对这个情况，我们会把所有的 MDPP 之和加起来对它们去做归一化，拉到 1。第二个情况是，如果我们只遍历了 K’ 维小于 K 维，但MDPP 之和就已经达到 1。对此，我们将停止遍历，并且把 MDPP 设置为剩余的“资源量”，即 1 减之前已经算出来 MDPP 值之和，这样就可以去考虑到约束。</p>
+
+<center><img src="/images/2023/IMAG2023122717.png"></center>
+
+
+<p>另外，我们也会在上述的树结构上引入 forest，因为它主要有两大意义。第一个是我们传统的 bagging 集成思想，它可以用多个学习器增强模型的鲁棒性。第二个是在维度遍历中，每次节点分裂只会计算到 K’ 个维度，有些维度没有被算进去。为了使每个维度都能以平等的机会参与到分裂中，我们需要建立多棵树。</p>
+
+<center><img src="/images/2023/IMAG2023122718.png"></center>
+
+
+<h3>③ 方法简介——算法加速</h3>
+
+<p>另外还有一个问题，由于算法包含了三层的遍历，所有树模型都需要特征值的遍历，还有额外引入的维度遍历以及搜寻 MDPP 的遍历。这样的三层遍历使得效率非常低下。因此我们对特征值的遍历和 MDPP 遍历用了加权分位数图的方法，只在分位数点去计算相应的结果，这样就可以大大地降低算法复杂度。同时，我们也找到了这些分位点作为“累加值域”的边界点，这样可以大大减小计算量和储存量。假设有 q 个分位点，我们只需要计算 q 次得出每段分位区间内的样本数量和 y 的均值，这样每次计算两边均值之差 d 的时候，只需要把 q 值分为左边和右边两部分，分别把每一个区间里的均值做一个加权求和就可以了。我们不需要再重新计算分位点左右两边所有样本的均值。我们下面进入实验部分。</p>
+
+<center><img src="/images/2023/IMAG2023122719.png"></center>
+
+
+<h2>4、实验设计</h2>
+
+<h3>① 实验设计-Metric</h3>
+
+<p>我们实验评估本质上就是一个策略评估问题，因此我们引入了策略评估相关的指标。第一个是 Main Regret，它用于衡量整体策略的收益和理论最优收益之间的差距。另一个是 Main Treatment Square Error，用于衡量多维 Treatment 下每一个 Treatment 维度的预估值和最优值之间的差距。这两个指标都是越小越好的。然而，定下这两个评估指标带来的最大问题就是我们怎么去确定最优值。</p>
+
+<center><img src="/images/2023/IMAG2023122720.png"></center>
+
+
+<h3>② 实验设计-对比方法</h3>
+
+<p>介绍一下我们的对比方法。首先是因果推断中的两种常用方法，一个是具有完备统计学理论的 DML，还有另外是网络模型 DR-Net 和 VC-Net。这些方法只能处理一维的问题，但在本文的问题上，我们进行了一些调整去应对多维问题，也就是先计算每一维的绝对值，再去做归一化。还有下面两篇论文中策略优化的方法，我们称之为 OPE 和OCMD。这两篇文章中有陈述其方法适用于多维问题，但是同时也指出，当维度过多时，这些方法就很难生效了。</p>
+
+<center><img src="/images/2023/IMAG2023122721.png"></center>
+
+
+<h3>③ 实验设计-模拟数据集</h3>
+
+<p>为了简单直接地去比较模型效果，我们模拟了真实世界的问题，生成了一个简化版的模拟数据集。特征空间 x 表示 6 个维度的用户特征和 2 个行为特征。还有对于不同特征的样本，我们先假定它的最优策略。如图所示，比如一个年龄小于 45 岁，教育程度大于 2，有一个行为特征大于 0.5 的用户，他在 6 个视频类目上最优。借助左边公式，先随机生成一个对用户的曝光策略，接下来算出曝光策略和真实最优策略之间的一个差距，以及模拟用户时长是多少。如果策略越贴近用户的最优策略，用户的时长 y 就会越长。这样我们就生成了这么一个数据集。这个模拟数据集的好处就是我们直接假设了最优值，非常方便评估，另外一个是数据比较简单，可以方便我们分析算法的结果。</p>
+
+<center><img src="/images/2023/IMAG2023122722.png"></center>
+
+
+<p>来看看模拟数据集上的实验结果，对于刚才我们提到的那类人群，提供了各种方法计算出对应的 treatment 的均值。第一行是理论最优，第二行是我们 MDPP forest，第三行基于 MDPP forest 在分裂准则里面又加了一些惩罚项的方法。可以看到我们方法和理论最优的差距都会非常小。另外的其他几种方法就不是特别极端，而是比较均匀。另外，从右图 MR 和 MTSE 来看，我们的两种方法也具有非常明显的优势。</p>
+
+<center><img src="/images/2023/IMAG2023122723.png"></center>
+
+
+<h3>④ 实验设计-半合成数据集</h3>
+
+<p>除了模拟数据集之外，我们也根据真实的业务数据构造了一个半合成数据。数据来自腾讯微视平台。Xi 表示用户的 20 维特征，treatment ti 表示多维的视频类目曝光比构成了10 维向量， yi（ti）表示第 i 个用户的使用时长。实际场景的一个特点是，我们并不能知道用户真实的最优视频曝光比。所以我们根据聚类中心规则去构造函数，生成虚拟的 y 来代替真实的 y，从而使得样本的 y 具有更好的规律性。这里具体公式我就不再赘述了，有兴趣的同学可以看一下原文。为什么可以这样做呢？因为我们算法的关键是它要能够解决 x 和 t 之间的一些混杂的影响，也就是线上用户受到有偏策略的影响。为了去评估策略的效果，我们只保留了 x 和 t 而改变了 y，从而更好地对问题进行评估。</p>
+
+<center><img src="/images/2023/IMAG2023122724.png"></center>
+
+
+<p>在半合成数据上，我们的算法效果也明显更好，并且比模拟数据集上的优势会更加的大。由此说明了在数据复杂的情况下，我们 MDPP forests 算法是更加的稳定的。另外，我们在合成数据上看一下超参数，也就是森林的规模。在右下图我们可以看到，随着森林规模的增加，两种分裂准则处理下指标收敛的都比较好，带惩罚项的一个始终会更好一些，它在 100 棵树的时候达到比较好的效果，250 棵树的时候达到最优效果，再之后会有一些过拟合。</p>
+
+<center><img src="/images/2023/IMAG2023122725.png"></center>
+
+
+<h1>四、问答环节</h1>
+
+<h2>Q：为什么遍历曝光度超过 1 的时候，归一化是可以 work 的？</h2>
+
+<p>A：我的理解是这样，因为我们做的是一个曝光占比约束的优化，在这个过程当中，我们是一个相对值。我们在遍历的过程当中，是寻找最优的一个分裂点，找到应该优先给哪个品类曝光更多的比例。在这个过程当中，我们只要能够保证它是等比缩放的，就是可以的。</p>
+
+<p>我也是同样观点，是等比缩放就可以。因为 1 是一个强的约束限制，我们一开始算出来的肯定不完全为 1，会低一些或者高一些。如果多了很多，没有办法去让它达到强约束唯一的条件，也是比较自然地用到一个归一化的思考。因为我们考虑到各个类目之间相对大小关系。我觉得相对大小关系是比较重要的，而不是一个绝对值的问题。</p>
+]]></content>
+  </entry>
+  
+</feed>

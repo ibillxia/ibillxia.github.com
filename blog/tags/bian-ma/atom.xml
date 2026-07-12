@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 编码 | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/bian-ma/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[MySQL乱码问题详解与解决方案]]></title>
+    <link href="https://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion/"/>
+    <updated>2015-10-28T17:12:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion</id>
+    <content type="html"><![CDATA[<p>本文节选自<a href="http://cenalulu.github.io/mysql/mysql-mojibake/">10分钟学会理解和解决MySQL乱码问题</a>   <br/>
+PS: 原文博主通过MySQL垂直深耕，成功进入Facebook了，祝福。</p>
+
+<h2>1. MySQL乱码的成因</h2>
+
+<center><img src="/images/2015/IMAG2015102801.png"></center>
+
+
+<p></p>
+
+<p>要了解为什么会出现乱码，需要理解从客户端发起请求到MySQL存储数据，再到取回客户端的过程中，哪些环节会有编码/解码的行为。</p>
+
+
+<p></p>
+
+<!--more-->   
+
+
+<h3>1.1 存入MySQL经历的编码转换</h3>
+
+<center><img src="/images/2015/IMAG2015102802.png"></center>
+
+
+<p></p>
+
+<p>存入过程有3次编码/解码：</p>
+
+
+<p></p>
+
+<p>1. Terminal根据字符编码转换成二进制流<br/>   
+2. Server通过character-set-client解码<br/>   
+3. 判断character-set-client和目标表的charset是否一致，不一致则转换</p>
+
+
+<p></p>
+
+<h3>1.2 从MySQL取出数据经历的编码转换</h3>
+
+<center><img src="/images/2015/IMAG2015102803.png"></center>
+
+
+<p></p>
+
+<p>取出过程同样有3次编码/解码：</p>
+
+
+<p></p>
+
+<p>1. 用表字符集编码进行解码<br/>   
+2. 将数据转换为character-set-client的编码<br/>   
+3. Server通过网络传输到远端client</p>
+
+
+<p></p>
+
+<h3>1.3出现乱码的原因</h3>
+
+<p>MySQL数据存入和读取过程有3次编码/解码的过程：客户端编码，MySQL Server解码，Client编码向表编码的转换   <br/>
+三步中，只要两步或者两部以上的编码有不一致就有可能出现编解码错误。   <br/>
+1. 存入和取出时对应环节的编码不一致    <br/>
+2. 单个流程中三步的编码不一致</p>
+
+<h2>2.如何避免乱码</h2>
+
+<p>理解了上面的内容，要避免乱码就显得很容易了。   <br/>
+只要做到“三位一体”，即 客户端，MySQL character-set-client，table charset三个字符集完全一致就可以保证一定不会有乱码出现了。</p>
+
+<p>最简单的方式是将客户端、连接、服务端统一设置为UTF-8（适合于还未写入数据造成乱码的情况，已经有乱码的修复见下文）：</p>
+
+<pre><code>SET NAMES 'utf8mb4';     
+-- 等同于以下三条语句：     
+SET character_set_client = utf8mb4;     
+SET character_set_results = utf8mb4;     
+SET character_set_connection = utf8mb4;     
+</code></pre>
+
+<h2>3.如何修复已经编码损坏的数据</h2>
+
+<p>原文有列举一些错误的方法，这里就略过了，直接说正确的方法</p>
+
+<h3>方法一 Dump &amp; Reload</h3>
+
+<p>这个方法比较笨，但也比较好操作和理解。简单的说分为以下三步：</p>
+
+<ul>
+<li>通过错进错出的方法，导出到文件</li>
+<li>用正确的字符集修改新表</li>
+<li>将之前导出的文件导回到新表中</li>
+</ul>
+
+
+<p>举例，我们用UTF-8将数据“错进”到latin1编码的表中。现在需要将表编码修改为UTF-8可以使用以下命令</p>
+
+<pre><code>shell&gt; mysqldump -u root -p -t --skip-set-charset --default-character-set=utf8 test charset_test_latin1 &gt; data.sql   
+#确保导出的文件用文本编辑器在UTF-8编码下查看没有乱码   
+shell&gt; mysql -uroot -p -e 'create table charset_test_latin1 (id int primary key auto_increment, char_col varchar(50)) charset = utf8' test   
+shell&gt; mysql -uroot -p  --default-character-set=utf8 test &lt; data.sql   
+</code></pre>
+
+<h3>方法二 Convert to Binary &amp; Convert Back</h3>
+
+<p>这种方法比较取巧，用的是将二进制数据作为中间数据的做法来实现的。由于，MySQL再将有编码意义的数据流，转换为无编码意义的二进制数据的时候并不做实际的数据转换。而从二进制数据准换为带编码的数据时，又会用目标编码做一次编码转换校验。通过这两个特性就相当于在MySQL内部模拟了一次“错出”，将乱码“拨乱反正”了。</p>
+
+<p>还是用上面那个例子举例，我们用UTF-8将数据“错进”到latin1编码的表中。现在需要将表编码修改为UTF-8可以使用以下命令</p>
+
+<pre><code>mysql&gt; ALTER TABLE charset_test_latin1 MODIFY COLUMN char_col VARBINARY(50);   
+mysql&gt; ALTER TABLE charset_test_latin1 MODIFY COLUMN char_col varchar(50) character set utf8;   
+</code></pre>
+
+<h2>参考资料</h2>
+
+<p>[1]<a href="https://cenalulu.github.io/mysql/mysql-mojibake/">10分钟学会理解和解决MySQL乱码问题</a><br/>
+[2]<a href="https://dev.mysql.com/doc/refman/8.0/en/charset.html">MySQL Character Sets文档</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[UTF8中文编码范围]]></title>
+    <link href="https://ibillxia.github.io/blog/2010/08/21/utf8-chinese-coding/"/>
+    <updated>2010-08-21T10:31:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2010/08/21/utf8-chinese-coding</id>
+    <content type="html"><![CDATA[<p>UTF-8有点类似于Haffman编码，它将Unicode编码为： </br>
+00000000-0000007F的字符，用单个字节来表示； </br>
+00000080-000007FF的字符用两个字节表示 （中文的编码范围） </br>
+00000800-0000FFFF的字符用3字节表示</br>
+编码转换：iconv -f “文件目前编码” -t “文件转换后的编码” -o “转换后生成的新文件名” “源文件名”temp = Iconv.conv("UTF-8","gb2312",a) </p>
+
+
+
+
+<p>因为目前为止Unicode-16规范没有指定FFFF以上的字符，所以UTF-8最多是使用3个字节来表示一个字符。但理论上来说，UTF-8最多需要用6字节表示一个字符。 
+在UTF-8里，英文字符仍然跟ASCII编码一样，因此原先的函数库可以继续使用。而中文的编码范围是在0080-07FF之间，因此是2个字节表示（但这两个字节
+和GB编码的两个字节是不同的）。 </p>
+
+
+<!--more-->
+
+
+<h2>big endian和little endian</h2>
+
+
+<p>我们一般将endian翻译成“字节序”，将big endian和little endian称作“大尾”和“小尾”。</p>
+
+
+
+
+<p>“endian”这个词出自《格列佛游记》。小人国的内战就源于吃鸡蛋时是究竟从大头(Big-Endian)敲开还是从小头(Little-Endian)敲开，
+由此曾发生过六次叛乱，其中一个皇帝送了命，另一个丢了王位。</p>
+
+
+
+
+<p>big endian和little endian是CPU处理多字节数的不同方式。例如“汉”字的Unicode编码是6C49。那么写到文件里时，究竟是将6C写在前面，
+还是将49写在前面？如果将6C写在前面，就是big endian。而如果将49写在前面，就是little endian。</p>
+
+
+
+
+<h2>UTF编码</h2>
+
+
+<p>UTF-8就是以8位为单元对UCS进行编码。从UCS-2到UTF-8的编码方式如下：</br>
+
+UCS-2编码(16进制) UTF-8 字节流(二进制)</br>
+0000 - 007F 0xxxxxxx</br>
+0080 - 07FF 110xxxxx 10xxxxxx</br>
+0800 - FFFF 1110xxxx 10xxxxxx 10xxxxxx </p>
+
+
+
+
+<p>例如“汉”字的Unicode编码是6C49。6C49在0800-FFFF之间，所以肯定要用3字节模板了：1110xxxx 10xxxxxx 10xxxxxx。
+将6C49写成二进制是：0110 110001 001001， 用这个比特流依次代替模板中的x，得到：11100110 10110001 10001001，即E6 B1 89。</p>
+
+
+
+
+<p>读者可以用记事本测试一下我们的编码是否正确。</p>
+
+
+
+
+<p>UTF-16以16位为单元对UCS进行编码。对于小于0x10000的UCS码，UTF-16编码就等于UCS码对应的16位无符号整数。对于不小于0x10000的UCS码，
+定义了一个算法。不过由于实际使用的UCS2，或者UCS4的BMP必然小于0x10000，所以就目前而言，可以认为UTF-16和UCS-2基本相同。
+但UCS-2只是一个编码方案，UTF-16却要用于实际的传输，所以就不得不考虑字节序的问题。</p>
+
+
+
+
+<h2>UTF的字节序和BOM</h2>
+
+
+<p>UTF-8以字节为编码单元，没有字节序的问题。UTF-16以两个字节为编码单元，在解释一个UTF-16文本前，首先要弄清楚每个编码单元的字节序。
+例如收到一个“奎”的Unicode编码是594E，“乙”的Unicode编码是4E59。如果我们收到UTF-16字节流“594E”，那么这是“奎”还是“乙”？</p>
+
+
+
+
+<p>Unicode规范中推荐的标记字节顺序的方法是BOM。BOM不是“Bill Of Material”的BOM表，而是Byte Order Mark。BOM是一个有点小聪明的想法：</br>
+
+在UCS编码中有一个叫做"ZERO WIDTH NO-BREAK SPACE"的字符，它的编码是FEFF。
+而FFFE在UCS中是不存在的字符，所以不应该出现在实际传输中。</br>
+UCS规范建议我们在传输字节流前，先传输字符"ZERO WIDTH NO-BREAK SPACE"。</p>
+
+
+
+
+<p>这样如果接收者收到FEFF，就表明这个字节流是Big-Endian的；如果收到FFFE，就表明这个字节流是Little-Endian的。
+因此字符"ZERO WIDTH NO-BREAK SPACE"又被称作BOM。</p>
+
+
+
+
+<p>UTF-8不需要BOM来表明字节顺序，但可以用BOM来表明编码方式。字符"ZERO WIDTH NO-BREAK SPACE"的UTF-8编码是EF BB BF（读者
+可以用我们前面介绍的编码方法验证一下）。所以如果接收者收到以EF BB BF开头的字节流，就知道这是UTF-8编码了。</p>
+
+
+
+
+<p>Windows就是使用BOM来标记文本文件的编码方式的。</p>
+
+
+
+]]></content>
+  </entry>
+  
+</feed>

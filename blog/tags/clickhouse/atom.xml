@@ -1,0 +1,729 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: ClickHouse | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/clickhouse/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ClickHouse基础知识与实践]]></title>
+    <link href="https://ibillxia.github.io/blog/2019/10/08/clickhouse-basics/"/>
+    <updated>2019-10-08T16:27:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2019/10/08/clickhouse-basics</id>
+    <content type="html"><![CDATA[<center><img src="/images/2019/IMAG2019100801.png"></center>
+
+
+<p><br></p>
+
+<h1>一、简介</h1>
+
+<p>Clickhouse是一个用于联机分析处理（OLAP）的列式数据库管理系统（columnar DBMS）。</p>
+
+<p>传统数据库在数据大小比较小，索引大小适合内存，数据缓存命中率足够高的情形下能正常提供服务。但残酷的是，这种理想情形最终会随着业务的增长走到尽头，查询会变得越来越慢。你可能通过增加更多的内存，订购更快的磁盘等等来解决问题（纵向扩展），但这只是拖延解决本质问题。如果你的需求是解决怎样快速查询出结果，那么ClickHouse也许可以解决你的问题。</p>
+
+<!--more-->
+
+
+<h2>应用场景</h2>
+
+<p>1.绝大多数请求都是用于读访问的</p>
+
+<p>2.数据需要以大批次（大于1000行）进行更新，而不是单行更新；或者根本没有更新操作</p>
+
+<p>3.数据只是添加到数据库，没有必要修改</p>
+
+<p>4.读取数据时，会从数据库中提取出大量的行，但只用到一小部分列</p>
+
+<p>5.表很“宽”，即表中包含大量的列</p>
+
+<p>6.查询频率相对较低（通常每台服务器每秒查询数百次或更少）</p>
+
+<p>7.对于简单查询，允许大约50毫秒的延迟</p>
+
+<p>8.列的值是比较小的数值和短字符串（例如，每个URL只有60个字节）</p>
+
+<p>9.在处理单个查询时需要高吞吐量（每台服务器每秒高达数十亿行）</p>
+
+<p>10.不需要事务</p>
+
+<p>11.数据一致性要求较低</p>
+
+<p>12.每次查询中只会查询一个大表。除了一个大表，其余都是小表</p>
+
+<p>13.查询结果显著小于数据源。即数据有过滤或聚合。返回结果不超过单个服务器内存大小</p>
+
+<h2>使用限制</h2>
+
+<p>1.不支持真正的删除/更新支持 不支持事务（期待后续版本支持）</p>
+
+<p>2.不支持二级索引</p>
+
+<p>3.有限的SQL支持，join实现与众不同</p>
+
+<p>4.不支持窗口功能</p>
+
+<p>5.元数据管理需要人工干预维护</p>
+
+<h1>二、基础用法</h1>
+
+<h2>常用SQL语法</h2>
+
+<ul>
+<li>列出数据库列表 show databases;</li>
+<li>列出数据库中表列表 show tables;</li>
+<li>创建数据库 create database test;</li>
+<li>删除一个表 drop table if exists test.t1;</li>
+<li>创建第一个表 create /<em>temporary</em>/ table /<em>if not exists</em>/ test.m1 ( id UInt16,name String) ENGINE = Memory;</li>
+<li>插入测试数据 insert into test.m1 (id, name) values (1, 'abc'), (2, 'bbbb');</li>
+<li>查询 select * from test.m1;</li>
+</ul>
+
+
+<h2>默认值</h2>
+
+<p>默认值 的处理方面， ClickHouse 中，默认值总是有的，如果没有显示式指定的话，会按字段类型处理：</p>
+
+<p>数字类型， 0</p>
+
+<p>字符串，空字符串</p>
+
+<p>数组，空数组</p>
+
+<p>日期， 0000-00-00</p>
+
+<p>时间， 0000-00-00 00:00:00</p>
+
+<p>注：NULLs 是不支持的</p>
+
+<h2>数据类型</h2>
+
+<p>1.整型：UInt8,UInt16,UInt32,UInt64,Int8,Int16,Int32,Int64</p>
+
+<p>范围U开头-2N/2~2N-1;非U开头0～2<sup>N</sup>-1</p>
+
+<p>2.枚举类型：Enum8,Enum16</p>
+
+<p>Enum('hello'=1,'test'=-1),Enum是有符号的整型映射的，因此负数也是可以的</p>
+
+<p>3.字符串型：FixedString(N),String</p>
+
+<p>N是最大字节数，不是字符长度，如果是UTF8字符串，那么就会占3个字节，GBK会占2字节;String可以用来替换VARCHAR,BLOB,CLOB等数据类型</p>
+
+<p>4.时间类型：Date</p>
+
+<p>5.数组类型：Array(T)</p>
+
+<p>T是一个基本类型，包括arry在内，官方不建议使用多维数组</p>
+
+<p>6.元组：Tuple</p>
+
+<p>7.结构：Nested(name1 Type1,name2 Type2,...)</p>
+
+<p>一种类似map的结结构</p>
+
+<h2>物化列</h2>
+
+<p>指定 MATERIALIZED 表达式，即将一个列作为物化列处理了，这意味着这个列的值不能从insert 语句获取，只能是自己计算出来的。同时，</p>
+
+<p>物化列也不会出现在 select * 的结果中：</p>
+
+<pre><code>drop table if exists test.m2;
+create table test.m2 ( a MATERIALIZED (b+1),b UInt16) ENGINE = Memory;
+insert into test.m2 (b) values (1);
+select * from test.m2;select a, b from test.m2;
+</code></pre>
+
+<h2>表达式列</h2>
+
+<p>ALIAS 表达式列某方面跟物化列相同，就是它的值不能从 insert 语句获取。不同的是， 物化列 是会真正保存数据（这样查询时不需要再计算），</p>
+
+<p>而表达式列不会保存数据（这样查询时总是需要计算），只是在查询时返回表达式的结果。</p>
+
+<pre><code>create table test.m3 (a ALIAS (b+1), b UInt16) ENGINE = Memory;
+insert into test.m3(b) values (1);
+select * from test.m3;
+select a, b from test.m3;
+</code></pre>
+
+<h1>三、引擎/engine</h1>
+
+<p>引擎是clickhouse设计的精华部分</p>
+
+<h2>3.1 TinyLog</h2>
+
+<p>最简单的一种引擎，每一列保存为一个文件，里面的内容是压缩过的，不支持索引</p>
+
+<p>这种引擎没有并发控制，所以，当你需要在读，又在写时，读会出错。并发写，内容都会坏掉。</p>
+
+<p>应用场景:</p>
+
+<ol type="a">
+<li><p>基本上就是那种只写一次</p></li>
+<li><p>然后就是只读的场景。</p></li>
+<li><p>不适用于处理量大的数据，官方推荐，使用这种引擎的表最多 100 万行的数据</p></li>
+</ol>
+
+
+<pre><code>drop table if exists test.tinylog;
+create table test.tinylog (a UInt16, b UInt16) ENGINE = TinyLog;
+insert into test.tinylog(a,b) values (7,13);
+</code></pre>
+
+<p>此时/var/lib/clickhouse/data/test/tinylog保存数据的目录结构：</p>
+
+<pre><code>├── a.bin   
+├── b.bin   
+└── sizes.json  
+</code></pre>
+
+<p>a.bin 和 b.bin 是压缩过的对应的列的数据， sizes.json 中记录了每个 *.bin 文件的大小</p>
+
+<h2>3.2 Log</h2>
+
+<p>这种引擎跟 TinyLog 基本一致</p>
+
+<p>它的改进点，是加了一个 __marks.mrk 文件，里面记录了每个数据块的偏移</p>
+
+<p>这样做的一个用处，就是可以准确地切分读的范围，从而使用并发读取成为可能</p>
+
+<p>但是，它是不能支持并发写的，一个写操作会阻塞其它读写操作</p>
+
+<p>Log 不支持索引，同时因为有一个 __marks.mrk 的冗余数据，所以在写入数据时，一旦出现问题，这个表就废了</p>
+
+<p>应用场景:</p>
+
+<p>同 TinyLog 差不多，它适用的场景也是那种写一次之后，后面就是只读的场景，临时数据用它保存也可以</p>
+
+<pre><code>drop table if exists test.log;
+create table test.log (a UInt16, b UInt16) ENGINE = Log;
+insert into test.log(a,b) values (7,13);
+</code></pre>
+
+<p>此时/var/lib/clickhouse/data/test/log保存数据的目录结构：</p>
+
+<pre><code>├── __marks.mrk
+├── a.bin
+├── b.bin
+└── sizes.json
+</code></pre>
+
+<h2>3.3 Memory</h2>
+
+<p>内存引擎，数据以未压缩的原始形式直接保存在内存当中，服务器重启数据就会消失</p>
+
+<p>可以并行读，读写互斥锁的时间也非常短</p>
+
+<p>不支持索引，简单查询下有非常非常高的性能表现</p>
+
+<p>应用场景:</p>
+
+<ol type="a">
+<li><p>进行测试</p></li>
+<li><p>在需要非常高的性能，同时数据量又不太大（上限大概 1 亿行）的场景</p></li>
+</ol>
+
+
+<h2>3.4 Merge</h2>
+
+<p>一个工具引擎，本身不保存数据，只用于把指定库中的指定多个表链在一起。</p>
+
+<p>这样，读取操作可以并发执行，同时也可以利用原表的索引，但是，此引擎不支持写操作</p>
+
+<p>指定引擎的同时，需要指定要链接的库及表，库名可以使用一个表达式，表名可以使用正则表达式指定</p>
+
+<pre><code>create table test.tinylog1 (id UInt16, name String) ENGINE=TinyLog;
+create table test.tinylog2 (id UInt16, name String) ENGINE=TinyLog;
+create table test.tinylog3 (id UInt16, name String) ENGINE=TinyLog;
+insert into test.tinylog1(id, name) values (1, 'tinylog1');
+insert into test.tinylog2(id, name) values (2, 'tinylog2');
+insert into test.tinylog3(id, name) values (3, 'tinylog3');
+use test;
+create table test.merge (id UInt16, name String) ENGINE=Merge(currentDatabase(), '^tinylog[0-9]+');
+select _table,* from test.merge order by id desc
+</code></pre>
+
+
+
+<pre><code>┌─_table───┬─id─┬─name─────┐
+│ tinylog3 │ 3 │ tinylog3 │
+│ tinylog2 │ 2 │ tinylog2 │
+│ tinylog1 │ 1 │ tinylog1 │
+└──────────┴────┴──────────┘
+</code></pre>
+
+<p>注：_table 这个列，是因为使用了 Merge 多出来的一个的一个虚拟列</p>
+
+<ol type="a">
+<li><p>它表示原始数据的来源表，它不会出现在 show table 的结果当中</p></li>
+<li><p>select * 不会包含它</p></li>
+</ol>
+
+
+<h2>3.5 Distributed</h2>
+
+<p>与 Merge 类似， Distributed 也是通过一个逻辑表，去访问各个物理表，设置引擎时的样子是：</p>
+
+<p><code>Distributed(remote_group, database, table [, sharding_key])</code></p>
+
+<p>其中：</p>
+
+<p>remote_group 是/etc/clickhouse-server/config.xml中remote_servers参数</p>
+
+<p>database 是各服务器中的库名</p>
+
+<p>table 是表名</p>
+
+<p>sharding_key 是一个寻址表达式，可以是一个列名，也可以是像 rand() 之类的函数调用，它与 remote_servers 中的 weight 共同作用，决定在 写 时往哪个 shard 写</p>
+
+<p>配置文件中的 remote_servers</p>
+
+<pre><code>&lt;remote_servers&gt;
+    &lt;log&gt;
+        &lt;shard&gt;
+            &lt;weight&gt;1&lt;weight&gt;
+            &lt;internal_replication&gt;false&lt;internal_replication&gt;
+            &lt;replica&gt;
+                &lt;host&gt;172.17.0.3&lt;host&gt;
+                &lt;port&gt;9000&lt;port&gt;
+            &lt;replica&gt;
+        &lt;shard&gt;
+        &lt;shard&gt;
+            &lt;weight&gt;2&lt;weight&gt;
+            &lt;internal_replication&gt;false&lt;internal_replication&gt;
+            &lt;replica&gt;
+                &lt;host&gt;172.17.0.4&lt;host&gt;
+                &lt;port&gt;9000&lt;port&gt;
+            &lt;replica&gt;
+        &lt;shard&gt;
+    &lt;log&gt;
+&lt;remote_servers&gt;
+</code></pre>
+
+<ul>
+<li><p>log 是某个 shard 组的名字，就是上面的 remote_group 的值</p></li>
+<li><p>shard 是固定标签</p></li>
+<li><p>weight 是权重，前面说的 sharding_key 与这个有关。</p></li>
+</ul>
+
+
+<p>简单来说，上面的配置，理论上来看:</p>
+
+<p>第一个 shard “被选中”的概率是 1 / (1 + 2) ，第二个是 2 / (1 + 2) ，这很容易理解。但是， sharding_key 的工作情况，是按实际数字的“命中区间”算的，即第一个的区间是 [0, 1) 的周期，第二个区间是 [1, 1+2) 的周期。比如把 sharding_key 设置成 id ，当 id=0 或 id=3 时，一定是写入到第一个 shard 中，如果把 sharding_key 设置成 rand() ，那系统会对应地自己作一般化转换吧，这种时候就是一种概率场景了。</p>
+
+<ul>
+<li>internal_replication 是定义针对多个 replica 时的写入行为的。</li>
+</ul>
+
+
+<p>如果为 false ，则会往所有的 replica 中写入数据，但是并不保证数据写入的一致性，所以这种情况时间一长，各 replica 的数据很可能出现差异。如果为 true ，则只会往第一个可写的 replica 中写入数据（剩下的事“物理表”自己处理）。</p>
+
+<ul>
+<li>replica 就是定义各个冗余副本的，选项有 host ， port ， user ， password 等</li>
+</ul>
+
+
+<p>看一个实际的例子，我们先在两台机器上创建好物理表并插入一些测试数据：</p>
+
+<pre><code>create table test.tinylog_d1(id UInt16, name String) ENGINE=TinyLog;
+insert into test.tinylog_d1(id, name) values (1, 'Distributed record 1');
+insert into test.tinylog_d1(id, name) values (2, 'Distributed record 2');
+</code></pre>
+
+<p>在其中一台创建逻辑表：</p>
+
+<pre><code>create table test.tinylog_d (id UInt16, name String) ENGINE=Distributed(log, test,tinylog_d1 , id);-- 插入数据到逻辑表，观察数据分发情况
+insert into test.tinylog_d(id, name) values (0, 'main');
+insert into test.tinylog_d(id, name) values (1, 'main');
+insert into test.tinylog_d(id, name) values (2, 'main');
+select name,sum(id),count(id) from test.tinylog_d group by name;
+</code></pre>
+
+<p>注：逻辑表中的写入操作是异步的，会先缓存在本机的文件系统上，并且，对于物理表的不可访问状态，并没有严格控制，所以写入失败丢数据的情况是可能发生的</p>
+
+<h2>3.6 Null</h2>
+
+<p>空引擎，写入的任何数据都会被忽略，读取的结果一定是空。</p>
+
+<p>但是注意，虽然数据本身不会被存储，但是结构上的和数据格式上的约束还是跟普通表一样是存在的，同时，你也可以在这个引擎上创建视图</p>
+
+<h2>3.7 Buffer</h2>
+
+<p>1.Buffer 引擎，像是Memory 存储的一个上层应用似的（磁盘上也是没有相应目录的）</p>
+
+<p>2.它的行为是一个缓冲区，写入的数据先被放在缓冲区，达到一个阈值后，这些数据会自动被写到指定的另一个表中</p>
+
+<p>3.和Memory 一样，有很多的限制，比如没有索引</p>
+
+<p>4.Buffer 是接在其它表前面的一层，对它的读操作，也会自动应用到后面表，但是因为前面说到的限制的原因，一般我们读数据，就直接从源表读就好了，缓冲区的这点数据延迟，只要配置得当，影响不大的</p>
+
+<p>5.Buffer 后面也可以不接任何表，这样的话，当数据达到阈值，就会被丢弃掉</p>
+
+<p>一些特点：</p>
+
+<ul>
+<li><p>如果一次写入的数据太大或太多，超过了 max 条件，则会直接写入源表。</p></li>
+<li><p>删源表或改源表的时候，建议 Buffer 表删了重建。</p></li>
+<li><p>“友好重启”时， Buffer 数据会先落到源表，“暴力重启”， Buffer 表中的数据会丢失。</p></li>
+<li><p>即使使用了 Buffer ，多次的小数据写入，对比一次大数据写入，也 慢得多 （几千行与百万行的差距）</p></li>
+</ul>
+
+
+<p>-- 创建源表</p>
+
+<pre><code>create table test.mergetree (sdt  Date, id UInt16, name String, point UInt16) ENGINE=MergeTree(sdt, (id, name), 10);
+-- 创建 Buffer表-- 
+Buffer(database, table, num_layers, min_time, max_time, min_rows, max_rows, min_bytes, max_bytes)
+create table test.mergetree_buffer as test.mergetree ENGINE=Buffer(test, mergetree, 16, 3, 20, 2, 10, 1, 10000);
+insert into test.mergetree (sdt, id, name, point) values ('2017-07-10', 1, 'a', 20);
+insert into test.mergetree_buffer (sdt, id, name, point) values ('2017-07-10', 1, 'b', 10);
+select * from test.mergetree;
+select '------';
+select * from test.mergetree_buffer;
+</code></pre>
+
+<p>database 数据库</p>
+
+<p>table 源表，这里除了字符串常量，也可以使用变量的。</p>
+
+<p>num_layers 是类似“分区”的概念，每个分区的后面的 min / max 是独立计算的，官方推荐的值是 16 。</p>
+
+<p>min / max 这组配置荐，就是设置阈值的，分别是 时间（秒），行数，空间（字节）。</p>
+
+<p>阈值的规则: 是“所有的 min 条件都满足， 或 至少一个 max 条件满足”。</p>
+
+<p>如果按上面我们的建表来说，所有的 min 条件就是：过了 3秒，2条数据，1 Byte。一个 max 条件是：20秒，或 10 条数据，或有 10K</p>
+
+<h2>3.8 Set</h2>
+
+<p>Set 这个引擎有点特殊，因为它只用在 IN 操作符右侧，你不能对它 select</p>
+
+<pre><code>create table test.set(id UInt16, name String) ENGINE=Set;
+insert into test.set(id, name) values (1, 'hello');
+-- select 1 where (1, 'hello') in test.set; -- 默认UInt8 需要手动进行类型转换
+select 1 where (toUInt16(1), 'hello') in test.set;
+</code></pre>
+
+<p>注: Set 引擎表，是全内存运行的，但是相关数据会落到磁盘上保存，启动时会加载到内存中。所以，意外中断或暴力重启，是可能产生数据丢失问题的</p>
+
+<h2>3.9 MergeTree</h2>
+
+<p><strong>这个引擎是 ClickHouse 的重头戏</strong>，它支持一个日期和一组主键的两层式索引，还可以实时更新数据。同时，索引的粒度可以自定义，外加直接支持采样功能</p>
+
+<p>MergeTree(EventDate, (CounterID, EventDate), 8192)MergeTree(EventDate, intHash32(UserID), (CounterID, EventDate, intHash32(UserID)), 8192)</p>
+
+<p>EventDate 一个日期的列名</p>
+
+<p>intHash32(UserID) 采样表达式</p>
+
+<p>(CounterID, EventDate) 主键组（里面除了列名，也支持表达式），也可以是一个表达式</p>
+
+<p>8192 主键索引的粒度</p>
+
+<pre><code>drop table if exists test.mergetree1;
+create table test.mergetree1 (sdt  Date, id UInt16, name String, cnt UInt16) ENGINE=MergeTree(sdt, (id, name), 10);
+-- 日期的格式，好像必须是 yyyy-mm-dd
+insert into test.mergetree1(sdt, id, name, cnt) values ('2018-06-01', 1, 'aaa', 10);
+insert into test.mergetree1(sdt, id, name, cnt) values ('2018-06-02', 4, 'bbb', 10);
+insert into test.mergetree1(sdt, id, name, cnt) values ('2018-06-03', 5, 'ccc', 11);
+</code></pre>
+
+<p>此时/var/lib/clickhouse/data/test/mergetree1的目录结构：</p>
+
+<pre><code>├── 20180601_20180601_1_1_0│   
+├── checksums.txt│   
+├── columns.txt│   
+├── id.bin│   
+├── id.mrk│   
+├── name.bin│   
+├── name.mrk│   
+├── cnt.bin│   
+├── cnt.mrk │   
+├── cnt.idx│   
+├── primary.idx│   
+├── sdt.bin│   
+└── sdt.mrk -- 保存一下块偏移量
+├── 20180602_20180602_2_2_0│   
+└── ...
+├── 20180603_20180603_3_3_0│   
+└── ...
+├── format_version.txt
+└── detached
+</code></pre>
+
+<h2>3.10 ReplacingMergeTree</h2>
+
+<p>1.在 MergeTree 的基础上，添加了“处理重复数据”的功能=>实时数据场景</p>
+
+<p>2.相比 MergeTree ,ReplacingMergeTree 在最后加一个"版本列",它跟时间列配合一起，用以区分哪条数据是"新的"，并把旧的丢掉(这个过程是在 merge 时处理，不是数据写入时就处理了的，平时重复的数据还是保存着的，并且查也是跟平常一样会查出来的)</p>
+
+<p>3.主键列组用于区分重复的行</p>
+
+<pre><code>-- 版本列 允许的类型是， UInt 一族的整数，或 Date 或 DateTime
+create table test.replacingmergetree (sdt  Date, id UInt16, name String, cnt UInt16) ENGINE=ReplacingMergeTree(sdt, (name), 10, cnt);
+insert into test.replacingmergetree (sdt, id, name, cnt) values ('2018-06-10', 1, 'a', 20);
+insert into test.replacingmergetree (sdt, id, name, cnt) values ('2018-06-10', 1, 'a', 30);
+insert into test.replacingmergetree (sdt, id, name, cnt) values ('2018-06-11', 1, 'a', 20);
+insert into test.replacingmergetree (sdt, id, name, cnt) values ('2018-06-11', 1, 'a', 30);
+insert into test.replacingmergetree (sdt, id, name, cnt) values ('2018-06-11', 1, 'a', 10);
+select * from test.replacingmergetree;-- 如果记录未执行merge，可以手动触发一下 merge 行为
+optimize table test.replacingmergetree;
+</code></pre>
+
+
+
+<pre><code>┌────────sdt─┬─id─┬─name─┬─cnt─┐
+│ 2018-06-11 │ 1 │ a │ 30 │
+└────────────┴────┴──────┴─────┘
+</code></pre>
+
+<h2>3.11 SummingMergeTree</h2>
+
+<p>1.SummingMergeTree 就是在 merge 阶段把数据sum求和</p>
+
+<p>2.sum求和的列可以指定，不可加的未指定列，会取一个最先出现的值</p>
+
+<pre><code>create table test.summingmergetree (sdt Date, name String, a UInt16, b UInt16) ENGINE=SummingMergeTree(sdt, (sdt, name), 8192, (a));
+insert into test.summingmergetree (sdt, name, a, b) values ('2018-06-10', 'a', 1, 20);
+insert into test.summingmergetree (sdt, name, a, b) values ('2018-06-10', 'b', 2, 11);
+insert into test.summingmergetree (sdt, name, a, b) values ('2018-06-11', 'b', 3, 18);
+insert into test.summingmergetree (sdt, name, a, b) values ('2018-06-11', 'b', 3, 82);
+insert into test.summingmergetree (sdt, name, a, b) values ('2018-06-11', 'a', 3, 11);
+insert into test.summingmergetree (sdt, name, a, b) values ('2018-06-12', 'c', 1, 35);-- 手动触发一下 merge 行为
+optimize table test.summingmergetree;
+select * from test.summingmergetree;
+</code></pre>
+
+
+
+<pre><code>┌────────sdt─┬─name─┬─a─┬──b─┐
+│ 2018-06-10 │ a │ 1 │ 20 │
+│ 2018-06-10 │ b │ 2 │ 11 │
+│ 2018-06-11 │ a │ 3 │ 11 │
+│ 2018-06-11 │ b │ 6 │ 18 │
+│ 2018-06-12 │ c │ 1 │ 35 │
+└────────────┴──────┴───┴────┘
+</code></pre>
+
+<p>注: 可加列不能是主键中的列，并且如果某行数据可加列都是 null ，则这行会被删除</p>
+
+<h2>3.13 AggregatingMergeTree</h2>
+
+<p>AggregatingMergeTree 是在 MergeTree 基础之上，针对聚合函数结果，作增量计算优化的一个设计，它会在 merge 时，针对主键预处理聚合的数据</p>
+
+<p>应用于AggregatingMergeTree 上的聚合函数除了普通的 sum, uniq等，还有 sumState , uniqState ，及 sumMerge ， uniqMerge 这两组</p>
+
+<p>1.聚合数据的预计算</p>
+
+<p>是一种“空间换时间”的权衡，并且是以减少维度为代价的</p>
+
+<table>
+<thead>
+<tr>
+<th> dim1 </th>
+<th> dim2 </th>
+<th> dim3 </th>
+<th> measure1 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> aaaa </td>
+<td> a </td>
+<td> 1 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> aaaa </td>
+<td> b </td>
+<td> 2 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> bbbb </td>
+<td> b </td>
+<td> 3 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> cccc </td>
+<td> b </td>
+<td> 2 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> cccc </td>
+<td> c </td>
+<td> 1 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> dddd </td>
+<td> c </td>
+<td> 2 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> dddd </td>
+<td> a </td>
+<td> 1 </td>
+<td> 1 </td>
+</tr>
+</tbody>
+</table>
+
+
+<p>假设原始有三个维度，一个需要 count 的指标</p>
+
+<table>
+<thead>
+<tr>
+<th> dim1 </th>
+<th> dim2 </th>
+<th> dim3 </th>
+<th> measure1 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> aaaa </td>
+<td> a </td>
+<td> 1 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> aaaa </td>
+<td> b </td>
+<td> 2 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> bbbb </td>
+<td> b </td>
+<td> 3 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> cccc </td>
+<td> b </td>
+<td> 2 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> cccc </td>
+<td> c </td>
+<td> 1 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> dddd </td>
+<td> c </td>
+<td> 2 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> dddd </td>
+<td> a </td>
+<td> 1 </td>
+<td> 1 </td>
+</tr>
+</tbody>
+</table>
+
+
+<p>通过减少一个维度的方式，来以 count 函数聚合一次 M</p>
+
+<table>
+<thead>
+<tr>
+<th> dim2 </th>
+<th> dim3 </th>
+<th> count(measure1) </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> a </td>
+<td> 1 </td>
+<td> 3 </td>
+</tr>
+<tr>
+<td> b </td>
+<td> 2 </td>
+<td> 2 </td>
+</tr>
+<tr>
+<td> b </td>
+<td> 3 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> c </td>
+<td> 1 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> c </td>
+<td> 2 </td>
+<td> 1 </td>
+</tr>
+</tbody>
+</table>
+
+
+<p>2.聚合数据的增量计算</p>
+
+<p>对于 AggregatingMergeTree 引擎的表，不能使用普通的 INSERT 去添加数据，可以用：</p>
+
+<ol type="a">
+<li><p>INSERT SELECT 来插入数据</p></li>
+<li><p>更常用的，是可以创建一个物化视图</p></li>
+</ol>
+
+
+<pre><code>drop table if exists test.aggregatingmergetree;
+create table test.aggregatingmergetree(sdt Date, dim1 String, dim2 String, dim3 String, measure1 UInt64) ENGINE=MergeTree(sdt, (sdt, dim1, dim2, dim3), 8192);
+-- 创建一个物化视图，使用 AggregatingMergeTree
+drop table if exists test.aggregatingmergetree_view;
+create materialized view test.aggregatingmergetree_view ENGINE = AggregatingMergeTree(sdt,(dim2, dim3), 8192)as 
+select sdt,dim2, dim3, uniqState(dim1) as uv from test.aggregatingmergetreegroup by sdt,dim2, dim3;
+insert into test.aggregatingmergetree (sdt, dim1, dim2, dim3, measure1) values ('2018-06-10', 'aaaa', 'a', '10', 1);
+insert into test.aggregatingmergetree (sdt, dim1, dim2, dim3, measure1) values ('2018-06-10', 'aaaa', 'a', '10', 1);
+insert into test.aggregatingmergetree (sdt, dim1, dim2, dim3, measure1) values ('2018-06-10', 'aaaa', 'b', '20', 1);
+insert into test.aggregatingmergetree (sdt, dim1, dim2, dim3, measure1) values ('2018-06-10', 'bbbb', 'b', '30', 1);
+insert into test.aggregatingmergetree (sdt, dim1, dim2, dim3, measure1) values ('2018-06-10', 'cccc', 'b', '20', 1);
+insert into test.aggregatingmergetree (sdt, dim1, dim2, dim3, measure1) values ('2018-06-10', 'cccc', 'c', '10', 1);
+insert into test.aggregatingmergetree (sdt, dim1, dim2, dim3, measure1) values ('2018-06-10', 'dddd', 'c', '20', 1);
+insert into test.aggregatingmergetree (sdt, dim1, dim2, dim3, measure1) values ('2018-06-10', 'dddd', 'a', '10', 1);
+-- 按 dim2 和 dim3 聚合 count(measure1)
+select dim2, dim3, count(measure1) from test.aggregatingmergetree group by dim2, dim3;
+-- 按 dim2 聚合 UV
+select dim2, uniq(dim1) from test.aggregatingmergetree group by dim2;
+-- 手动触发merge
+OPTIMIZE TABLE test.aggregatingmergetree_view;
+select * from test.aggregatingmergetree_view;
+-- 查 dim2 的 uv
+select dim2, uniqMerge(uv) from test.aggregatingmergetree_view group by dim2 order by dim2;
+</code></pre>
+
+<h2>3.14 CollapsingMergeTree</h2>
+
+<p>是专门为 OLAP 场景下，一种“变通”存数做法而设计的，在数据是不能改，更不能删的前提下，通过“运算”的方式，去抹掉旧数据的影响，把旧数据“减”去即可，从而解决"最终状态"类的问题，比如 当前有多少人在线？</p>
+
+<p>“以加代删”的增量存储方式，带来了聚合计算方便的好处，代价却是存储空间的翻倍，并且，对于只关心最新状态的场景，中间数据都是无用的</p>
+
+<p>CollapsingMergeTree 在创建时与 MergeTree 基本一样，除了最后多了一个参数，需要指定 Sign 位（必须是 Int8 类型）</p>
+
+<pre><code>create table test.collapsingmergetree(sign Int8, sdt Date, name String, cnt UInt16) ENGINE=CollapsingMergeTree(sdt, (sdt, name), 8192, sign);
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

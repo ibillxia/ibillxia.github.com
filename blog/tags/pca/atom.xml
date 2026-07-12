@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: PCA | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/pca/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[可视化语音分析：深度对比Wavenet、t-SNE和PCA等算法]]></title>
+    <link href="https://ibillxia.github.io/blog/2017/12/07/visual-speech-analysis-wavenet-tsne/"/>
+    <updated>2017-12-07T13:48:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2017/12/07/visual-speech-analysis-wavenet-tsne</id>
+    <content type="html"><![CDATA[<p>选自Medium，作者：Leon Fedden</p>
+
+<p>原文链接：<a href="https://medium.com/@LeonFedden/comparative-audio-analysis-with-wavenet-mfccs-umap-t-sne-and-pca-cb8237bfce2f">https://medium.com/@LeonFedden/comparative-audio-analysis-with-wavenet-mfccs-umap-t-sne-and-pca-cb8237bfce2f</a></p>
+
+<p>机器之心编译，参与：Nurhachu Null、刘晓坤</p>
+
+<p>这篇文章基于 GitHub 中探索音频数据集的项目。本文列举并对比了一些有趣的算法，例如 Wavenet、UMAP、t-SNE、MFCCs 以及 PCA。此外，本文还展示了如何在 Python 中使用 Librosa 和 Tensorflow 来实现它们，并用 HTML、Javascript 和 CCS 展示可视化结果。</p>
+
+<ul>
+<li><p>Jupyter Notebook：<a href="https://gist.github.com/fedden/52d903bcb45777f816746f16817698a0">https://gist.github.com/fedden/52d903bcb45777f816746f16817698a0</a></p></li>
+<li><p>浏览器可视化代码：<a href="https://github.com/fedden/umap_tsne_embedding_visualiser">https://github.com/fedden/umap_tsne_embedding_visualiser</a></p></li>
+</ul>
+
+
+<p>作者希望能和我们分享两个代码库。第一个是用来制作这篇文章的 notebook，它不像我通常喜欢的那样精美，但是花了很长时间，读者可以随意使用并扩展它。</p>
+
+<p>此外，作者也上传了浏览器中的这些可视化代码到 github 上。他使用 Material Design Lite 库以相对简洁的方式创建用户界面，用 THREE.js 库来快速绘制数据并进行优化，还使用 webaudiox.js 可以让音频生成得更容易。</p>
+
+<!--more-->
+
+
+<p>这个可视化方法允许以交互的形式从两个维度探索音频数据集，还可以画出参数化的图形，就像下面展示的一样：</p>
+
+<center><img src="/images/2017/IMAG2017120701.webp"></center>
+
+
+<p><br>
+结果以一个小型网页应用的形式放在我们学校的服务器上，读者将鼠标放在紫色点上边，就能听到与这个二维点向量相关联的声音了。</p>
+
+<p>你可以自由的选择音频特征的提取方式（MFCCs 或者 Wavenet 提取到的隐变量），以及降维的方法（UMAP、t-SNE 或者 PCA）。其中 UMAP 和 t-SNE 还可以调整一些参数，例如步长或者困惑度（perplexity）。</p>
+
+<center><img src="/images/2017/IMAG2017120702.webp"></center>
+
+
+<p><br>
+这是最终产品的一段演示</p>
+
+<h2>关于维度</h2>
+
+<p>那么我们说的维度大小是什么呢？它是机器学习和数据科学中的一个重要话题，用来描述数据集的潜在复杂度。一个数据集由好多数据点组成，每个数据点都有一些固定数量的特征，或者维度。例如，我可能是一个酷爱观察鸟类的人，我用自己在旅途中遇到的鸟组建了一个数据集。如果每个数据点存储了喙长、翼展以及羽毛颜色这些信息，那么就可以说我的数据集的维度是 3。</p>
+
+<p>那么我们为什么要如此关心维度的大小呢？拿以下比喻来说：</p>
+
+<p>你在一条笔直的道路上丢失了一笔现金。你想找到这笔钱，所以你沿着这条线走，然后在相对较短的一段搜索之后就找到了钱。</p>
+
+<p>这一次不太巧，你在运动的时候又一次将这笔现金丢失了，而且丢在了运动场。现在要找到这笔钱就相对比较困难了，因为每一个位置都有一个交叉口。所以找到丢失的钱就会花费更多的时间。</p>
+
+<p>最后，你魔法般地成了世界上最笨拙的宇航员。在太空行走的时候你的现金从口袋中滑落。你很恼怒，花了接下来的一整天去寻找丢失的现金。现在你是在真空的三维空间去寻找丢失的现金。相比之前的情景，这需要更多的时间和资源，可以理解，休斯顿的家伙不太乐意做这事。</p>
+
+<p>幸运的是，有一个事实很明确：随着维度的增加（通常会超过三维），寻找方案和相关的区域（也就是说现金在什么地方）需要更多的时间和资源。这一点在人和计算机上都是适用的。另一个重要的问题是，你需要更多的数据来对高维空间进行建模；随着维度数量的增加，空间的体积会呈指数增长，以至于有效的数据会变得稀疏，所获的数据很难支撑起一个具有统计意义的模型，因为所有的数据点在很多维度中以及在很多方式下都是不相似的。</p>
+
+<p>对于进行机器学习实践的人而言，降维是一个重要的话题，因为高维度会导致较高的计算成本，以及数据过拟合的倾向。了解了这一点之后，我们开始解释这个命名适当的主题——维度诅咒，它指的是以某种方式计算高维度数据集的时候出现的现象。</p>
+
+<h2>降维是什么呢？</h2>
+
+<p>在降维的时候，我们希望减少数据集的维度。维度数量越大，就越难进行可视化，这些特征都是有关联的，所以高维数据也增加了数据集中的信息冗余。</p>
+
+<center><img src="/images/2017/IMAG2017120703.webp"></center>
+
+
+<p><br>
+图中哪个是将三维的红色数据降维到二维的最好方式呢（绿色、紫色或者蓝色）？进行特征选择之后，所有的轴都形成了不同的形状，丢弃了与其他形状相关的信息。</p>
+
+<p>最简单的降维方法也许就是去选择一个能够最好描述数据的特征子集，丢弃掉数据集中的其它维度，这被称作特征选择。很不幸的是，这貌似是在丢弃信息。</p>
+
+<p>一个稍微好一些的解决方案是将数据集转换为一个较低维度的数据集。这个方法被称作特征提取，它是这篇文章的重点内容。</p>
+
+<h2>数据</h2>
+
+<p>作为一个音频控，我觉得尝试给音频文件（每个音频文件都可能具有任意长度）降维是比较合适的，将它降到一些数值，以便它们可以用二维图画出来。这使我们能够去探索一个音频库，并有希望快速地找到相似的声音。在 Python 中，我们可以使用 librosa 库得到音频 PCM 数据。下面我们循环遍历了一个文件夹中的样本，将所有 wav 格式文件中的音频数据加载进来。</p>
+
+<pre><code class="python">import os
+import librosa
+
+directory = './path/to/my/audio/folder/'
+
+for file in os.listdir(directory):
+    if file.endswith('.wav'):
+        file_path = os.path.join(directory, file)
+        audio_data, _ = librosa.load(file_path)
+</code></pre>
+
+<p>使用 Librosa 从一个路径中加载音频。</p>
+
+<p>在这个项目中，主要思想就是将样本加载到内存中，并从音频中创建特征序列。这些特征就会以下面所示的方式进行处理，所以我们并不用在意特征序列有多长。随后，特征可以用某种方法被降维，例如 PCA。</p>
+
+<p>我们可以用很多方法将一个 PCM 数据的数组转换成可以更好描述声音的形式。我们可以将声音转换成随时间变化的频率信息，例如频谱中心频率或者过零率这些参数。但是接下来我们要剖析一个在语音识别系统中使用最广泛的具有很好鲁棒性的特征--MFCC（梅尔频率倒谱系数）。</p>
+
+<h2>MFCCs</h2>
+
+<p>MFCC 实际上也可以被视为一种降维的形式；在典型的 MFCC 计算过程中，你需要传递一段段的 512 个音频样本（这里指的是离散的数字音频序列中的 512 个采样点），然后得到用来描述声音的 13 个倒谱系数。尽管 MFCC 最初是被用来表征由人类声道所发出的声音的，但是结果证明这是一种在不同音质、基音下相当稳定的一种特征，除了自动语音识别之外，它还有很多其他应用。</p>
+
+<p>在提取 MFCCs 的时候，第一步就是从我们的音频数据中计算傅里叶变换，傅里叶变换将时域信号转换成频域信号。在实际过程中是通过快速傅里叶变换来实现的，这是我们这个时代的一个很伟大的算法。</p>
+
+<center><img src="/images/2017/IMAG2017120704.gif"></center>
+
+
+
+
+<center>将时域信号转变成频域信号</center>
+
+
+<p><br></p>
+
+<p>现在我们取刚刚计算得到的频率信号的能谱，然后在能谱上应用梅尔滤波器组。这很简单，就像将每个滤波器中的能量求和一样。与待测音调的实际音高（通常意义上的 Hz 频率）相比，梅尔频率与预调的感知频率更加相关；我们对低频声音的微小变化比高频声音信号更加敏感。对能谱使用这种 Mel 滤波器组，更接近于人类的实际的听觉感知。</p>
+
+<center><img src="/images/2017/IMAG2017120705.webp"></center>
+
+
+<p><br>
+然后我们对每一个滤波器得到的能量求对数，这是由于人类对响度的听觉感知并不是线性的。意味着，如果一段声音刚开始就很响，那么之后音量上的大的变化听起来也不会那么不同。</p>
+
+<center><img src="/images/2017/IMAG2017120706.webp"></center>
+
+
+
+
+<center>自然对数函数图像</center>
+
+
+<p><br>
+最后一步就是计算一个被称为倒谱的量。倒谱就是谱的谱。就是给梅尔滤波器组处理过的能谱的对数进行离散余弦变换（DCT），这为我们给出了能谱的周期性规律，可以从中看到频率本身是如何快速变化的。离散余弦变换（DCT）和离散傅里叶变换 (DFT) 类似，只是它返回的是实数（浮点类型）而不是具有虚部的复数。</p>
+
+<p>虽然对 MFCC 做一个概述也是很好的，所幸 Python 中的 libora 库允许我们只用一行代码就能计算出特征，这要比本文的作者描述的过程稍微简洁一些。</p>
+
+<pre><code class="python">import librosa
+
+sample_rate = 44100
+mfcc_size = 13
+
+# Load the audio
+pcm_data, _ = librosa.load(file_path)
+
+# Compute a vector of n * 13 mfccs
+mfccs = librosa.feature.mfcc(pcm_data, 
+                             sample_rate, 
+                             n_mfcc=mfcc_size)
+</code></pre>
+
+<p>使用 Librosa 计算 MFCC。</p>
+
+<h2>Wavnet 和神经音频合成（NSynth）</h2>
+
+<p>Google 的 Magenta 项目是一个针对这个问题的小组：机器学习能够被用来创造引人注目的艺术和音乐吗？巧妙地避开了可计算的创新性中的未定义、空洞的问题之后，他们设计出了一些很酷的生成工具，可以生成多种形式的媒体，例如图像和音乐。</p>
+
+<center><img src="/images/2017/IMAG2017120707.gif"></center>
+
+
+<p><br>
+图为 Wavenet 的扩张一维卷积（dilated one dimensional convolutions）</p>
+
+<p>Deepmind（Google 的另一个子公司）创建了一个令人印象深刻的神经网络，它叫做 Wavenet。Magenta 将这个生成模型转变成了一个自动编码器，创建了新的网络即 NSynth。</p>
+
+<p>你可能之前没有接触过自动编码器，它们只是一种简单的神经网络，经常被用在无监督学习中。自动编码器的通常目标是学习到对某个数据的高效编码，通常是为了降维，而且越来越多地用在生成模型中。自动编码器的共同特征是它的结构；它由两部分组成—编码器和解码器。通常（但不是全部），解码器的权重和偏置是编码器的相关参数的转置。</p>
+
+<p>正如我所提到的，自动编码器的目标经常是将输入压缩到一个更小的隐变量。然而，这里的 Z 是一个低维向量，即输入音频的一个函数。</p>
+
+<center><img src="/images/2017/IMAG2017120708.webp"></center>
+
+
+<p><br>
+NSynth 的架构。注意，左边还是像 Wavenet 一样的扩张卷积。这个项目利用的低维向量 Z 大概在编码器和解码器的中间。</p>
+
+<p>使用这个网络是很简单的。首先，安装 Magneta（TensorFlow 的代码），然后下载这个模型的权值（<a href="http://download.magenta.tensorflow.org/models/nsynth/wavenet-ckpt.tar">http://download.magenta.tensorflow.org/models/nsynth/wavenet-ckpt.tar</a>）。下面的代码将会从压缩原始信号信息的网络中得到隐藏状态的向量化序列。</p>
+
+<pre><code class="python">from magenta.models.nsynth import utils
+from magenta.models.nsynth.wavenet import fastgen
+
+def wavenet_encode(file_path):
+
+    # Load the model weights.
+    checkpoint_path = './wavenet-ckpt/model.ckpt-200000'
+
+    # Load and downsample the audio.
+    neural_sample_rate = 16000
+    audio = utils.load_audio(file_path, 
+                             sample_length=400000, 
+                             sr=neural_sample_rate)
+
+    # Pass the audio through the first half of the autoencoder,
+    # to get a list of latent variables that describe the sound.
+    # Note that it would be quicker to pass a batch of audio
+    # to fastgen. 
+    encoding = fastgen.encode(audio, checkpoint_path, len(audio))
+
+    # Reshape to a single sound.
+    return encoding.reshape((-1, 16))
+
+# An array of n * 16 frames. 
+wavenet_z_data = wavenet_encode(file_path)
+</code></pre>
+
+<h2>特征预处理</h2>
+
+<p>这个数据集中的所有样本都具有不同的大小，在下面的控制台输出的第五列中可以看到。</p>
+
+<pre><code class="bash">ls -lah ./audio_dataset/
+
+...
+-rw-rw-r-- 1 tollie tollie  3.8M Jun 28  2014 HAL9K - Long Sustained Note.wav
+-rw-rw-r-- 1 tollie tollie  2.7M Jul  2  2014 HAL9K - Lost Soul.wav
+-rw-rw-r-- 1 tollie tollie  7.5M Jun 29  2014 HAL9K - Low Long Tail.wav
+-rw-rw-r-- 1 tollie tollie  3.8M Jun 28  2014 HAL9K - Low Short.wav
+-rw-rw-r-- 1 tollie tollie  4.6M Jun 28  2014 HAL9K - Low Thump.wav
+-rw-rw-r-- 1 tollie tollie  4.6M Jul  2  2014 HAL9K - Lute 1.wav
+-rw-rw-r-- 1 tollie tollie  7.7M Jul  2  2014 HAL9K - Lute 2.wav
+-rw-rw-r-- 1 tollie tollie  4.9M Jun 28  2014 HAL9K - Mechatronic.wav
+-rw-rw-r-- 1 tollie tollie  2.4M Jun 28  2014 HAL9K - Metal + Delay.wav
+-rw-rw-r-- 1 tollie tollie  4.8M Jun 28  2014 HAL9K - Metallic Hiss.wav
+-rw-rw-r-- 1 tollie tollie  5.7M Jun 28  2014 HAL9K - Mysterious Revelation.wav
+-rw-rw-r-- 1 tollie tollie  5.7M Jul  2  2014 HAL9K - Piercing.wav
+-rw-rw-r-- 1 tollie tollie  2.0M Jun 28  2014 HAL9K - Room 237.wav
+-rw-rw-r-- 1 tollie tollie  2.7M Jun 28  2014 HAL9K - SciFi 1.wav
+-rw-rw-r-- 1 tollie tollie  4.1M Jun 28  2014 HAL9K - SciFi 2.wav
+</code></pre>
+
+<p>当我们为这些样本计算特征的时候，不管是 MFCCs 还是 NSYTH，样本大小不一导致最终的特征序列的长度也不同。可以这么说，我们在这个项目中面临的问题是取可变长度的特征，将它们压缩为一系列的数字向量，最终得到能够较好描述这段声音的向量。</p>
+
+<p>最后，每段声音的特征向量会是以下三部分的拼接。首先是平均特征，它给我们提供了一段声音的特征序列中的平均值。这意味着，每一个维度的特征都被计算了平均值。对于 MFCCs 而言，平均特征的维度是 13，NSynth 是 16。</p>
+
+<p>第二部分是所得特征中每一维的标准差。它和平均特征有一样的大小（维度），它告诉了我们特征分布的扩展。</p>
+
+<p>最后一部分是相邻两帧特征之间的一阶差分的均值。这一部分反映了特征随时间变化的平均值。同样，该值在 MFCCs 对应的维度是 13，Nsynth 是 16。</p>
+
+<p>对特征的这种拼接意味着，从端到端的角度，对于任意长度的任意样本而言，都能将它压缩到一个固定长度的特征，如果使用 MFCCs，那么这个特征的维度就是 39，如果使用的是基于 Wavenet 的网络，那么这个特征的维度就是 48。给定一个任意长度和特征维度的 numpy 数组，对其计算某个长度的特征向量的代码如下所示：</p>
+
+<pre><code class="python">import numpy as np 
+
+# Create some random MFCC shaped features as a sequence of 10 values
+feature_sequence = np.random.random((10, 13))
+
+# Get the standard deviation
+stddev_features = np.std(feature_sequence, axis=0)
+
+# Get the mean
+mean_features = np.mean(feature_sequence, axis=0)
+
+# Get the average difference of the features
+average_difference_features = np.zeros((16,))
+for i in range(0, len(feature_sequence) - 2, 2):
+    average_difference_features += feature_sequence[i] - feature_sequence[i+1]
+average_difference_features /= (len(feature_sequence) // 2)   
+average_difference_features = np.array(average_difference_features)
+
+# Concatenate the features to a single feature vector
+concat_features_features = np.hstack((stddev_features, mean_features))
+concat_features_features = np.hstack((concat_features_features, average_difference_features))
+</code></pre>
+
+<h2>PCA</h2>
+
+<p>降维算法的首选是标准的线性代数算法--主成分分析。我想起了 Rebecca Fiebrink 博士，他教过一个很棒的机器学习课程（<a href="https://www.kadenze.com/courses/machine-learning-for-musicians-and-artists/info">https://www.kadenze.com/courses/machine-learning-for-musicians-and-artists/info</a>），他曾斥责像我一样的机器学习菜鸟在搞清楚简单算法（例如 PCA）之前就直接跳到更复杂的算法（例如 t-SNE）上去。</p>
+
+<p>PCA 通过最大化数据方差的同时降低数据的维度。它将数据转换成线性不相关的变量（就是所谓的主成分）。假设我们想得到这些数据的二维图，那么我们就会使用具有最大方差的两个主成分来揭示数据中的结构。如果你想更深一层地理解它，可以看一下我写的关于用 numpy 来进行线性代数算法的实现及其解释。</p>
+
+<p>我们可以很容易地实现特征的 PCA 计算：</p>
+
+<pre><code class="python">from sklearn.decomposition import PCA
+from sklearn.preprocessing import MinMaxScaler
+
+def get_pca(features):
+    pca = PCA(n_components=2)
+    transformed = pca.fit(features).transform(features)
+    scaler = MinMaxScaler()
+    scaler.fit(transformed)
+    return scaler.transform(transformed)
+
+my_array_of_feature_vectors = ...
+scaled_pca = get_pca(my_array_of_feature_vectors)
+</code></pre>
+
+<p>注意，最后的输出是进行缩放了的。我们将会在绘制的每一副图中这样做，从而可以在我们的交互式网页应用图中插入结果。</p>
+
+<p>那么，最后的图长什么样呢？我们实际上有两个数据集，一个是基于 Wavenet 的特征，另一个是 MFCC 导出的特征。所以下面的二维图中的每一个点都代表一个音频文件。这是基于 Wavenet 的特征图：</p>
+
+<center><img src="/images/2017/IMAG2017120709.webp"></center>
+
+
+<p><br>
+这是 MFCCs 的特征图：</p>
+
+<center><img src="/images/2017/IMAG2017120710.webp"></center>
+
+
+<p><br>
+有趣的是，这两张图在两种类似的样本上都有一小部分的聚集，就是踢球的声音或者短暂的敲击声，通常在这种信号中有着低能量的末尾。估计这两种特征向量能够较好地区分这种类型的声音。</p>
+
+<p>在这两张图上我们可以粗略总结，y 轴代表的是频率；如果你尝试在网页应用的图上从上至下移动鼠标，踩钹等高频声音出现在上边，敲击等低频声音出现在下面，同时，中等能量的鼓掌等声音出现在中间部分。</p>
+
+<h2>t-SNE</h2>
+
+<p>下一个降维算法是 t 分布的随机近邻嵌入（t-SNE/t-Distributed Neighbour Embedding），这个算法是由 Laurens van der Maaten 和神经网络先驱 Geoffrey Hinton 共同设计的。</p>
+
+<p> t-SNE 算法有两个阶段。它首先在高维对象对中构造一个概率分布，这样就更有可能找到相似的对象。为了获得这些高维对象的低维表征，它为低维映射构造了一个类似的概率分布。然后两个概率分布之间的散度被最小化。这个散度，或者是相对熵，被称作 KL 散度。</p>
+
+<p>用 Sklearn 计算 t-SNE 向量很容易。</p>
+
+<pre><code class="python">from sklearn.manifold import TSNE
+from sklearn.preprocessing import MinMaxScaler
+
+def get_scaled_tsne_embeddings(features, perplexity, iteration):
+    embedding = TSNE(n_components=2,
+                     perplexity=perplexity,
+                     n_iter=iteration).fit_transform(features)
+    scaler = MinMaxScaler()
+    scaler.fit(embedding)
+    return scaler.transform(embedding)
+
+tnse_embeddings_mfccs = []
+tnse_embeddings_wavenet = []
+perplexities = [2, 5, 30, 50, 100]
+iterations = [200, 500, 1000, 2000, 5000]
+
+for perplexity in perplexities:
+    for iteration in iterations:
+        tsne_mfccs = get_scaled_tsne_embeddings(mfcc_features,
+                                                perplexity,
+                                                iteration)
+        tnse_wavenet = get_scaled_tsne_embeddings(wavenet_features,
+                                                  perplexity,
+                                                  iteration)
+</code></pre>
+
+<p>t-SNE 函数只需要一小部分参数，这里有很棒的解释：<a href="https://distill.pub/2016/misread-tsne/">https://distill.pub/2016/misread-tsne/</a>。但我在这里还是做一个简单的解释吧。这个算法的第一个参数就是困惑度（perplexity），它是一个在其他流形学习算法中关于最近邻数目的参数。每一列的困惑度都会变化。另一个参数是迭代量，它指的是 t-SNE 应该优化多少次。迭代量会在每个相连的行中相继增加。迭代量对图的影响很大，使用 Wavenet 特征，我们可以在下图可以看到：</p>
+
+<center><img src="/images/2017/IMAG2017120711.webp"></center>
+
+
+<p><br>
+基于 MFCC 特征的图在下面：</p>
+
+<center><img src="/images/2017/IMAG2017120712.webp"></center>
+
+
+<p><br>
+显而易见，对于两个特征数据集而言，当迭代量太小的时候，最终的解并没有得到充足的优化（两幅大图中的第一行就是这样的情形）。在 distill 中关于有效使用 t-SNE 的文章中特别地指出了这一点。</p>
+
+<p>在更多次数的迭代时，出现了一些声音的聚类。然而，对于两个特征集而言，有时候局部的结构没有相似的声音。而全局结构经常能够表现出声音的趋势--也就是说，图中的一大部分中，大多数是敲击声，而另一部分是踩钹等声音。困惑度貌似对算法没有很大的影响，这在相关文献以及 sklearn 的文档中都有很好的表述。</p>
+
+<h2>UMAP</h2>
+
+<p>均匀流形近似和投影（UMAP/uniform manifold approximation and projection）是一种降维技术。它已经产生了一些相当激动人心的结果，我强烈建议你用一下。在 github 页面（<a href="https://github.com/lmcinnes/umap">https://github.com/lmcinnes/umap</a>）上是这么描述的：</p>
+
+<p>UMAP 是建立在对数据的三种假设之上：</p>
+
+<ul>
+<li><p>数据在黎曼流形上是均匀分布的；</p></li>
+<li><p>黎曼度量是局部恒定的（或者说是近似恒定的）；</p></li>
+<li><p>流形是局部连续的（不是全局，而是局部）；</p></li>
+</ul>
+
+
+<p>基于这些假设，可以使用一个模糊拓扑结构对流形进行建模。通过搜索具有最大可能的等价模糊拓扑结构的数据的低维投影可以找到向量。</p>
+
+<p>umap 的使用是很简单的，因为它的功能设计和 sklearn 的 t-SNE 包很类似。下面是分别为 Wavenet 特征和 MFCC 特征创建向量的代码。</p>
+
+<pre><code class="python">import umap
+from sklearn.preprocessing import MinMaxScaler
+
+def get_scaled_umap_embeddings(features, neighbour, distance):
+
+    embedding = umap.UMAP(n_neighbors=neighbour,
+                          min_dist=distance,
+                          metric='correlation').fit_transform(features)
+    scaler = MinMaxScaler()
+    scaler.fit(embedding)
+    return scaler.transform(embedding)
+
+umap_embeddings_mfccs = []
+umap_embeddings_wavenet = []
+neighbours = [5, 10, 15, 30, 50]
+distances = [0.000, 0.001, 0.01, 0.1, 0.5]
+
+for neighbour in neighbours:
+    for distance in distances:
+        umap_mfccs = get_scaled_umap_embeddings(mfcc_features,
+                                                neighbour,
+                                                distance)
+        umap_wavenet = get_scaled_umap_embeddings(wavenet_features,
+                                                  neighbour,
+                                                  distance)
+</code></pre>
+
+<p>我还是将得到的向量缩放到 0 和 1 之间，因为图像需要在每个向量之间插入。向量中，缩放并不是重点，就像在 t-SNE 中一样，唯一重要的是和一个点近邻的其它点。在代码中，我们可以再一次看到，一些列表嵌套 for 循环来参数化 UMAP 函数，所以我们可以看到它是如何影响向量的。请注意，列表最左边和最右边的参数设置是不好的参数，作者只是希望看到算法如何运行这样的参数。</p>
+
+<p>Wavenet 特征得到的结果的图像很漂亮，具有有趣的全局结构和局部结构。每一列中为算法给定的近邻数量是一样的，从一系列取值中选择 [5,10,15,30,50]。流形结构的局部近似中具有较大数目的近邻点会导致较好的全局结构，但是会损失局部结构。每一行分别对应着设置好的最小距离参数 [0.000,0.001,0.01,0.1,0.5]，这个参数控制着向量可以将数据点压缩到多近。较大的数值保证了数据更均匀的数据分布，而更小的值会确保更精确的局部结构。</p>
+
+<center><img src="/images/2017/IMAG2017120713.webp"></center>
+
+
+<p><br>
+MFCC 特征对应的图也是一样的好看。</p>
+
+<center><img src="/images/2017/IMAG2017120714.webp"></center>
+
+
+<p><br>
+图中引人注目的是在较低的参数设置下出现的局部结构，相反，当两个参数设置都很高时会出现全局结构。在参数设置相同时，基于 Wavenet 的特征比基于 MFCC 的特征能够更好地保持局部结构。</p>
+
+<p>在交互演示中，以近邻数和距离滑块较小的设置下（1 或者 2）在局部结构中尝试移动鼠标，你应该能够注意到这个算法能够正确地将这些声音聚类在一起。</p>
+
+<h2>总结</h2>
+
+<p>在很大程度上，每个算法都是有用的，并且参数化算法和绘制两组特征的输出是非常有用的。一个值得注意的说法是关于图的解释性。PCA 似乎是这个领域中最强大的算法，因为它相对简单。容易注意到，y 轴或多或少包含了样本的高频成分，这是一个很好的启示。</p>
+
+<p>确保 UMAP 的距离不是很高，并且近邻数也在一个较低的水平时，可以确定 UMAP 的局部结构是很好的。通常那些拥有较高感知相似度的样本会出现少量的线和聚类。将参数倒过来，换成较大的近邻数和最小的距离数目，这意味着在算法中结合了更多的全局结构，全局结构更加具有说服力，而且从经验上来说，要比 t-SNE 和 PCA 的结构更强大。</p>
+
+<p>Wavenet 特征的结果证明，在和降维技术结合的时候，这些特征确实很鲁棒，很可靠。与 MFCC 特征得到的图相比时，聚类中并没有明显的退化，在其他情况下，与具有相同参数设置的 MFCC 相比，使用 Wavenet 向量实际上还改善了最终得到的图。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[基于主成分分析分类器的说话人识别]]></title>
+    <link href="https://ibillxia.github.io/blog/2012/07/20/PCA-based-speaker-recognition/"/>
+    <updated>2012-07-20T22:08:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2012/07/20/PCA-based-speaker-recognition</id>
+    <content type="html"><![CDATA[<h2>1.说话人分类常用算法</h2>
+
+
+<p>说话人分类是说话人识别中的一大主题，目前已经发展了很多方法，这些方法大致可以分为两类：</br>
+(1)基于概率分布的高复杂度的精确分类算法，如高斯混合模型（Gaussian Mixture Model，GMM）、隐马尔科夫
+模型（Hidden Markov Model，HMM）和支持向量机（Support Vector Machine，SVM）模型；</br>
+(2)基于模板的低复杂度的分类算法，如向量量化方法（Vector Quantization，VQ）。</br>
+第一类说话人分类算法能取得不错的效果，但他们的高复杂度使得进行说话人识别需要很长时间，不适合于实时应用。
+而第二类说话人匪类算法虽然复杂度低，但当系统中说话人的人数增加时，识别性能下降得很快。</p>
+
+
+
+
+<p>Wu Junwen，Zhang Xuegong提出了一种基于PCA的分类器（即主成分子空间（Principal Component Subspace，PCS）分类器），
+作为一种线性分类器，其复杂度低于以上第一类算法，又表现出很好的分类能力。另外，我们还可以根据截断误差子空间来构造分类器，
+称为TES（Truncation Error Subspace）分类器。这两种分类器反映了主成分分析方法的两个方面，结合两种分类器可得到混合分类器，
+称其为P&T分类器。</p>
+
+
+
+
+<!-- more -->
+
+
+<h2>2.主成分分析的分类依据</h2>
+
+
+<p>对语音信号进行特征提取后，将得到的数据进行主成分分析，经过训练确定主成分的个数m和经过主成分变换的特征数据（即主成分
+子空间），同时也可得到截断误差子空间，主成分子空间或截断误差子空间即可作为描述说话人特征的模型。</p>
+
+
+
+
+<p><strong>PCS分类器的基本思路</strong>是，对于一个待分类样本$X$，将它向数据集中每个说话人模型（即PCS）投影，即
+计算$U_{k}^{T}(X-\mu _{k})$，其中$U_{k}$为数据集中第$k$个说话人的模型，$\mu _{k})$为每个模型的中心向量，定义投影
+量所保留的原向量的方差为：</br>
+<center>$f(k)=\parallel U_{k}^{T}(X-\mu _{k})\parallel ^{2}，k=1，2，…，n$.</center></br>
+这个值即为投影量保留的方差之和。如果X投影到正确类的PCS，即同一说话人模型，那么该值将达到最大，而投影到其他说话人
+模型上所保留的方差之和都比该值小。即有：</br>
+<center>$x \in model${ $k|max(f(k)),1 < k \leq n $ }.</center></p>
+
+
+
+
+<p><strong>TES分类器</strong>与PCS分类器类似，只是说话人模型是用TES来表示的，对应的说话人模型相似度的度量标准为：</br>
+<center>$g(k)=\parallel V_{k}^{T}(X-\mu _{k})\parallel ^{2}, k=1, 2, ..., n$.</center></br>
+其中$V_{k}$表示第$k$个说话人模型。而决策规则为：
+<center>$x\in model$ { $k|min(g(k)),1 < k \leq n $ }.</center></p>
+
+
+<p></p><strong>P&amp;T分类器</strong>是将以上两种分类器结合起来进行决策，最简单的结合方法是线性组合，可以设PCS分类器的
+权重为$\lambda （0\leq \lambda \leq 1）$，而TES分类器的权重为1-λ，则衡量说话人模型相似度的标准为：</br></p>
+
+<center>$h(k)=\lambda f(k) - (1-\lambda)g(k), k=1, 2, ..., n$.</center>
+
+
+<p></br>
+而对应的决策规则为：</br></p>
+
+<center>$x\in model$ { $k|min(h(k)),1 < k \leq n $ }.</center>
+
+
+<p></p></p>
+
+<p>在使用P&T分类器时要注意，在计算f(k)，g(k)之前，应先对PCS和TES进行归一化，以免某一个值太大而影响了另一个值的作用。</p>
+
+
+
+
+<h2>3.主成分分类器应用于说话人识别</h2>
+
+
+<p>根据说话人识别任务的特点，基于PCA的分类器需要解决两个问题：</br>
+(1)训练说话人模型；</br>
+(2)对测试音进行鉴别。</p>
+
+
+
+
+<p>说话人鉴别的<strong>训练过程</strong>，就是训练每个说话人的模型参数，在此以PCS分类器为例进行说明。PCS分类器的模型参数由两部分组成，
+即主成分主方向数m和主成分子空间$PCS=[U1，U2，…，Um]$。关于主成分的计算在前面的文章中讲过，就不在赘述，这里重点说说主方向
+数确定的方法。为了使得PCS分类器的分类效果最好，我们可以选用少量的说话人以及他们的少量的测试语音，组成确定阈值的“验证
+集（validation set）”，变动主方向数$m$，选取使得识别率最好时的主方向数$m$作为参数。为简单起见，我们令所有说话人的主成分
+方向数取相同的值。</p>
+
+
+
+
+<p>测试音鉴别：设数据库中共有M个说话人模型，${X(n)|n=1,2,…,N}$为某个测试语音上提取的特征向量序列，则模型相似度度量标准为：</br>
+<center>$F(k) = \sum_{n=1}^{N} \parallel U_{k}^{T}(X(n)-\mu _{k}) \parallel ^{2}, k = 1,2,...,M$.</center></br>
+那么，使得这个值最大的说话人即为识别结果。
+</p>
+
+
+
+
+<h2>4.实验结果</h2>
+
+
+<p>分别在无噪语料库YOHO和有噪语料库PHONE做实验，得到如下结果：</br>
+<center><img src="/images/2012/IMAG2012072001.jpg"></center></br>
+<center><img src="/images/2012/IMAG2012072002.jpg"></center>
+</p>
+
+
+
+
+<h2>5.复杂度分析</h2>
+
+
+<p>P&T分类器的复杂度</br>
+模型训练阶段：</br>
+$PTtrain = N*d+N*d+d*d*N+4/3d^{3}+O(d^{2})+O(dlogd) 
+= O(N*d^{2})+O(d^{3})$
+模型测试阶段：
+$PTtest=M*Ntest*P*d+M*N*P+O(1)
+=O(M*Ntest*P*d)$
+</p>
+
+
+
+
+<h2>6.小结</h2>
+
+
+<p>由实验结果及复杂度分析可知，基于PCA分类器的说话人识别不仅具有很好的识别率，而且时间复杂度较低，
+是比较理想的说话人识别分类器。</p>
+
+
+
+
+<h2>参考文献</h2>
+
+
+<p>[1]《说话人识别模型与方法》吴朝辉 杨迎春 著 清华大学出版社</br>
+[2]基于PCA与LDA的说话人识别研究 章万峰 浙江大学硕士论文</p>
+
+]]></content>
+  </entry>
+  
+</feed>

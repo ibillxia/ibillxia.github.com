@@ -1,0 +1,1021 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Apache Kylin入门、指南与实践 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2019/06/14/apache-kylin-guide">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(function () {
+  addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">Apache Kylin入门、指南与实践</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2019-06-14T17:47:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><center><img src="/images/2019/IMAG2019061401.png"></center>
+
+
+<p><br></p>
+
+<h1>一、Apache Kylin 简介</h1>
+
+<p>Apache Kylin 是一个开源的分布式分析引擎，提供 Hadoop/Spark 之上的 SQL 查询接口及多维分析（OLAP）能力以支持超大规模数据，最初由 eBay Inc. 开发并贡献至开源社区，它能在亚秒内查询巨大的 Hive 表。</p>
+
+<!--more-->
+
+
+<h2>1.1 Apache Kylin 的特性：</h2>
+
+<ul>
+<li><p>可扩展的超快 OLAP 引擎: Kylin 是为减少在 Hadoop/Spark 上百亿规模数据查询延迟而设计；</p></li>
+<li><p>Hadoop ANSI SQL 接口: Kylin 为 Hadoop 提供标准 SQL 支持大部分查询功能；</p></li>
+<li><p>交互式查询能力: 通过 Kylin，用户可以与 Hadoop 数据进行亚秒级交互，在同样的数据集上提供比 Hive 更好的性能；</p></li>
+<li><p>多维立方体（MOLAP Cube）: 用户能够在 Kylin 里为百亿以上数据集定义数据模型并构建立方体；</p></li>
+<li><p>与 BI 工具无缝整合: Kylin 提供与 BI 工具的整合能力，如 Tableau，PowerBI/Excel，MSTR，QlikSense，Hue 和 SuperSet。</p></li>
+</ul>
+
+
+<p>其他特性：</p>
+
+<ul>
+<li><p>Job 管理与监控</p></li>
+<li><p>压缩与编码</p></li>
+<li><p>增量更新</p></li>
+<li><p>利用 HBase Coprocessor</p></li>
+<li><p>基于 HyperLogLog 的 Dinstinc Count 近似算法</p></li>
+<li><p>友好的 web 界面以管理，监控和使用立方体</p></li>
+<li><p>项目及表级别的访问控制安全</p></li>
+<li><p>支持 LDAP、SSO</p></li>
+</ul>
+
+
+<h2>1.2 数据仓库基本概念</h2>
+
+<p>数据仓库（Data Warehouse）</p>
+
+<p>数据仓库是一种信息系统的资料储存理论，此理论强调的是利用某些特殊的资料储存方式，让所包含的资料特别有利于分析和处理，从而产生有价值的资讯，并可依此做出决策。</p>
+
+<p>利用数据仓库的方式存放的资料，具有一旦存入，便不会随时间发生变动的特性，此外，存入的资料必定包含时间属性，通常一个数据仓库中会含有大量的历史性资料，并且它可利用特定的分析方式，从其中发掘出特定的资讯。</p>
+
+<h3>STAGE 层</h3>
+
+<p>STAGE 层作为数据缓冲层，主要负责采集不同类型的业务系统数据并保存一定期限内的相关业务数据，完成不同类型数据源的统一临时存储，同时避免 ETL 操作对业务系统性能造成影响，STAGE 层数据在数据结构、数据之间的逻辑关系上都与业务系统基本保持一致。</p>
+
+<h3>ODS 数据层</h3>
+
+<p>ODS（Operational Data Store）层数据来源于 STAGE 层，它的数据经过了对 STAGE 层数据的清洗，包括编码表去重、去空、垃圾数据过滤、数据类型规则化等。</p>
+
+<p>另外 ODS 作为 DW 和 STAGE 层的桥梁，也可以实现指标一致性的管理，将不同系统不同部门相同指标的定义及指标数据按照业务规则取其一，保证不同源数据的数据一致性，也可以满足用户对明细数据的查询要求，直接从ODS层获取明细数据进行分析。</p>
+
+<h3>DWD 数据层</h3>
+
+<p>DWD（Data Warehouse Detail）层数据是将 ODS 层数据根据数据清洗规则，经过质量检查、数据清洗、转换、标准化后，形成符合质量要求的公共数据中心。</p>
+
+<p>把 ODS 数据表结构改变成项目主题数据仓库的表结构，对 DWD 层的所有表添加了代理键，标准化了业务系统编码类型不统一的问题，建立了数据仓库维度表和事实表的关联体系，也为缓慢变化维的实现奠定了基础。</p>
+
+<h3>DWC 数据层</h3>
+
+<p>DWC（Data Warehouse Center）层主要管理固化报表的数据存储，数据主要来源于 DWD 层，根据前台所需数据建立物理模型，使用 ETL 抽取 DWD 层数据推送给 DWC 层，这样显著减少前台应用直接关联 DWD 层查询明细数据的成本，提高平台数据获取的速度。</p>
+
+<h3>DM 数据层</h3>
+
+<p>DM（Data Mart）层即数据集市，将指标与维度建立物理模型组成数据集市，这是 OLAP 的数据基础。该层实现了合并不同系统的数据源来满足面向主题的业务需求，它的建模是终端用户驱动的，也是由业务需求驱动的。按主题，维度及 KPI 指标对 DM 层进行模型设计、建模，DM 层数据是将 DWD 层数据进行进一步整合、转换、汇总、计算等 ETL 操作处理获取的。</p>
+
+<center><img src="/images/2019/IMAG2019061401.webp"></center>
+
+
+<p><br></p>
+
+<h2>1.3 Kylin 基本概念</h2>
+
+<h3>事实表（Fact Table）</h3>
+
+<p>事实表（Fact Table）是指存储有事实记录的表，如系统日志、销售记录等；事实表的记录在不断地动态增长，所以它的体积通常远大于其他表。</p>
+
+<h3>维度表（Dimension Table）</h3>
+
+<p>维度表或维表，有时也称查找表（Lookup Table），是与事实表相对应的一种表。它保存了维度的属性值，可以跟事实表做关联；相当于将事实表上经常重复出现的属性抽取、规范出来用一张表进行管理。</p>
+
+<p>维度表有以下几个优点：</p>
+
+<ul>
+<li><p>缩小了事实表的大小；</p></li>
+<li><p>便于维度的管理和维护，不必对事实表进行改动；</p></li>
+<li><p>维度表可以为多个事实表重用，以减少重复工作。</p></li>
+</ul>
+
+
+<h3>维度（Dimension）</h3>
+
+<p>维度是观察数据的角度，一般是一组离散的值；因此统计时可以把维度值相同的记录聚合在一起，然后进行聚合计算。</p>
+
+<p>在 Kylin Cube 构建中，维度可以分为以下几种类型：</p>
+
+<ul>
+<li><p>Mandatory：必需维度，查询中总是出现在 where 条件中的维度；如果一个维度被标记为 “Mandatory”，会认为所有的查询都会包含此维度，所有不含此维度的组合，在 Cube 构建时都会被剪枝（不计算）；</p></li>
+<li><p>Hierarchy：层级维度，如果多个维度之间有层级（或包含）的关系，通过设置为 “Hierarchy”，那些不满足层级的组合会被剪枝；如果A, B, C是层级，并且A>B>C，那么只需要计算组合A, AB, ABC; 其它组合如B, C, BC, AC将不做预计算；</p></li>
+<li><p>Joint：联合维度，有些维度往往一起出现，或者它们的基数非常接近（有 1:1 映射关系），例如 “用户 ID”总是对应唯一的 “用户名”；</p></li>
+<li><p>Derived：衍生维度：维度表的列值，可以从它的主键值衍生而来，那么通过将这些列定义为衍生维度，可以仅将主键加入到 Cube 的预计算来，而在运行时通过使用维度表的快照，衍生出非主键列的值，从而起到降维的效果。</p></li>
+</ul>
+
+
+<h3>度量（Measure）</h3>
+
+<p>度量是被聚合的统计值，也是聚合运算的结果，它一般是连续的值。</p>
+
+<h3>OLAP（Online Analytical Process）</h3>
+
+<p>OLAP（Online Analytical Process），联机分析处理，以多维度的方式分析数据，而且能够弹性地提供上卷（Roll-up）、下钻（Drill-down）和透视分析（Pivot）等操作，它是呈现集成性决策信息的方法，多用于决策支持系统、商务智能或数据仓库。其主要的功能在于方便大规模数据分析及统计计算，可对决策提供参考和支持。</p>
+
+<p>与之相区别的是联机交易处理（OLTP），联机交易处理，更侧重于基本的、日常的事务处理，包括数据的增删改查。</p>
+
+<h3>星型模型</h3>
+
+<p>星型模型是一种多维的数据关系，它由一个事实表和一组维表组成。每个维表都有一个维作为主键，所有这些维的主键组合成事实表的主键。强调的是对维度进行预处理，将多个维度集合到一个事实表，形成一个宽表。</p>
+
+<p>这也是我们在使用 Hive 时，经常会看到一些大宽表的原因，大宽表一般都是事实表，包含了维度关联的主键和一些度量信息，而维度表则是事实表里面维度的具体信息，使用时候一般通过 Join 来组合数据，相对来说对 OLAP 的分析比较方便。</p>
+
+<center><img src="/images/2019/IMAG2019061402.png"></center>
+
+
+<p><br></p>
+
+<h3>雪花模型</h3>
+
+<p>当有一个或多个维表没有直接连接到事实表上，而是通过其他维表连接到事实表上时，其图解就像多个雪花连接在一起，故称雪花模型。</p>
+
+<p>雪花模型是对星型模型的扩展，它对星型模型的维表进一步层次化，原有的各维表可能被扩展为小的事实表，形成一些局部的"层次"区域，这些被分解的表都连接到主维度表而不是事实表。</p>
+
+<p>雪花模型更加符合数据库范式，减少数据冗余，但是在分析数据的时候，操作比较复杂，需要 Join 的表比较多所以其性能并不一定比星型模型高。</p>
+
+<center><img src="/images/2019/IMAG2019061403.png"></center>
+
+
+<p><br></p>
+
+<h3>数据立方体（Data Cube）</h3>
+
+<p>数据立方体允许多维对数据建模和观察，它由维和事实定义，它是对多维模型的一个形象的说法。</p>
+
+<p>从表方面看，数据立方体是三维的，但是多维模型不仅限于三维模型，可以组合更多的模型，比如四维、五维等等，比如我们根据时间、地域、产品和产品型号这四个维度，统计销售量等指标。</p>
+
+<p>对于每一种维度的组合，将度量做聚合运算，然后将运算的结果保存为一个物化视图，称为 Cuboid。所有维度组合的 Cuboid 作为一个整体，被称为 Cube。所以简单来说，一个 Cube 就是许多按维度聚合的物化视图的集合。</p>
+
+<p>Cube Segment 是指针对源数据中的某一个片段，计算出来的 Cube 数据。通常数据仓库中的数据数量会随着时间的增长而增长，而 Cube Segment 也是按时间顺序来构建的。</p>
+
+<p>Cuboid 示例：Cuboid[Time, Locatio] = select Time, Location, sum(GMV) as GMV from T group by Time, Location</p>
+
+<center><img src="/images/2019/IMAG2019061404.png"></center>
+
+
+<p><br></p>
+
+<h3>Cube 构建常见概念</h3>
+
+<ul>
+<li><p>Table - 表， 是 Cube 的数据源；在创建 Cube 之前，需要从数据源（通常为 Hive）同步表的元数据，包含表名、列名、列属性等。</p></li>
+<li><p>Data Model - 数据模型，定义了由若干张表的一个连接关系。支持星型模型的多维分析；在创建Cube之前，用户需定义这么一个数据模型。</p></li>
+<li><p>Cube - 数据立方体，是一种多维分析的技术，通过预计算，将计算结果存储在某多个维度值所映射的空间中；在运行时通过对 Cube 的再处理而快速获取结果。</p></li>
+<li><p>Partition - 分区，用户可以定义一个分区日期或时间列，随后对 Cub e的构建按此列的值范围而进行，从而将 Cube 分成多个 Segment。</p></li>
+<li><p>Cube Segment - 每个 Cube Segment 是对特定时间范围的数据计算而成的 Cube，每个 Segment 对应一张 HBase 表。</p></li>
+<li><p>Aggregation Group - 聚合组，每个聚合组是全部维度的一个子集；通过将很多个维度分组，并把常一起使用的维度放在一起，可以有效降低 Cube 的组合数。</p></li>
+</ul>
+
+
+<h1>二、原理与架构</h1>
+
+<h2>2.1 工作原理</h2>
+
+<p>简单来说，Kylin 的核心思想是预计算（利用空间换时间），即对多维分析可能用到的度量进行预计算，将计算好的结果保存成 Cube 并存在 HBase 中，供查询时直接访问。</p>
+
+<p>把高复杂度的聚合运算、多表连接等操作转换成对预计算结果的查询，这决定了 Kylin 能够拥有很好的快速查询和高并发能力，具体工作过程如下：</p>
+
+<ol>
+<li><p>指定数据模型（Model），定义维度（Dimensions）和度量（Measure）；</p></li>
+<li><p>预计算 Cube，计算所有 Cuboid 并保存为物化视图；</p></li>
+<li><p>执行查询时（Restful API/JDBC/ODBC），读取 Cuboid，运算，产生查询结果。</p></li>
+</ol>
+
+
+<h2>2.2 体系架构</h2>
+
+<p>Apache Kylin 系统可以分为在线查询和离线构建两部分，技术架构如图所示，在线查询的模块主要处于上半区，而离线构建则处于下半区。</p>
+
+<center><img src="/images/2019/IMAG2019061403.webp"></center>
+
+
+<p><br></p>
+
+<h3>Kylin 的核心模块</h3>
+
+<ul>
+<li><p>REST Server：提供 Restful 接口，例如创建、构建、刷新、合并等 Cube 相关操作，Kylin 的 Projects、Tables 等元数据管理，用户访问权限控制，SQL 的查询等；</p></li>
+<li><p>Query Engine：使用开源的 Apache Calcite 框架来实现 SQL 解析，可以理解为 SQL 引擎层；</p></li>
+<li><p>Routing：负责将解析 SQL 生成的执行计划转换成 Cube 缓存的查询，这部分查询是可以在秒级甚至毫秒级完成；</p></li>
+<li><p>Metadata：Kylin 中有大量的元数据信息，包括 Cube 的定义、星型模型的定义、Job 和执行 Job 的输出信息、模型的维度信息等等，Kylin 的元数据和 Cube 都存储在 HBase 中，存储的格式是 json 字符串；</p></li>
+<li><p>Cube Build Engine：所有模块的基础，它主要负责 Kylin 预计算中创建 Cube，创建的过程是首先通过 Hive 读取原始数据，然后通过一些 MapReduce 或 Spark 计算生成 Htable，最后将数据 load 到 HBase 表中。</p></li>
+</ul>
+
+
+<h3>离线构建</h3>
+
+<p>离线构建的主要步骤：</p>
+
+<ol>
+<li><p>数据源在左侧，目前主要是 Hadoop Hive，保存着待分析的用户数据；</p></li>
+<li><p>根据元数据的定义，下方构建引擎从数据源抽取数据，并构建 Cube；</p></li>
+<li><p>数据以关系表的形式输入，且必须符合星形模型（2.0 开始已经支持星型模型）；</p></li>
+<li><p>MapReduce 是当前主要的构建技术（2.5 开始 Spark 是主要的构建技术）；</p></li>
+<li><p>构建后的 Cube 保存在右侧的存储引擎中，一般选用 HBase 作为存储。</p></li>
+</ol>
+
+
+<h3>在线查询</h3>
+
+<ol>
+<li><p>用户可以从上方查询系统（Rest API、JDBC/ODBC）发送 SQL 进行查询分析；</p></li>
+<li><p>无论从哪个接口进入，SQL 最终都会来到 Rest 服务层，再转交给查询引擎进行处理；</p></li>
+<li><p>查询引擎解析 SQL，生成基于关系表的逻辑执行计划；</p></li>
+<li><p>然后将其转译为基于 Cube 的物理执行计划；</p></li>
+<li><p>最后查询预计算生成的 Cube 并产生结果。</p></li>
+</ol>
+
+
+<h2>2.3 可扩展架构</h2>
+
+<p>可扩展指 Kylin 可以对其主要依赖的三个模块做任意的扩展和替换，Kylin 的三大依赖模块分别是数据源（Hive）、构建引擎（MR）和存储引擎（HBase）。</p>
+
+<p>可扩展架构带来了额外的灵活性，比如，它可以允许多个引擎同时并存。例如 Kylin 可以同时对接 Hive、Kafka 和其他第三方数据源；抑或用户可以为不同的 Cube 指定不同的构建引擎或存储引擎，以期达到最极致的性能和功能定制。</p>
+
+<center><img src="/images/2019/IMAG2019061404.webp"></center>
+
+
+<p><br></p>
+
+<h2>2.4 构建算法</h2>
+
+<h3>Layered Cubing</h3>
+
+<p>这个四维 Cube 需要五轮的 MapReduce 来完成：第一轮 MR 的输入是源数据，这一步会对维度列的值进行编码，并计算 ABCD 组合的结果。接下来的 MR 以上一轮的输出结果为输入，向上聚合计算三个维度的组合：ABC、BCD、ABD和ACD；依此类推，直到算出所有的维度组合。</p>
+
+<p>Layered Cubing 的特点：</p>
+
+<ul>
+<li><p>算法比较简单；</p></li>
+<li><p>算法的稳定性非常高；</p></li>
+<li><p>计算量或者数据量大的时候并不能充分利用系统的资源；</p></li>
+<li><p>没有充分利用内存（缓存中间计算结果）。</p></li>
+</ul>
+
+
+<center><img src="/images/2019/IMAG2019061405.webp"></center>
+
+
+<p><br></p>
+
+<h3>Fast Cubing</h3>
+
+<p>最大化利用 Mapper 端的 CPU 和内存，对分配的数据块，将需要的组合全都做计算后再输出给 Reducer；由 Reducer 再做一次合并（Merge），从而计算出完整数据的所有组合。如此，经过一轮 MapReduce 就完成了以前需要 N 轮的 Cube 计算。</p>
+
+<center><img src="/images/2019/IMAG2019061406.webp"></center>
+
+
+<p><br></p>
+
+<p>Fast Cubing 的特点：最大限度地把计算发生在 Mapper 这一端，一方面减少 shuffle 的数据量，另一方面减少 Reducer 端的计算量。</p>
+
+<p>第一步会计算 Base Cuboid（所有维度都有的组合），再基于它计算减少一个维度的组合。基于 parent 节点计算 child 节点，可以重用之前的计算结果；当计算 child 节点时，需要 parent 节点的值尽可能留在内存中；如果 child 节点还有 child，那么递归向下，所以它是一个深度优先遍历。当有一个节点没有 child，或者它的所有 child 都已经计算完，这时候它就可以被输出，占用的内存就可以释放。</p>
+
+<center><img src="/images/2019/IMAG2019061407.webp"></center>
+
+
+<p><br></p>
+
+<h1>三、 构建 Model</h1>
+
+<h2>3.1、从 Hive 中加载表</h2>
+
+<p>从 Hive 中导入表定义的具体步骤如下：</p>
+
+<ol>
+<li><p>登录系统：http://ip:7070/kylin；</p></li>
+<li><p>主界面顶端左侧网站 Logo 下点击加号 “＋” 以新建项目；</p></li>
+<li><p>在弹出的窗口中，输入项目名称（必选）和项目描述, 点击“确定”按钮，完成项目创建；</p></li>
+<li><p>在网站 Logo 的右侧的下拉框中选择创建的项目，点击 “Model” 菜单；</p></li>
+<li><p>点击“Data Source”选项卡，在 Tables 后面有三个按钮，第一个深蓝色按钮表示根据表名从 Hive 中导入表；第二个浅蓝色按钮点击后可以以可视化的方式从 Hive 选择需要导入的表；</p></li>
+<li><p>点击浅蓝色按钮，从 Hive 中选择需要导入的表，选择完毕后点击右下角的“Sync”按钮即可完成 Hive 表的导入。</p></li>
+</ol>
+
+
+<p>导入表定义的界面有一个选择框 Calculate column cardinality，勾选后系统会计算 Hive 表每一列的基数，基数是指数据集中出现的不同值的个数，例如“国家”是一个维度，如果有 200 个不同的值，那么此维度的基数就是 200。</p>
+
+<center><img src="/images/2019/IMAG2019061407.png"></center>
+
+
+<p><br></p>
+
+<h2>3.2、创建 Model</h2>
+
+<p>点击 “Models” 选项卡，可以看到项目已创建的 Models 以及 Cubes，点击 “+ New” 按钮，选择 “New Model” 即可打开创建 Model 的窗口。由于数据模型的差异，本文不介绍具体的案例，下面将主要介绍创建 Model 过程中遇到的各种概念。</p>
+
+<h3>1） Model Info</h3>
+
+<p>Model Info 主要是填写 Model 的基本信息，其中 “Model Name” 是必填项，模型名称有两点需要注意：</p>
+
+<ol>
+<li><p>模型名称是全局唯一的，也就是说即便你新建了一个工程，你的模型名称也不能够重复；</p></li>
+<li><p>模型一旦创建后，模型名称无法被修改。</p></li>
+</ol>
+
+
+<center><img src="/images/2019/IMAG2019061408.png"></center>
+
+
+<p><br></p>
+
+<h3>2） Data Model</h3>
+
+<p>Data Model 主要是构建整体的数据模型，无论你的数据是星型模型或者是雪花模型，需要在这个地方建立数据表之间的关系。</p>
+
+<h4>（2.1）、选择事实表</h4>
+
+<p>建立数据模型的第一步是选择事实表，选择完成后点击 “Add Lookup Table” 按钮设置事实表与维度表之间的关系。</p>
+
+<center><img src="/images/2019/IMAG2019061408.webp"></center>
+
+
+<p><br></p>
+
+<h4>（2.2）、建立数据关系</h4>
+
+<p>对 “Add Lookup Table” 页面的几点说明：</p>
+
+<ol>
+<li><p>数据关系不仅仅是事实表与维度表之间（星型模型），维度表和维度表之间（雪花模型）也可以建立联系；</p></li>
+<li><p>表与表之间的连接添加有三种：“Left Join”、“Inner Join”、“Right Join”；</p></li>
+<li><p>Skip snapshot for this lookup table 选项指的是是否跳过生成 snapshotTable，由于某些 Lookup 表特别大（大于 300M），如果某一个维度的基数比较大 ，可能会导致内存出现 OOM，所以在创建 snapshotTable 的时候会限制原始表的大小不能超过配置的一个上限值（kylin.snapshot.max-mb，默认值300）;</p></li>
+<li><p>跳过构建 snapshot 的 lookup 表将不能搜索，同时不支持设置为衍生维度（Derived）；</p></li>
+<li><p>大部分情况下都是使用 “Left Join”，其他两种 Join 方式不是很常用。</p></li>
+</ol>
+
+
+<center><img src="/images/2019/IMAG2019061409.png"></center>
+
+
+<p><br></p>
+
+<h4>(2.3)、完成表关系构建</h4>
+
+<p>通过上述的操作即可将事实表以及维度表联系起来，构成一个数据模型。</p>
+
+<center><img src="/images/2019/IMAG2019061410.png"></center>
+
+
+<p><br></p>
+
+<h3>3)、Dimensions</h3>
+
+<p>在 Dimensions 页面选择可能参与计算的维度，这里被选择的只是在 Cube 构建的时候拥有被选择资格的维度，并不是最后参与 Cube 构建的维度，推荐将维度表中的字段都选择上。</p>
+
+<p>一般而言，日期、商品种类、区域等会作为维度。</p>
+
+<center><img src="/images/2019/IMAG2019061411.png"></center>
+
+
+<p><br></p>
+
+<h3>4)、Measures</h3>
+
+<p>在 Measures 页面选择可能用于计算的度量。</p>
+
+<p>一般而言，销售额、流量、温湿度等会作为度量。</p>
+
+<center><img src="/images/2019/IMAG2019061412.png"></center>
+
+
+<p><br></p>
+
+<h3>5)、Settings</h3>
+
+<p>在 Settings 页面可以设置分区以及过滤条件，其中分区是为了系统可以进行增量构建而设计的，目前 Kylin 支持基于日期的分区，在 “Partition Date Column” 后面选择事实表或者维度表中的日期字段，然后选择日期格式即可；过滤条件设置后，Kylin 在构建的时候会选择符合过滤条件的数据进行构建。</p>
+
+<p>需要注意的几点：</p>
+
+<ol>
+<li><p>时间分区列可以支持日期或更细粒度的时间分区；</p></li>
+<li><p>时间分区列支持的数据类型有 time/date/datetime/integer等；</p></li>
+<li><p>过滤条件不需要写 WHERE；</p></li>
+<li><p>过滤条件不能包含日期维度。</p></li>
+</ol>
+
+
+<center><img src="/images/2019/IMAG2019061413.png"></center>
+
+
+<p><br></p>
+
+<h3>6)、Save</h3>
+
+<p>最后保存即可完成 Model 的创建，你可以打开 Model 中的 Visualization 标签页查询模型的表连接情况。</p>
+
+<center><img src="/images/2019/IMAG2019061414.png"></center>
+
+
+<p><br></p>
+
+<h2>3.3、Snapshot Table</h2>
+
+<p>每一个 Snapshot 是和一个 Hive 维度表对应的，生成的过程是：</p>
+
+<ol>
+<li><p>从原始的hive维度表中顺序得读取每一行每一列的值;</p></li>
+<li><p>使用 TrieDictionary 方式对这些所有的值进行编码（一个值对应一个 Id）；</p></li>
+<li><p>再次读取原始表中每一行的值，将每一列的值使用编码之后的 Id 进行替换，得到了一个只有 Id 的新表；</p></li>
+<li><p>同时保存这个新表和 Dictionary 对象（Id 和值的映射关系）就能够保存整个维度表；</p></li>
+<li><p>Kylin 将这个数据存储到元数据库中。</p></li>
+</ol>
+
+
+<h1>四、构建 Cube</h1>
+
+<h2>4.1、Cube Info</h2>
+
+<p>Cube Info 界面主要填写 Cube 的一些基本信息，首先要选择一个数据模型，然后填写 Cube 名称，Cube 名称全局唯一不能重复；Cube 信息填写完成后点击 “Next” 进入下一步。</p>
+
+<center><img src="/images/2019/IMAG2019061413.webp"></center>
+
+
+<p><br></p>
+
+<h2>4.2、Dimensions</h2>
+
+<p>Dimensions 是维度选择界面，从数据模型的维度中选择一些列作为 Cube 的维度，这个算是 Cube 构建过程中第一个比较重要的环节，这里的设置会影响到生成的 Cuboid 数量，进而影响 Cube 的数据量大小。</p>
+
+<p>在选择维度时，每一个维度列可以作为普通维度（Normal），也可以作为衍生维度（Derived）。相对于普通维度来说，衍生维度并不参与维度的 Cuboid，衍生维度对应的外键（FK）参与维度 Cuboid，从而降低 Cuboid 数。在查询时，对衍生维度的查询会首先转换为对外键所在维度的查询，因此会牺牲少量性能（大部分情况下可以接受）。</p>
+
+<center><img src="/images/2019/IMAG2019061414.webp"></center>
+
+
+<p><br></p>
+
+<h3>1、维度选择的建议：</h3>
+
+<ol>
+<li><p>作为 Cube 的维度需要满足下面的条件：可能存在于 where 条件中或者 groupBy 中的维度；</p></li>
+<li><p>事实表（Fact Table）只选择参与查询的字段，不参与查询的一定不要勾选（即便是外键）；</p></li>
+<li><p>维度表（Lookup Table）中的主键与事实表的外键一一对应，推荐勾选事实表的外键，维度表的主键勾选后选择为衍生（Derived）维度；</p></li>
+<li><p>对于星型模型而言，维度表的字段往往可以全部为衍生字段；</p></li>
+<li><p>对于雪花模型而言，如果维度表存在子表，则维度表对于子表的外键推荐作为普通（Normal）维度。</p></li>
+</ol>
+
+
+<h3>2、特别注意的事项：</h3>
+
+<ol>
+<li><p>表连接的字段并非一定要参与 Cuboid 计算；</p></li>
+<li><p>表连接的字段如果没有被勾选，且其外键表中没有任何字段作为衍生维度，则该表连接字段是不会参与 Cuboid 的；</p></li>
+<li><p>一旦被设置为 Normal 类型，则一定会参与 Cuboid 计算；</p></li>
+<li><p>如果维度表存在层级（例如省市县、日月年等），则推荐分层级的相关字段选择为普通（Normal）维度。</p></li>
+</ol>
+
+
+<center><img src="/images/2019/IMAG2019061415.webp"></center>
+
+
+<p><br></p>
+
+<h2>4.3、Measures</h2>
+
+<p>维度选择完成后，需要选择度量聚合的方式，比较常规的聚合方式有：COUNT、SUM、MIN、MAX、PERCENTILE，下面将详细介绍其他几种聚合方式。</p>
+
+<h3>1、TOP_N</h3>
+
+<p>Top-N 度量，旨在在 Cube 构建的时候预计算好需要的 Top-N；在查询阶段，就可以迅速的获取并返回 Top-N 记录，这样查询性能就远远高于没有 Top-N 预计算结果的 Cube。</p>
+
+<p>1.1、Top-N 中 Group By 的该如何选择？</p>
+
+<p>例如：全国二氧化碳污染物总和的省份排名，结果是省份排名，需要测量的是污染物的总和，因此 Group By 需要设置为 污染物类型。</p>
+
+<p>1.2、Return Type 中的 Top N 是什么意思？</p>
+
+<p>TOP N 表示最终获取的前 N 名的排序是比较准确的，例如 TOP 10 表示最终的前 10 名是比较准确的（维度的基数非常大时存在误差），但是不代表只能取前 10 个（Limit 10），可以使用其他数字，例如 Limit 500，只是返回更多内容时，精准度没有保证。</p>
+
+<p>1.3、TOP-N 的存储</p>
+
+<p>使用 TOP-N 时，排序度量字段和 Group By 字段会组合在一起，形成一个字段进行存储，用户需要 Top 100 的结果，Kylin 对于每种组合条件值，保留 Top 5000 （50倍）的纪录, 并供以后再次合并。</p>
+
+<center><img src="/images/2019/IMAG2019061415.png"></center>
+
+
+<p><br></p>
+
+<h3>2、Count_Distinct</h3>
+
+<p>Count_Distinct 度量有两个实现：</p>
+
+<ol>
+<li><p>近似实现：基于 HyperLogLog 算法，可选择接受的错误率（从9.75% 到 1.22%），低错误率需要更多存储；</p></li>
+<li><p>精确实现：基于 Bitmap（位图）算法，对于数据型为 tinyint、smallint 和 int 的数据，将把数据对应的值直接打入位图；对于数据型为 long，string 和其他的数据，将它们编码成字符串放入字典，然后再将对应的值打入位图。返回的度量结果是已经序列化的位图数据，而不仅是计算的值。这确保了不同的 segment 中，甚至跨越不同的 segment 来上卷，结果也是正确的。</p></li>
+</ol>
+
+
+<p>越精确消耗的存储空间越大，大多数场景下 HyperLogLog 的近似实现即可满足需求。</p>
+
+<h3>3、EXTEND_COLUMN</h3>
+
+<p>在分析场景中，经常存在对某个 id 进行过滤，但查询结果要展示为 name 的情况，比如user_id和user_name。这类问题通常有三种解决方式：</p>
+
+<ol>
+<li><p>将 id 和 name 都设置为维度，查询语句类似select name, count(*) from table where id = 1 group by id,name，这种方式的问题是会导致维度增多，导致预计算结果膨胀；</p></li>
+<li><p>将 id 和 name 都设置为维度，并且将两者设置为联合维度（Joint Dimensions），这种方式的好处是保持维度组合数不会增加，但限制了维度的其它优化，比如 id 不能再被设置为强制维度或者层次维度；</p></li>
+<li><p>将 id 设置为维度，name 设置为特殊的 Measure，类型为 Extended Column，这种方式既能保证过滤 id 且查询 name 的需求，同时也不影响 id 维度的进一步优化。</p></li>
+</ol>
+
+
+<h1>4.4、Refresh Setting</h1>
+
+<ul>
+<li><p>触发自动合并的时间阈值(Auto Merge Thresholds)：自动合并小的 segments 到中等甚至更大的 segment，如果不想自动合并，删除默认 2 个选项；</p></li>
+<li><p>Volatile Range: 默认为 0，‘Auto Merge’ 会自动合并所有可能的 cube segments；设置具体的数值后，‘Auto Merge’ 将不会合并最近 Volatile Range 天的 cube segments；假设 Volatile Range 设置为 7，则最近 7 天内生成的 cube segments 不会被自动合并；</p></li>
+<li><p>保留时间阈值（Retention Threshold）：对于时间久远的不需要再被查询的 Segment，Kylin 通过设置保留时间阈值可以自动清除这些 Segment，以节省磁盘空间；每当构建新的 Segment 时，Kylin 会自动检查老的 Segment，当这些 Segment 的结束日期与当前最新 Segment 的结束日期的差值大于保留时间阈值，则会被清除；如果无需自动清理，可以默认设置保留时间阈值为 0。</p></li>
+<li><p>分区起始时间（Partition Start Date）：Cube 构建的起始时间，1970-01-01 08:00:00 默认为分区起始时间。</p></li>
+</ul>
+
+
+<h2>4.5、Advanced Setting</h2>
+
+<p>高级设置主要用于 Cuboid 的剪枝优化，通过聚合组（Aggregation Group）、必要维度（Mandatory Dimension）、层级维度（Hierarchy Dimension）、联合维度（Joint Dimension）等方式，可以使得 Cuboid 的组合在预期范围内。</p>
+
+<h3>1、聚合组（Aggregation Group）</h3>
+
+<p>根据查询的维度组合，可以划分出维度组合大类，这些大类在 Kylin 里面被称为聚合组。例如查询需求为：污染物排放量在特定的时间范围内，各个区域（省、市、区县三个级别）的排名以及各个流域（一、二、三级流域）的排名。</p>
+
+<p>上述的查询需求就可以氛围两个聚合组：</p>
+
+<ol>
+<li><p>根据区域维度、时间维度查询污染物排放量；</p></li>
+<li><p>根据流域维度、时间维度查询污染物排放量。</p></li>
+</ol>
+
+
+<blockquote><p>如果只使用一个聚合组，区域维度和流域维度就很产生很多组合的 Cuboid，然而这些组合对查询毫无用处，此时就可以使用两个聚合组把区域和流域分开，这样便可以大大减少无用的组合。</p></blockquote>
+
+<h3>2、必要维度（Mandatory Dimension）</h3>
+
+<p>Mandatory 维度指的是那些总是会出现 在Where 条件或 Group By 语句里的维度。</p>
+
+<p>当然必须存在不一定是显式出现在查询语句中，例如查询日期是必要字段，月份、季度、年属于它的衍生字段，那么查询的时候出现月份、季度、年这些衍生字段等效于出现查询日期这个必要字段。</p>
+
+<h3>3、层级维度 （Hierachy Dimension）</h3>
+
+<p>Hierarchy 是一组有层级关系的维度，例如：国家->省->市，这里的“国家”是高级别的维度，“省”“市”依次是低级别的维度；用户会按高级别维度进行查询，也会按低级别维度进行查询，但在查询低级别维度时，往往都会带上高级别维度的条件，而不会孤立地审视低级别维度的数据。也就是说，用户对于这三个维度的查询可以归类为以下三类:</p>
+
+<ol>
+<li><p>group by country</p></li>
+<li><p>group by country, province（等同于group by province）</p></li>
+<li><p>group by country, province, city（等同于group by country, city 或者group by city）</p></li>
+</ol>
+
+
+<h3>4、联合维度（Joint Dimension）</h3>
+
+<p>有些维度往往一起出现，或者它们的基数非常接近（有1:1映射关系），例如 “user_id” 和 “email”。把多个维度定义为组合关系后，所有不符合此关系的 cuboids 会被跳过计算。</p>
+
+<p>就 Joint Dimension (A, B) 来说，在 group by 时 A, B 最好同时出现，这样不损失性能。但如果只出现 A 或者 B，那么就需要在查询时从 group by A,B 的结果做进一步聚合运算，会降低查询的速度。</p>
+
+<h2>4.5、Rowkeys</h2>
+
+<h3>4.5.1、编码</h3>
+
+<p>Kylin 以 Key-Value 的方式将 Cube 存储到 HBase 中，HBase 的 key，也就是 Rowkey，是由各维度的值拼接而成的；为了更高效地存储这些值，Kylin 会对它们进行编码和压缩；每个维度均可以选择合适的编码（Encoding）方式，默认采用的是字典（Dictionary）编码技术；字段支持的基本编码类型如下：</p>
+
+<ul>
+<li><p>dict：适用于大部分字段，默认推荐使用，但在超高基情况下，可能引起内存不足的问题；</p></li>
+<li><p>boolean：适用于字段值为true, false, TRUE, FALSE, True, False, t, f, T, F, yes, no, YES, NO, Yes, No, y, n, Y, N, 1, 0；</p></li>
+<li><p>integer：适用于字段值为整数字符，支持的整数区间为[ -2<sup>8N-1</sup>, 2<sup>8N-1</sup>]；</p></li>
+<li><p>date：适用于字段值为日期字符，支持的格式包括yyyyMMdd、yyyy-MM-dd、yyyy-MM-dd HH:mm:ss、yyyy-MM-dd HH:mm:ss.SSS，其中如果包含时间戳部分会被截断；</p></li>
+<li><p>time：适用于字段值为时间戳字符，支持范围为[ 1970-01-01 00:00:00, 2038/01/19 03:14:07]，毫秒部分会被忽略，time编码适用于 time, datetime, timestamp 等类型；</p></li>
+<li><p>fix_length：适用于超高基场景，将选取字段的前 N 个字节作为编码值，当 N 小于字段长度，会造成字段截断，当 N 较大时，造成 RowKey 过长，查询性能下降，只适用于 varchar 或 nvarchar 类型；</p></li>
+<li><p>fixed_length_hex：适用于字段值为十六进制字符，比如 1A2BFF 或者 FF00FF，每两个字符需要一个字节，只适用于 varchar 或 nvarchar 类型。</p></li>
+</ul>
+
+
+<h3>4.5.2、顺序</h3>
+
+<p>各维度在 Rowkeys 中的顺序，对于查询的性能会产生较明显的影响；在这里用户可以根据查询的模式和习惯，通过拖曳的方式调整各个维度在Rowkeys上的顺序。推荐的顺序为：Mandatory 维度、where 过滤条件中出现频率较多的维度、高基数维度、低基数维度。这样做的好处是，充分利用过滤条件来缩小在 HBase 中扫描的范围，从而提高查询的效率。</p>
+
+<h3>4.5.3、分片</h3>
+
+<p>指定 ShardBy 的列，明细数据将按照该列的值分片；没有指定 ShardBy 的列，则默认将根据所有列中的数据进行分片；选择适当的 ShardBy 列，可以使明细数据较为均匀的分散在多个数据片上，提高并行性，进而获得更理想的查询效率；建议选择基数较大的列作为 ShardBy 列，以避免数据分散不均匀。</p>
+
+<h2>4.6、其他设置</h2>
+
+<ul>
+<li><p>Mandatory Cuboids: 维度组合白名单，指定需要构建的 cuboid 的维度的组合；</p></li>
+<li><p>Cube Engine: Cube 构建引擎，有两种：MapReduce 和 Spark；如果你的 Cube 只有简单度量（SUM, MIN, MAX)，建议使用 Spark；如果 Cube 中有复杂类型度量（COUNT DISTINCT, TOP_N），建议使用 MapReduce；</p></li>
+<li><p>Global Dictionary：用于精确计算 COUNT DISTINCT 的字典, 它会将一个非 integer 的值转成 integer，以便于 bitmap 进行去重；如果你要计算 COUNT DISTINCT 的列本身已经是 integer 类型，那么不需要定义 Global Dictionary； Global Dictionary 会被所有 segment 共享，因此支持在跨 segments 之间做上卷去重操作。</p></li>
+<li><p>Segment Dictionary：另一个用于精确计算 COUNT DISTINCT 的字典，与 Global Dictionary 不同的是，它是基于一个 segment 的值构建的，因此不支持跨 segments 的汇总计算。如果你的 cube 不是分区的或者能保证你的所有 SQL 按照 partition_column 进行 group by, 那么你应该使用 “Segment Dictionary” 而不是 “Global Dictionary”，这样可以避免单个字典过大的问题。</p></li>
+<li><p>Advanced Snapshot Table: 为全局 lookup 表而设计，提供不同的存储类型；</p></li>
+<li><p>Advanced ColumnFamily: 如果有超过一个的 COUNT DISTINCT 或 TopN 度量, 你可以将它们放在更多列簇中，以优化与HBase 的I/O。</p></li>
+</ul>
+
+
+<h2>4.7、Configuration Overwrites</h2>
+
+<p>Kylin 使用了很多配置参数以提高灵活性，用户可以根据具体的环境、场景等配置不同的参数进行调优；Kylin 全局的参数值可在 conf/kylin.properties 文件中进行配置；如果 Cube 需要覆盖全局设置的话，则需要在此页面中指定，这些配置项将覆盖项目级别和配置文件中的默认值。</p>
+
+<center><img src="/images/2019/IMAG2019061416.png"></center>
+
+
+<p><br></p>
+
+<h2>4.8、Overview</h2>
+
+<p>你可以概览你的 cube 并返回之前的步骤进行修改，点击 Save 按钮完成 cube 创建。</p>
+
+<center><img src="/images/2019/IMAG2019061417.png"></center>
+
+
+<p><br></p>
+
+<h2>4.9、Planner</h2>
+
+<p>如果你开启了 Cube Planner，当 Cube 保存后可以到 Planner 标签页查看 Cuboid 的个数以及各个维度的组合情况，这能够很直观的帮助你了解你的维度组合情况，如果与预想的有出入可以随时对 Cube 进行调整。</p>
+
+<center><img src="/images/2019/IMAG2019061418.png"></center>
+
+
+<p><br></p>
+
+<h1>五、优化 Cube</h1>
+
+<h2>5.1、维度表与事实表</h2>
+
+<h3>1、维度表</h3>
+
+<ol>
+<li><p>要具有数据一致性，主键值必须是唯一的（否则 Kylin 构建过程会报错）；</p></li>
+<li><p>维度表越小越好，因为 Kylin 会将维度表加载到内存中供查询，过大的表不适合作为维度表，默认的阈值是 300MB；</p></li>
+<li><p>改变频率低，Kylin 会在每次构建中试图重用维度表的快照（Snapshot），如果维度表经常改变的话，重用就会失效，这就会导致要经常对维度表创建快照；</p></li>
+<li><p>维度表最好不要是 Hive 视图（View），因为每次都需要将视图进行物化，从而导致额外的时间开销。</p></li>
+</ol>
+
+
+<h3>2、事实表</h3>
+
+<ol>
+<li><p>移除不参与 Cube 构建的字段，可以提升构建速度，降低 Cube 构建结果的大小；</p></li>
+<li><p>尽可能将事实表进行维度拆分，提取公用的维度；</p></li>
+<li><p>保证维度表与事实表的映射关系，过滤无法映射的记录。</p></li>
+</ol>
+
+
+<p>如果维度与事实表无法映射，某些字段（数据类型为 number 系列）会遇到构建失败的问题（numberFormatException('\N')，\N 是为 Hive 中 NULL 的实际存储内容）；此外，在进行 Left Join 的时候会产生大量的 NULL，这些 NULL 值在真正查询中根本没有任何作用。</p>
+
+<h3>3、分区表</h3>
+
+<p>Hive 表支持多分区（Partition），简单地说，一个分区就是一个文件目录，存储了特定的数据文件。当有新的数据生成的时候，可以将数据加载到指定的分区，读取数据的时候也可以指定分区。对于 SQL 查询，如果查询中指定了分区列的属性条件，则 Hive 会智能地选择特定分区（也就是目录），从而避免全量数据的扫描，减少读写操作对集群的压力。</p>
+
+<p>Kylin 支持增量的 Cube 构建，通常是按时间属性来增量地从 Hive 表中抽取数据。如果 Hive 表正好是按此时间属性做分区的话，那么就可以利用到 Hive 分区的好处，每次在 Hive 构建的时候都可以直接跳过不相干日期的数据，节省 Cube 构建的时间。这样的列在 Kylin 里也称为分割时间列（Partition Time Column），通常它应该也是 Hive 表的分区列。</p>
+
+<h2>5.2、Cube 构建优化</h2>
+
+<h3>1、维度优化</h3>
+
+<ol>
+<li><p>分析查询条件，不参与 Group By 或者 Where 过滤的条件维度一定不要勾选；</p></li>
+<li><p>一般而言，Left Join 右侧表里面的字段均可以作为 Derived （衍生）维度；</p></li>
+<li><p>必需维度、层级维度、联合维度、衍生维度四种维度优化方案；</p></li>
+<li><p>聚合组进一步对维度组合进行优化。</p></li>
+</ol>
+
+
+<h3>2、其他优化</h3>
+
+<ol>
+<li><p>RowKeys 顺序：Mandatory 维度、where 过滤条件中出现频率较多的维度、高基数维度、低基数维度；</p></li>
+<li><p>ShardBy 设置：建议选择基数较大的列作为 ShardBy 列，以使得数据可以均匀分布；</p></li>
+<li><p>数据压缩：Kylin 针对维度字典以及维度表快照采用了特殊的压缩算法，对于 HBase 中的聚合计算数据利用了 Hadoop 的 LZO 或者是 Snappy 等压缩算法，从而保证存储在 HBase 以及内存中的数据尽可能地小；</p></li>
+<li><p>对于大的事实表可以采用分区来增量构建，然后设置定期自动合并（Merge）操作；</p></li>
+<li><p>事实表中日期数据类型为尽可能设置为 date；</p></li>
+<li><p>ShardBy 字段有助于全部数据分散分布在各个 Region 中，有助于防止出现数据倾斜等问题；</p></li>
+<li><p>ShardBy 字段为 True 后，同一个值的数据会存储在一起，便于批量捞取数据。</p></li>
+</ol>
+
+
+<h2>5.3、注意事项</h2>
+
+<h3>1、哪些维度参与了 Cuboid 构建？</h3>
+
+<p>很多人会误以为只有聚合组 Includes 里面被选择的维度才参与 Cube 构建的计算，其实真正参与计算是 Dimensions 设置界面选择为 Default 的那些维度，还有 Left Join 的字段（如果其 Derived 字段被勾选）。</p>
+
+<blockquote><p>简单来说，在 RowKeys 排序界面看到的维度都会参与 Cuboid 的构建，如果在 RowKeys 看到不想参与计算的维度，可以到 Dimensions 设置界面进行修改。</p></blockquote>
+
+<h3>2、结合业务设置层级维度</h3>
+
+<p>层级维度在设置的时候一定要深刻理解业务，例如：企业到底归属到行业类型下还是归属到区域类型下？从层级结构的角度来讲都是可以的，深层次挖掘业务需求后我们会发现，凡是查询企业的时候均附带有区域的过滤条件，因此将企业归属到区域的层级下比归属到行业类型下更加有效。</p>
+
+<h3>3、善于尝试</h3>
+
+<p>在实践中，可能会遇到各种不确定的思路，最佳的做法是去实践，多建立 Model 和 Cube，从不同层次去优化，去尝试，在实践中不断总结经验。</p>
+
+<p>原文链接：<br/>
+<a href="https://juejin.cn/post/6844903693058342925">Apache Kylin 入门 1 - 基本概念</a> <br/>
+<a href="https://juejin.cn/post/6844903693599408136">Apache Kylin 入门 2 - 原理与架构</a> <br/>
+<a href="https://juejin.cn/post/6844903697755947015">Apache Kylin 入门 4 - 构建 Model</a> <br/>
+<a href="https://juejin.cn/post/6844903700800995336">Apache Kylin 入门 5 - 构建 Cube</a> <br/>
+<a href="https://juejin.cn/post/6844903705536364558">Apache Kylin 入门 6 - 优化 Cube</a></p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2019/06/14/apache-kylin-guide/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2019-06-14T17:47:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/bigdata/'>BigData</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/kylin/'>Kylin</a>, <a class='tag' href='/blog/tags/olap/'>OLAP</a>, <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a></span>
+		
+    </p>
+    
+      
+         <div class="sharing">
+  
+  
+  
+</div>
+
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2019/06/12/python-periodic-time-series/" title="Previous Post:
+        用Python预测周期性时间序列">&laquo; 用Python预测周期性时间序列</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2019/07/27/data-analysis-for-product-ops/"
+        title="Next Post: 产品与运营的数据分析能力指南">产品与运营的数据分析能力指南
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://ibillxia.github.io/blog/2019/06/14/apache-kylin-guide/';
+        var disqus_url = 'https://ibillxia.github.io/blog/2019/06/14/apache-kylin-guide/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

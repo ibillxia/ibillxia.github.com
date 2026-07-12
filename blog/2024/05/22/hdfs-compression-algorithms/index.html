@@ -1,0 +1,599 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>HDFS常用文件类型及压缩算法对比 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2024/05/22/hdfs-compression-algorithms">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(function () {
+  addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">HDFS常用文件类型及压缩算法对比</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2024-05-22T12:18:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><center><img src="/images/2024/IMAG2024052201.webp"></center>
+
+
+<p>首先我们要明确一点，为什么要进行数据压缩？</p>
+
+<p>Cloudera 提出过数据压缩的基本准则：</p>
+
+<ul>
+<li><p>是否压缩数据以及使用何种压缩格式对性能具有重要的影响。</p></li>
+<li><p>需要平衡压缩和解压缩数据所需的能力、读写数据所需的磁盘 IO，以及在网络中发送数据所需的网络带宽。</p></li>
+</ul>
+
+
+<p>此外，用到哪些压缩格式，为什么使用这些压缩格式而不是其他的压缩格式？</p>
+
+<!--more-->
+
+
+<p>主要考虑到：</p>
+
+<ul>
+<li><p>文件和压缩算法的组合是否支持可分片, MapReduce在读取数据的时候需要并行, 这就要求压缩后的文件可以分片读取。</p></li>
+<li><p>io读取性能, 读取相同信息量的信息, 压缩后的文件不仅占用的存储空间低, 而且还会提高磁盘io的读取效率。提高程序的运行速度</p></li>
+<li><p>CPU资源也是启用何种压缩算法不得不考虑的因素, 一般来说压缩效率越高的算法对io效率和存储利用率的提升越有促进作用, 但另一方面也会更高的消耗CPU资源。所以我们需要在这中间寻求一个平衡点。</p></li>
+<li><p>共通性, 文件格式是否支持多种语言, 服务的读取。比如Hadoop主要的序列化格式为Writables, 但是Writables只支持Java, 所以后面衍生出了Avro, Thrift等格式。还如OrcFile是对Hive设计的一种列式存储格式, 但是他不支持Impala, 数据的共用性受到了制约。</p></li>
+<li><p>错误处理能力, 有的文件的某一部分坏掉之后会影响整个表, 有的只会影响其后的数据, 有的只会影响坏掉数据块本身(Avro)。</p></li>
+<li><p>读取和载入效率, RCFile的载入速度慢, 但是查询相应速度快, 相对更适合数据仓库一次插入多次读取的特性。</p></li>
+</ul>
+
+
+<h1>一、HDFS中的文件类型</h1>
+
+<ul>
+<li><p>基于文件存储</p></li>
+<li><p>序列化和列式存储，例如：Avro、RCFile和Parquet</p></li>
+</ul>
+
+
+<p>下面我们依次来介绍。</p>
+
+<h2>1.1 基于文件的SequenceFile</h2>
+
+<p>sequenceFile文件是Hadoop用来存储二进制形式的[Key,Value]对而设计的一种平面文件(Flat File)。可以把SequenceFile当做是一个容器，把所有的文件打包到SequenceFile类中可以高效的对小文件进行存储和处理。SequenceFile文件并不按照其存储的Key进行排序存储，SequenceFile的内部类Writer提供了append功能。SequenceFile中的Key和Value可以是任意类型Writable或者是自定义Writable。</p>
+
+<p>在存储结构上，SequenceFile主要由一个Header后跟多条Record组成，Header主要包含了Key classname，value classname，存储压缩算法，用户自定义元数据等信息，此外，还包含了一些同步标识，用于快速定位到记录的边界。每条Record以键值对的方式进行存储，用来表示它的字符数组可以一次解析成：记录的长度、Key的长度、Key值和value值，并且Value值的结构取决于该记录是否被压缩。</p>
+
+<p>SequenceFile支持三种记录存储方式：</p>
+
+<ul>
+<li><p>无压缩, io效率较差. 相比压缩, 不压缩的情况下没有什么优势.</p></li>
+<li><p>记录级压缩, 对每条记录都压缩. 这种压缩效率比较一般.</p></li>
+<li><p>块级压缩, 这里的块不同于hdfs中的块的概念. 这种方式会将达到指定块大小的二进制数据压缩为一个块. 相对记录级压缩, 块级压缩拥有更高的压缩效率. 一般来说使用SequenceFile都会使用块级压缩.</p></li>
+</ul>
+
+
+<p>但是SequenceFile只支持Java, SequenceFile一般用来作为小文件的容器使用, 防止小文件占用过多的NameNode内存空间来存储其在DataNode位置的元数据。</p>
+
+<h2>1.2 序列化存储格式和列式存储</h2>
+
+<p>序列化指的是数据格式转化为字节流的过程, 主要用于远程传输或存储. hadoop采用的序列化格式主要是Writables. 但是它只能支持Java语言, 所以后来就出现了Thrift, Avro等格式。</p>
+
+<ul>
+<li>Thrift</li>
+</ul>
+
+
+<p>Thrift是Facebook开发的框架，用于实现跨语言提供服务和接口，满足跨平台通信。但是Thrift不支持分片，且缺少MapReduce的原生支持。所以我们可以忽略这个压缩算法。</p>
+
+<ul>
+<li>Avro</li>
+</ul>
+
+
+<p>Avro 是 Hadoop 中的一个子项目，也是 Apache 中一个独立的项目，Avro 是一个基于二进制数据传输高性能的中间件。在 Hadoop 的其他项目中，例如 HBase 和 Hive 的 Client 端与服务端的数据传输也采用了这个工具。</p>
+
+<p>Avro是一个语言无关的数据序列化的系统，它的出现主要是为了解决Writables缺少跨语言移植的缺陷。Avro将模式存储在文件头中，所以每个文件都是自描述的，而且Avro还支持模式演进(schema evolution)，也就是说，读取文件的模式不需要与写入文件的模式严格匹配，当有新需求时，可以在模式中加入新的字段。</p>
+
+<pre><code>- Avro支持分片, 即使是进行Gzip压缩之后
+
+- 支持跨语言的支持
+</code></pre>
+
+<ul>
+<li>ORCFile</li>
+</ul>
+
+
+<p>ORC的全称是(Optimized Row Columnar)，ORC文件格式是一种Hadoop生态圈中的列式存储格式，它的产生早在2013年初，最初产生自Apache Hive，用于降低Hadoop数据存储空间和加速Hive查询速度。和Parquet类似，它并不是一个单纯的列式存储格式，仍然是首先根据行组分割整个表，在每一个行组内进行按列存储。ORC文件是自描述的，它的元数据使用Protocol Buffers序列化，并且文件中的数据尽可能的压缩以降低存储空间的消耗，目前也被Spark SQL、Presto等查询引擎支持。2015年ORC项目被Apache项目基金会提升为Apache顶级项目。ORC具有以下一些优势：</p>
+
+<pre><code>- ORC是列式存储，有多种文件压缩方式，并且有着很高的压缩比
+
+- 文件是可切分（Split）的。因此，在Hive中使用ORC作为表的文件存储格式，不仅节省HDFS存储资源，查询任务的输入数据量减少，使用的MapTask也就减少了
+
+- 提供了多种索引，row group index、bloom filter index
+
+- ORC可以支持复杂的数据结构（比如Map等）
+
+- 支持所有的hive类型, 包括复合类型: structs, lists, maps 和 unions
+
+- 支持分片
+
+- 可以仅返回查询的列, 减少io消耗, 提升性能
+
+- 可以与Zlib, LZO和Snappy结合进一步压缩
+</code></pre>
+
+<h2>1.3 常用的存储格式对比</h2>
+
+<p>存储格式的对比</p>
+
+<table>
+<thead>
+<tr>
+<th> 存储格式 </th>
+<th> 是否默认 </th>
+<th> 存储方式 </th>
+<th> 压缩算法 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> TextFile </td>
+<td> 是 </td>
+<td> 行式存储 </td>
+<td> Gzip、Bzip2 </td>
+</tr>
+<tr>
+<td> SequenceFile </td>
+<td> 否 </td>
+<td> 行式存储 </td>
+<td> NONE、RECORD、BLOCK </td>
+</tr>
+<tr>
+<td> Parquet </td>
+<td> 否 </td>
+<td> 列式存储 </td>
+<td> Uncompress(默认)、Snappy、Gzip、Lzo </td>
+</tr>
+<tr>
+<td> RCFile </td>
+<td> 否 </td>
+<td> 数据按行分块，每块按列存储 </td>
+<td> - </td>
+</tr>
+<tr>
+<td> ORCFile(RCFile的进化版本) </td>
+<td> 否 </td>
+<td> 数据按行分块，每块按照列存储 </td>
+<td> NONE、ZLIB(默认)、SNAPPY </td>
+</tr>
+</tbody>
+</table>
+
+
+<p>存储方式的对比</p>
+
+<table>
+<thead>
+<tr>
+<th> 存储方式 </th>
+<th> 行查询效率 </th>
+<th> 列查询效率 </th>
+<th> 压缩效率 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> 行式存储 </td>
+<td> 高 </td>
+<td> 低 </td>
+<td> 低 </td>
+</tr>
+<tr>
+<td> 列式存储 </td>
+<td> 低 </td>
+<td> 高 </td>
+<td> 高 </td>
+</tr>
+</tbody>
+</table>
+
+
+<h1>二、压缩算法</h1>
+
+<h2>2.1 gzip压缩</h2>
+
+<p>优点：压缩率比较高，而且压缩/解压速度也比较快；hadoop本身支持，在应用中处理gzip格式的文件就和直接处理文本一样；有hadoop native库；大部分linux系统都自带gzip命令，使用方便。缺点：不支持split。应用场景：当每个文件压缩之后在130M以内的（1个块大小内），都可以考虑用gzip压缩格式。譬如说一天或者一个小时的日志压缩成一个gzip文件，运行mapreduce程序的时候通过多个gzip文件达到并发。hive程序，streaming程序，和java写的mapreduce程序完全和文本处理一样，压缩之后原来的程序不需要做任何修改。</p>
+
+<h2>2.2 lzo压缩</h2>
+
+<p>优点：压缩/解压速度也比较快，合理的压缩率；支持split，是hadoop中最流行的压缩格式；支持hadoop native库；可以在linux系统下安装lzop命令，使用方便。缺点：压缩率比gzip要低一些；hadoop本身不支持，需要安装；在应用中对lzo格式的文件需要做一些特殊处理（为了支持split需要建索引，还需要指定inputformat为lzo格式）。应用场景：一个很大的文本文件，压缩之后还大于200M以上的可以考虑，而且单个文件越大，lzo优点越明显。</p>
+
+<p>snappy压缩 优点：高速压缩速度和合理的压缩率；支持hadoop native库。缺点：不支持split；压缩率比gzip要低；hadoop本身不支持，需要安装；linux系统下没有对应的命令。应用场景：当mapreduce作业的map输出的数据比较大的时候，作为map到reduce的中间数据的压缩格式；或者作为一个mapreduce作业的输出和另外一个mapreduce作业的输入。</p>
+
+<h2>2.3 bzip2压缩</h2>
+
+<p>优点：支持split；具有很高的压缩率，比gzip压缩率都高；hadoop本身支持，但不支持native；在linux系统下自带bzip2命令，使用方便。缺点：压缩/解压速度慢；不支持native。应用场景：适合对速度要求不高，但需要较高的压缩率的时候，可以作为mapreduce作业的输出格式；或者输出之后的数据比较大，处理之后的数据需要压缩存档减少磁盘空间并且以后数据用得比较少的情况；或者对单个很大的文本文件想压缩减少存储空间，同时又需要支持split，而且兼容之前的应用程序（即应用程序不需要修改）的情况。</p>
+
+<p>最后，我们用一张图来对这4种压缩格式进行比较：</p>
+
+<center><img src="/images/2024/IMAG2024052202.webp"></center>
+
+
+<h2>2.4 压缩算法对比</h2>
+
+<p>Hive 在处理数据时，一般都需要经历文件读取和文件写出的过程，如果按照原文件的大小进行读写和传输，不仅效率查而且带宽的占用也很高，此时就需要我们这里所讲的 存储格式 和 压缩算法</p>
+
+<h3>不同的存储格式+压缩算法性能比较</h3>
+
+<p>文件存储格式不同对应不同的压缩算法，从而带来不同的性能，我们根据实际使用考虑压缩算法的性能，主要通过以下 3 个指标：</p>
+
+<p><strong>① 压缩比</strong></p>
+
+<p>压缩比越高，压缩后文件越小，所以压缩比越高越好；</p>
+
+<p>压缩比越高，存储磁盘空间占用越小，可以降低单节点的磁盘IO，同时可以减少占用的带宽；</p>
+
+<p><strong>② 压缩时间</strong></p>
+
+<p>越快越好，加快数据在Hadoop集群流动的速度和磁盘 IO 的速度</p>
+
+<p><strong>③ 压缩后的文件是否可以再分割</strong></p>
+
+<p>可以分割的格式允许单一文件由多个Mapper程序处理，可以更好的并行化</p>
+
+<table>
+<thead>
+<tr>
+<th> 压缩方式 </th>
+<th> 压缩比 </th>
+<th> 压缩速度 </th>
+<th> 解压缩速度 </th>
+<th> 是否可分割 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> gzip </td>
+<td> 13.4% </td>
+<td> 21 MB/s </td>
+<td> 118 MB/s </td>
+<td> 否 </td>
+</tr>
+<tr>
+<td> bzip2 </td>
+<td> 13.2% </td>
+<td> 2.4MB/s </td>
+<td> 9.5MB/s </td>
+<td> 是 </td>
+</tr>
+<tr>
+<td> lzo </td>
+<td> 20.5% </td>
+<td> 135 MB/s </td>
+<td> 410 MB/s </td>
+<td> 是 </td>
+</tr>
+<tr>
+<td> snappy </td>
+<td> 22.2% </td>
+<td> 172 MB/s </td>
+<td> 409 MB/s </td>
+<td> 否 </td>
+</tr>
+</tbody>
+</table>
+
+
+<h1>三、使用总结</h1>
+
+<pre><code>*# 压缩比比较*ORC &gt;  PARQUET &gt; TEXTFILE*# 查询速度*ORC &gt;  TEXTFILE &gt; PARQUET*# 存储格式为ORC,不同的压缩算法比较压缩后的文件大小*ZLIB &lt; SNAPPY &lt; 非压缩
+</code></pre>
+
+<h2>① 数据量较大</h2>
+
+<p>如果单个文件比较大，可以使用 Parquet 存储，lzo 压缩，可以避免由于读取不可分割大文件引发的数据倾斜</p>
+
+<h2>② 计算逻辑比较少</h2>
+
+<p>使用 ORC 存储 + ZLIB 压缩，可以尽量减少占用存储空间</p>
+
+<h2>③ 计算逻辑比较多</h2>
+
+<p>使用 ORC 存储 + SNAPPY 压缩，可以提高读写速度，从而提高整体计算性能</p>
+
+<h1>参考资料</h1>
+
+<ol>
+<li><a href="https://cloud.tencent.com/developer/article/1777790">HDFS常用文件类型及压缩算法对比</a></li>
+</ol>
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2024/05/22/hdfs-compression-algorithms/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2024-05-22T12:18:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/bigdata/'>BigData</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/hdfs/'>HDFS</a>, <a class='tag' href='/blog/tags/hadoop/'>Hadoop</a>, <a class='tag' href='/blog/tags/ya-suo/'>压缩</a>, <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a></span>
+		
+    </p>
+    
+      
+         <div class="sharing">
+  
+  
+  
+</div>
+
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2024/05/15/spark-memory-management-tuning/" title="Previous Post:
+        Spark内存管理及调优">&laquo; Spark内存管理及调优</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2024/05/26/recommendation-system-industry-summary/"
+        title="Next Post: 工业界推荐系统技术要点总结">工业界推荐系统技术要点总结
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://ibillxia.github.io/blog/2024/05/22/hdfs-compression-algorithms/';
+        var disqus_url = 'https://ibillxia.github.io/blog/2024/05/22/hdfs-compression-algorithms/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,1077 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: XGBoost | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/xgboost/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[集成树模型详解：RandomForest、GBDT、XGBoost与LightGBM]]></title>
+    <link href="https://ibillxia.github.io/blog/2020/02/21/tree-ensemble-models-comparison/"/>
+    <updated>2020-02-21T20:00:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2020/02/21/tree-ensemble-models-comparison</id>
+    <content type="html"><![CDATA[<p>本文主要介绍基于集成学习的决策树，然后对其中重要的、使用广泛的方法进行对比：RF（随机森林））, GBDT（梯度提升决策树）, XGBoost, lightGBM。</p>
+
+<h1>一、集成学习</h1>
+
+<center><img src="/images/2020/IMAG2020022101.png"></center>
+
+
+<p><br></p>
+
+<p>常见的集成学习框架有三种：Bagging，Boosting 和 Stacking。三种集成学习框架在基学习器的产生和综合结果的方式上会有些区别，我们先做些简单的介绍。</p>
+
+<!--more-->
+
+
+<h2>1.1 Bagging</h2>
+
+<p>Bagging 全称叫 Bootstrap aggregating，看到 Bootstrap 我们立刻想到著名的开源前端框架（抖个机灵，是 Bootstrap 抽样方法） ，每个基学习器都会对训练集进行有放回抽样得到子训练集，比较著名的采样法为 0.632 自助法。每个基学习器基于不同子训练集进行训练，并综合所有基学习器的预测值得到最终的预测结果。Bagging 常用的综合方法是投票法，票数最多的类别为预测类别。</p>
+
+<center><img src="/images/2020/IMAG2020022102.jpeg"></center>
+
+
+<p><br></p>
+
+<h2>1.2 Boosting</h2>
+
+<p>Boosting 训练过程为阶梯状，基模型的训练是有顺序的，每个基模型都会在前一个基模型学习的基础上进行学习，最终综合所有基模型的预测值产生最终的预测结果，用的比较多的综合方式为加权法。</p>
+
+<center><img src="/images/2020/IMAG2020022103.jpeg"></center>
+
+
+<p><br></p>
+
+<h2>1.3 Stacking</h2>
+
+<p>Stacking 是先用全部数据训练好基模型，然后每个基模型都对每个训练样本进行的预测，其预测值将作为训练样本的特征值，最终会得到新的训练样本，然后基于新的训练样本进行训练得到模型，然后得到最终预测结果。</p>
+
+<center><img src="/images/2020/IMAG2020022104.jpeg"></center>
+
+
+<p><br></p>
+
+<p>那么，为什么集成学习会好于单个学习器呢？原因可能有三：</p>
+
+<ol>
+<li><p>训练样本可能无法选择出最好的单个学习器，由于没法选择出最好的学习器，所以干脆结合起来一起用；</p></li>
+<li><p>假设能找到最好的学习器，但由于算法运算的限制无法找到最优解，只能找到次优解，采用集成学习可以弥补算法的不足；</p></li>
+<li><p>可能算法无法得到最优解，而集成学习能够得到近似解。比如说最优解是一条对角线，而单个决策树得到的结果只能是平行于坐标轴的，但是集成学习可以去拟合这条对角线。</p></li>
+</ol>
+
+
+<h1>二、偏差与方差</h1>
+
+<p>上节介绍了集成学习的基本概念，这节我们主要介绍下如何从偏差和方差的角度来理解集成学习。</p>
+
+<h2>2.1 集成学习的偏差与方差</h2>
+
+<p>偏差（Bias）描述的是预测值和真实值之差；方差（Variance）描述的是预测值作为随机变量的离散程度。放一场很经典的图：</p>
+
+<center><img src="/images/2020/IMAG2020022106.jpeg"></center>
+
+
+<p><br></p>
+
+<p>模型的偏差与方差</p>
+
+<ul>
+<li><p>偏差：描述样本拟合出的模型的预测结果的期望与样本真实结果的差距，要想偏差表现的好，就需要复杂化模型，增加模型的参数，但这样容易过拟合，过拟合对应上图的 High Variance，点会很分散。低偏差对应的点都打在靶心附近，所以喵的很准，但不一定很稳；</p></li>
+<li><p>方差：描述样本上训练出来的模型在测试集上的表现，要想方差表现的好，需要简化模型，减少模型的复杂度，但这样容易欠拟合，欠拟合对应上图 High Bias，点偏离中心。低方差对应就是点都打的很集中，但不一定是靶心附近，手很稳，但不一定瞄的准。</p></li>
+</ul>
+
+
+<p>我们常说集成学习中的基模型是弱模型，通常来说弱模型是偏差高（在训练集上准确度低）方差小（防止过拟合能力强）的模型。但是，并不是所有集成学习框架中的基模型都是弱模型。Bagging 和 Stacking 中的基模型为强模型（偏差低方差高），Boosting 中的基模型为弱模型。</p>
+
+<h2>2.2 Bagging 的偏差与方差</h2>
+
+<p>对于 Bagging 来说，每个基模型的权重等于 1/m 且期望近似相等（子训练集都是从原训练集中进行子抽样），故我们可以进一步化简得到：</p>
+
+<center><img src="/images/2020/IMAG2020022107.png"></center>
+
+
+<p><br></p>
+
+<p>通过上式我们可以看到</p>
+
+<ul>
+<li><p>整体模型的期望等于基模型的期望，这也就意味着整体模型的偏差和基模型的偏差近似。</p></li>
+<li><p>整体模型的方差小于等于基模型的方差，当且仅当相关性为 1 时取等号，随着基模型数量增多，整体模型的方差减少，从而防止过拟合的能力增强，模型的准确度得到提高。但是，模型的准确度一定会无限逼近于 1 吗？并不一定，当基模型数增加到一定程度时，方差公式第一项的改变对整体方差的作用很小，防止过拟合的能力达到极限，这便是准确度的极限了。</p></li>
+</ul>
+
+
+<p>在此我们知道了为什么 Bagging 中的基模型一定要为强模型，如果 Bagging 使用弱模型则会导致整体模型的偏差提高，而准确度降低。</p>
+
+<p>Random Forest 是经典的基于 Bagging 框架的模型，并在此基础上通过引入特征采样和样本采样来降低基模型间的相关性，在公式中显著降低方差公式中的第二项，略微升高第一项，从而使得整体降低模型整体方差。</p>
+
+<h2>2.3 Boosting 的偏差与方差</h2>
+
+<p>对于 Boosting 来说，基模型的训练集抽样是强相关的，那么模型的相关系数近似等于 1，故我们也可以针对 Boosting 化简公式为：</p>
+
+<center><img src="/images/2020/IMAG2020022108.png"></center>
+
+
+<p><br></p>
+
+<p>通过观察整体方差的表达式我们容易发现：</p>
+
+<ul>
+<li><p>整体模型的方差等于基模型的方差，如果基模型不是弱模型，其方差相对较大，这将导致整体模型的方差很大，即无法达到防止过拟合的效果。因此，Boosting 框架中的基模型必须为弱模型。</p></li>
+<li><p>此外 Boosting 框架中采用基于贪心策略的前向加法，整体模型的期望由基模型的期望累加而成，所以随着基模型数的增多，整体模型的期望值增加，整体模型的准确度提高。</p></li>
+</ul>
+
+
+<p>基于 Boosting 框架的 Gradient Boosting Decision Tree 模型中基模型也为树模型，同 Random Forrest，我们也可以对特征进行随机抽样来使基模型间的相关性降低，从而达到减少方差的效果。</p>
+
+<h2>2.4 小结</h2>
+
+<ul>
+<li><p>我们可以使用模型的偏差和方差来近似描述模型的准确度；</p></li>
+<li><p>对于 Bagging 来说，整体模型的偏差与基模型近似，而随着模型的增加可以降低整体模型的方差，故其基模型需要为强模型；</p></li>
+<li><p>对于 Boosting 来说，整体模型的方差近似等于基模型的方差，而整体模型的偏差由基模型累加而成，故基模型需要为弱模型。</p></li>
+</ul>
+
+
+<p>接下来对集成学习中重要的、使用广泛的方法进行对比：RF（随机森林））, GBDT（梯度提升决策树）, XGBoost, lightGBM</p>
+
+<h1>三、随机森林 -- RandomForest</h1>
+
+<p>提到随机森林，就不得不提Bagging，Bagging可以简单的理解为：放回抽样，多数表决（分类）或简单平均（回归）,同时Bagging的基学习器之间属于并列生成，不存在强依赖关系。</p>
+
+<blockquote><p>Random Forest（随机森林）是Bagging的扩展变体，它在以决策树 为基学习器构建Bagging集成的基础上，进一步在决策树的训练过程中引入了随机特征选择</p></blockquote>
+
+<h2>概括RF包括四个部分</h2>
+
+<p>1、随机选择样本（放回抽样）；</p>
+
+<p>2、随机选择特征属性；</p>
+
+<p>3、构建决策树；</p>
+
+<p>4、随机森林投票（平均） 因此防止过拟合能力更强，降低方差。</p>
+
+<p>RF和Bagging对比： RF的起始性能较差，特别当只有一个基学习器时，随着学习器数目增多，随机森林通常会收敛到更低的泛化误差。随机森林的训练效率也会高于Bagging，因为在单个决策树的构建中，Bagging使用的是‘确定性’决策树，在选择特征划分结点时，要对所有的特征进行考虑，而随机森林使用的是‘随机性’特征数，只需考虑特征的子集。</p>
+
+<h2>使用的融合方法：bagging</h2>
+
+<ul>
+<li><p>一种集成学习算法，基于bootstrap sampling 自助采样法，重复性有放回的随机采用部分样本进行训练最后再将结果 voting 或者 averaging 。</p></li>
+<li><p>它是并行式算法，因为不同基学习器是独立</p></li>
+<li><p>训练一个bagging集成学习器时间复杂度与基学习器同阶（n倍，n为基学习器个数）。</p></li>
+<li><p>bagging可以用于二分类／多分类／回归</p></li>
+<li><p>每个基学习器的未用作训练样本可用来做包外估计，评价泛化性能。</p></li>
+<li><p>bagging主要关注降低 方差。</p></li>
+<li><p>两个步骤 1. 抽样训练（采样样本，采样特征） 2 融合</p></li>
+</ul>
+
+
+<h2>随机森林的优缺点</h2>
+
+<h3>优点：</h3>
+
+<p>a）随机森林算法能解决分类与回归两种类型的问题，表现良好，由于是集成学习，方差和偏差都比较低，泛化性能优越；</p>
+
+<p>b）随机森林对于高维数据集的处理能力很好，它可以处理成千上万的输入变量，并确定最重要的变量，因此被认为是一个不错的降维方法。此外，该模型能够输出特征的重要性程度，这是一个非常实用的功能。</p>
+
+<p>c) 可以应对缺失数据；</p>
+
+<p>d）当存在分类不平衡的情况时，随机森林能够提供平衡数据集误差的有效方法；</p>
+
+<p>e ) 高度并行化，易于分布式实现</p>
+
+<p>f) 由于是树模型 ，不需要归一化即可之间使用</p>
+
+<h3>缺点：</h3>
+
+<ol>
+<li><p>随机森林在解决回归问题时并没有像它在分类中表现的那么好，这是因为它并不能给出一个连续型的输出。当进行回归时，随机森林不能够作出超越训练集数据范围的预测，这可能导致在对某些还有特定噪声的数据进行建模时出现过度拟合。</p></li>
+<li><p>对于许多统计建模者来说，随机森林给人的感觉像是一个黑盒子——你几乎无法控制模型内部的运行，只能在不同的参数和随机种子之间进行尝试。</p></li>
+<li><p>忽略属性之间的相关性</p></li>
+<li><p>在噪声较大的分类或者回归问题上容易过拟合。</p></li>
+</ol>
+
+
+<h1>四、GBDT (Gradient Boosting Decision Tree)</h1>
+
+<p>提GBDT之前，谈一下Boosting，Boosting是一种与Bagging很类似的技术。不论是Boosting还是Bagging，所使用的多个分类器类型都是一致的。但是在前者当中，不同的分类器是通过串行训练而获得的，每个新分类器都根据已训练的分类器的性能来进行训练。Boosting是通过关注被已有分类器错分的那些数据来获得新的分类器。</p>
+
+<blockquote><p>由于Boosting分类的结果是基于所有分类器的加权求和结果的，因此Boosting与Bagging不太一样，Bagging中的分类器权值是一样的，而Boosting中的分类器权重并不相等，每个权重代表对应的分类器在上一轮迭代中的成功度。</p></blockquote>
+
+<h2>原理</h2>
+
+<ul>
+<li><p>GBDT的基本原理是boost 里面的 boosting tree（提升树），并使用 gradient boost。</p></li>
+<li><p>GradientBoosting算法关键是利用损失函数的负梯度方向在当前模型的值作为残差的近似值，进而拟合一棵CART回归树。</p></li>
+<li><p>GBDT会累加所有树的结果，而这种累加是无法通过分类完成的，因此GBDT的树都是CART回归树，而不是分类树（尽管GBDT调整后也可以用于分类但不代表GBDT的树为分类树) 因为Gradient Boosting 需要按照损失函数的梯度近似的拟合残差，这样拟合的是连续数值，因此只有回归树。</p></li>
+</ul>
+
+
+<h2>梯度提升 Gradient Boosting:</h2>
+
+<p>Gradient Boosting是一种Boosting的方法，其与传统的Boosting的区别是，每一次的计算是为了减少上一次的残差(residual)，而为了消除残差，可以在残差减少的梯度(Gradient)方向上建立一个新的模型。所以说，在Gradient Boosting中，每个新的模型的建立是为了使得之前模型的残差往梯度方向减少，与传统Boosting对正确、错误样本进行加权有着很大的区别。这个梯度代表上一轮学习器损失函数对预测值求导。</p>
+
+<p>与Boosting Tree的区别：Boosting Tree适合于损失函数为平方损失或者指数损失。而Gradient Boosting适合各类损失函数（损失函数为平方损失则相当于Boosting Tree拟合残差、损失函数为指数损失则可以近似于Adaboost，但树是回归树）</p>
+
+<h2>优缺点</h2>
+
+<p>　　优点：GBDT的性能在RF的基础上又有一步提升，因此其优点也很明显，1、它能灵活的处理各种类型的数据；2、在相对较少的调参时间下，预测的准确度较高。</p>
+
+<p>　　缺点：当然由于它是Boosting，因此基学习器之前存在串行关系，难以并行训练数据。</p>
+
+<h1>五、XGBoost</h1>
+
+<h2>原理</h2>
+
+<p>XGBoost的原理详细，推荐两篇大神博客， <a href="https://www.cnblogs.com/yuluoxingkong/p/8624787.html">xgboost原理</a> ，<a href="https://www.cnblogs.com/pinard/p/10979808.html">xgboost 算法原理</a>。</p>
+
+<p>XGBoost是集成学习Boosting家族的成员，是在GBDT的基础上对boosting算法进行的改进。GBDT是用模型在数据上的负梯度作为残差的近似值，从而拟合残差。XGBoost也是拟合的在数据上的残差，但是它是用泰勒展开式对模型损失残差的近似；同时XGBoost对模型的损失函数进行的改进，并加入了模型复杂度的正则项。</p>
+
+<blockquote><p>XGBoost的性能在GBDT上又有一步提升，而其性能也能通过各种比赛管窥一二。坊间对XGBoost最大的认知在于其能够自动地运用CPU的多线程进行并行计算，同时在算法精度上也进行了精度的提高。由于GBDT在合理的参数设置下，往往要生成一定数量的树才能达到令人满意的准确率，在数据集较复杂时，模型可能需要几千次迭代运算。但是XGBoost利用并行的CPU更好的解决了这个问题。</p></blockquote>
+
+<p>XGBoost与GBDT的区别： 在了解了XGBoost原理后容易理解二者的不同</p>
+
+<h3>损失函数的改变：（导数和正则项的认识）</h3>
+
+<ul>
+<li><p>传统的GBDT以CART树作为基学习器，XGBoost还支持线性分类器，这个时候XGBoost相当于L1和L2正则化的逻辑斯蒂回归（分类）或者线性回归（回归）；</p></li>
+<li><p>传统的GBDT在优化的时候只用到一阶导数信息，XGBoost则对代价函数进行了二阶泰勒展开，得到一阶和二阶导数；</p></li>
+<li><p>XGBoost在代价函数中加入了正则项，用于控制模型的复杂度。从权衡方差偏差来看，它降低了模型的方差，使学习出来的模型更加简单，防止过拟合，这也是XGBoost优于传统GBDT的一个特性；</p></li>
+</ul>
+
+
+<h3>工具的优化：（趋势值和并行的认识）</h3>
+
+<ol>
+<li><p>shrinkage（缩减），相当于学习速率（XGBoost中的eta）。XGBoost在进行完一次迭代时，会将叶子节点的权值乘上该系数，主要是为了削弱每棵树的影响，让后面有更大的学习空间。（GBDT也有学习速率）；</p></li>
+<li><p>列抽样。XGBoost借鉴了随机森林的做法，支持列抽样，不仅防止过 拟合，还能减少计算；</p></li>
+<li><p>对缺失值的处理。对于特征的值有缺失的样本，XGBoost还可以自动学习出它的分裂方向；</p></li>
+<li><p>XGBoost工具支持并行。Boosting不是一种串行的结构吗?怎么并行的？注意XGBoost的并行不是tree粒度的并行，XGBoost也是一次迭代完才能进行下一次迭代的（第t次迭代的代价函数里包含了前面t-1次迭代的预测值）。XGBoost的并行是在特征粒度上的。我们知道，决策树的学习最耗时的一个步骤就是对特征的值进行排序（因为要确定最佳分割点），XGBoost在训练之前，预先对数据进行了排序，然后保存为block结构，后面的迭代 中重复地使用这个结构，大大减小计算量。这个block结构也使得并行成为了可能，在进行节点的分裂时，需要计算每个特征的增益，最终选增益最大的那个特征去做分裂，那么各个特征的增益计算就可以开多线程进行。</p></li>
+</ol>
+
+
+<h2>缺点</h2>
+
+<p>1、level-wise 建树方式对当前层的所有叶子节点一视同仁，有些叶子节点分裂收益非常小，对结果没影响，但还是要分裂，加重了计算代价。</p>
+
+<p>2、预排序方法空间消耗比较大，不仅要保存特征值，也要保存特征的排序索引，同时时间消耗也大，在遍历每个分裂点时都要计算分裂增益(不过这个缺点可以被近似算法所克服)</p>
+
+<h1>六、lightGBM</h1>
+
+<p>它是微软出的新的boosting框架，基本原理与XGBoost一样，只是在框架上做了一优化（重点在模型的训练速度的优化）。</p>
+
+<p>关于lightGBM的介绍参考：比XGBOOST更快–LightGBM介绍</p>
+
+<h2>与XGboost对比</h2>
+
+<p>1、xgboost采用的是level-wise的分裂策略，而lightGBM采用了leaf-wise的策略，区别是xgboost对每一层所有节点做无差别分裂，可能有些节点的增益非常小，对结果影响不大，但是xgboost也进行了分裂，带来了务必要的开销。 leaft-wise的做法是在当前所有叶子节点中选择分裂收益最大的节点进行分裂，如此递归进行，很明显leaf-wise这种做法容易过拟合，因为容易陷入比较高的深度中，因此需要对最大深度做限制，从而避免过拟合。</p>
+
+<p>2、lightgbm使用了基于histogram的决策树算法，这一点不同与xgboost中的 exact 算法（tree_method 可以使用 hist参数），histogram算法在内存和计算代价上都有不小优势。</p>
+
+<p>　　（1）内存上优势：很明显，直方图算法的内存消耗为(#data<em> #features * 1Bytes)(因为对特征分桶后只需保存特征离散化之后的值)，而xgboost的exact算法内存消耗为：(2 * #data * #features</em> 4Bytes)，因为xgboost既要保存原始feature的值，也要保存这个值的顺序索引，这些值需要32位的浮点数来保存。</p>
+
+<p>　　（2）计算上的优势，预排序算法在选择好分裂特征计算分裂收益时需要遍历所有样本的特征值，时间为(#data),而直方图算法只需要遍历桶就行了，时间为(#bin)</p>
+
+<p>3、直方图做差加速</p>
+
+<p>一个子节点的直方图可以通过父节点的直方图减去兄弟节点的直方图得到，从而加速计算。</p>
+
+<p>4、lightgbm支持直接输入categorical 的feature</p>
+
+<p>在对离散特征分裂时，每个取值都当作一个桶，分裂时的增益算的是”是否属于某个category“的gain。类似于one-hot编码。</p>
+
+<p>5、多线程优化</p>
+
+<h2>lightgbm哪些方面做了并行？</h2>
+
+<ul>
+<li>feature parallel</li>
+</ul>
+
+
+<p>一般的feature parallel就是对数据做垂直分割（partiion data vertically，就是对属性分割），然后将分割后的数据分散到各个worker上，各个workers计算其拥有的数据的best splits point, 之后再汇总得到全局最优分割点。但是lightgbm说这种方法通讯开销比较大，lightgbm的做法是每个worker都拥有所有数据，再分割？（没懂，既然每个worker都有所有数据了，再汇总有什么意义？这个并行体现在哪里？？）</p>
+
+<ul>
+<li>data parallel</li>
+</ul>
+
+
+<p>传统的data parallel是将对数据集进行划分，也叫 平行分割(partion data horizontally)， 分散到各个workers上之后，workers对得到的数据做直方图，汇总各个workers的直方图得到全局的直方图。 lightgbm也claim这个操作的通讯开销较大，lightgbm的做法是使用”Reduce Scatter“机制，不汇总所有直方图，只汇总不同worker的不同feature的直方图(原理？)，在这个汇总的直方图上做split，最后同步。</p>
+
+<h1>七、参考</h1>
+
+<p><a href="https://www.runoob.com/ml/ml-ensemble-learning.html">【1】集成学习</a></p>
+
+<p><a href="https://cloud.tencent.com/developer/article/2318546">【2】3种常见的集成学习决策树算法及原理</a></p>
+
+<p><a href="https://zhuanlan.zhihu.com/p/86263786">【3】【机器学习】决策树（中）——Random Forest、Adaboost、GBDT （非常详细）</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[XGBoost算法原理详解]]></title>
+    <link href="https://ibillxia.github.io/blog/2017/09/05/xgboost-algorithm-explained/"/>
+    <updated>2017-09-05T21:38:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2017/09/05/xgboost-algorithm-explained</id>
+    <content type="html"><![CDATA[<p>文章内容可能会相对比较多，读者可以点击上方目录，直接阅读自己感兴趣的章节。</p>
+
+<h1>1.序</h1>
+
+<p>关于xgboost的原理网络上的资源很少，大多数还停留在应用层面，本文通过学习陈天奇博士的PPT、论文、一些网络资源，希望对xgboost原理进行深入理解。（笔者在最后的参考文献中会给出地址）</p>
+
+<h1>2.xgboost vs gbdt</h1>
+
+<p>说到xgboost，不得不说gbdt，两者都是boosting方法（如图1所示），了解gbdt可以看我这篇文章 地址。</p>
+
+<center><img src="/images/2017/IMAG2017090501.png"></center>
+
+
+<center>图1</center>
+
+
+<!--more-->
+
+
+<p><br>
+如果不考虑工程实现、解决问题上的一些差异，xgboost与gbdt比较大的不同就是目标函数的定义。</p>
+
+<center><img src="/images/2017/IMAG2017090502.png"></center>
+
+
+<p><br>
+注：红色箭头指向的l即为损失函数；红色方框为正则项，包括L1、L2；红色圆圈为常数项。xgboost利用泰勒展开三项，做一个近似，我们可以很清晰地看到，最终的目标函数只依赖于每个数据点的在误差函数上的一阶导数和二阶导数。</p>
+
+<h1>3.原理</h1>
+
+<p>对于上面给出的目标函数，我们可以进一步化简</p>
+
+<p>（1）定义树的复杂度</p>
+
+<p>对于f的定义做一下细化，把树拆分成结构部分q和叶子权重部分w。下图是一个具体的例子。结构函数q把输入映射到叶子的索引号上面去，而w给定了每个索引号对应的叶子分数是什么。</p>
+
+<center><img src="/images/2017/IMAG2017090503.png"></center>
+
+
+<p><br>
+定义这个复杂度包含了一棵树里面节点的个数，以及每个树叶子节点上面输出分数的L2模平方。当然这不是唯一的一种定义方式，不过这一定义方式学习出的树效果一般都比较不错。下图还给出了复杂度计算的一个例子。</p>
+
+<center><img src="/images/2017/IMAG2017090504.png"></center>
+
+
+<p><br>
+注：方框部分在最终的模型公式中控制这部分的比重,对应模型参数中的lambda ，gamma</p>
+
+<p>在这种新的定义下，我们可以把目标函数进行如下改写，其中I被定义为每个叶子上面样本集合</p>
+
+<center><img src="/images/2017/IMAG2017090505.gif"></center>
+
+
+<p><br>
+g是一阶导数，h是二阶导数</p>
+
+<center><img src="/images/2017/IMAG2017090506.png"></center>
+
+
+<p><br>
+这一个目标包含了T个相互独立的单变量二次函数。我们可以定义</p>
+
+<center><img src="/images/2017/IMAG2017090507.png"></center>
+
+
+<p><br>
+最终公式可以化简为</p>
+
+<center><img src="/images/2017/IMAG2017090508.png"></center>
+
+
+<p><br>
+通过对求导等于0，可以得到</p>
+
+<center><img src="/images/2017/IMAG2017090509.png"></center>
+
+
+<p><br>
+然后把最优解代入得到：</p>
+
+<center><img src="/images/2017/IMAG2017090510.png"></center>
+
+
+<p><br>
+（2）打分函数计算示例</p>
+
+<p>Obj代表了当我们指定一个树的结构的时候，我们在目标上面最多减少多少。我们可以把它叫做结构分数(structure score)</p>
+
+<center><img src="/images/2017/IMAG2017090511.png"></center>
+
+
+<p><br>
+（3）分裂节点</p>
+
+<p>论文中给出了两种分裂节点的方法</p>
+
+<p>（1）贪心法：</p>
+
+<p>每一次尝试去对已有的叶子加入一个分割</p>
+
+<center><img src="/images/2017/IMAG2017090512.png"></center>
+
+
+<p><br>
+对于每次扩展，我们还是要枚举所有可能的分割方案，如何高效地枚举所有的分割呢？我假设我们要枚举所有x &lt; a 这样的条件，对于某个特定的分割a我们要计算a左边和右边的导数和。</p>
+
+<center><img src="/images/2017/IMAG2017090513.png"></center>
+
+
+<p><br>
+我们可以发现对于所有的a，我们只要做一遍从左到右的扫描就可以枚举出所有分割的梯度和GL和GR。然后用上面的公式计算每个分割方案的分数就可以了。</p>
+
+<p>观察这个目标函数，大家会发现第二个值得注意的事情就是引入分割不一定会使得情况变好，因为我们有一个引入新叶子的惩罚项。优化这个目标对应了树的剪枝， 当引入的分割带来的增益小于一个阀值的时候，我们可以剪掉这个分割。大家可以发现，当我们正式地推导目标的时候，像计算分数和剪枝这样的策略都会自然地出现，而不再是一种因为heuristic（启发式）而进行的操作了。</p>
+
+<p>下面是论文中的算法</p>
+
+<center><img src="/images/2017/IMAG2017090514.png"></center>
+
+
+<p><br>
+（2）近似算法：</p>
+
+<p>主要针对数据太大，不能直接进行计算</p>
+
+<center><img src="/images/2017/IMAG2017090515.png"></center>
+
+
+<p><br></p>
+
+<h1>4.自定义损失函数（指定grad、hess）</h1>
+
+<p>（1）损失函数</p>
+
+<center><img src="/images/2017/IMAG2017090516.png"></center>
+
+
+<p><br>
+（2）grad、hess推导</p>
+
+<center><img src="/images/2017/IMAG2017090517.png"></center>
+
+
+<p><br>
+（3）官方代码</p>
+
+<pre><code class="python">#!/usr/bin/python
+import numpy as np
+import xgboost as xgb
+###
+# advanced: customized loss function
+#
+print ('start running example to used customized objective function')
+
+dtrain = xgb.DMatrix('../data/agaricus.txt.train')
+dtest = xgb.DMatrix('../data/agaricus.txt.test')
+
+# note: for customized objective function, we leave objective as default
+# note: what we are getting is margin value in prediction
+# you must know what you are doing
+param = {'max_depth': 2, 'eta': 1, 'silent': 1}
+watchlist = [(dtest, 'eval'), (dtrain, 'train')]
+num_round = 2
+
+# user define objective function, given prediction, return gradient and second order gradient
+# this is log likelihood loss
+def logregobj(preds, dtrain):
+    labels = dtrain.get_label()
+    preds = 1.0 / (1.0 + np.exp(-preds))
+    grad = preds - labels
+    hess = preds * (1.0-preds)
+    return grad, hess
+
+# user defined evaluation function, return a pair metric_name, result
+# NOTE: when you do customized loss function, the default prediction value is margin
+# this may make builtin evaluation metric not function properly
+# for example, we are doing logistic loss, the prediction is score before logistic transformation
+# the builtin evaluation error assumes input is after logistic transformation
+# Take this in mind when you use the customization, and maybe you need write customized evaluation function
+def evalerror(preds, dtrain):
+    labels = dtrain.get_label()
+    # return a pair metric_name, result
+    # since preds are margin(before logistic transformation, cutoff at 0)
+    return 'error', float(sum(labels != (preds &gt; 0.0))) / len(labels)
+
+# training with customized objective, we can also do step by step training
+# simply look at xgboost.py's implementation of train
+bst = xgb.train(param, dtrain, num_round, watchlist, logregobj, evalerror)
+</code></pre>
+
+<h1>5.Xgboost调参</h1>
+
+<p>由于xgboost的参数过多，这里介绍三种思路</p>
+
+<p>（1）GridSearch</p>
+
+<p>（2）Hyperopt</p>
+
+<h1>6.工程实现优化</h1>
+
+<p>（1）Column Blocks and Parallelization</p>
+
+<center><img src="/images/2017/IMAG2017090518.png"></center>
+
+
+<p><br>
+（2）Cache Aware Access</p>
+
+<ul>
+<li><p>A thread pre-fetches data from non-continuous memory into a continuous buffer.</p></li>
+<li><p>The main thread accumulates gradients statistics in the continuous buffer.</p></li>
+</ul>
+
+
+<p>（3）System Tricks</p>
+
+<ul>
+<li><p>Block pre-fetching.</p></li>
+<li><p>Utilize multiple disks to parallelize disk operations.</p></li>
+<li><p>LZ4 compression(popular recent years for outstanding performance).</p></li>
+<li><p>Unrolling loops.</p></li>
+<li><p>OpenMP</p></li>
+</ul>
+
+
+<h1>7.代码走读</h1>
+
+<p>这块非常感谢杨军老师的无私奉献【4】</p>
+
+<p>个人看代码用的是SourceInsight，由于xgboost有些文件是cc后缀名，可以通过以下命令修改下（默认的识别不了）</p>
+
+<pre><code>find ./-name"*.cc"| awk -F"."'{print $2}'| xargs -i-t mv ./{}.cc  ./{}.cpp
+</code></pre>
+
+<p>实际上，对XGBoost的源码进行走读分析之后，能够看到下面的主流程：</p>
+
+<pre><code>cli_main.cc:
+main()
+     -&gt; CLIRunTask()
+          -&gt; CLITrain()
+               -&gt; DMatrix::Load()
+               -&gt; learner = Learner::Create()
+               -&gt; learner-&gt;Configure()
+               -&gt; learner-&gt;InitModel()
+               -&gt; for (i = 0; i &lt; param.num_round; ++i)
+                    -&gt; learner-&gt;UpdateOneIter()
+                    -&gt; learner-&gt;Save()    
+learner.cc:
+Create()
+      -&gt; new LearnerImpl()
+Configure()
+InitModel()
+     -&gt; LazyInitModel()
+          -&gt; obj_ = ObjFunction::Create()
+               -&gt; objective.cc
+                    Create()
+                         -&gt; SoftmaxMultiClassObj(multiclass_obj.cc)/
+                              LambdaRankObj(rank_obj.cc)/
+                              RegLossObj(regression_obj.cc)/
+                              PoissonRegression(regression_obj.cc)
+          -&gt; gbm_ = GradientBooster::Create()
+               -&gt; gbm.cc
+                    Create()
+                         -&gt; GBTree(gbtree.cc)/
+                              GBLinear(gblinear.cc)
+          -&gt; obj_-&gt;Configure()
+          -&gt; gbm_-&gt;Configure()
+UpdateOneIter()
+      -&gt; PredictRaw()
+      -&gt; obj_-&gt;GetGradient()
+      -&gt; gbm_-&gt;DoBoost()         
+
+gbtree.cc:
+Configure()
+      -&gt; for (up in updaters)
+           -&gt; up-&gt;Init()
+DoBoost()
+      -&gt; BoostNewTrees()
+           -&gt; new_tree = new RegTree()
+           -&gt; for (up in updaters)
+                -&gt; up-&gt;Update(new_tree)    
+
+tree_updater.cc:
+Create()
+     -&gt; ColMaker/DistColMaker(updater_colmaker.cc)/
+        SketchMaker(updater_skmaker.cc)/
+        TreeRefresher(updater_refresh.cc)/
+        TreePruner(updater_prune.cc)/
+        HistMaker/CQHistMaker/
+                  GlobalProposalHistMaker/
+                  QuantileHistMaker(updater_histmaker.cc)/
+        TreeSyncher(updater_sync.cc)
+</code></pre>
+
+<p>从上面的代码主流程可以看到，在XGBoost的实现中，对算法进行了模块化的拆解，几个重要的部分分别是：</p>
+
+<ol type="a">
+<li>ObjFunction：对应于不同的Loss Function，可以完成一阶和二阶导数的计算。</li>
+</ol>
+
+
+<p>II. GradientBooster：用于管理Boost方法生成的Model，注意，这里的Booster Model既可以对应于线性Booster Model，也可以对应于Tree Booster Model。</p>
+
+<p>III. Updater：用于建树，根据具体的建树策略不同，也会有多种Updater。比如，在XGBoost里为了性能优化，既提供了单机多线程并行加速，也支持多机分布式加速。也就提供了若干种不同的并行建树的updater实现，按并行策略的不同，包括：</p>
+
+<p>I). inter-feature exact parallelism （特征级精确并行）</p>
+
+<p>II). inter-feature approximate parallelism（特征级近似并行，基于特征分bin计算，减少了枚举所有特征分裂点的开销）</p>
+
+<p>III). intra-feature parallelism （特征内并行）</p>
+
+<p>此外，为了避免overfit，还提供了一个用于对树进行剪枝的updater(TreePruner)，以及一个用于在分布式场景下完成结点模型参数信息通信的updater(TreeSyncher)，这样设计，关于建树的主要操作都可以通过Updater链的方式串接起来，比较一致干净，算是Decorator设计模式[4]的一种应用。</p>
+
+<p>XGBoost的实现中，最重要的就是建树环节，而建树对应的代码中，最主要的也是Updater的实现。所以我们会以Updater的实现作为介绍的入手点。</p>
+
+<p>以ColMaker（单机版的inter-feature parallelism，实现了精确建树的策略）为例，其建树操作大致如下：</p>
+
+<pre><code>updater_colmaker.cc:
+ColMaker::Update()
+     -&gt; Builder builder;
+     -&gt; builder.Update()
+          -&gt; InitData()
+          -&gt; InitNewNode() // 为可用于split的树结点（即叶子结点，初始情况下只有一个
+                           // 叶结点，也就是根结点) 计算统计量，包括gain/weight等
+          -&gt;  for (depth = 0; depth &lt; 树的最大深度; ++depth)
+               -&gt; FindSplit()
+                    -&gt; for (each feature) // 通过OpenMP获取
+                                          // inter-feature parallelism
+                         -&gt; UpdateSolution()      
+                              -&gt; EnumerateSplit()  // 每个执行线程处理一个特征，
+                                                   // 选出每个特征的
+                                                   // 最优split point
+                              -&gt; ParallelFindSplit()   
+                                   // 多个执行线程同时处理一个特征，选出该特征
+                                   //的最优split point; 
+                                   // 在每个线程里汇总各个线程内分配到的数据样
+                                   //本的统计量(grad/hess);
+                                   // aggregate所有线程的样本统计(grad/hess)，       
+                                   //计算出每个线程分配到的样本集合的边界特征值作为
+                                   //split point的最优分割点;
+                                   // 在每个线程分配到的样本集合对应的特征值集合进
+                                   //行枚举作为split point，选出最优分割点
+                         -&gt; SyncBestSolution()  
+                               // 上面的UpdateSolution()/ParallelFindSplit()
+                               //会为所有待扩展分割的叶结点找到特征维度的最优split 
+                               //point，比如对于叶结点A，OpenMP线程1会找到特征F1 
+                               //的最优split point，OpenMP线程2会找到特征F2的最
+                               //优split point，所以需要进行全局sync，找到叶结点A
+                               //的最优split point。
+                         -&gt; 为需要进行分割的叶结点创建孩子结点     
+               -&gt; ResetPosition() 
+                      //根据上一步的分割动作，更新样本到树结点的映射关系
+                      // Missing Value(i.e. default)和非Missing Value(i.e. 
+                      //non-default)分别处理
+               -&gt; UpdateQueueExpand() 
+                      // 将待扩展分割的叶子结点用于替换qexpand_，作为下一轮split的
+                      //起始基础
+               -&gt; InitNewNode()  // 为可用于split的树结点计算统计量
+</code></pre>
+
+<h1>8.python、R对于xgboost的简单使用</h1>
+
+<p>任务：二分类，存在样本不均衡问题（scale_pos_weight可以一定程度上解读此问题）</p>
+
+<p>【python】</p>
+
+<center><img src="/images/2017/IMAG2017090519.png"></center>
+
+
+<p><br>
+【R】</p>
+
+<center><img src="/images/2017/IMAG2017090520.png"></center>
+
+
+<p><br></p>
+
+<h1>9.xgboost中比较重要的参数介绍</h1>
+
+<p>（1）objective [ default=reg:linear ] 定义学习任务及相应的学习目标，可选的目标函数如下：</p>
+
+<ul>
+<li><p>“reg:linear” –线性回归。</p></li>
+<li><p>“reg:logistic” –逻辑回归。</p></li>
+<li><p>“binary:logistic” –二分类的逻辑回归问题，输出为概率。</p></li>
+<li><p>“binary:logitraw” –二分类的逻辑回归问题，输出的结果为wTx。</p></li>
+<li><p>“count:poisson” –计数问题的poisson回归，输出结果为poisson分布。 在poisson回归中，max_delta_step的缺省值为0.7。(used to safeguard optimization)</p></li>
+<li><p>“multi:softmax” –让XGBoost采用softmax目标函数处理多分类问题，同时需要设置参数num_class（类别个数）</p></li>
+<li><p>“multi:softprob” –和softmax一样，但是输出的是ndata * nclass的向量，可以将该向量reshape成ndata行nclass列的矩阵。没行数据表示样本所属于每个类别的概率。</p></li>
+<li><p>“rank:pairwise” –set XGBoost to do ranking task by minimizing the pairwise loss</p></li>
+</ul>
+
+
+<p>（2）’eval_metric’ The choices are listed below，评估指标:</p>
+
+<ul>
+<li><p>“rmse”: root mean square error</p></li>
+<li><p>“logloss”: negative log-likelihood</p></li>
+<li><p>“error”: Binary classification error rate. It is calculated as #(wrong cases)/#(all cases). For the predictions, the evaluation will regard the instances with prediction value larger than 0.5 as positive instances, and the others as negative instances.</p></li>
+<li><p>“merror”: Multiclass classification error rate. It is calculated as #(wrong cases)/#(all cases).</p></li>
+<li><p>“mlogloss”: Multiclass logloss</p></li>
+<li><p>“auc”: Area under the curve for ranking evaluation.</p></li>
+<li><p>“ndcg”:Normalized Discounted Cumulative Gain</p></li>
+<li><p>“map”:Mean average precision</p></li>
+<li><p>“ndcg@n”,”map@n”: n can be assigned as an integer to cut off the top positions in the lists for evaluation.</p></li>
+<li><p>“ndcg-“,”map-“,”ndcg@n-“,”map@n-“: In XGBoost, NDCG and MAP will evaluate the score of a list without any positive samples as 1. By adding “-” in the evaluation metric XGBoost will evaluate these score as 0 to be consistent under some conditions.</p></li>
+</ul>
+
+
+<p>（3）lambda [default=0] L2 正则的惩罚系数</p>
+
+<p>（4）alpha [default=0] L1 正则的惩罚系数</p>
+
+<p>（5）lambda_bias 在偏置上的L2正则。缺省值为0（在L1上没有偏置项的正则，因为L1时偏置不重要）</p>
+
+<p>（6）eta [default=0.3]</p>
+
+<p>为了防止过拟合，更新过程中用到的收缩步长。在每次提升计算之后，算法会直接获得新特征的权重。 eta通过缩减特征的权重使提升计算过程更加保守。缺省值为0.3</p>
+
+<p>取值范围为：[0,1]</p>
+
+<p>（7）max_depth [default=6] 数的最大深度。缺省值为6 ，取值范围为：[1,∞]</p>
+
+<p>（8）min_child_weight [default=1]</p>
+
+<p>孩子节点中最小的样本权重和。如果一个叶子节点的样本权重和小于min_child_weight则拆分过程结束。在现行回归模型中，这个参数是指建立每个模型所需要的最小样本数。该成熟越大算法越conservative</p>
+
+<p>取值范围为: [0,∞]</p>
+
+<h1>10.DART</h1>
+
+<p>核心思想就是将dropout引入XGBoost</p>
+
+<p>示例代码</p>
+
+<pre><code class="python">import xgboost as xgb
+# read in data
+dtrain = xgb.DMatrix('demo/data/agaricus.txt.train?format=libsvm')
+dtest = xgb.DMatrix('demo/data/agaricus.txt.test?format=libsvm')
+# specify parameters via map
+param = {'max_depth': 5, 'learning_rate': 0.1,
+         'objective': 'binary:logistic',
+         'sample_type': 'uniform',
+         'normalize_type': 'tree',
+         'rate_drop': 0.1,
+         'skip_drop': 0.5}
+num_round = 50
+bst = xgb.train(param, dtrain, num_round)
+preds = bst.predict(dtest)
+</code></pre>
+
+<p>更多细节可以阅读参考文献5</p>
+
+<h1>11.csr_matrix训练XGBoost</h1>
+
+<p>当数据规模比较大、较多列比较稀疏时，可以使用csr_matrix训练XGBoost模型，从而节约内存。</p>
+
+<p>下面是Kaggle比赛中TalkingData开源的代码，可以学习一下，详见参考文献6。</p>
+
+<pre><code class="python">import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+import os
+from sklearn.preprocessing import LabelEncoder
+from scipy.sparse import csr_matrix, hstack
+import xgboost as xgb
+from sklearn.cross_validation import StratifiedKFold
+from sklearn.metrics import log_loss
+
+datadir = '../input'
+gatrain = pd.read_csv(os.path.join(datadir,'gender_age_train.csv'),
+                      index_col='device_id')
+gatest = pd.read_csv(os.path.join(datadir,'gender_age_test.csv'),
+                     index_col = 'device_id')
+phone = pd.read_csv(os.path.join(datadir,'phone_brand_device_model.csv'))
+# Get rid of duplicate device ids in phone
+phone = phone.drop_duplicates('device_id',keep='first').set_index('device_id')
+events = pd.read_csv(os.path.join(datadir,'events.csv'),
+                     parse_dates=['timestamp'], index_col='event_id')
+appevents = pd.read_csv(os.path.join(datadir,'app_events.csv'), 
+                        usecols=['event_id','app_id','is_active'],
+                        dtype={'is_active':bool})
+applabels = pd.read_csv(os.path.join(datadir,'app_labels.csv'))
+
+gatrain['trainrow'] = np.arange(gatrain.shape[0])
+gatest['testrow'] = np.arange(gatest.shape[0])
+
+brandencoder = LabelEncoder().fit(phone.phone_brand)
+phone['brand'] = brandencoder.transform(phone['phone_brand'])
+gatrain['brand'] = phone['brand']
+gatest['brand'] = phone['brand']
+Xtr_brand = csr_matrix((np.ones(gatrain.shape[0]), 
+                       (gatrain.trainrow, gatrain.brand)))
+Xte_brand = csr_matrix((np.ones(gatest.shape[0]), 
+                       (gatest.testrow, gatest.brand)))
+print('Brand features: train shape {}, test shape {}'.format(Xtr_brand.shape, Xte_brand.shape))
+
+m = phone.phone_brand.str.cat(phone.device_model)
+modelencoder = LabelEncoder().fit(m)
+phone['model'] = modelencoder.transform(m)
+gatrain['model'] = phone['model']
+gatest['model'] = phone['model']
+Xtr_model = csr_matrix((np.ones(gatrain.shape[0]), 
+                       (gatrain.trainrow, gatrain.model)))
+Xte_model = csr_matrix((np.ones(gatest.shape[0]), 
+                       (gatest.testrow, gatest.model)))
+print('Model features: train shape {}, test shape {}'.format(Xtr_model.shape, Xte_model.shape))
+
+appencoder = LabelEncoder().fit(appevents.app_id)
+appevents['app'] = appencoder.transform(appevents.app_id)
+napps = len(appencoder.classes_)
+deviceapps = (appevents.merge(events[['device_id']], how='left',left_on='event_id',right_index=True)
+                       .groupby(['device_id','app'])['app'].agg(['size'])
+                       .merge(gatrain[['trainrow']], how='left', left_index=True, right_index=True)
+                       .merge(gatest[['testrow']], how='left', left_index=True, right_index=True)
+                       .reset_index())
+
+d = deviceapps.dropna(subset=['trainrow'])
+Xtr_app = csr_matrix((np.ones(d.shape[0]), (d.trainrow, d.app)), 
+                      shape=(gatrain.shape[0],napps))
+d = deviceapps.dropna(subset=['testrow'])
+Xte_app = csr_matrix((np.ones(d.shape[0]), (d.testrow, d.app)), 
+                      shape=(gatest.shape[0],napps))
+print('Apps data: train shape {}, test shape {}'.format(Xtr_app.shape, Xte_app.shape))
+
+applabels = applabels.loc[applabels.app_id.isin(appevents.app_id.unique())]
+applabels['app'] = appencoder.transform(applabels.app_id)
+labelencoder = LabelEncoder().fit(applabels.label_id)
+applabels['label'] = labelencoder.transform(applabels.label_id)
+nlabels = len(labelencoder.classes_)
+
+devicelabels = (deviceapps[['device_id','app']]
+                .merge(applabels[['app','label']])
+                .groupby(['device_id','label'])['app'].agg(['size'])
+                .merge(gatrain[['trainrow']], how='left', left_index=True, right_index=True)
+                .merge(gatest[['testrow']], how='left', left_index=True, right_index=True)
+                .reset_index())
+devicelabels.head()
+
+d = devicelabels.dropna(subset=['trainrow'])
+Xtr_label = csr_matrix((np.ones(d.shape[0]), (d.trainrow, d.label)), 
+                      shape=(gatrain.shape[0],nlabels))
+d = devicelabels.dropna(subset=['testrow'])
+Xte_label = csr_matrix((np.ones(d.shape[0]), (d.testrow, d.label)), 
+                      shape=(gatest.shape[0],nlabels))
+print('Labels data: train shape {}, test shape {}'.format(Xtr_label.shape, Xte_label.shape))
+
+Xtrain = hstack((Xtr_brand, Xtr_model, Xtr_app, Xtr_label), format='csr')
+Xtest =  hstack((Xte_brand, Xte_model, Xte_app, Xte_label), format='csr')
+print('All features: train shape {}, test shape {}'.format(Xtrain.shape, Xtest.shape))
+
+targetencoder = LabelEncoder().fit(gatrain.group)
+y = targetencoder.transform(gatrain.group)
+
+########## XGBOOST ##########
+
+params = {}
+params['booster'] = 'gblinear'
+params['objective'] = "multi:softprob"
+params['eval_metric'] = 'mlogloss'
+params['eta'] = 0.005
+params['num_class'] = 12
+params['lambda'] = 3
+params['alpha'] = 2
+
+# Random 10% for validation
+kf = list(StratifiedKFold(y, n_folds=10, shuffle=True, random_state=4242))[0]
+
+Xtr, Xte = Xtrain[kf[0], :], Xtrain[kf[1], :]
+ytr, yte = y[kf[0]], y[kf[1]]
+
+print('Training set: ' + str(Xtr.shape))
+print('Validation set: ' + str(Xte.shape))
+
+d_train = xgb.DMatrix(Xtr, label=ytr)
+d_valid = xgb.DMatrix(Xte, label=yte)
+
+watchlist = [(d_train, 'train'), (d_valid, 'eval')]
+
+clf = xgb.train(params, d_train, 1000, watchlist, early_stopping_rounds=25)
+
+pred = clf.predict(xgb.DMatrix(Xtest))
+
+pred = pd.DataFrame(pred, index = gatest.index, columns=targetencoder.classes_)
+pred.head()
+pred.to_csv('sparse_xgb.csv', index=True)
+
+#params['lambda'] = 1
+#for alpha in [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]:
+#    params['alpha'] = alpha
+#    clf = xgb.train(params, d_train, 1000, watchlist, early_stopping_rounds=25)
+#    print('^' + str(alpha))import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+import os
+from sklearn.preprocessing import LabelEncoder
+from scipy.sparse import csr_matrix, hstack
+import xgboost as xgb
+from sklearn.cross_validation import StratifiedKFold
+from sklearn.metrics import log_loss
+
+datadir = '../input'
+gatrain = pd.read_csv(os.path.join(datadir,'gender_age_train.csv'),
+                      index_col='device_id')
+gatest = pd.read_csv(os.path.join(datadir,'gender_age_test.csv'),
+                     index_col = 'device_id')
+phone = pd.read_csv(os.path.join(datadir,'phone_brand_device_model.csv'))
+# Get rid of duplicate device ids in phone
+phone = phone.drop_duplicates('device_id',keep='first').set_index('device_id')
+events = pd.read_csv(os.path.join(datadir,'events.csv'),
+                     parse_dates=['timestamp'], index_col='event_id')
+appevents = pd.read_csv(os.path.join(datadir,'app_events.csv'), 
+                        usecols=['event_id','app_id','is_active'],
+                        dtype={'is_active':bool})
+applabels = pd.read_csv(os.path.join(datadir,'app_labels.csv'))
+
+gatrain['trainrow'] = np.arange(gatrain.shape[0])
+gatest['testrow'] = np.arange(gatest.shape[0])
+
+brandencoder = LabelEncoder().fit(phone.phone_brand)
+phone['brand'] = brandencoder.transform(phone['phone_brand'])
+gatrain['brand'] = phone['brand']
+gatest['brand'] = phone['brand']
+Xtr_brand = csr_matrix((np.ones(gatrain.shape[0]), 
+                       (gatrain.trainrow, gatrain.brand)))
+Xte_brand = csr_matrix((np.ones(gatest.shape[0]), 
+                       (gatest.testrow, gatest.brand)))
+print('Brand features: train shape {}, test shape {}'.format(Xtr_brand.shape, Xte_brand.shape))
+
+m = phone.phone_brand.str.cat(phone.device_model)
+modelencoder = LabelEncoder().fit(m)
+phone['model'] = modelencoder.transform(m)
+gatrain['model'] = phone['model']
+gatest['model'] = phone['model']
+Xtr_model = csr_matrix((np.ones(gatrain.shape[0]), 
+                       (gatrain.trainrow, gatrain.model)))
+Xte_model = csr_matrix((np.ones(gatest.shape[0]), 
+                       (gatest.testrow, gatest.model)))
+print('Model features: train shape {}, test shape {}'.format(Xtr_model.shape, Xte_model.shape))
+
+appencoder = LabelEncoder().fit(appevents.app_id)
+appevents['app'] = appencoder.transform(appevents.app_id)
+napps = len(appencoder.classes_)
+deviceapps = (appevents.merge(events[['device_id']], how='left',left_on='event_id',right_index=True)
+                       .groupby(['device_id','app'])['app'].agg(['size'])
+                       .merge(gatrain[['trainrow']], how='left', left_index=True, right_index=True)
+                       .merge(gatest[['testrow']], how='left', left_index=True, right_index=True)
+                       .reset_index())
+
+d = deviceapps.dropna(subset=['trainrow'])
+Xtr_app = csr_matrix((np.ones(d.shape[0]), (d.trainrow, d.app)), 
+                      shape=(gatrain.shape[0],napps))
+d = deviceapps.dropna(subset=['testrow'])
+Xte_app = csr_matrix((np.ones(d.shape[0]), (d.testrow, d.app)), 
+                      shape=(gatest.shape[0],napps))
+print('Apps data: train shape {}, test shape {}'.format(Xtr_app.shape, Xte_app.shape))
+
+applabels = applabels.loc[applabels.app_id.isin(appevents.app_id.unique())]
+applabels['app'] = appencoder.transform(applabels.app_id)
+labelencoder = LabelEncoder().fit(applabels.label_id)
+applabels['label'] = labelencoder.transform(applabels.label_id)
+nlabels = len(labelencoder.classes_)
+
+devicelabels = (deviceapps[['device_id','app']]
+                .merge(applabels[['app','label']])
+                .groupby(['device_id','label'])['app'].agg(['size'])
+                .merge(gatrain[['trainrow']], how='left', left_index=True, right_index=True)
+                .merge(gatest[['testrow']], how='left', left_index=True, right_index=True)
+                .reset_index())
+devicelabels.head()
+
+d = devicelabels.dropna(subset=['trainrow'])
+Xtr_label = csr_matrix((np.ones(d.shape[0]), (d.trainrow, d.label)), 
+                      shape=(gatrain.shape[0],nlabels))
+d = devicelabels.dropna(subset=['testrow'])
+Xte_label = csr_matrix((np.ones(d.shape[0]), (d.testrow, d.label)), 
+                      shape=(gatest.shape[0],nlabels))
+print('Labels data: train shape {}, test shape {}'.format(Xtr_label.shape, Xte_label.shape))
+
+Xtrain = hstack((Xtr_brand, Xtr_model, Xtr_app, Xtr_label), format='csr')
+Xtest =  hstack((Xte_brand, Xte_model, Xte_app, Xte_label), format='csr')
+print('All features: train shape {}, test shape {}'.format(Xtrain.shape, Xtest.shape))
+
+targetencoder = LabelEncoder().fit(gatrain.group)
+y = targetencoder.transform(gatrain.group)
+
+########## XGBOOST ##########
+
+params = {}
+params['booster'] = 'gblinear'
+params['objective'] = "multi:softprob"
+params['eval_metric'] = 'mlogloss'
+params['eta'] = 0.005
+params['num_class'] = 12
+params['lambda'] = 3
+params['alpha'] = 2
+
+# Random 10% for validation
+kf = list(StratifiedKFold(y, n_folds=10, shuffle=True, random_state=4242))[0]
+
+Xtr, Xte = Xtrain[kf[0], :], Xtrain[kf[1], :]
+ytr, yte = y[kf[0]], y[kf[1]]
+
+print('Training set: ' + str(Xtr.shape))
+print('Validation set: ' + str(Xte.shape))
+
+d_train = xgb.DMatrix(Xtr, label=ytr)
+d_valid = xgb.DMatrix(Xte, label=yte)
+
+watchlist = [(d_train, 'train'), (d_valid, 'eval')]
+
+clf = xgb.train(params, d_train, 1000, watchlist, early_stopping_rounds=25)
+
+pred = clf.predict(xgb.DMatrix(Xtest))
+
+pred = pd.DataFrame(pred, index = gatest.index, columns=targetencoder.classes_)
+pred.head()
+pred.to_csv('sparse_xgb.csv', index=True)
+
+#params['lambda'] = 1
+#for alpha in [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]:
+#    params['alpha'] = alpha
+#    clf = xgb.train(params, d_train, 1000, watchlist, early_stopping_rounds=25)
+#    print('^' + str(alpha))
+</code></pre>
+
+<h1>12.Tip</h1>
+
+<p>（1）含有缺失进行训练</p>
+
+<pre><code class="python">dtrain = xgb.DMatrix(x_train, y_train, missing=np.nan）
+</code></pre>
+
+<h1>13.参考文献</h1>
+
+<p>（1）<a href="http://pan.baidu.com/s/1gfA6FK3">xgboost导读和实战</a></p>
+
+<p>（2）<a href="http://pan.baidu.com/s/1eR7ADge">xgboost</a></p>
+
+<p>（3）<a href="https://github.com/dmlc/xgboost/blob/master/demo/guide-python/custom_objective.py">自定义目标函数</a></p>
+
+<p>（4）<a href="https://www.zhihu.com/question/41354392">机器学习算法中GBDT和XGBOOST的区别有哪些？</a></p>
+
+<p>（5）<a href="http://xgboost.readthedocs.io/en/latest/tutorials/dart.html">DART</a></p>
+
+<p>（6）<a href="https://www.kaggle.com/anokas/sparse-xgboost-starter-2-26857/code">https://www.kaggle.com/anokas/sparse-xgboost-starter-2-26857/code</a></p>
+
+<p>（7）<a href="http://learningsys.org/papers/LearningSys_2015_paper_32.pdf">XGBoost: Reliable Large-scale Tree Boosting System</a></p>
+
+<p>（8）<a href="http://delivery.acm.org/10.1145/2940000/2939785/p785-chen.pdf?ip=202.118.228.100&amp;id=2939785&amp;acc=ACTIVE%20SERVICE&amp;key=BF85BBA5741FDC6E.5C4511229FC427D6.4D4702B0C3E38B35.4D4702B0C3E38B35&amp;CFID=905733202&amp;CFTOKEN=53852884&amp;__acm__=1488265641_ffdebf36cef2b1bf7f3f76abf6bfe426">XGBoost: A Scalable Tree Boosting System</a></p>
+]]></content>
+  </entry>
+  
+</feed>

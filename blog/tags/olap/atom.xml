@@ -1,0 +1,2055 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: OLAP | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/olap/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ClickHouse基础知识与实践]]></title>
+    <link href="https://ibillxia.github.io/blog/2019/10/08/clickhouse-basics/"/>
+    <updated>2019-10-08T16:27:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2019/10/08/clickhouse-basics</id>
+    <content type="html"><![CDATA[<center><img src="/images/2019/IMAG2019100801.png"></center>
+
+
+<p><br></p>
+
+<h1>一、简介</h1>
+
+<p>Clickhouse是一个用于联机分析处理（OLAP）的列式数据库管理系统（columnar DBMS）。</p>
+
+<p>传统数据库在数据大小比较小，索引大小适合内存，数据缓存命中率足够高的情形下能正常提供服务。但残酷的是，这种理想情形最终会随着业务的增长走到尽头，查询会变得越来越慢。你可能通过增加更多的内存，订购更快的磁盘等等来解决问题（纵向扩展），但这只是拖延解决本质问题。如果你的需求是解决怎样快速查询出结果，那么ClickHouse也许可以解决你的问题。</p>
+
+<!--more-->
+
+
+<h2>应用场景</h2>
+
+<p>1.绝大多数请求都是用于读访问的</p>
+
+<p>2.数据需要以大批次（大于1000行）进行更新，而不是单行更新；或者根本没有更新操作</p>
+
+<p>3.数据只是添加到数据库，没有必要修改</p>
+
+<p>4.读取数据时，会从数据库中提取出大量的行，但只用到一小部分列</p>
+
+<p>5.表很“宽”，即表中包含大量的列</p>
+
+<p>6.查询频率相对较低（通常每台服务器每秒查询数百次或更少）</p>
+
+<p>7.对于简单查询，允许大约50毫秒的延迟</p>
+
+<p>8.列的值是比较小的数值和短字符串（例如，每个URL只有60个字节）</p>
+
+<p>9.在处理单个查询时需要高吞吐量（每台服务器每秒高达数十亿行）</p>
+
+<p>10.不需要事务</p>
+
+<p>11.数据一致性要求较低</p>
+
+<p>12.每次查询中只会查询一个大表。除了一个大表，其余都是小表</p>
+
+<p>13.查询结果显著小于数据源。即数据有过滤或聚合。返回结果不超过单个服务器内存大小</p>
+
+<h2>使用限制</h2>
+
+<p>1.不支持真正的删除/更新支持 不支持事务（期待后续版本支持）</p>
+
+<p>2.不支持二级索引</p>
+
+<p>3.有限的SQL支持，join实现与众不同</p>
+
+<p>4.不支持窗口功能</p>
+
+<p>5.元数据管理需要人工干预维护</p>
+
+<h1>二、基础用法</h1>
+
+<h2>常用SQL语法</h2>
+
+<ul>
+<li>列出数据库列表 show databases;</li>
+<li>列出数据库中表列表 show tables;</li>
+<li>创建数据库 create database test;</li>
+<li>删除一个表 drop table if exists test.t1;</li>
+<li>创建第一个表 create /<em>temporary</em>/ table /<em>if not exists</em>/ test.m1 ( id UInt16,name String) ENGINE = Memory;</li>
+<li>插入测试数据 insert into test.m1 (id, name) values (1, 'abc'), (2, 'bbbb');</li>
+<li>查询 select * from test.m1;</li>
+</ul>
+
+
+<h2>默认值</h2>
+
+<p>默认值 的处理方面， ClickHouse 中，默认值总是有的，如果没有显示式指定的话，会按字段类型处理：</p>
+
+<p>数字类型， 0</p>
+
+<p>字符串，空字符串</p>
+
+<p>数组，空数组</p>
+
+<p>日期， 0000-00-00</p>
+
+<p>时间， 0000-00-00 00:00:00</p>
+
+<p>注：NULLs 是不支持的</p>
+
+<h2>数据类型</h2>
+
+<p>1.整型：UInt8,UInt16,UInt32,UInt64,Int8,Int16,Int32,Int64</p>
+
+<p>范围U开头-2N/2~2N-1;非U开头0～2<sup>N</sup>-1</p>
+
+<p>2.枚举类型：Enum8,Enum16</p>
+
+<p>Enum('hello'=1,'test'=-1),Enum是有符号的整型映射的，因此负数也是可以的</p>
+
+<p>3.字符串型：FixedString(N),String</p>
+
+<p>N是最大字节数，不是字符长度，如果是UTF8字符串，那么就会占3个字节，GBK会占2字节;String可以用来替换VARCHAR,BLOB,CLOB等数据类型</p>
+
+<p>4.时间类型：Date</p>
+
+<p>5.数组类型：Array(T)</p>
+
+<p>T是一个基本类型，包括arry在内，官方不建议使用多维数组</p>
+
+<p>6.元组：Tuple</p>
+
+<p>7.结构：Nested(name1 Type1,name2 Type2,...)</p>
+
+<p>一种类似map的结结构</p>
+
+<h2>物化列</h2>
+
+<p>指定 MATERIALIZED 表达式，即将一个列作为物化列处理了，这意味着这个列的值不能从insert 语句获取，只能是自己计算出来的。同时，</p>
+
+<p>物化列也不会出现在 select * 的结果中：</p>
+
+<pre><code>drop table if exists test.m2;
+create table test.m2 ( a MATERIALIZED (b+1),b UInt16) ENGINE = Memory;
+insert into test.m2 (b) values (1);
+select * from test.m2;select a, b from test.m2;
+</code></pre>
+
+<h2>表达式列</h2>
+
+<p>ALIAS 表达式列某方面跟物化列相同，就是它的值不能从 insert 语句获取。不同的是， 物化列 是会真正保存数据（这样查询时不需要再计算），</p>
+
+<p>而表达式列不会保存数据（这样查询时总是需要计算），只是在查询时返回表达式的结果。</p>
+
+<pre><code>create table test.m3 (a ALIAS (b+1), b UInt16) ENGINE = Memory;
+insert into test.m3(b) values (1);
+select * from test.m3;
+select a, b from test.m3;
+</code></pre>
+
+<h1>三、引擎/engine</h1>
+
+<p>引擎是clickhouse设计的精华部分</p>
+
+<h2>3.1 TinyLog</h2>
+
+<p>最简单的一种引擎，每一列保存为一个文件，里面的内容是压缩过的，不支持索引</p>
+
+<p>这种引擎没有并发控制，所以，当你需要在读，又在写时，读会出错。并发写，内容都会坏掉。</p>
+
+<p>应用场景:</p>
+
+<ol type="a">
+<li><p>基本上就是那种只写一次</p></li>
+<li><p>然后就是只读的场景。</p></li>
+<li><p>不适用于处理量大的数据，官方推荐，使用这种引擎的表最多 100 万行的数据</p></li>
+</ol>
+
+
+<pre><code>drop table if exists test.tinylog;
+create table test.tinylog (a UInt16, b UInt16) ENGINE = TinyLog;
+insert into test.tinylog(a,b) values (7,13);
+</code></pre>
+
+<p>此时/var/lib/clickhouse/data/test/tinylog保存数据的目录结构：</p>
+
+<pre><code>├── a.bin   
+├── b.bin   
+└── sizes.json  
+</code></pre>
+
+<p>a.bin 和 b.bin 是压缩过的对应的列的数据， sizes.json 中记录了每个 *.bin 文件的大小</p>
+
+<h2>3.2 Log</h2>
+
+<p>这种引擎跟 TinyLog 基本一致</p>
+
+<p>它的改进点，是加了一个 __marks.mrk 文件，里面记录了每个数据块的偏移</p>
+
+<p>这样做的一个用处，就是可以准确地切分读的范围，从而使用并发读取成为可能</p>
+
+<p>但是，它是不能支持并发写的，一个写操作会阻塞其它读写操作</p>
+
+<p>Log 不支持索引，同时因为有一个 __marks.mrk 的冗余数据，所以在写入数据时，一旦出现问题，这个表就废了</p>
+
+<p>应用场景:</p>
+
+<p>同 TinyLog 差不多，它适用的场景也是那种写一次之后，后面就是只读的场景，临时数据用它保存也可以</p>
+
+<pre><code>drop table if exists test.log;
+create table test.log (a UInt16, b UInt16) ENGINE = Log;
+insert into test.log(a,b) values (7,13);
+</code></pre>
+
+<p>此时/var/lib/clickhouse/data/test/log保存数据的目录结构：</p>
+
+<pre><code>├── __marks.mrk
+├── a.bin
+├── b.bin
+└── sizes.json
+</code></pre>
+
+<h2>3.3 Memory</h2>
+
+<p>内存引擎，数据以未压缩的原始形式直接保存在内存当中，服务器重启数据就会消失</p>
+
+<p>可以并行读，读写互斥锁的时间也非常短</p>
+
+<p>不支持索引，简单查询下有非常非常高的性能表现</p>
+
+<p>应用场景:</p>
+
+<ol type="a">
+<li><p>进行测试</p></li>
+<li><p>在需要非常高的性能，同时数据量又不太大（上限大概 1 亿行）的场景</p></li>
+</ol>
+
+
+<h2>3.4 Merge</h2>
+
+<p>一个工具引擎，本身不保存数据，只用于把指定库中的指定多个表链在一起。</p>
+
+<p>这样，读取操作可以并发执行，同时也可以利用原表的索引，但是，此引擎不支持写操作</p>
+
+<p>指定引擎的同时，需要指定要链接的库及表，库名可以使用一个表达式，表名可以使用正则表达式指定</p>
+
+<pre><code>create table test.tinylog1 (id UInt16, name String) ENGINE=TinyLog;
+create table test.tinylog2 (id UInt16, name String) ENGINE=TinyLog;
+create table test.tinylog3 (id UInt16, name String) ENGINE=TinyLog;
+insert into test.tinylog1(id, name) values (1, 'tinylog1');
+insert into test.tinylog2(id, name) values (2, 'tinylog2');
+insert into test.tinylog3(id, name) values (3, 'tinylog3');
+use test;
+create table test.merge (id UInt16, name String) ENGINE=Merge(currentDatabase(), '^tinylog[0-9]+');
+select _table,* from test.merge order by id desc
+</code></pre>
+
+
+
+<pre><code>┌─_table───┬─id─┬─name─────┐
+│ tinylog3 │ 3 │ tinylog3 │
+│ tinylog2 │ 2 │ tinylog2 │
+│ tinylog1 │ 1 │ tinylog1 │
+└──────────┴────┴──────────┘
+</code></pre>
+
+<p>注：_table 这个列，是因为使用了 Merge 多出来的一个的一个虚拟列</p>
+
+<ol type="a">
+<li><p>它表示原始数据的来源表，它不会出现在 show table 的结果当中</p></li>
+<li><p>select * 不会包含它</p></li>
+</ol>
+
+
+<h2>3.5 Distributed</h2>
+
+<p>与 Merge 类似， Distributed 也是通过一个逻辑表，去访问各个物理表，设置引擎时的样子是：</p>
+
+<p><code>Distributed(remote_group, database, table [, sharding_key])</code></p>
+
+<p>其中：</p>
+
+<p>remote_group 是/etc/clickhouse-server/config.xml中remote_servers参数</p>
+
+<p>database 是各服务器中的库名</p>
+
+<p>table 是表名</p>
+
+<p>sharding_key 是一个寻址表达式，可以是一个列名，也可以是像 rand() 之类的函数调用，它与 remote_servers 中的 weight 共同作用，决定在 写 时往哪个 shard 写</p>
+
+<p>配置文件中的 remote_servers</p>
+
+<pre><code>&lt;remote_servers&gt;
+    &lt;log&gt;
+        &lt;shard&gt;
+            &lt;weight&gt;1&lt;weight&gt;
+            &lt;internal_replication&gt;false&lt;internal_replication&gt;
+            &lt;replica&gt;
+                &lt;host&gt;172.17.0.3&lt;host&gt;
+                &lt;port&gt;9000&lt;port&gt;
+            &lt;replica&gt;
+        &lt;shard&gt;
+        &lt;shard&gt;
+            &lt;weight&gt;2&lt;weight&gt;
+            &lt;internal_replication&gt;false&lt;internal_replication&gt;
+            &lt;replica&gt;
+                &lt;host&gt;172.17.0.4&lt;host&gt;
+                &lt;port&gt;9000&lt;port&gt;
+            &lt;replica&gt;
+        &lt;shard&gt;
+    &lt;log&gt;
+&lt;remote_servers&gt;
+</code></pre>
+
+<ul>
+<li><p>log 是某个 shard 组的名字，就是上面的 remote_group 的值</p></li>
+<li><p>shard 是固定标签</p></li>
+<li><p>weight 是权重，前面说的 sharding_key 与这个有关。</p></li>
+</ul>
+
+
+<p>简单来说，上面的配置，理论上来看:</p>
+
+<p>第一个 shard “被选中”的概率是 1 / (1 + 2) ，第二个是 2 / (1 + 2) ，这很容易理解。但是， sharding_key 的工作情况，是按实际数字的“命中区间”算的，即第一个的区间是 [0, 1) 的周期，第二个区间是 [1, 1+2) 的周期。比如把 sharding_key 设置成 id ，当 id=0 或 id=3 时，一定是写入到第一个 shard 中，如果把 sharding_key 设置成 rand() ，那系统会对应地自己作一般化转换吧，这种时候就是一种概率场景了。</p>
+
+<ul>
+<li>internal_replication 是定义针对多个 replica 时的写入行为的。</li>
+</ul>
+
+
+<p>如果为 false ，则会往所有的 replica 中写入数据，但是并不保证数据写入的一致性，所以这种情况时间一长，各 replica 的数据很可能出现差异。如果为 true ，则只会往第一个可写的 replica 中写入数据（剩下的事“物理表”自己处理）。</p>
+
+<ul>
+<li>replica 就是定义各个冗余副本的，选项有 host ， port ， user ， password 等</li>
+</ul>
+
+
+<p>看一个实际的例子，我们先在两台机器上创建好物理表并插入一些测试数据：</p>
+
+<pre><code>create table test.tinylog_d1(id UInt16, name String) ENGINE=TinyLog;
+insert into test.tinylog_d1(id, name) values (1, 'Distributed record 1');
+insert into test.tinylog_d1(id, name) values (2, 'Distributed record 2');
+</code></pre>
+
+<p>在其中一台创建逻辑表：</p>
+
+<pre><code>create table test.tinylog_d (id UInt16, name String) ENGINE=Distributed(log, test,tinylog_d1 , id);-- 插入数据到逻辑表，观察数据分发情况
+insert into test.tinylog_d(id, name) values (0, 'main');
+insert into test.tinylog_d(id, name) values (1, 'main');
+insert into test.tinylog_d(id, name) values (2, 'main');
+select name,sum(id),count(id) from test.tinylog_d group by name;
+</code></pre>
+
+<p>注：逻辑表中的写入操作是异步的，会先缓存在本机的文件系统上，并且，对于物理表的不可访问状态，并没有严格控制，所以写入失败丢数据的情况是可能发生的</p>
+
+<h2>3.6 Null</h2>
+
+<p>空引擎，写入的任何数据都会被忽略，读取的结果一定是空。</p>
+
+<p>但是注意，虽然数据本身不会被存储，但是结构上的和数据格式上的约束还是跟普通表一样是存在的，同时，你也可以在这个引擎上创建视图</p>
+
+<h2>3.7 Buffer</h2>
+
+<p>1.Buffer 引擎，像是Memory 存储的一个上层应用似的（磁盘上也是没有相应目录的）</p>
+
+<p>2.它的行为是一个缓冲区，写入的数据先被放在缓冲区，达到一个阈值后，这些数据会自动被写到指定的另一个表中</p>
+
+<p>3.和Memory 一样，有很多的限制，比如没有索引</p>
+
+<p>4.Buffer 是接在其它表前面的一层，对它的读操作，也会自动应用到后面表，但是因为前面说到的限制的原因，一般我们读数据，就直接从源表读就好了，缓冲区的这点数据延迟，只要配置得当，影响不大的</p>
+
+<p>5.Buffer 后面也可以不接任何表，这样的话，当数据达到阈值，就会被丢弃掉</p>
+
+<p>一些特点：</p>
+
+<ul>
+<li><p>如果一次写入的数据太大或太多，超过了 max 条件，则会直接写入源表。</p></li>
+<li><p>删源表或改源表的时候，建议 Buffer 表删了重建。</p></li>
+<li><p>“友好重启”时， Buffer 数据会先落到源表，“暴力重启”， Buffer 表中的数据会丢失。</p></li>
+<li><p>即使使用了 Buffer ，多次的小数据写入，对比一次大数据写入，也 慢得多 （几千行与百万行的差距）</p></li>
+</ul>
+
+
+<p>-- 创建源表</p>
+
+<pre><code>create table test.mergetree (sdt  Date, id UInt16, name String, point UInt16) ENGINE=MergeTree(sdt, (id, name), 10);
+-- 创建 Buffer表-- 
+Buffer(database, table, num_layers, min_time, max_time, min_rows, max_rows, min_bytes, max_bytes)
+create table test.mergetree_buffer as test.mergetree ENGINE=Buffer(test, mergetree, 16, 3, 20, 2, 10, 1, 10000);
+insert into test.mergetree (sdt, id, name, point) values ('2017-07-10', 1, 'a', 20);
+insert into test.mergetree_buffer (sdt, id, name, point) values ('2017-07-10', 1, 'b', 10);
+select * from test.mergetree;
+select '------';
+select * from test.mergetree_buffer;
+</code></pre>
+
+<p>database 数据库</p>
+
+<p>table 源表，这里除了字符串常量，也可以使用变量的。</p>
+
+<p>num_layers 是类似“分区”的概念，每个分区的后面的 min / max 是独立计算的，官方推荐的值是 16 。</p>
+
+<p>min / max 这组配置荐，就是设置阈值的，分别是 时间（秒），行数，空间（字节）。</p>
+
+<p>阈值的规则: 是“所有的 min 条件都满足， 或 至少一个 max 条件满足”。</p>
+
+<p>如果按上面我们的建表来说，所有的 min 条件就是：过了 3秒，2条数据，1 Byte。一个 max 条件是：20秒，或 10 条数据，或有 10K</p>
+
+<h2>3.8 Set</h2>
+
+<p>Set 这个引擎有点特殊，因为它只用在 IN 操作符右侧，你不能对它 select</p>
+
+<pre><code>create table test.set(id UInt16, name String) ENGINE=Set;
+insert into test.set(id, name) values (1, 'hello');
+-- select 1 where (1, 'hello') in test.set; -- 默认UInt8 需要手动进行类型转换
+select 1 where (toUInt16(1), 'hello') in test.set;
+</code></pre>
+
+<p>注: Set 引擎表，是全内存运行的，但是相关数据会落到磁盘上保存，启动时会加载到内存中。所以，意外中断或暴力重启，是可能产生数据丢失问题的</p>
+
+<h2>3.9 MergeTree</h2>
+
+<p><strong>这个引擎是 ClickHouse 的重头戏</strong>，它支持一个日期和一组主键的两层式索引，还可以实时更新数据。同时，索引的粒度可以自定义，外加直接支持采样功能</p>
+
+<p>MergeTree(EventDate, (CounterID, EventDate), 8192)MergeTree(EventDate, intHash32(UserID), (CounterID, EventDate, intHash32(UserID)), 8192)</p>
+
+<p>EventDate 一个日期的列名</p>
+
+<p>intHash32(UserID) 采样表达式</p>
+
+<p>(CounterID, EventDate) 主键组（里面除了列名，也支持表达式），也可以是一个表达式</p>
+
+<p>8192 主键索引的粒度</p>
+
+<pre><code>drop table if exists test.mergetree1;
+create table test.mergetree1 (sdt  Date, id UInt16, name String, cnt UInt16) ENGINE=MergeTree(sdt, (id, name), 10);
+-- 日期的格式，好像必须是 yyyy-mm-dd
+insert into test.mergetree1(sdt, id, name, cnt) values ('2018-06-01', 1, 'aaa', 10);
+insert into test.mergetree1(sdt, id, name, cnt) values ('2018-06-02', 4, 'bbb', 10);
+insert into test.mergetree1(sdt, id, name, cnt) values ('2018-06-03', 5, 'ccc', 11);
+</code></pre>
+
+<p>此时/var/lib/clickhouse/data/test/mergetree1的目录结构：</p>
+
+<pre><code>├── 20180601_20180601_1_1_0│   
+├── checksums.txt│   
+├── columns.txt│   
+├── id.bin│   
+├── id.mrk│   
+├── name.bin│   
+├── name.mrk│   
+├── cnt.bin│   
+├── cnt.mrk │   
+├── cnt.idx│   
+├── primary.idx│   
+├── sdt.bin│   
+└── sdt.mrk -- 保存一下块偏移量
+├── 20180602_20180602_2_2_0│   
+└── ...
+├── 20180603_20180603_3_3_0│   
+└── ...
+├── format_version.txt
+└── detached
+</code></pre>
+
+<h2>3.10 ReplacingMergeTree</h2>
+
+<p>1.在 MergeTree 的基础上，添加了“处理重复数据”的功能=>实时数据场景</p>
+
+<p>2.相比 MergeTree ,ReplacingMergeTree 在最后加一个"版本列",它跟时间列配合一起，用以区分哪条数据是"新的"，并把旧的丢掉(这个过程是在 merge 时处理，不是数据写入时就处理了的，平时重复的数据还是保存着的，并且查也是跟平常一样会查出来的)</p>
+
+<p>3.主键列组用于区分重复的行</p>
+
+<pre><code>-- 版本列 允许的类型是， UInt 一族的整数，或 Date 或 DateTime
+create table test.replacingmergetree (sdt  Date, id UInt16, name String, cnt UInt16) ENGINE=ReplacingMergeTree(sdt, (name), 10, cnt);
+insert into test.replacingmergetree (sdt, id, name, cnt) values ('2018-06-10', 1, 'a', 20);
+insert into test.replacingmergetree (sdt, id, name, cnt) values ('2018-06-10', 1, 'a', 30);
+insert into test.replacingmergetree (sdt, id, name, cnt) values ('2018-06-11', 1, 'a', 20);
+insert into test.replacingmergetree (sdt, id, name, cnt) values ('2018-06-11', 1, 'a', 30);
+insert into test.replacingmergetree (sdt, id, name, cnt) values ('2018-06-11', 1, 'a', 10);
+select * from test.replacingmergetree;-- 如果记录未执行merge，可以手动触发一下 merge 行为
+optimize table test.replacingmergetree;
+</code></pre>
+
+
+
+<pre><code>┌────────sdt─┬─id─┬─name─┬─cnt─┐
+│ 2018-06-11 │ 1 │ a │ 30 │
+└────────────┴────┴──────┴─────┘
+</code></pre>
+
+<h2>3.11 SummingMergeTree</h2>
+
+<p>1.SummingMergeTree 就是在 merge 阶段把数据sum求和</p>
+
+<p>2.sum求和的列可以指定，不可加的未指定列，会取一个最先出现的值</p>
+
+<pre><code>create table test.summingmergetree (sdt Date, name String, a UInt16, b UInt16) ENGINE=SummingMergeTree(sdt, (sdt, name), 8192, (a));
+insert into test.summingmergetree (sdt, name, a, b) values ('2018-06-10', 'a', 1, 20);
+insert into test.summingmergetree (sdt, name, a, b) values ('2018-06-10', 'b', 2, 11);
+insert into test.summingmergetree (sdt, name, a, b) values ('2018-06-11', 'b', 3, 18);
+insert into test.summingmergetree (sdt, name, a, b) values ('2018-06-11', 'b', 3, 82);
+insert into test.summingmergetree (sdt, name, a, b) values ('2018-06-11', 'a', 3, 11);
+insert into test.summingmergetree (sdt, name, a, b) values ('2018-06-12', 'c', 1, 35);-- 手动触发一下 merge 行为
+optimize table test.summingmergetree;
+select * from test.summingmergetree;
+</code></pre>
+
+
+
+<pre><code>┌────────sdt─┬─name─┬─a─┬──b─┐
+│ 2018-06-10 │ a │ 1 │ 20 │
+│ 2018-06-10 │ b │ 2 │ 11 │
+│ 2018-06-11 │ a │ 3 │ 11 │
+│ 2018-06-11 │ b │ 6 │ 18 │
+│ 2018-06-12 │ c │ 1 │ 35 │
+└────────────┴──────┴───┴────┘
+</code></pre>
+
+<p>注: 可加列不能是主键中的列，并且如果某行数据可加列都是 null ，则这行会被删除</p>
+
+<h2>3.13 AggregatingMergeTree</h2>
+
+<p>AggregatingMergeTree 是在 MergeTree 基础之上，针对聚合函数结果，作增量计算优化的一个设计，它会在 merge 时，针对主键预处理聚合的数据</p>
+
+<p>应用于AggregatingMergeTree 上的聚合函数除了普通的 sum, uniq等，还有 sumState , uniqState ，及 sumMerge ， uniqMerge 这两组</p>
+
+<p>1.聚合数据的预计算</p>
+
+<p>是一种“空间换时间”的权衡，并且是以减少维度为代价的</p>
+
+<table>
+<thead>
+<tr>
+<th> dim1 </th>
+<th> dim2 </th>
+<th> dim3 </th>
+<th> measure1 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> aaaa </td>
+<td> a </td>
+<td> 1 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> aaaa </td>
+<td> b </td>
+<td> 2 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> bbbb </td>
+<td> b </td>
+<td> 3 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> cccc </td>
+<td> b </td>
+<td> 2 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> cccc </td>
+<td> c </td>
+<td> 1 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> dddd </td>
+<td> c </td>
+<td> 2 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> dddd </td>
+<td> a </td>
+<td> 1 </td>
+<td> 1 </td>
+</tr>
+</tbody>
+</table>
+
+
+<p>假设原始有三个维度，一个需要 count 的指标</p>
+
+<table>
+<thead>
+<tr>
+<th> dim1 </th>
+<th> dim2 </th>
+<th> dim3 </th>
+<th> measure1 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> aaaa </td>
+<td> a </td>
+<td> 1 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> aaaa </td>
+<td> b </td>
+<td> 2 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> bbbb </td>
+<td> b </td>
+<td> 3 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> cccc </td>
+<td> b </td>
+<td> 2 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> cccc </td>
+<td> c </td>
+<td> 1 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> dddd </td>
+<td> c </td>
+<td> 2 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> dddd </td>
+<td> a </td>
+<td> 1 </td>
+<td> 1 </td>
+</tr>
+</tbody>
+</table>
+
+
+<p>通过减少一个维度的方式，来以 count 函数聚合一次 M</p>
+
+<table>
+<thead>
+<tr>
+<th> dim2 </th>
+<th> dim3 </th>
+<th> count(measure1) </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> a </td>
+<td> 1 </td>
+<td> 3 </td>
+</tr>
+<tr>
+<td> b </td>
+<td> 2 </td>
+<td> 2 </td>
+</tr>
+<tr>
+<td> b </td>
+<td> 3 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> c </td>
+<td> 1 </td>
+<td> 1 </td>
+</tr>
+<tr>
+<td> c </td>
+<td> 2 </td>
+<td> 1 </td>
+</tr>
+</tbody>
+</table>
+
+
+<p>2.聚合数据的增量计算</p>
+
+<p>对于 AggregatingMergeTree 引擎的表，不能使用普通的 INSERT 去添加数据，可以用：</p>
+
+<ol type="a">
+<li><p>INSERT SELECT 来插入数据</p></li>
+<li><p>更常用的，是可以创建一个物化视图</p></li>
+</ol>
+
+
+<pre><code>drop table if exists test.aggregatingmergetree;
+create table test.aggregatingmergetree(sdt Date, dim1 String, dim2 String, dim3 String, measure1 UInt64) ENGINE=MergeTree(sdt, (sdt, dim1, dim2, dim3), 8192);
+-- 创建一个物化视图，使用 AggregatingMergeTree
+drop table if exists test.aggregatingmergetree_view;
+create materialized view test.aggregatingmergetree_view ENGINE = AggregatingMergeTree(sdt,(dim2, dim3), 8192)as 
+select sdt,dim2, dim3, uniqState(dim1) as uv from test.aggregatingmergetreegroup by sdt,dim2, dim3;
+insert into test.aggregatingmergetree (sdt, dim1, dim2, dim3, measure1) values ('2018-06-10', 'aaaa', 'a', '10', 1);
+insert into test.aggregatingmergetree (sdt, dim1, dim2, dim3, measure1) values ('2018-06-10', 'aaaa', 'a', '10', 1);
+insert into test.aggregatingmergetree (sdt, dim1, dim2, dim3, measure1) values ('2018-06-10', 'aaaa', 'b', '20', 1);
+insert into test.aggregatingmergetree (sdt, dim1, dim2, dim3, measure1) values ('2018-06-10', 'bbbb', 'b', '30', 1);
+insert into test.aggregatingmergetree (sdt, dim1, dim2, dim3, measure1) values ('2018-06-10', 'cccc', 'b', '20', 1);
+insert into test.aggregatingmergetree (sdt, dim1, dim2, dim3, measure1) values ('2018-06-10', 'cccc', 'c', '10', 1);
+insert into test.aggregatingmergetree (sdt, dim1, dim2, dim3, measure1) values ('2018-06-10', 'dddd', 'c', '20', 1);
+insert into test.aggregatingmergetree (sdt, dim1, dim2, dim3, measure1) values ('2018-06-10', 'dddd', 'a', '10', 1);
+-- 按 dim2 和 dim3 聚合 count(measure1)
+select dim2, dim3, count(measure1) from test.aggregatingmergetree group by dim2, dim3;
+-- 按 dim2 聚合 UV
+select dim2, uniq(dim1) from test.aggregatingmergetree group by dim2;
+-- 手动触发merge
+OPTIMIZE TABLE test.aggregatingmergetree_view;
+select * from test.aggregatingmergetree_view;
+-- 查 dim2 的 uv
+select dim2, uniqMerge(uv) from test.aggregatingmergetree_view group by dim2 order by dim2;
+</code></pre>
+
+<h2>3.14 CollapsingMergeTree</h2>
+
+<p>是专门为 OLAP 场景下，一种“变通”存数做法而设计的，在数据是不能改，更不能删的前提下，通过“运算”的方式，去抹掉旧数据的影响，把旧数据“减”去即可，从而解决"最终状态"类的问题，比如 当前有多少人在线？</p>
+
+<p>“以加代删”的增量存储方式，带来了聚合计算方便的好处，代价却是存储空间的翻倍，并且，对于只关心最新状态的场景，中间数据都是无用的</p>
+
+<p>CollapsingMergeTree 在创建时与 MergeTree 基本一样，除了最后多了一个参数，需要指定 Sign 位（必须是 Int8 类型）</p>
+
+<pre><code>create table test.collapsingmergetree(sign Int8, sdt Date, name String, cnt UInt16) ENGINE=CollapsingMergeTree(sdt, (sdt, name), 8192, sign);
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Apache Kylin入门、指南与实践]]></title>
+    <link href="https://ibillxia.github.io/blog/2019/06/14/apache-kylin-guide/"/>
+    <updated>2019-06-14T17:47:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2019/06/14/apache-kylin-guide</id>
+    <content type="html"><![CDATA[<center><img src="/images/2019/IMAG2019061401.png"></center>
+
+
+<p><br></p>
+
+<h1>一、Apache Kylin 简介</h1>
+
+<p>Apache Kylin 是一个开源的分布式分析引擎，提供 Hadoop/Spark 之上的 SQL 查询接口及多维分析（OLAP）能力以支持超大规模数据，最初由 eBay Inc. 开发并贡献至开源社区，它能在亚秒内查询巨大的 Hive 表。</p>
+
+<!--more-->
+
+
+<h2>1.1 Apache Kylin 的特性：</h2>
+
+<ul>
+<li><p>可扩展的超快 OLAP 引擎: Kylin 是为减少在 Hadoop/Spark 上百亿规模数据查询延迟而设计；</p></li>
+<li><p>Hadoop ANSI SQL 接口: Kylin 为 Hadoop 提供标准 SQL 支持大部分查询功能；</p></li>
+<li><p>交互式查询能力: 通过 Kylin，用户可以与 Hadoop 数据进行亚秒级交互，在同样的数据集上提供比 Hive 更好的性能；</p></li>
+<li><p>多维立方体（MOLAP Cube）: 用户能够在 Kylin 里为百亿以上数据集定义数据模型并构建立方体；</p></li>
+<li><p>与 BI 工具无缝整合: Kylin 提供与 BI 工具的整合能力，如 Tableau，PowerBI/Excel，MSTR，QlikSense，Hue 和 SuperSet。</p></li>
+</ul>
+
+
+<p>其他特性：</p>
+
+<ul>
+<li><p>Job 管理与监控</p></li>
+<li><p>压缩与编码</p></li>
+<li><p>增量更新</p></li>
+<li><p>利用 HBase Coprocessor</p></li>
+<li><p>基于 HyperLogLog 的 Dinstinc Count 近似算法</p></li>
+<li><p>友好的 web 界面以管理，监控和使用立方体</p></li>
+<li><p>项目及表级别的访问控制安全</p></li>
+<li><p>支持 LDAP、SSO</p></li>
+</ul>
+
+
+<h2>1.2 数据仓库基本概念</h2>
+
+<p>数据仓库（Data Warehouse）</p>
+
+<p>数据仓库是一种信息系统的资料储存理论，此理论强调的是利用某些特殊的资料储存方式，让所包含的资料特别有利于分析和处理，从而产生有价值的资讯，并可依此做出决策。</p>
+
+<p>利用数据仓库的方式存放的资料，具有一旦存入，便不会随时间发生变动的特性，此外，存入的资料必定包含时间属性，通常一个数据仓库中会含有大量的历史性资料，并且它可利用特定的分析方式，从其中发掘出特定的资讯。</p>
+
+<h3>STAGE 层</h3>
+
+<p>STAGE 层作为数据缓冲层，主要负责采集不同类型的业务系统数据并保存一定期限内的相关业务数据，完成不同类型数据源的统一临时存储，同时避免 ETL 操作对业务系统性能造成影响，STAGE 层数据在数据结构、数据之间的逻辑关系上都与业务系统基本保持一致。</p>
+
+<h3>ODS 数据层</h3>
+
+<p>ODS（Operational Data Store）层数据来源于 STAGE 层，它的数据经过了对 STAGE 层数据的清洗，包括编码表去重、去空、垃圾数据过滤、数据类型规则化等。</p>
+
+<p>另外 ODS 作为 DW 和 STAGE 层的桥梁，也可以实现指标一致性的管理，将不同系统不同部门相同指标的定义及指标数据按照业务规则取其一，保证不同源数据的数据一致性，也可以满足用户对明细数据的查询要求，直接从ODS层获取明细数据进行分析。</p>
+
+<h3>DWD 数据层</h3>
+
+<p>DWD（Data Warehouse Detail）层数据是将 ODS 层数据根据数据清洗规则，经过质量检查、数据清洗、转换、标准化后，形成符合质量要求的公共数据中心。</p>
+
+<p>把 ODS 数据表结构改变成项目主题数据仓库的表结构，对 DWD 层的所有表添加了代理键，标准化了业务系统编码类型不统一的问题，建立了数据仓库维度表和事实表的关联体系，也为缓慢变化维的实现奠定了基础。</p>
+
+<h3>DWC 数据层</h3>
+
+<p>DWC（Data Warehouse Center）层主要管理固化报表的数据存储，数据主要来源于 DWD 层，根据前台所需数据建立物理模型，使用 ETL 抽取 DWD 层数据推送给 DWC 层，这样显著减少前台应用直接关联 DWD 层查询明细数据的成本，提高平台数据获取的速度。</p>
+
+<h3>DM 数据层</h3>
+
+<p>DM（Data Mart）层即数据集市，将指标与维度建立物理模型组成数据集市，这是 OLAP 的数据基础。该层实现了合并不同系统的数据源来满足面向主题的业务需求，它的建模是终端用户驱动的，也是由业务需求驱动的。按主题，维度及 KPI 指标对 DM 层进行模型设计、建模，DM 层数据是将 DWD 层数据进行进一步整合、转换、汇总、计算等 ETL 操作处理获取的。</p>
+
+<center><img src="/images/2019/IMAG2019061401.webp"></center>
+
+
+<p><br></p>
+
+<h2>1.3 Kylin 基本概念</h2>
+
+<h3>事实表（Fact Table）</h3>
+
+<p>事实表（Fact Table）是指存储有事实记录的表，如系统日志、销售记录等；事实表的记录在不断地动态增长，所以它的体积通常远大于其他表。</p>
+
+<h3>维度表（Dimension Table）</h3>
+
+<p>维度表或维表，有时也称查找表（Lookup Table），是与事实表相对应的一种表。它保存了维度的属性值，可以跟事实表做关联；相当于将事实表上经常重复出现的属性抽取、规范出来用一张表进行管理。</p>
+
+<p>维度表有以下几个优点：</p>
+
+<ul>
+<li><p>缩小了事实表的大小；</p></li>
+<li><p>便于维度的管理和维护，不必对事实表进行改动；</p></li>
+<li><p>维度表可以为多个事实表重用，以减少重复工作。</p></li>
+</ul>
+
+
+<h3>维度（Dimension）</h3>
+
+<p>维度是观察数据的角度，一般是一组离散的值；因此统计时可以把维度值相同的记录聚合在一起，然后进行聚合计算。</p>
+
+<p>在 Kylin Cube 构建中，维度可以分为以下几种类型：</p>
+
+<ul>
+<li><p>Mandatory：必需维度，查询中总是出现在 where 条件中的维度；如果一个维度被标记为 “Mandatory”，会认为所有的查询都会包含此维度，所有不含此维度的组合，在 Cube 构建时都会被剪枝（不计算）；</p></li>
+<li><p>Hierarchy：层级维度，如果多个维度之间有层级（或包含）的关系，通过设置为 “Hierarchy”，那些不满足层级的组合会被剪枝；如果A, B, C是层级，并且A>B>C，那么只需要计算组合A, AB, ABC; 其它组合如B, C, BC, AC将不做预计算；</p></li>
+<li><p>Joint：联合维度，有些维度往往一起出现，或者它们的基数非常接近（有 1:1 映射关系），例如 “用户 ID”总是对应唯一的 “用户名”；</p></li>
+<li><p>Derived：衍生维度：维度表的列值，可以从它的主键值衍生而来，那么通过将这些列定义为衍生维度，可以仅将主键加入到 Cube 的预计算来，而在运行时通过使用维度表的快照，衍生出非主键列的值，从而起到降维的效果。</p></li>
+</ul>
+
+
+<h3>度量（Measure）</h3>
+
+<p>度量是被聚合的统计值，也是聚合运算的结果，它一般是连续的值。</p>
+
+<h3>OLAP（Online Analytical Process）</h3>
+
+<p>OLAP（Online Analytical Process），联机分析处理，以多维度的方式分析数据，而且能够弹性地提供上卷（Roll-up）、下钻（Drill-down）和透视分析（Pivot）等操作，它是呈现集成性决策信息的方法，多用于决策支持系统、商务智能或数据仓库。其主要的功能在于方便大规模数据分析及统计计算，可对决策提供参考和支持。</p>
+
+<p>与之相区别的是联机交易处理（OLTP），联机交易处理，更侧重于基本的、日常的事务处理，包括数据的增删改查。</p>
+
+<h3>星型模型</h3>
+
+<p>星型模型是一种多维的数据关系，它由一个事实表和一组维表组成。每个维表都有一个维作为主键，所有这些维的主键组合成事实表的主键。强调的是对维度进行预处理，将多个维度集合到一个事实表，形成一个宽表。</p>
+
+<p>这也是我们在使用 Hive 时，经常会看到一些大宽表的原因，大宽表一般都是事实表，包含了维度关联的主键和一些度量信息，而维度表则是事实表里面维度的具体信息，使用时候一般通过 Join 来组合数据，相对来说对 OLAP 的分析比较方便。</p>
+
+<center><img src="/images/2019/IMAG2019061402.png"></center>
+
+
+<p><br></p>
+
+<h3>雪花模型</h3>
+
+<p>当有一个或多个维表没有直接连接到事实表上，而是通过其他维表连接到事实表上时，其图解就像多个雪花连接在一起，故称雪花模型。</p>
+
+<p>雪花模型是对星型模型的扩展，它对星型模型的维表进一步层次化，原有的各维表可能被扩展为小的事实表，形成一些局部的"层次"区域，这些被分解的表都连接到主维度表而不是事实表。</p>
+
+<p>雪花模型更加符合数据库范式，减少数据冗余，但是在分析数据的时候，操作比较复杂，需要 Join 的表比较多所以其性能并不一定比星型模型高。</p>
+
+<center><img src="/images/2019/IMAG2019061403.png"></center>
+
+
+<p><br></p>
+
+<h3>数据立方体（Data Cube）</h3>
+
+<p>数据立方体允许多维对数据建模和观察，它由维和事实定义，它是对多维模型的一个形象的说法。</p>
+
+<p>从表方面看，数据立方体是三维的，但是多维模型不仅限于三维模型，可以组合更多的模型，比如四维、五维等等，比如我们根据时间、地域、产品和产品型号这四个维度，统计销售量等指标。</p>
+
+<p>对于每一种维度的组合，将度量做聚合运算，然后将运算的结果保存为一个物化视图，称为 Cuboid。所有维度组合的 Cuboid 作为一个整体，被称为 Cube。所以简单来说，一个 Cube 就是许多按维度聚合的物化视图的集合。</p>
+
+<p>Cube Segment 是指针对源数据中的某一个片段，计算出来的 Cube 数据。通常数据仓库中的数据数量会随着时间的增长而增长，而 Cube Segment 也是按时间顺序来构建的。</p>
+
+<p>Cuboid 示例：Cuboid[Time, Locatio] = select Time, Location, sum(GMV) as GMV from T group by Time, Location</p>
+
+<center><img src="/images/2019/IMAG2019061404.png"></center>
+
+
+<p><br></p>
+
+<h3>Cube 构建常见概念</h3>
+
+<ul>
+<li><p>Table - 表， 是 Cube 的数据源；在创建 Cube 之前，需要从数据源（通常为 Hive）同步表的元数据，包含表名、列名、列属性等。</p></li>
+<li><p>Data Model - 数据模型，定义了由若干张表的一个连接关系。支持星型模型的多维分析；在创建Cube之前，用户需定义这么一个数据模型。</p></li>
+<li><p>Cube - 数据立方体，是一种多维分析的技术，通过预计算，将计算结果存储在某多个维度值所映射的空间中；在运行时通过对 Cube 的再处理而快速获取结果。</p></li>
+<li><p>Partition - 分区，用户可以定义一个分区日期或时间列，随后对 Cub e的构建按此列的值范围而进行，从而将 Cube 分成多个 Segment。</p></li>
+<li><p>Cube Segment - 每个 Cube Segment 是对特定时间范围的数据计算而成的 Cube，每个 Segment 对应一张 HBase 表。</p></li>
+<li><p>Aggregation Group - 聚合组，每个聚合组是全部维度的一个子集；通过将很多个维度分组，并把常一起使用的维度放在一起，可以有效降低 Cube 的组合数。</p></li>
+</ul>
+
+
+<h1>二、原理与架构</h1>
+
+<h2>2.1 工作原理</h2>
+
+<p>简单来说，Kylin 的核心思想是预计算（利用空间换时间），即对多维分析可能用到的度量进行预计算，将计算好的结果保存成 Cube 并存在 HBase 中，供查询时直接访问。</p>
+
+<p>把高复杂度的聚合运算、多表连接等操作转换成对预计算结果的查询，这决定了 Kylin 能够拥有很好的快速查询和高并发能力，具体工作过程如下：</p>
+
+<ol>
+<li><p>指定数据模型（Model），定义维度（Dimensions）和度量（Measure）；</p></li>
+<li><p>预计算 Cube，计算所有 Cuboid 并保存为物化视图；</p></li>
+<li><p>执行查询时（Restful API/JDBC/ODBC），读取 Cuboid，运算，产生查询结果。</p></li>
+</ol>
+
+
+<h2>2.2 体系架构</h2>
+
+<p>Apache Kylin 系统可以分为在线查询和离线构建两部分，技术架构如图所示，在线查询的模块主要处于上半区，而离线构建则处于下半区。</p>
+
+<center><img src="/images/2019/IMAG2019061403.webp"></center>
+
+
+<p><br></p>
+
+<h3>Kylin 的核心模块</h3>
+
+<ul>
+<li><p>REST Server：提供 Restful 接口，例如创建、构建、刷新、合并等 Cube 相关操作，Kylin 的 Projects、Tables 等元数据管理，用户访问权限控制，SQL 的查询等；</p></li>
+<li><p>Query Engine：使用开源的 Apache Calcite 框架来实现 SQL 解析，可以理解为 SQL 引擎层；</p></li>
+<li><p>Routing：负责将解析 SQL 生成的执行计划转换成 Cube 缓存的查询，这部分查询是可以在秒级甚至毫秒级完成；</p></li>
+<li><p>Metadata：Kylin 中有大量的元数据信息，包括 Cube 的定义、星型模型的定义、Job 和执行 Job 的输出信息、模型的维度信息等等，Kylin 的元数据和 Cube 都存储在 HBase 中，存储的格式是 json 字符串；</p></li>
+<li><p>Cube Build Engine：所有模块的基础，它主要负责 Kylin 预计算中创建 Cube，创建的过程是首先通过 Hive 读取原始数据，然后通过一些 MapReduce 或 Spark 计算生成 Htable，最后将数据 load 到 HBase 表中。</p></li>
+</ul>
+
+
+<h3>离线构建</h3>
+
+<p>离线构建的主要步骤：</p>
+
+<ol>
+<li><p>数据源在左侧，目前主要是 Hadoop Hive，保存着待分析的用户数据；</p></li>
+<li><p>根据元数据的定义，下方构建引擎从数据源抽取数据，并构建 Cube；</p></li>
+<li><p>数据以关系表的形式输入，且必须符合星形模型（2.0 开始已经支持星型模型）；</p></li>
+<li><p>MapReduce 是当前主要的构建技术（2.5 开始 Spark 是主要的构建技术）；</p></li>
+<li><p>构建后的 Cube 保存在右侧的存储引擎中，一般选用 HBase 作为存储。</p></li>
+</ol>
+
+
+<h3>在线查询</h3>
+
+<ol>
+<li><p>用户可以从上方查询系统（Rest API、JDBC/ODBC）发送 SQL 进行查询分析；</p></li>
+<li><p>无论从哪个接口进入，SQL 最终都会来到 Rest 服务层，再转交给查询引擎进行处理；</p></li>
+<li><p>查询引擎解析 SQL，生成基于关系表的逻辑执行计划；</p></li>
+<li><p>然后将其转译为基于 Cube 的物理执行计划；</p></li>
+<li><p>最后查询预计算生成的 Cube 并产生结果。</p></li>
+</ol>
+
+
+<h2>2.3 可扩展架构</h2>
+
+<p>可扩展指 Kylin 可以对其主要依赖的三个模块做任意的扩展和替换，Kylin 的三大依赖模块分别是数据源（Hive）、构建引擎（MR）和存储引擎（HBase）。</p>
+
+<p>可扩展架构带来了额外的灵活性，比如，它可以允许多个引擎同时并存。例如 Kylin 可以同时对接 Hive、Kafka 和其他第三方数据源；抑或用户可以为不同的 Cube 指定不同的构建引擎或存储引擎，以期达到最极致的性能和功能定制。</p>
+
+<center><img src="/images/2019/IMAG2019061404.webp"></center>
+
+
+<p><br></p>
+
+<h2>2.4 构建算法</h2>
+
+<h3>Layered Cubing</h3>
+
+<p>这个四维 Cube 需要五轮的 MapReduce 来完成：第一轮 MR 的输入是源数据，这一步会对维度列的值进行编码，并计算 ABCD 组合的结果。接下来的 MR 以上一轮的输出结果为输入，向上聚合计算三个维度的组合：ABC、BCD、ABD和ACD；依此类推，直到算出所有的维度组合。</p>
+
+<p>Layered Cubing 的特点：</p>
+
+<ul>
+<li><p>算法比较简单；</p></li>
+<li><p>算法的稳定性非常高；</p></li>
+<li><p>计算量或者数据量大的时候并不能充分利用系统的资源；</p></li>
+<li><p>没有充分利用内存（缓存中间计算结果）。</p></li>
+</ul>
+
+
+<center><img src="/images/2019/IMAG2019061405.webp"></center>
+
+
+<p><br></p>
+
+<h3>Fast Cubing</h3>
+
+<p>最大化利用 Mapper 端的 CPU 和内存，对分配的数据块，将需要的组合全都做计算后再输出给 Reducer；由 Reducer 再做一次合并（Merge），从而计算出完整数据的所有组合。如此，经过一轮 MapReduce 就完成了以前需要 N 轮的 Cube 计算。</p>
+
+<center><img src="/images/2019/IMAG2019061406.webp"></center>
+
+
+<p><br></p>
+
+<p>Fast Cubing 的特点：最大限度地把计算发生在 Mapper 这一端，一方面减少 shuffle 的数据量，另一方面减少 Reducer 端的计算量。</p>
+
+<p>第一步会计算 Base Cuboid（所有维度都有的组合），再基于它计算减少一个维度的组合。基于 parent 节点计算 child 节点，可以重用之前的计算结果；当计算 child 节点时，需要 parent 节点的值尽可能留在内存中；如果 child 节点还有 child，那么递归向下，所以它是一个深度优先遍历。当有一个节点没有 child，或者它的所有 child 都已经计算完，这时候它就可以被输出，占用的内存就可以释放。</p>
+
+<center><img src="/images/2019/IMAG2019061407.webp"></center>
+
+
+<p><br></p>
+
+<h1>三、 构建 Model</h1>
+
+<h2>3.1、从 Hive 中加载表</h2>
+
+<p>从 Hive 中导入表定义的具体步骤如下：</p>
+
+<ol>
+<li><p>登录系统：http://ip:7070/kylin；</p></li>
+<li><p>主界面顶端左侧网站 Logo 下点击加号 “＋” 以新建项目；</p></li>
+<li><p>在弹出的窗口中，输入项目名称（必选）和项目描述, 点击“确定”按钮，完成项目创建；</p></li>
+<li><p>在网站 Logo 的右侧的下拉框中选择创建的项目，点击 “Model” 菜单；</p></li>
+<li><p>点击“Data Source”选项卡，在 Tables 后面有三个按钮，第一个深蓝色按钮表示根据表名从 Hive 中导入表；第二个浅蓝色按钮点击后可以以可视化的方式从 Hive 选择需要导入的表；</p></li>
+<li><p>点击浅蓝色按钮，从 Hive 中选择需要导入的表，选择完毕后点击右下角的“Sync”按钮即可完成 Hive 表的导入。</p></li>
+</ol>
+
+
+<p>导入表定义的界面有一个选择框 Calculate column cardinality，勾选后系统会计算 Hive 表每一列的基数，基数是指数据集中出现的不同值的个数，例如“国家”是一个维度，如果有 200 个不同的值，那么此维度的基数就是 200。</p>
+
+<center><img src="/images/2019/IMAG2019061407.png"></center>
+
+
+<p><br></p>
+
+<h2>3.2、创建 Model</h2>
+
+<p>点击 “Models” 选项卡，可以看到项目已创建的 Models 以及 Cubes，点击 “+ New” 按钮，选择 “New Model” 即可打开创建 Model 的窗口。由于数据模型的差异，本文不介绍具体的案例，下面将主要介绍创建 Model 过程中遇到的各种概念。</p>
+
+<h3>1） Model Info</h3>
+
+<p>Model Info 主要是填写 Model 的基本信息，其中 “Model Name” 是必填项，模型名称有两点需要注意：</p>
+
+<ol>
+<li><p>模型名称是全局唯一的，也就是说即便你新建了一个工程，你的模型名称也不能够重复；</p></li>
+<li><p>模型一旦创建后，模型名称无法被修改。</p></li>
+</ol>
+
+
+<center><img src="/images/2019/IMAG2019061408.png"></center>
+
+
+<p><br></p>
+
+<h3>2） Data Model</h3>
+
+<p>Data Model 主要是构建整体的数据模型，无论你的数据是星型模型或者是雪花模型，需要在这个地方建立数据表之间的关系。</p>
+
+<h4>（2.1）、选择事实表</h4>
+
+<p>建立数据模型的第一步是选择事实表，选择完成后点击 “Add Lookup Table” 按钮设置事实表与维度表之间的关系。</p>
+
+<center><img src="/images/2019/IMAG2019061408.webp"></center>
+
+
+<p><br></p>
+
+<h4>（2.2）、建立数据关系</h4>
+
+<p>对 “Add Lookup Table” 页面的几点说明：</p>
+
+<ol>
+<li><p>数据关系不仅仅是事实表与维度表之间（星型模型），维度表和维度表之间（雪花模型）也可以建立联系；</p></li>
+<li><p>表与表之间的连接添加有三种：“Left Join”、“Inner Join”、“Right Join”；</p></li>
+<li><p>Skip snapshot for this lookup table 选项指的是是否跳过生成 snapshotTable，由于某些 Lookup 表特别大（大于 300M），如果某一个维度的基数比较大 ，可能会导致内存出现 OOM，所以在创建 snapshotTable 的时候会限制原始表的大小不能超过配置的一个上限值（kylin.snapshot.max-mb，默认值300）;</p></li>
+<li><p>跳过构建 snapshot 的 lookup 表将不能搜索，同时不支持设置为衍生维度（Derived）；</p></li>
+<li><p>大部分情况下都是使用 “Left Join”，其他两种 Join 方式不是很常用。</p></li>
+</ol>
+
+
+<center><img src="/images/2019/IMAG2019061409.png"></center>
+
+
+<p><br></p>
+
+<h4>(2.3)、完成表关系构建</h4>
+
+<p>通过上述的操作即可将事实表以及维度表联系起来，构成一个数据模型。</p>
+
+<center><img src="/images/2019/IMAG2019061410.png"></center>
+
+
+<p><br></p>
+
+<h3>3)、Dimensions</h3>
+
+<p>在 Dimensions 页面选择可能参与计算的维度，这里被选择的只是在 Cube 构建的时候拥有被选择资格的维度，并不是最后参与 Cube 构建的维度，推荐将维度表中的字段都选择上。</p>
+
+<p>一般而言，日期、商品种类、区域等会作为维度。</p>
+
+<center><img src="/images/2019/IMAG2019061411.png"></center>
+
+
+<p><br></p>
+
+<h3>4)、Measures</h3>
+
+<p>在 Measures 页面选择可能用于计算的度量。</p>
+
+<p>一般而言，销售额、流量、温湿度等会作为度量。</p>
+
+<center><img src="/images/2019/IMAG2019061412.png"></center>
+
+
+<p><br></p>
+
+<h3>5)、Settings</h3>
+
+<p>在 Settings 页面可以设置分区以及过滤条件，其中分区是为了系统可以进行增量构建而设计的，目前 Kylin 支持基于日期的分区，在 “Partition Date Column” 后面选择事实表或者维度表中的日期字段，然后选择日期格式即可；过滤条件设置后，Kylin 在构建的时候会选择符合过滤条件的数据进行构建。</p>
+
+<p>需要注意的几点：</p>
+
+<ol>
+<li><p>时间分区列可以支持日期或更细粒度的时间分区；</p></li>
+<li><p>时间分区列支持的数据类型有 time/date/datetime/integer等；</p></li>
+<li><p>过滤条件不需要写 WHERE；</p></li>
+<li><p>过滤条件不能包含日期维度。</p></li>
+</ol>
+
+
+<center><img src="/images/2019/IMAG2019061413.png"></center>
+
+
+<p><br></p>
+
+<h3>6)、Save</h3>
+
+<p>最后保存即可完成 Model 的创建，你可以打开 Model 中的 Visualization 标签页查询模型的表连接情况。</p>
+
+<center><img src="/images/2019/IMAG2019061414.png"></center>
+
+
+<p><br></p>
+
+<h2>3.3、Snapshot Table</h2>
+
+<p>每一个 Snapshot 是和一个 Hive 维度表对应的，生成的过程是：</p>
+
+<ol>
+<li><p>从原始的hive维度表中顺序得读取每一行每一列的值;</p></li>
+<li><p>使用 TrieDictionary 方式对这些所有的值进行编码（一个值对应一个 Id）；</p></li>
+<li><p>再次读取原始表中每一行的值，将每一列的值使用编码之后的 Id 进行替换，得到了一个只有 Id 的新表；</p></li>
+<li><p>同时保存这个新表和 Dictionary 对象（Id 和值的映射关系）就能够保存整个维度表；</p></li>
+<li><p>Kylin 将这个数据存储到元数据库中。</p></li>
+</ol>
+
+
+<h1>四、构建 Cube</h1>
+
+<h2>4.1、Cube Info</h2>
+
+<p>Cube Info 界面主要填写 Cube 的一些基本信息，首先要选择一个数据模型，然后填写 Cube 名称，Cube 名称全局唯一不能重复；Cube 信息填写完成后点击 “Next” 进入下一步。</p>
+
+<center><img src="/images/2019/IMAG2019061413.webp"></center>
+
+
+<p><br></p>
+
+<h2>4.2、Dimensions</h2>
+
+<p>Dimensions 是维度选择界面，从数据模型的维度中选择一些列作为 Cube 的维度，这个算是 Cube 构建过程中第一个比较重要的环节，这里的设置会影响到生成的 Cuboid 数量，进而影响 Cube 的数据量大小。</p>
+
+<p>在选择维度时，每一个维度列可以作为普通维度（Normal），也可以作为衍生维度（Derived）。相对于普通维度来说，衍生维度并不参与维度的 Cuboid，衍生维度对应的外键（FK）参与维度 Cuboid，从而降低 Cuboid 数。在查询时，对衍生维度的查询会首先转换为对外键所在维度的查询，因此会牺牲少量性能（大部分情况下可以接受）。</p>
+
+<center><img src="/images/2019/IMAG2019061414.webp"></center>
+
+
+<p><br></p>
+
+<h3>1、维度选择的建议：</h3>
+
+<ol>
+<li><p>作为 Cube 的维度需要满足下面的条件：可能存在于 where 条件中或者 groupBy 中的维度；</p></li>
+<li><p>事实表（Fact Table）只选择参与查询的字段，不参与查询的一定不要勾选（即便是外键）；</p></li>
+<li><p>维度表（Lookup Table）中的主键与事实表的外键一一对应，推荐勾选事实表的外键，维度表的主键勾选后选择为衍生（Derived）维度；</p></li>
+<li><p>对于星型模型而言，维度表的字段往往可以全部为衍生字段；</p></li>
+<li><p>对于雪花模型而言，如果维度表存在子表，则维度表对于子表的外键推荐作为普通（Normal）维度。</p></li>
+</ol>
+
+
+<h3>2、特别注意的事项：</h3>
+
+<ol>
+<li><p>表连接的字段并非一定要参与 Cuboid 计算；</p></li>
+<li><p>表连接的字段如果没有被勾选，且其外键表中没有任何字段作为衍生维度，则该表连接字段是不会参与 Cuboid 的；</p></li>
+<li><p>一旦被设置为 Normal 类型，则一定会参与 Cuboid 计算；</p></li>
+<li><p>如果维度表存在层级（例如省市县、日月年等），则推荐分层级的相关字段选择为普通（Normal）维度。</p></li>
+</ol>
+
+
+<center><img src="/images/2019/IMAG2019061415.webp"></center>
+
+
+<p><br></p>
+
+<h2>4.3、Measures</h2>
+
+<p>维度选择完成后，需要选择度量聚合的方式，比较常规的聚合方式有：COUNT、SUM、MIN、MAX、PERCENTILE，下面将详细介绍其他几种聚合方式。</p>
+
+<h3>1、TOP_N</h3>
+
+<p>Top-N 度量，旨在在 Cube 构建的时候预计算好需要的 Top-N；在查询阶段，就可以迅速的获取并返回 Top-N 记录，这样查询性能就远远高于没有 Top-N 预计算结果的 Cube。</p>
+
+<p>1.1、Top-N 中 Group By 的该如何选择？</p>
+
+<p>例如：全国二氧化碳污染物总和的省份排名，结果是省份排名，需要测量的是污染物的总和，因此 Group By 需要设置为 污染物类型。</p>
+
+<p>1.2、Return Type 中的 Top N 是什么意思？</p>
+
+<p>TOP N 表示最终获取的前 N 名的排序是比较准确的，例如 TOP 10 表示最终的前 10 名是比较准确的（维度的基数非常大时存在误差），但是不代表只能取前 10 个（Limit 10），可以使用其他数字，例如 Limit 500，只是返回更多内容时，精准度没有保证。</p>
+
+<p>1.3、TOP-N 的存储</p>
+
+<p>使用 TOP-N 时，排序度量字段和 Group By 字段会组合在一起，形成一个字段进行存储，用户需要 Top 100 的结果，Kylin 对于每种组合条件值，保留 Top 5000 （50倍）的纪录, 并供以后再次合并。</p>
+
+<center><img src="/images/2019/IMAG2019061415.png"></center>
+
+
+<p><br></p>
+
+<h3>2、Count_Distinct</h3>
+
+<p>Count_Distinct 度量有两个实现：</p>
+
+<ol>
+<li><p>近似实现：基于 HyperLogLog 算法，可选择接受的错误率（从9.75% 到 1.22%），低错误率需要更多存储；</p></li>
+<li><p>精确实现：基于 Bitmap（位图）算法，对于数据型为 tinyint、smallint 和 int 的数据，将把数据对应的值直接打入位图；对于数据型为 long，string 和其他的数据，将它们编码成字符串放入字典，然后再将对应的值打入位图。返回的度量结果是已经序列化的位图数据，而不仅是计算的值。这确保了不同的 segment 中，甚至跨越不同的 segment 来上卷，结果也是正确的。</p></li>
+</ol>
+
+
+<p>越精确消耗的存储空间越大，大多数场景下 HyperLogLog 的近似实现即可满足需求。</p>
+
+<h3>3、EXTEND_COLUMN</h3>
+
+<p>在分析场景中，经常存在对某个 id 进行过滤，但查询结果要展示为 name 的情况，比如user_id和user_name。这类问题通常有三种解决方式：</p>
+
+<ol>
+<li><p>将 id 和 name 都设置为维度，查询语句类似select name, count(*) from table where id = 1 group by id,name，这种方式的问题是会导致维度增多，导致预计算结果膨胀；</p></li>
+<li><p>将 id 和 name 都设置为维度，并且将两者设置为联合维度（Joint Dimensions），这种方式的好处是保持维度组合数不会增加，但限制了维度的其它优化，比如 id 不能再被设置为强制维度或者层次维度；</p></li>
+<li><p>将 id 设置为维度，name 设置为特殊的 Measure，类型为 Extended Column，这种方式既能保证过滤 id 且查询 name 的需求，同时也不影响 id 维度的进一步优化。</p></li>
+</ol>
+
+
+<h1>4.4、Refresh Setting</h1>
+
+<ul>
+<li><p>触发自动合并的时间阈值(Auto Merge Thresholds)：自动合并小的 segments 到中等甚至更大的 segment，如果不想自动合并，删除默认 2 个选项；</p></li>
+<li><p>Volatile Range: 默认为 0，‘Auto Merge’ 会自动合并所有可能的 cube segments；设置具体的数值后，‘Auto Merge’ 将不会合并最近 Volatile Range 天的 cube segments；假设 Volatile Range 设置为 7，则最近 7 天内生成的 cube segments 不会被自动合并；</p></li>
+<li><p>保留时间阈值（Retention Threshold）：对于时间久远的不需要再被查询的 Segment，Kylin 通过设置保留时间阈值可以自动清除这些 Segment，以节省磁盘空间；每当构建新的 Segment 时，Kylin 会自动检查老的 Segment，当这些 Segment 的结束日期与当前最新 Segment 的结束日期的差值大于保留时间阈值，则会被清除；如果无需自动清理，可以默认设置保留时间阈值为 0。</p></li>
+<li><p>分区起始时间（Partition Start Date）：Cube 构建的起始时间，1970-01-01 08:00:00 默认为分区起始时间。</p></li>
+</ul>
+
+
+<h2>4.5、Advanced Setting</h2>
+
+<p>高级设置主要用于 Cuboid 的剪枝优化，通过聚合组（Aggregation Group）、必要维度（Mandatory Dimension）、层级维度（Hierarchy Dimension）、联合维度（Joint Dimension）等方式，可以使得 Cuboid 的组合在预期范围内。</p>
+
+<h3>1、聚合组（Aggregation Group）</h3>
+
+<p>根据查询的维度组合，可以划分出维度组合大类，这些大类在 Kylin 里面被称为聚合组。例如查询需求为：污染物排放量在特定的时间范围内，各个区域（省、市、区县三个级别）的排名以及各个流域（一、二、三级流域）的排名。</p>
+
+<p>上述的查询需求就可以氛围两个聚合组：</p>
+
+<ol>
+<li><p>根据区域维度、时间维度查询污染物排放量；</p></li>
+<li><p>根据流域维度、时间维度查询污染物排放量。</p></li>
+</ol>
+
+
+<blockquote><p>如果只使用一个聚合组，区域维度和流域维度就很产生很多组合的 Cuboid，然而这些组合对查询毫无用处，此时就可以使用两个聚合组把区域和流域分开，这样便可以大大减少无用的组合。</p></blockquote>
+
+<h3>2、必要维度（Mandatory Dimension）</h3>
+
+<p>Mandatory 维度指的是那些总是会出现 在Where 条件或 Group By 语句里的维度。</p>
+
+<p>当然必须存在不一定是显式出现在查询语句中，例如查询日期是必要字段，月份、季度、年属于它的衍生字段，那么查询的时候出现月份、季度、年这些衍生字段等效于出现查询日期这个必要字段。</p>
+
+<h3>3、层级维度 （Hierachy Dimension）</h3>
+
+<p>Hierarchy 是一组有层级关系的维度，例如：国家->省->市，这里的“国家”是高级别的维度，“省”“市”依次是低级别的维度；用户会按高级别维度进行查询，也会按低级别维度进行查询，但在查询低级别维度时，往往都会带上高级别维度的条件，而不会孤立地审视低级别维度的数据。也就是说，用户对于这三个维度的查询可以归类为以下三类:</p>
+
+<ol>
+<li><p>group by country</p></li>
+<li><p>group by country, province（等同于group by province）</p></li>
+<li><p>group by country, province, city（等同于group by country, city 或者group by city）</p></li>
+</ol>
+
+
+<h3>4、联合维度（Joint Dimension）</h3>
+
+<p>有些维度往往一起出现，或者它们的基数非常接近（有1:1映射关系），例如 “user_id” 和 “email”。把多个维度定义为组合关系后，所有不符合此关系的 cuboids 会被跳过计算。</p>
+
+<p>就 Joint Dimension (A, B) 来说，在 group by 时 A, B 最好同时出现，这样不损失性能。但如果只出现 A 或者 B，那么就需要在查询时从 group by A,B 的结果做进一步聚合运算，会降低查询的速度。</p>
+
+<h2>4.5、Rowkeys</h2>
+
+<h3>4.5.1、编码</h3>
+
+<p>Kylin 以 Key-Value 的方式将 Cube 存储到 HBase 中，HBase 的 key，也就是 Rowkey，是由各维度的值拼接而成的；为了更高效地存储这些值，Kylin 会对它们进行编码和压缩；每个维度均可以选择合适的编码（Encoding）方式，默认采用的是字典（Dictionary）编码技术；字段支持的基本编码类型如下：</p>
+
+<ul>
+<li><p>dict：适用于大部分字段，默认推荐使用，但在超高基情况下，可能引起内存不足的问题；</p></li>
+<li><p>boolean：适用于字段值为true, false, TRUE, FALSE, True, False, t, f, T, F, yes, no, YES, NO, Yes, No, y, n, Y, N, 1, 0；</p></li>
+<li><p>integer：适用于字段值为整数字符，支持的整数区间为[ -2<sup>8N-1</sup>, 2<sup>8N-1</sup>]；</p></li>
+<li><p>date：适用于字段值为日期字符，支持的格式包括yyyyMMdd、yyyy-MM-dd、yyyy-MM-dd HH:mm:ss、yyyy-MM-dd HH:mm:ss.SSS，其中如果包含时间戳部分会被截断；</p></li>
+<li><p>time：适用于字段值为时间戳字符，支持范围为[ 1970-01-01 00:00:00, 2038/01/19 03:14:07]，毫秒部分会被忽略，time编码适用于 time, datetime, timestamp 等类型；</p></li>
+<li><p>fix_length：适用于超高基场景，将选取字段的前 N 个字节作为编码值，当 N 小于字段长度，会造成字段截断，当 N 较大时，造成 RowKey 过长，查询性能下降，只适用于 varchar 或 nvarchar 类型；</p></li>
+<li><p>fixed_length_hex：适用于字段值为十六进制字符，比如 1A2BFF 或者 FF00FF，每两个字符需要一个字节，只适用于 varchar 或 nvarchar 类型。</p></li>
+</ul>
+
+
+<h3>4.5.2、顺序</h3>
+
+<p>各维度在 Rowkeys 中的顺序，对于查询的性能会产生较明显的影响；在这里用户可以根据查询的模式和习惯，通过拖曳的方式调整各个维度在Rowkeys上的顺序。推荐的顺序为：Mandatory 维度、where 过滤条件中出现频率较多的维度、高基数维度、低基数维度。这样做的好处是，充分利用过滤条件来缩小在 HBase 中扫描的范围，从而提高查询的效率。</p>
+
+<h3>4.5.3、分片</h3>
+
+<p>指定 ShardBy 的列，明细数据将按照该列的值分片；没有指定 ShardBy 的列，则默认将根据所有列中的数据进行分片；选择适当的 ShardBy 列，可以使明细数据较为均匀的分散在多个数据片上，提高并行性，进而获得更理想的查询效率；建议选择基数较大的列作为 ShardBy 列，以避免数据分散不均匀。</p>
+
+<h2>4.6、其他设置</h2>
+
+<ul>
+<li><p>Mandatory Cuboids: 维度组合白名单，指定需要构建的 cuboid 的维度的组合；</p></li>
+<li><p>Cube Engine: Cube 构建引擎，有两种：MapReduce 和 Spark；如果你的 Cube 只有简单度量（SUM, MIN, MAX)，建议使用 Spark；如果 Cube 中有复杂类型度量（COUNT DISTINCT, TOP_N），建议使用 MapReduce；</p></li>
+<li><p>Global Dictionary：用于精确计算 COUNT DISTINCT 的字典, 它会将一个非 integer 的值转成 integer，以便于 bitmap 进行去重；如果你要计算 COUNT DISTINCT 的列本身已经是 integer 类型，那么不需要定义 Global Dictionary； Global Dictionary 会被所有 segment 共享，因此支持在跨 segments 之间做上卷去重操作。</p></li>
+<li><p>Segment Dictionary：另一个用于精确计算 COUNT DISTINCT 的字典，与 Global Dictionary 不同的是，它是基于一个 segment 的值构建的，因此不支持跨 segments 的汇总计算。如果你的 cube 不是分区的或者能保证你的所有 SQL 按照 partition_column 进行 group by, 那么你应该使用 “Segment Dictionary” 而不是 “Global Dictionary”，这样可以避免单个字典过大的问题。</p></li>
+<li><p>Advanced Snapshot Table: 为全局 lookup 表而设计，提供不同的存储类型；</p></li>
+<li><p>Advanced ColumnFamily: 如果有超过一个的 COUNT DISTINCT 或 TopN 度量, 你可以将它们放在更多列簇中，以优化与HBase 的I/O。</p></li>
+</ul>
+
+
+<h2>4.7、Configuration Overwrites</h2>
+
+<p>Kylin 使用了很多配置参数以提高灵活性，用户可以根据具体的环境、场景等配置不同的参数进行调优；Kylin 全局的参数值可在 conf/kylin.properties 文件中进行配置；如果 Cube 需要覆盖全局设置的话，则需要在此页面中指定，这些配置项将覆盖项目级别和配置文件中的默认值。</p>
+
+<center><img src="/images/2019/IMAG2019061416.png"></center>
+
+
+<p><br></p>
+
+<h2>4.8、Overview</h2>
+
+<p>你可以概览你的 cube 并返回之前的步骤进行修改，点击 Save 按钮完成 cube 创建。</p>
+
+<center><img src="/images/2019/IMAG2019061417.png"></center>
+
+
+<p><br></p>
+
+<h2>4.9、Planner</h2>
+
+<p>如果你开启了 Cube Planner，当 Cube 保存后可以到 Planner 标签页查看 Cuboid 的个数以及各个维度的组合情况，这能够很直观的帮助你了解你的维度组合情况，如果与预想的有出入可以随时对 Cube 进行调整。</p>
+
+<center><img src="/images/2019/IMAG2019061418.png"></center>
+
+
+<p><br></p>
+
+<h1>五、优化 Cube</h1>
+
+<h2>5.1、维度表与事实表</h2>
+
+<h3>1、维度表</h3>
+
+<ol>
+<li><p>要具有数据一致性，主键值必须是唯一的（否则 Kylin 构建过程会报错）；</p></li>
+<li><p>维度表越小越好，因为 Kylin 会将维度表加载到内存中供查询，过大的表不适合作为维度表，默认的阈值是 300MB；</p></li>
+<li><p>改变频率低，Kylin 会在每次构建中试图重用维度表的快照（Snapshot），如果维度表经常改变的话，重用就会失效，这就会导致要经常对维度表创建快照；</p></li>
+<li><p>维度表最好不要是 Hive 视图（View），因为每次都需要将视图进行物化，从而导致额外的时间开销。</p></li>
+</ol>
+
+
+<h3>2、事实表</h3>
+
+<ol>
+<li><p>移除不参与 Cube 构建的字段，可以提升构建速度，降低 Cube 构建结果的大小；</p></li>
+<li><p>尽可能将事实表进行维度拆分，提取公用的维度；</p></li>
+<li><p>保证维度表与事实表的映射关系，过滤无法映射的记录。</p></li>
+</ol>
+
+
+<p>如果维度与事实表无法映射，某些字段（数据类型为 number 系列）会遇到构建失败的问题（numberFormatException('\N')，\N 是为 Hive 中 NULL 的实际存储内容）；此外，在进行 Left Join 的时候会产生大量的 NULL，这些 NULL 值在真正查询中根本没有任何作用。</p>
+
+<h3>3、分区表</h3>
+
+<p>Hive 表支持多分区（Partition），简单地说，一个分区就是一个文件目录，存储了特定的数据文件。当有新的数据生成的时候，可以将数据加载到指定的分区，读取数据的时候也可以指定分区。对于 SQL 查询，如果查询中指定了分区列的属性条件，则 Hive 会智能地选择特定分区（也就是目录），从而避免全量数据的扫描，减少读写操作对集群的压力。</p>
+
+<p>Kylin 支持增量的 Cube 构建，通常是按时间属性来增量地从 Hive 表中抽取数据。如果 Hive 表正好是按此时间属性做分区的话，那么就可以利用到 Hive 分区的好处，每次在 Hive 构建的时候都可以直接跳过不相干日期的数据，节省 Cube 构建的时间。这样的列在 Kylin 里也称为分割时间列（Partition Time Column），通常它应该也是 Hive 表的分区列。</p>
+
+<h2>5.2、Cube 构建优化</h2>
+
+<h3>1、维度优化</h3>
+
+<ol>
+<li><p>分析查询条件，不参与 Group By 或者 Where 过滤的条件维度一定不要勾选；</p></li>
+<li><p>一般而言，Left Join 右侧表里面的字段均可以作为 Derived （衍生）维度；</p></li>
+<li><p>必需维度、层级维度、联合维度、衍生维度四种维度优化方案；</p></li>
+<li><p>聚合组进一步对维度组合进行优化。</p></li>
+</ol>
+
+
+<h3>2、其他优化</h3>
+
+<ol>
+<li><p>RowKeys 顺序：Mandatory 维度、where 过滤条件中出现频率较多的维度、高基数维度、低基数维度；</p></li>
+<li><p>ShardBy 设置：建议选择基数较大的列作为 ShardBy 列，以使得数据可以均匀分布；</p></li>
+<li><p>数据压缩：Kylin 针对维度字典以及维度表快照采用了特殊的压缩算法，对于 HBase 中的聚合计算数据利用了 Hadoop 的 LZO 或者是 Snappy 等压缩算法，从而保证存储在 HBase 以及内存中的数据尽可能地小；</p></li>
+<li><p>对于大的事实表可以采用分区来增量构建，然后设置定期自动合并（Merge）操作；</p></li>
+<li><p>事实表中日期数据类型为尽可能设置为 date；</p></li>
+<li><p>ShardBy 字段有助于全部数据分散分布在各个 Region 中，有助于防止出现数据倾斜等问题；</p></li>
+<li><p>ShardBy 字段为 True 后，同一个值的数据会存储在一起，便于批量捞取数据。</p></li>
+</ol>
+
+
+<h2>5.3、注意事项</h2>
+
+<h3>1、哪些维度参与了 Cuboid 构建？</h3>
+
+<p>很多人会误以为只有聚合组 Includes 里面被选择的维度才参与 Cube 构建的计算，其实真正参与计算是 Dimensions 设置界面选择为 Default 的那些维度，还有 Left Join 的字段（如果其 Derived 字段被勾选）。</p>
+
+<blockquote><p>简单来说，在 RowKeys 排序界面看到的维度都会参与 Cuboid 的构建，如果在 RowKeys 看到不想参与计算的维度，可以到 Dimensions 设置界面进行修改。</p></blockquote>
+
+<h3>2、结合业务设置层级维度</h3>
+
+<p>层级维度在设置的时候一定要深刻理解业务，例如：企业到底归属到行业类型下还是归属到区域类型下？从层级结构的角度来讲都是可以的，深层次挖掘业务需求后我们会发现，凡是查询企业的时候均附带有区域的过滤条件，因此将企业归属到区域的层级下比归属到行业类型下更加有效。</p>
+
+<h3>3、善于尝试</h3>
+
+<p>在实践中，可能会遇到各种不确定的思路，最佳的做法是去实践，多建立 Model 和 Cube，从不同层次去优化，去尝试，在实践中不断总结经验。</p>
+
+<p>原文链接：<br/>
+<a href="https://juejin.cn/post/6844903693058342925">Apache Kylin 入门 1 - 基本概念</a> <br/>
+<a href="https://juejin.cn/post/6844903693599408136">Apache Kylin 入门 2 - 原理与架构</a> <br/>
+<a href="https://juejin.cn/post/6844903697755947015">Apache Kylin 入门 4 - 构建 Model</a> <br/>
+<a href="https://juejin.cn/post/6844903700800995336">Apache Kylin 入门 5 - 构建 Cube</a> <br/>
+<a href="https://juejin.cn/post/6844903705536364558">Apache Kylin 入门 6 - 优化 Cube</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[【美团】基于Druid的Kylin存储引擎实践]]></title>
+    <link href="https://ibillxia.github.io/blog/2019/06/05/druid-based-kylin-storage/"/>
+    <updated>2019-06-05T20:54:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2019/06/05/druid-based-kylin-storage</id>
+    <content type="html"><![CDATA[<p>作者: 康凯森</p>
+
+<p>8月11日，由 Kyligence 主办、美团点评协办的 Apache Kylin Meetup@北京，在美团公司总部圆满落幕。本文整理自当天美团大数据工程师、Apache Kylin Committer康凯森的演讲实录，全文共6600字，阅读时间大约15分钟。或点击<a href="https://v.qq.com/x/page/f0763nt7h4o.html">视频</a>，观看Meetup现场实录。</p>
+
+<p>本次分享的内容主要分为3部分，首先我会介绍下Kylin On HBase的问题，也就是我们为什么要为Kylin实现一个新的存储引擎，其次我会介绍下我们Kylin新存储引擎探索的过程，这部分会解释我们为什么选择了Druid作为Kylin的存储引擎，最后我会介绍下Kylin On Druid的整体架构,核心原理和Kylin On Druid的成果。 下面的分享中Kylin On Druid有时会简称为KOD。</p>
+
+<h1>一、Kylin 在美团点评的服务现状</h1>
+
+<center><img src="/images/2019/IMAG2019060501.png"></center>
+
+
+<p><br></p>
+
+<!--more-->
+
+
+<p>进入正式主题前，我先介绍下Kylin在美团点评的现状。目前我们线上Cube数有近1000个，Cube单副本存储近1PB；每天查询量380多万次，查询的TP50时延在200ms左右，TP90时延在1.2s左右。目前Kylin已经覆盖了美团点评所有主要业务线。</p>
+
+<h2>Kylin On HBase 问题</h2>
+
+<center><img src="/images/2019/IMAG2019060502.png"></center>
+
+
+<p><br></p>
+
+<p>随着Kylin在我司的大规模使用和我们对Kylin的深入优化改进，我们发现了Kylin本身的一些痛点和问题，其中之一便是Kylin On HBase的性能问题。如图：我们用同一SQL在同一集群查询同一Cube，前后性能相差上千倍。 两次查询的唯一不同点就是Kylin维度在HBase的RowKey中位置不同， 耗时90ms的查询中维度dt和poi_id在RowKey前两位，耗时100多s的查询中维度dt和poi_id在RowKey后两位。</p>
+
+<center><img src="/images/2019/IMAG2019060503.png"></center>
+
+
+<p><br></p>
+
+<p>下面我们来看下Kylin On HBase中前后缀过滤性能相差巨大的原因：如图所示：Kylin中会将Cuboid+所有维度拼接成HBase的Rowkey，Kylin默认会将所有普通指标拼接成HBase一个Column Family中同一列的Value。HBase只有单一Rowkey索引，所以只有查询能够匹配Rowkey的前缀时，查询性能会十分高效，反之，查询性能会比较低下，甚至会出现全表Scan。此外，即使只需要查询一个指标，Kylin在HBase侧也需要Scan所有指标列，相比列存性能也会有较大差距。 总的来说，HBase在Kylin的查询场景下Scan和Filter效率较低下。</p>
+
+<p>对于Kylin On HBase Scan和Filter效率低下的问题，我们比较自然会想到的解法是：用列存加速Scan，用索引来加速Filter。</p>
+
+<p>这里我简单介绍下列存的优点，主要包含以下3点：</p>
+
+<ol>
+<li><p>因为只需要读取必需访问的列，所以列存有高效的IO</p></li>
+<li><p>因为每列数据的类型一致，格式一致，所以列存可以进行高效的编码和压缩</p></li>
+<li><p>列存更容易实现向量化执行，而向量化执行相比传统的火山模型，函数调用次数更少，对CPU Cache和SIMD更加友好。 总的来说，列存相比HBase的KV模型更适合Kylin的查询场景。</p></li>
+</ol>
+
+
+<p>所以，要解决Kylin On HBase Scan和Filter效率低下的问题, 我们就需要为Kylin增加一个列存，有高效索引的存储引擎。</p>
+
+<h1>二、Kylin 新存储引擎探索之路</h1>
+
+<center><img src="/images/2019/IMAG2019060504.png"></center>
+
+
+<p><br></p>
+
+<p>在我们为Kylin新增一个存储引擎之前，我们自然就需要先了解Kylin的存储引擎组成。主要有5部分：存储格式，Cache，计算，调度和元数据。 计算指数据的Scan,过滤，聚合等，调度指文件增删，复制和负载均衡等，这里的元数据指的是存储引擎本身的元数据。其中存储格式对查询性能影响很大，也是HBase在Kylin查询场景下的痛点，所以我们决定首先去寻找或改造一个适合Kylin的存储格式。</p>
+
+<h2>Kylin 新存储引擎实现思路</h2>
+
+<center><img src="/images/2019/IMAG2019060505.png"></center>
+
+
+<p><br></p>
+
+<p>当时我们主要有两个思路，一种思路是基于Spark + 存储格式进行演进： 就是找到一个优秀的存储格式后，和Spark进行集成。大概思路是将文件Cache到本地，用Spark来实现计算和查询的调度，整个方案大体上就可以Run起来。大家对这种思路感兴趣的话，可以参考TiDB的TiSpark项目，以及Snappydata这个系统。</p>
+
+<p>第二种思路就是找到或自研一个优秀的存储格式后，再参考HBase， Druid等系统，逐步完善成一个完整的存储引擎。</p>
+
+<p>所以，无论哪一种思路，我们都需要首先找到或者自研一个优秀的适合Kylin的存储格式。</p>
+
+<center><img src="/images/2019/IMAG2019060506.png"></center>
+
+
+<p><br></p>
+
+<p>我们在调研存储格式时主要考虑Scan和Filter性能，导入性能，压缩率，集成难度这4点因素，其中重点关注Scan和Filter性能。</p>
+
+<h2>Kylin On Parquet POC</h2>
+
+<center><img src="/images/2019/IMAG2019060507.png"></center>
+
+
+<p><br></p>
+
+<p>我们首先对Parquet进行了调研。因为Parquet是当前Hadoop生态列式文件的标准，在Hadoop生态中广泛使用。一个Parquet文件先按行逻辑上水平拆分成row groups，row groups内是列存，每一列是一个Column chunks，Column chunks进一步拆分成Page， Page是数据访问的最小单位。Parquet 可以通过min,max索引和字典实现row groups粒度的过滤，但是没有Page粒度的索引。</p>
+
+<p>我们在17年5月份的时候进行了Kylin On Parquet POC，POC的结果也符合我们的理论预期：由于Parquet是列存，所以在Scan部分列时性能优于HBase，但由于存在Tuple重组，也就是列转行的开销，Scan性能会随着访问列的个数增加而降低，Scan全部列时性能不如HBase。 Filter方面，Parquet在前缀和后缀过滤上性能没有差别，但是由于当时的Parquet没有Page粒度的细粒度索引，所以前缀过滤性能明显比HBase差。</p>
+
+<h2>Kylin On CarbonData</h2>
+
+<center><img src="/images/2019/IMAG2019060508.png"></center>
+
+
+<p><br></p>
+
+<p>由于Parquet过滤性能不足，所以我们就Pass了Kylin On Parquet的方案。 Parquet之后，我们又调研了当时新起的华为开源的存储格式CarbonData。和Parquet类似，CarbonData首先将数据水平切分成若干个Blocklet，Blocklet内部按列存储，每列的数据叫做一个Column Chunk。和Parquet不同的是，CarbonData拥有丰富的索引：MDK索引；Min，Max索引；倒排索引。MDK索引是多维度索引，类似Kylin中的维度索引，整个文件会按照多个维度列进行排序，这样对MDK列中的维度进行前缀过滤就会很高效。</p>
+
+<p>CarbonData的列存+丰富索引的设计的确是我们所期望的，不过CarbonData和Spark耦合较深，且当时的CarbonData没有OutputFormat，也不是很成熟，所以我们也Pass了Kylin On CarbonData的方案。</p>
+
+<h2>Kylin On Lucene POC</h2>
+
+<center><img src="/images/2019/IMAG2019060509.png"></center>
+
+
+<p><br></p>
+
+<p>Parquet，CarbonData之后。 我们差不多同时进行了Kylin On Lucene POC 和 Kylin On Druid POC。我们先来看下Lucene， Lucene大家应该都很熟悉，是一个被广泛使用的全文搜索库，其存储格式是基于MMAP，支持倒排索引的列存。</p>
+
+<p>Kylin On Lucene POC的结果和我们对倒排索引的理论认知符合：由于倒排索引是用额外的构建成本和存储成本换取查询时高效的过滤性能，所以Lucene的构建性能只有HBase的1/3，存储是HBase的4倍，但是过滤性能明显优于HBase。</p>
+
+<h2>Kylin On Druid POC</h2>
+
+<center><img src="/images/2019/IMAG2019060510.png"></center>
+
+
+<p><br></p>
+
+<p>下面我们来看下Druid的存储格式。和Lucene类似，Druid的存储格式也是基于MMAP，支持倒排索引的列存，区别是Druid的倒排索引是基于Bitmap的，Lucene的倒排索引是基于倒排表的。Druid的存储格式比较简单，就是直接按列依次存储，其中的M1,M2是指标列，D1,D2指维度列.除了数据文件之外，还会有一个meta文件记录每一列的offset。我们要读取Druid文件时，就将Druid文件MMap到内存，直接根据offset读取指定偏移量的数据。</p>
+
+<center><img src="/images/2019/IMAG2019060511.png"></center>
+
+
+<p><br></p>
+
+<p>图中上半部分是Druid Bitmap 倒排索引的实现原理：我们有维度列D2, 共4行数据，包含meituan,dianping两个值，Druid会首先对维度列进行字典编码，图中meituan编码为0，dianping编码为1，然后Druid会基于维度值和字典构建基于Bitmap的倒排索引，倒排索引的Key是编码后的ID，Value是Bitmap，Bitmap的哪个bit位是1，就表示该值出现在哪些行。 下半部分是Druid String 维度存储的具体内容：包括列的元数据，维度字典，维度编码后的ID和倒排索引。</p>
+
+<p>图中是Kylin On Druid POC的结果，我们可以看到Druid的过滤性能明显优于HBase，Scan性能和Parquet类似，在部分列时也明显优于HBase。 构建和存储的话，和Lucene类似，会比HBase差一点。</p>
+
+<h2>Why Kylin On Druid</h2>
+
+<p>在我们对Parquet，CarbonData，Lucene，Druid的存储格式和POC情况有了基本了解之后，我们来看下为什么我们当时做出了Kylin On Druid的方案：</p>
+
+<ul>
+<li><p>Parquet的索引粒度较粗，过滤性能不足；</p></li>
+<li><p>CarbonData与Spark 耦合较深，集成难度较大；</p></li>
+<li><p>Lucene 和 Druid相比，存储膨胀率较高，还有比较重要的一点是，Druid不仅仅是一个存储格式，也可以作为Kylin完整的存储引擎。</p></li>
+</ul>
+
+
+<center><img src="/images/2019/IMAG2019060512.png"></center>
+
+
+<p><br></p>
+
+<p>我们再来看下我们选择Kylin On Druid的原因：</p>
+
+<ul>
+<li><p>首先是Druid Scan,Filter性能很好</p></li>
+<li><p>其次是Druid不仅仅是一个存储格式，而是可以作为一个完整的Kylin存储引擎， 比如Druid Historical节点负责Segment的Cache和 计算，Druid Coordinator节点负责Segment的增删，副本和负载均衡。这样我们就不需要基于存储格式再去演进出一个存储引擎，我们整个项目的工期会大幅缩短。</p></li>
+<li><p>最后，Kylin和Druid本身就是我们维护的系统，项目即使失败，我们的付出也会有收获。</p></li>
+</ul>
+
+
+<h1>三、Kylin On Druid</h1>
+
+<p>OK，前半部分主要介绍了Kylin On Druid的大背景，回答了Why Kylin On Druid。 下面我们来看下How Kylin On Druid。</p>
+
+<h2>Kylin 可插拔架构</h2>
+
+<center><img src="/images/2019/IMAG2019060513.png"></center>
+
+
+<p><br></p>
+
+<p>在介绍Kylin On Druid之前，我们先来看下Kylin的可插拔架构。Kylin的可插拔架构对数据源，计算引擎， 存储引擎都有抽象，理论这3个部分都是可以替换的。目前数据源已经支持Hive，Kafka；计算引擎支持Spark，MR； 但是存储引擎只有HBase。 所谓的Kylin On Druid就是在Kylin的可插拔架构中用Druid替换掉HBase。</p>
+
+<h2>Kylin On Druid 架构</h2>
+
+<center><img src="/images/2019/IMAG2019060514.png"></center>
+
+
+<p><br></p>
+
+<p>图中是Kylin On Druid 简化后的架构图，分为数据导入和数据查询两条线。数据导入时，Kylin的JobServer会将Hive中的数据导入到Druid的Historical节点中；数据查询时，Kylin的Queryserver会通过Druid的Broker节点向Druid发起查询。</p>
+
+<center><img src="/images/2019/IMAG2019060515.png"></center>
+
+
+<p><br></p>
+
+<p>下面我们来详细看下KOD数据导入和数据查询的过程，我们首先来看下数据导入过程：</p>
+
+<ol>
+<li><p>和HBase一样，首先需要计算出Cuboid</p></li>
+<li><p>生成Cuboid后，Kylin On HBase中是将Cuboid转为HBase的HFile，KOD中则是将Cuboid转为Druid Segment文件。</p></li>
+<li><p>向Druid的MetaData Store插入Segment元数据。下面的工作是Druid内部的流程:</p></li>
+<li><p>Coordinator定期从MetaData Store Pull Segment元数据，发现有新Segment生成时，就会通知Historical节点Load Segment</p></li>
+<li><p>Historical节点收到Load Segment通知后，就会去HDFS上下载Segment文件，然后MMap到内存，至此整个数据导入过程完成。</p></li>
+</ol>
+
+
+<center><img src="/images/2019/IMAG2019060516.png"></center>
+
+
+<p><br></p>
+
+<p>KOD的数据查询过程，Kylin和Druid如何交互我们可以有两种方案。 一种是通过直接访问Broker的方式和Druid集成，一种是通过直接访问Druid Historical节点的方式和Druid集成。 第一种方式我们只需要将Kylin的SQL翻译成Druid的json，通过Http向Druid的Broker发起查询。 第二种方式我们就需要在kylin中实现Druid Broker的功能，好处是性能会比第一种好，因为少一层网络传输，坏处是Kylin和Druid的依赖冲突会更严重，实现较复杂。本着侵入性小和简单可用的原则，我们选择了第一种方案。</p>
+
+<h2>Kylin On Druid 实现细节</h2>
+
+<p>在了解了KOD的架构和整个数据导入，数据查询过程后，我们再具体看下我们做了哪些方面的工作：</p>
+
+<ol>
+<li><p>Kylin和Druid的Schema映射</p></li>
+<li><p>Cube 构建侧适配</p></li>
+<li><p>Cube 查询侧适配</p></li>
+<li><p>运维工具适配</p></li>
+</ol>
+
+
+<p>其实这4方面的工作也是我们为Kylin增加一个存储引擎必须要做的工作。</p>
+
+<center><img src="/images/2019/IMAG2019060517.png"></center>
+
+
+<p><br></p>
+
+<p>Kylin和Druid的Schema映射是这样的：Kylin的Cube对应Druid中的DataSource，Kylin的Segment对应Druid中的Segment，维度对维度，指标对指标，需要额外增加一个Cuboid维度列，Druid中没有的指标需要在Druid中进行扩展。</p>
+
+<center><img src="/images/2019/IMAG2019060518.png"></center>
+
+
+<p><br></p>
+
+<p>我们目前在Druid中增加了Kylin的精确去重指标，Kylin的ExtendColumn指标和Decimal指标。无论是Druid还是Kylin，我们新增一种聚合指标所要做的事情都是类似的，区别只是具体的接口和实现方式不同。我们自定义一种聚合指标要做这些事情：</p>
+
+<ul>
+<li><p>定义指标的元数据：指标的名称参数，返回类型，核心数据结构；</p></li>
+<li><p>定义指标的聚合方式；</p></li>
+<li><p>定义指标序列化和反序列化的方式；</p></li>
+<li><p>注册指标，让系统发现新指标。</p></li>
+</ul>
+
+
+<center><img src="/images/2019/IMAG2019060519.png"></center>
+
+
+<p><br></p>
+
+<p>Cube构建侧适配除了之前提到的将Cuboid 转为 Druid Segment和Load Segemnt这一步，KOD中为了支持Druid层的业务隔离，还增加了Update Druid Tier这一步，允许用户将不同的Cube存储到不同的Tier。在Druid Segment生成和Load这两步，都进行了一定的优化。 生成Druid Segment时，由于需要生成倒排索引，所以相比生成HBase的HFILE，就需要更多的内存，所以这一步进行了较多内存升的优化。 在Druid Load Segment这一步，初期发现多个Segment 并发导入时，Druid Load Segment会很慢。 经过排查发现，主要是Druid 0.10.0版本有bug，默认的并发度配置不生效，所以整个Load是串行，后来是通过升级到Druid 0.11，并将并发度设置为磁盘数的2倍解决的，因为Druid Load Segment的耗时99.9% 都是在从HDFS下载Segment上。</p>
+
+<center><img src="/images/2019/IMAG2019060520.png"></center>
+
+
+<p><br></p>
+
+<p>在介绍KOD对Cube查询侧的适配之前，我们先简单看下Kylin的查询流程。Kylin的SQL解析，逻辑计划的生成和优化都是通过Calcite实现的，Kylin会根据Calcite生成的查询计划生成HBase的Scan请求，HBase端经过Scan，Filter,Agg后会一次性将结果返回给Kylin的QueryServer，QueryServer会将HBase返回的结果反序列化，对维度根据字典进行解码生成Obejct数组，再将Obejct数组转为Tuple，Tuple和Obejct数组的主要区别是Tuple有了类型信息，最后Tuple会交给Calcite的Enumerator进行最终计算。</p>
+
+<center><img src="/images/2019/IMAG2019060521.png"></center>
+
+
+<p><br></p>
+
+<p>下面我们来看下KOD对Cube查询侧的适配，我们拿到Calcite生成的查询计划后，为了实现谓词下推，会首先将Kylin的Filter转为Druid的Filter；其次会进行分区裁剪，避免访问不必要的Druid Segment；然后会根据查询的Cube，维度，指标，Filter等生成Druid的查询Json，通过Http向Druid发起查询，Druid端经过Scan，Filter,Agg后会按照Http Chunk的方式Pipline地将查询结果返回给Kylin的QueryServer，下来的过程基本和HBase类似，需要注意的是，由于我们本身在Druid中存储的就是原始值，所以查询就不需要加载字典进行维度的解码。</p>
+
+<p>最后我们来看下运维工具适配方面的工作，主要包括：</p>
+
+<ul>
+<li><p>Cube迁移工具</p></li>
+<li><p>Storage Cleanup工具</p></li>
+<li><p>Cube Purge，Drop，Retention操作等。</p></li>
+</ul>
+
+
+<p>这里我就不展开了，因为主要是一些实现和细节上的问题。</p>
+
+<h2>Kylin On Druid 成果</h2>
+
+<p>现在为止，我们已经清楚了KOD的整体架构和核心原理。 下面我们来看下，KOD的性能到底怎么样。 首先我们来看下SSB测试的结果，PPT中展示了我们测试的SQL样例和测试环境。 需要特别注意的是：我们在KOD和Kylin都只计算了Base Cuboid，因为如果KOD和Kylin都充分预计算，测试性能基本上没有意义，测试的目的就是为了对比KOD和Kylin的现场计算能力。</p>
+
+<center><img src="/images/2019/IMAG2019060522.png"></center>
+
+
+<p><br></p>
+
+<p>这是KOD和Kylin只计算Base Cuboid时SSB测试的结果，图中纵轴是KOD相比Kylin的加速比，千万量级时KOD的加速比是49，亿级时KOD的加速比是130。 总的来说，KOD的现场计算能力相比Kylin有了两个数量级的提升。</p>
+
+<p>这张图展示的是我们KOD第一批Cube上线后，线上的真实数据。 我们可以看到，KOD相比Kylin在查询性能提升的同时，存储和计算资源也有了明显的下降</p>
+
+<center><img src="/images/2019/IMAG2019060523.png"></center>
+
+
+<p><br></p>
+
+<p>前面提到，KOD的现场计算能力相比Kylin有了两个数量级的提升，所以对于亿级及以下数据规模的数据，我们不需要再进行复杂的优化，只需要构建Base Cuboid就可以，用户的易用性有了显著提升。</p>
+
+<h2>Kylin On Druid 特性</h2>
+
+<p>在介绍完KOD的架构，核心原理，性能后，我们再总结下KOD的特性：</p>
+
+<ul>
+<li><p>和Kylin完全兼容：SQL，Web 等</p></li>
+<li><p>分区预过滤</p></li>
+<li><p>查询时无需加载字典：相比Kylin On HBase 查询稳定性更高</p></li>
+<li><p>存储层支持业务隔离</p></li>
+<li><p>亿级及以下数据只需构建Base Cuboid</p></li>
+</ul>
+
+
+<h1>Kylin On Druid 未来规划</h1>
+
+<p>最后，我们看下KOD的未来规划：</p>
+
+<p>1 更高效，更精简的Cube构建流程：由于Druid不依赖字典，所以KOD的Cube构建时，就不需要构建字典，和字典相关的好几步都可以省去</p>
+
+<p>2 优化高基数列点查询的场景：之前的POC也体现了这一点，这种场景是倒排索引不适合的场景，却是HBase的最佳场景。 解决思路：参考linkedin的Pinot对Druid进行优化，Druid中倒排索引作为可选项，添加轻量级的类似Palo，ClickHouse的前缀索引。</p>
+
+<p>3 支持在线Schema变更：目前Kylin的Schema变更也是用户使用上一大痛点，每次Schema变更都需要全量重刷数据。</p>
+
+<p>本次分享从Kylin On HBase 问题出发，解释了为什么我们给Kylin新增一种存储引擎，进而介绍了我们存储引擎探索的过程，最后介绍了Kylin On Druid的架构和原理。</p>
+
+<p>最后，需要注意的一点是，最新版本的Parquet已经有了PageIndex，点查询的性能显著提高，所以Kylin On paquert 或许依然值得尝试。</p>
+
+<h1>FAQ</h1>
+
+<h2>Q1 为什么不直接用Druid代替Kylin?</h2>
+
+<ol>
+<li><p>Kylin的预计算比Druid更加强大，Druid只能计算Base Cuboid</p></li>
+<li><p>Kylin支持基于预计算的精确计算，精确去重是我司强需求</p></li>
+<li><p>Kylin的SQL支持更加完善</p></li>
+<li><p>Kylin的离线导入更加完善</p></li>
+<li><p>Kylin对星型模型的查询支持更加友好</p></li>
+<li><p>Kylin支持Join</p></li>
+</ol>
+
+
+<p>总之，用Druid代替Kylin的工作量远远大于Kylin On Druid的工作量。</p>
+
+<h2>Q2 为什么没有选择Kylin On Kudu?</h2>
+
+<ol>
+<li><p>Kudu 并没有倒排索引或者二级索引</p></li>
+<li><p>Kudu 是C++实现的，我们团队的技术栈主要是Java，我们的存储团队也没有引进Kudu</p></li>
+</ol>
+
+
+<h2>Q3 为什么没有选择去优化改进HBase？</h2>
+
+<p>因为要将HBase的Key-Value模型改成列存的话已经不仅仅是优化改进了，需要重新设计整个系统。 可以参考 https://kudu.apache.org/faq.html#why-build-a-new-storage-engine-why-not-just-improve-apache-hbase-to-increase-its-scan-speed</p>
+
+<h2>Q4 Druid和Kylin的应用场景？</h2>
+
+<p>在我司，Kylin是主推的离线OLAP引擎，Druid是主推的实时OLAP引擎。</p>
+
+<p>关于CarbonData 的 DataMap特性</p>
+
+<p>CarbonData在最近的版本实现了DataMap特性: https://carbondata.apache.org/datamap-developer-guide.html</p>
+
+<p>DataMap的主要目的是一份存储支持多种查询场景，实现CarbonData设计之初的愿景；核心思想是一份数据，多种索引，不同场景下的查询用不同的索引进行加速，查询时可以自动路由到相应的索引。 目前已经实现了Pre-aggregate DataMap，Timeseries DataMap，Lucene DataMap，BloomFilter DataMap等，个人比较看好CarbonData这个特性。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[神策分析的技术选型与架构实现]]></title>
+    <link href="https://ibillxia.github.io/blog/2016/11/15/sensors-analytics-architecture/"/>
+    <updated>2016-11-15T21:17:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2016/11/15/sensors-analytics-architecture</id>
+    <content type="html"><![CDATA[<center><img src="/images/2016/IMAG2016111500.png"></center>
+
+
+<p>很多朋友很想知道神策分析（Sensors Analytics）是如何实现在每天十亿级别数据的情况下可以做到秒级导入和秒级查询，是如何做到不需要预先指定指标和维度就能实现多维查询的。今天正好在这篇文章里面，和大家交流一下我们的技术选型与具体的架构实现，希望能够对大家有所启发。</p>
+
+<p>当然，脱离客户需求谈产品设计，不太现实；而脱离产品设计，纯粹谈技术选型与架构实现，也不现实。因此，我们首先会跟大家探讨一下神策分析从产品角度，是如何从客户需求抽象产品设计的，而产品设计，又是如何确定我们的技术选型。然后，我们则会从产品的整体架构出发，逐步介绍每一个模块和子系统的具体实现。</p>
+
+<!--more-->
+
+
+<h2>1. 客户需求决定产品设计，产品设计决定技术选型</h2>
+
+<h3>1.1 私有化部署</h3>
+
+<p>在决定做神策分析这个产品的最开始，我们就准备满足这样一类客户的需求，即对数据的安全与隐私有顾虑，或者希望能够积累自己的用户行为数据资产，并且完成数据的深度应用与二次开发。</p>
+
+<center><img src="/images/2016/IMAG2016111501.jpeg"></center>
+
+
+<p>因此，这就决定我们的产品需要是一个可以私有化部署的产品，可以部署在客户的内网中，这基本也构成是我们产品的核心设计理念。</p>
+
+<p>而正因为需要私有化部署，我们在设计上，也必须考虑到因为这一点而带来的一系列在运维、审计方面的技术调整；同时，为了方便客户能够基于我们的系统二次开发，充分发挥数据的价值，这就要求我们在技术选型上，尽可能选择热门的开源技术，必须保留最细粒度原始数据，同时，最好在数据处理从采集、传输到存储、查询的各个环节都对外提供普适易用的接口，降低客户的开发代价。</p>
+
+<h3>1.2 用户行为分析</h3>
+
+<p>数据分析是一个很大的领域，而我们最核心地是满足客户对于用户行为分析这一个特定领域的需求。帮助他们回答这样一些问题：用户使用产品的活跃情况和频次分布；核心流程转化情况；分析上周流失用户的行为特征等。同时，我们期望神策分析可以适应不同的行业的不同产品，而这些不同产品肯定又会有不同的技术架构。</p>
+
+<p>针对这种需求，我们在技术上做了两个关键性的决策：首先，我们对分析模型进行抽象，期望用少数几个分析模型能够满足大部分需求，而剩余未满足的需求则通过自定义查询来实现，这样的好处，就是可以集中精力来优化查询速度；其次，为了减少 ETL 的代价，我们尽量简化数据模型，从而能够减少 ETL 的环节，保证神策分析产品在不同行业的适用性。</p>
+
+<h3>1.3 全端数据采集</h3>
+
+<p>随着互联网的发展越来越深入，一个用户在同一个产品上的行为，已经需要从多个不同的来源来进行采集了，这些来源包括 iOS、安卓、Web、H5、微信、业务数据库、第三方配送服务、客服系统等。不仅仅是需要采集到，还需要能够将同一个用户在不同来源的数据进行打通。</p>
+
+<p>针对这种需求，神策分析决定提供全端的数据采集方案，需要包括主流的客户端平台和主流语言的 SDK，Restful 风格的数据导入 API，全埋点与可视化埋点等埋点辅助手段。同时，为了方便埋点的迭代与管理，还需要在这方面下大力气。同时，为了解决跨屏贯通一个用户的问题，还需要提供 ID-Mapping 方面的解决方案。</p>
+
+<h3>1.4 灵活的多维分析</h3>
+
+<p>相比较传统的网页或者 App 统计工具，如百度统计、Google Analytics 等，我们想解决的是用户更加灵活更加深入的分析需求。例如，分析不同地域、不同品类的销量对比；分析比较不同客服的服务质量；对比不同年龄段用户的转化情况；分渠道分析转化效果；察看使用不同功能后对留存的影响等。</p>
+
+<center><img src="/images/2016/IMAG2016111502.jpeg"></center>
+
+
+<p>针对这一需求，神策分析需要提供全功能的多维分析能力，能够满足如下技术指标：维度、指标不需要预定义；漏斗、留存、回访分析都可以任意下钻。而因为这些需求，所以现在很火的开源多维分析系统，如 Apache Kylin、Druid 等都无法满足我们的需要。同时，这也决定了我们不能够存储聚合数据，而是应该存储最细粒度的明细数据。当然，这一决策也是受到私有化部署提供数据进行二次开发的影响。</p>
+
+<h3>1.5 秒级导入和秒级查询</h3>
+
+<p>在数据分析的某些应用场景下，对于数据导入后多长时间能够查到，其实是有一定需求的。例如，分析彩票投注截止前的最后30分钟投注情况，或者广告投放后立刻察看效果以便调整策略等。为了满足这部分需求，更好地让数据为决策服务，神策分析需要让数据能够做到秒级导入，即一条数据接收后，在秒级就能被查到。因此，我们应该有实时数据导入流，并且尽可能地减少 ETL 的复杂程度，从而降低数据导入的开销。</p>
+
+<p>我们一直推崇数据驱动，推崇数据的需求方可以自助式地满足数据分析需求。因此，这就需要我们的产品能够满足秒级查询。这也就意味着我们在查询引擎的选择方面，就不能够选择 Hive，而应该考虑类似于 Impala、Spark SQL 等 MPP 架构的方案。</p>
+
+<center><img src="/images/2016/IMAG2016111503.jpeg"></center>
+
+
+<h3>1.6 目前为止的技术决策</h3>
+
+<p>现在，我们回顾一下，由于之前我们列出的这一系列客户需求，我们基本确定了如下的一些技术决策：</p>
+
+<ul>
+<li><p>具有私有化部署能力，需要解决运维问题；</p></li>
+<li><p>技术选型以开源方案为主，便于复用和客户二次开发；</p></li>
+<li><p>数据模型尽量简洁，减少 ETL 代价；</p></li>
+<li><p>每天十亿级别数据量下，秒级导入，秒级查询；</p></li>
+<li><p>需要存储明细数据，采用 ROLAP 而不是 MOLAP 的方案。</p></li>
+</ul>
+
+
+<p>那么，下面，就让我们进一步来看看，在这些技术决策之下，神策分析具体是怎么实现的。</p>
+
+<h2>2. 技术实现</h2>
+
+<h3>2.1 整体架构</h3>
+
+<p>通常情况下，一个常见的数据平台，整个数据处理的过程，可以分为如下 5 步：</p>
+
+<center><img src="/images/2016/IMAG2016111504.jpeg"></center>
+
+
+<p>神策分析设计上也基本遵循这一原则。下图是神策分析的架构图：</p>
+
+<center><img src="/images/2016/IMAG2016111505.jpeg"></center>
+
+
+<p>我们后面依次介绍各个子系统的具体技术实现。</p>
+
+<h3>2.2 数据采集子系统</h3>
+
+<p>神策分析主要支持采集三类数据，分别是前端操作、后端日志和业务数据。</p>
+
+<h4>2.2.1 采集前端操作</h4>
+
+<p>其中前端操作，主要是用户在客户端，如 iOS App、安卓 App 和网页上的一些操作，目前主流有三种采集方案，分别是全埋点、可视化埋点和代码埋点。</p>
+
+<p>其中，全埋点是指默认地不加区分地采集所有能够采集的控件操作和交互，然后再在后端筛选出需要的数据；可视化埋点则是通过可视化交互的方式，提前选择要采集哪些控件的操作，然后再在操作发生时向后端发送数据；代码埋点则是最传统和广泛使用的一种技术采集手段，是以代码调用 SDK 接口的方式，来发送要采集的用户操作。</p>
+
+<p>三种采集方式，在使用上，全埋点最简单，只需要嵌入 SDK 即可，但是会带来额外的数据开销；可视化埋点不会有额外的数据开销，嵌入 SDK 后需要用可视化的方式进行控件的点选。由于国内 App 开发普遍存在不遵循开发规范的情况，导致上述两种采集方案都存在一定的兼容性问题。代码埋点则是每一个点都需要一行或者更多的代码，更新迭代时使用较为复杂。</p>
+
+<p>但是反过来，代码埋点却是采集能力最强的一种采集手段。我们以用户在京东的提交订单页面，来分别描述三者在采集能力上的差异：</p>
+
+<center><img src="/images/2016/IMAG2016111506.jpeg"></center>
+
+
+<p>在这个界面上，使用三种采集方案的采集能力大概如下面所描述的那样：</p>
+
+<ul>
+<li><p>使用全埋点，可以知道某时某刻某人点击了某个按钮；</p></li>
+<li><p>使用可视化埋点，可以跟进一步知道某时某刻某人提交了一个订单；</p></li>
+<li><p>使用代码埋点，则可以更进一步地获取订单金额、商品名称、用户级别等自定义属性。</p></li>
+</ul>
+
+
+<p>为了方便客户的使用，神策分析对于采集前端操作提供的方案则是：</p>
+
+<ul>
+<li><p>以代码埋点为主，提供了 iOS、安卓和 JS 三种 SDK，特别是针对混合开发的 App，专门提供了原生 App 和 H5 之前交换数据，打通用户 ID 的接口；</p></li>
+<li><p>以可视化埋点为辅，并且努力解决国内 App 的兼容性问题；</p></li>
+<li><p>对于一些例如页面浏览、App 启动、App 进入后台等默认事件，则提供全埋点的方案，可以嵌入 SDK 之后直接采集；</p></li>
+<li><p>建议客户根据不同的使用场景，选择最合适的前端埋点方案。</p></li>
+</ul>
+
+
+<p>同时，为了最大限度保证嵌入了我们 SDK 的客户 App 的用户体验，我们专门针对 SDK 的数据发送策略做了很多优化，包括：</p>
+
+<ul>
+<li><p>数据首先缓存在本地，达到一定规模或间隔时才发送；</p></li>
+<li><p>仅在 3G/4G/Wi-Fi 时发送数据，发送时会对数据进行打包、压缩；</p></li>
+<li><p>在产生首条数据、进入后台、退出程序时都会尝试发送，以尽可能兼容那些安装了 App 简单尝试后就快速删除的用户；</p></li>
+<li><p>提供了强制发送接口，也让客户自己可以控制发送策略。</p></li>
+</ul>
+
+
+<h4>2.2.2 采集后端日志</h4>
+
+<p>后端日志主要指产品的服务端模块在运行时打印出的日志。相比采集前端操作，采集后端日志会有如下一系列的优势：</p>
+
+<ul>
+<li><p>传输时效性：如前面描述的那样，为了保证用户体验，前端采集数据是不能实时向后端发送的，所以会带来传输时效性的问题，而采集后端日志就不存在这个问题；</p></li>
+<li><p>数据可靠性：前端采集需要通过公网进行数据传输，肯定会存在数据可靠性的问题，采集后端日志配合私有部署，则可以做到纯内网传输数据，这一问题大大缓解；</p></li>
+<li><p>能够获取的信息丰富程度：有很多信息，例如商品库存、商品成本、用户风险级别、用户潜在价值等，在前端都采集不到的，只能在后端采集。</p></li>
+</ul>
+
+
+<p>正因为这一点，我们建议一个行为在前端和后端都可以采集时，优先在后端进行采集，并且为此提供了一系列的后端语言 SDK、日志采集工具和数据批量导入工具等。</p>
+
+<h4>2.2.3 采集业务数据</h4>
+
+<p>业务数据主要指一些供销存数据库数据、从第三方系统拿到的订单配送数据和客户数据等，针对这一类数据，我们提供了相应的数据导入工具，以及 RESTful 风格的导入 API，用于完成数据的导入。</p>
+
+<h4>2.2.4 ID-Mapping</h4>
+
+<p>对于前面三类不同的数据源，我们期望能够打通同一个用户在这三类数据源中的行为，并且为此提供了如下的技术手段：</p>
+
+<ul>
+<li><p>不同端可以自定义唯一的用户 ID，如设备 ID、Cookie ID、注册 ID等，客户可以自己定义自己选择；当然，神策分析系统内部会有唯一的 user_id；</p></li>
+<li><p>提供一次性的 track_signup 接口，将两个 ID 贯通起来，例如，可以将一个用户在浏览器上的 Cookie ID 与他在产品里面的注册 ID 贯通起来，然后这个用户以注册 ID 在手机 App 上登录时，我们依然能知道是同一个用户；</p></li>
+<li><p>我们目前采用的方案不需要回溯数据，但是应用是有限制的，即只能支持一对一的 ID-Mapping，这也是一个典型的功能与性能的折衷。</p></li>
+</ul>
+
+
+<h3>2.3 数据接入子系统</h3>
+
+<p>不管是采用哪种采集方式，数据都是通过 HTTP API 发送给系统的。</p>
+
+<p>而在数据接入子系统部分，我们采用了 Nginx 来接收通过 API 发送的数据，并且将之写到日志文件上。使用 Nginx 主要是考虑到它的高可靠性与高可扩展性，并且在我们的应用场景下， Nginx 单机可以轻松地做到每秒接收 1 万条请求，考虑到一条请求通常都不止一条用户行为，可以认为很轻松就能做到数万 TPS。</p>
+
+<p>对于 Nginx 打印到文件的日志，会由我们自己开发的 Extractor 模块来实时读取和处理 Nginx 日志，并将处理结果发布到 Kafka 中。在这个过程中，Extractor 模块还会进行数据格式的校验，属性类型的识别与相关元数据的操作。与 ID-Mapping 的处理也是在这个阶段完成的。一些字段的解析和扩展工作，如基于 IP 判断国家、省份、城市，基于 UserAgent 判断浏览器、操作系统等，也是在这个阶段完成的。前面提到了，我们不需要用户预先指定指标和维度，基本实现了 schema-free，就是在 Extractor 处理阶段，对这些列进行校验，并且完成相关的元数据操作。</p>
+
+<p>Kafka 是一个广泛使用的高可用的分布式消息队列，作为数据接入与数据处理两个流程之间的缓冲，同时也作为近期数据的一个备份。另外，这个阶段也对外提供访问 API，客户可以直接从 Kafka 中将数据引走，进入自己的实时计算流。</p>
+
+<h3>2.4 数据模型</h3>
+
+<p>在介绍数据导入模块与数据存储模块之前，我们需要先讨论一下神策分析的数据模型设计。</p>
+
+<p>前面已经提到，神策分析主要解决的是用户行为分析这么一个特定领域的数据分析需求，并且期望尽量简化数据模型以降低 ETL 代价。最终，我们选择了业内非常流行的 Event + User 模型，可以覆盖客户的绝大部分分析需求，并且对于采集到的数据不需要有太多的 ETL 工作。</p>
+
+<p>Event 主要是描述用户做了什么事情。每一条 Event 数据对应用户的一次事件，由 用户 ID、Event 名称、自定义属性三部分组成。Event 名称主要是对 Event 的一个分类，例如"PageView"、"Search"、"PayOrder"等等。我们在客户端会默认采集设备 ID 或者 Cookie ID 作为用户 ID，客户也可以自己设置一个合理的用户 ID。而我们最多可以支持一万个自定义属性，并且开发者并不需要事先告之系统，系统会自动从接收的数据中解析发现新的字段并且进行相应的处理。Event 数据以追加为主，不可修改，这也符合事件这一概念的实际物理意义。不过，为了方便后续系统的运维以及客户的使用，我们特别为 Event 数据提供了有限的数据删除能力，这一点会在后续存储部分更详尽地描述。</p>
+
+<p>User 则主要描述用户是个什么样的人。它用 用户 ID 与自定义属性两部分组成。自定义属性是年龄、所在地、Tag等。在神策分析中，它的来源主要有三类，一类是使用者自己采集并且通过接口告之系统的，例如用户的注册信息；一类是基于使用者的第一方数据挖掘得到的用户画像数据；还有一类则是通过第三方供应商得到的用户在第三方行为所体现出来的属性和特质。在神策分析中，User 数据，是每一行对应一个用户，并且可以任意修改的。</p>
+
+<h3>2.5 数据导入与存储</h3>
+
+<p>正如前面所说，由于神策分析自身的产品需求，如导入时效性、不需要预先指定指标和维度等，目前比较热的开源 OLAP 系统如 Apache Kylin 和 Druid，我们并不能拿来使用。而最后，我们选择的是存储最细粒度数据，在每次查询时都从最细粒度数据开始使用 Impala 进行聚合和计算，而为了实现秒级查询，我们在存储部分做了很多优化，尽可能减少需要扫描的数据量以便加快数据的查询速度。</p>
+
+<p>具体来说，虽然存储都是构建在 HDFS 之上，但是为了满足秒级导入和秒级查询，我们将存储分为 WOS（Write Optimized Store）和 ROS（Read Optimized Store）两部分，分别为写入和读取进行优化，并且 WOS 中的数据会逐渐转入 ROS 之中。</p>
+
+<p>对于 ROS，我们选择了 Parquet，这样一个面向分析型业务的列式存储格式。并且，根据我们面临的业务的具体查询需求，对数据的分区方式做了很细致的优化。首先，我们是按照事件发生的日期和事件的名称，对数据做 Partition；同一个 Partition 内，会有多个文件，文件大小尽量保持在 512 MB 左右；每个文件内部先按照 userid 的 hash 有序，再按照 userid 有序，最后则按照事件发生的时间有序；会有一个单独的索引文件记录每个 user_id 对应数据的文件 offset。另外，与大多数列式存储一样，Parquet 对于不同类型的列，本身有着很好的压缩性能，也能大大减少扫描数据时的磁盘吞吐。简单来说，利用列式存储，只扫描必要的列，利用我们自己的数据分区方案，则在这个基础之上进一步只扫描需要的行，两者一起作用，共同减少需要扫描的数据量。</p>
+
+<p>虽然 Parquet 是一个查询性能很好的列式存储，但是它是不能实时追加的，因此在 WOS 部分，我们选择了 Kudu。在向 Kudu 中写入数据时，我们选择了类似于 0/1 切换的方案，即同一时间只写入一张表，当这张表的写入达到阈值时，就写入新表中，而老表则会开始转为 Parquet 格式。</p>
+
+<p>由于这样一个转换过程，不可避免地会带来 Parquet 的碎文件问题，因此也需要专门解决。</p>
+
+<p>下图比较详细地展示了这样一个转化的过程：</p>
+
+<center><img src="/images/2016/IMAG2016111507.jpeg"></center>
+
+
+<p>在这个导入过程中，有如下几个关键的工作模块：</p>
+
+<ul>
+<li><p>KafkaConsumer：一个常驻内存的 MapReduce 程序 （只有 Mapper），负责实时从 Kafka 中订阅数据，并且写入到 Kudu 中。</p></li>
+<li><p>KuduToParquet：一个不定时启动的 MapReduce 程序，在 Kudu 单个表写入达到阈值并且不再被写入时，将它转成多个 Parquet 文件，并且移动到对应的 Partition 中。</p></li>
+<li><p>LoaderDemon：一个后台调度程序，完成一些元数据操作；</p></li>
+<li><p>Merger：一个定时的 MapReduce 任务，定期合并 Parquet 中每个 Partition 内的碎文件。</p></li>
+</ul>
+
+
+<h3>2.6 数据查询子系统</h3>
+
+<p>在数据查询部分，我们是通过 WebServer 这个模块，接收客户通过我们的 UI 界面或者通过 API 发起的查询请求，WebServer 并不做额外的处理，而是将这些查询请求直接转发给 QueryEngine 模块。QueryEngine 模块则是将查询请求翻译成 SQL，并在 Impala 中发起查询。Impala 会访问 Kudu 与 Parquet 数据共同构成的 View，完成对应的聚合与聚散。</p>
+
+<p>特别提一下，在查询引擎部分，我们选择 Impala 而不是 Spark SQL，并不是出于性能或者稳定性的考虑，仅仅是因为我们团队之前有比较多的基于 Impala 的工作经验。</p>
+
+<p>为了保证秒级的查询性能，我们除了在存储部分做文章以外，还在查询部分做了很多的优化，这些优化包括：</p>
+
+<ul>
+<li><p>界面上提供的查询模型有限，但是能满足客户绝大部分需求，因此专门针对这些查询模型做有针对性的优化；</p></li>
+<li><p>使用 UDF/UDAF/UDAnF 等聚合函数替代 Join，提高查询效率，特别一提的是，由于 Impala 不支持 UDAnF，这里我们修改了 Impala 的源代码；</p></li>
+<li><p>比较精细的缓存，只对有变化的数据才进行重查；</p></li>
+<li><p>提供按用户抽样的功能，客户可以通过抽样数据快速尝试不同的猜想，并最终在全量数据上获取准确结果。</p></li>
+</ul>
+
+
+<h3>2.7 元数据与监控</h3>
+
+<p>我们主要使用 MySQL、ZooKeeper 来存储元数据，主要包括类似于 Schema、维度字典、数据概览、漏斗、分群、预测的配置、任务调度、权限等信息。我们还用到了 Redis 来存储查询缓存信息。</p>
+
+<p>我们有 Monitor 这样一个常驻内存的模块，对系统的各个部分进行语义监控，并且进行异常状态的修复。当然，作为一个商业系统，我们对于 license 的处理也是放在这个模块之中的。</p>
+
+<p>同时，为了减少运维的代价，对一些不常用的功能，虽然不提供界面但是也工具化了，包括数据清理工具、版本升级工具、性能分析工具、多项目管理工具等。</p>
+
+<h3>2.8 用户分群与用户行为预测</h3>
+
+<p>用户分群与用户行为预测，我们单独放在最后面进行探讨。</p>
+
+<p>神策分析对用户分群的定义，是根据用户以往的行为，给用户打标签。例如，找到那些"上个月有购买行为的用户"，"最近三个月有登录的用户"等。它是用户画像的一部分，但肯定不是用户画像的全部。</p>
+
+<p>而与之相对的，用户行为预测则是根据用户过往的行为，预测将来做某个行为的概率。</p>
+
+<h2>参考资料</h2>
+
+<p>[1]<a href="https://demo.sensorsdata.cn/blog/technical_implementation_of_sensors_analytics">神策分析的技术选型与架构实现</a></p>
+]]></content>
+  </entry>
+  
+</feed>

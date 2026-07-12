@@ -1,0 +1,1211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: RecSys | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/categories/recsys/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[GenRec综述论文笔记]]></title>
+    <link href="https://ibillxia.github.io/blog/2025/06/18/gen-rec-servey-notes/"/>
+    <updated>2025-06-18T09:51:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2025/06/18/gen-rec-servey-notes</id>
+    <content type="html"><![CDATA[<p>论文链接：<a href="https://arxiv.org/abs/2409.15173">https://arxiv.org/abs/2409.15173</a></p>
+
+<h1>book structure</h1>
+
+<center><img src="/images/2025/IMAG2025061801.webp"></center>
+
+
+
+
+<!--more-->
+
+
+<p>Advantages of recommender systems with generative models</p>
+
+<center><img src="/images/2025/IMAG2025061802.webp"></center>
+
+
+<p>Outline of key techniques and publications in LLM-driven RSs</p>
+
+<center><img src="/images/2025/IMAG2025061803.webp"></center>
+
+
+<h1>Chap4-LLM Rec</h1>
+
+<h2>4.3 Encoder-only LLM Rec</h2>
+
+<p><strong>encoder-only LLMs</strong> can be used in two main architectures: as dense retrievers (c.f. Sec 4.3.1) or as cross-encoders (c.f. Sec 4.3.2).</p>
+
+<center><img src="/images/2025/IMAG2025061804.webp"></center>
+
+
+<p>Autoregressive LLM inputs are called prompts, which are sequences of tokens expressing a task such as top-k recommendation, rating prediction, or explanation generation.</p>
+
+<center><img src="/images/2025/IMAG2025061805.webp"></center>
+
+
+<h2>4.5 Retrieval Augmented Rec</h2>
+
+<center><img src="/images/2025/IMAG2025061806.webp"></center>
+
+
+<h2>4.6 LLMs Representation Generation</h2>
+
+<center><img src="/images/2025/IMAG2025061807.webp"></center>
+
+
+<h2>4.7 Conversational Rec</h2>
+
+<center><img src="/images/2025/IMAG2025061808.webp"></center>
+
+
+<h1>Chap5-Multi-modal GMs for Rec</h1>
+
+<h2>5.1 Introduction</h2>
+
+<p>Why?——item cold start problem, user request understanding, complex recsys scenes(virtual try-on, conversational shopping assistans)</p>
+
+<p>Challenges——alignment，latent space learning</p>
+
+<h2>5.2 Contrastive Multimodal Rec</h2>
+
+<p>CLIP</p>
+
+<center><img src="/images/2025/IMAG2025061809.webp"></center>
+
+
+<p>Align BEfore Fuse (ALBEF)</p>
+
+<center><img src="/images/2025/IMAG2025061810.webp"></center>
+
+
+<h2>5.3 Generative Multimodal Rec</h2>
+
+<p>GAN</p>
+
+<center><img src="/images/2025/IMAG2025061811.webp"></center>
+
+
+<p>VAE</p>
+
+<center><img src="/images/2025/IMAG2025061812.webp"></center>
+
+
+<p>Diffusion</p>
+
+<center><img src="/images/2025/IMAG2025061813.webp"></center>
+
+
+<h2>5.4 Applications of Multimodal Rec</h2>
+
+<ul>
+<li><p>E-commerce</p></li>
+<li><p>product visualization-virtual try on</p></li>
+<li><p>Marketing-create personalized ad images and videos</p></li>
+<li><p>Streaming services-Long and short-form video,music,audiobooks,podcasts,radio</p></li>
+<li><p>Travel</p></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[【凉夏】推荐模型中的门控机制与动态权重]]></title>
+    <link href="https://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation/"/>
+    <updated>2025-01-03T10:33:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/701181424">https://zhuanlan.zhihu.com/p/701181424</a></p>
+
+<p>大家好，我是凉夏同学。今天是我第一次在知乎分享我对算法模型的理解，有些生疏，还请大家多多指教。感兴趣的话，敬请关注公众号：凉夏的机器学习笔记。感恩~</p>
+
+<p>今天要讲的是最近比较火的一种网络结构，可以近乎“无脑地”加入到网络结构当中，基本上都可以带来或多或少的效果提升。这个网络结构有人叫他门控网络、门控结构，也有人叫他的英文名“gating”，也有人叫他动态权重。</p>
+
+<p>这篇文章，我会先讲一下我对门控机制的理解，然后会简单介绍几个使用门控机制的论文。</p>
+
+<h1>门控的本质</h1>
+
+<p>一直都觉得深度学习模型架构里，很多东西都是相同的，虽然很多时候他们有不同的名称、亦或是用在了不同的模型位置，但底层的思想和逻辑很可能是一致的。而我认为，门控网络结构的本质就是注意力机制。说到注意力机制，大家应该都不陌生，该结构出现在以DNN模型为基础的各种应用结构中，例如：transformer里面使用了multi-head attention（MHA）这种多头自注意力机制；用户行为序列建模DIN结构使用了target attention结构。</p>
+
+<!--more-->
+
+
+<p>那么注意力机制的本质又是什么呢？我的理解是：注意力机制就是自适应学习得到权重。所以相关结构可以再进行细分，得到三种关键元素： <br/>
+- ①输入：使用哪些信息作为注意力的输入；
+- ②结构：如何计算注意力权重；
+- ③输出：得到了权重之后，我们要作用在哪里。</p>
+
+<p>基本上，我们见到的任何注意力机制都可以归因到上面三个问题上。</p>
+
+<center><img src="/images/2025/IMAG2025010331.jpeg"></center>
+
+
+<center>transformer中的MHA结构</center>
+
+
+<p></br></p>
+
+<p>拿我们举例子的transformer中的多头注意力机制来说。如果是encoder那侧，那么则是自注意力机制，输入是同一个序列的token经过矩阵转换之后的向量；注意力计算方式是Scaled（除以根号d）的内积再softmax；输出依旧作用在当前序列上。如果是DIN结构，那输入是target poi的embedding，计算方式则是简单的内积，输出在用户序列的每个seq poi的embedding上。</p>
+
+<p>简单介绍完了注意力机制，说回来我们的门控。既然门控本质也是注意力机制，那么其三元素也是包括输入、结构、输出。只是相应的内容有一些变化，从而衍生出不同的网络结构和应用。下面介绍一些常见的。</p>
+
+<h1>LHUC结构</h1>
+
+<p>LHUC的全称是Learning Hidden Unit Contributions，最早语音识别领域所提出的，其核心的思想是：为每一个 speaker 定制一个振幅函数 (amplitude function)，作用于 DNN 的隐层之上。从公式上看非常直观：</p>
+
+<p>其中 代表哈达玛积，也就是两个向量对应位置的元素相乘。其右边代表DNN某个隐藏层输出（因为大概形式就是f(w·x+b)嘛），其左边代表振幅函数的输出。虽说名字叫做振幅函数，但整个公式的形式看起来非常符合我们上文讨论的注意力机制的形式——生成了权重乘在隐藏层的输出上。其输入就是每个speaker的信息，结构就是浅层的DNN，输出作用在DNN的多个隐藏层上。其中有一个细节是，一般来说作为权重的DNN子结构会使用sigmoid作为激活函数，使得权重在0~1之间。而LHUC在sigmoid前面乘了个固定数字“2”，使得权重在0~2之间。带来的效果是：若权重在0~1之间，则是对原有隐藏层数值的抑制；若权重在1~2之间，则是对原有数值的放大。</p>
+
+<h1>PPNet</h1>
+
+<p>PPNet的全称是Parameter Personalized Net，是快手提出的模型架构，将上述语音领域的LHUC架构搬到了推荐领域，将每一个“speaker”当做是每一个用户，从而提升模型个性化效果。</p>
+
+<center><img src="/images/2025/IMAG2025010332.jpg"></center>
+
+
+<center>快手PPNet网络架构</center>
+
+
+<p></br></p>
+
+<p>我们看下PPNet的门控结构的输入输出和网络结构。其输入的特征uid，pid，aid 分别表示 user id，photo id，author id，将这三个id输入门控网络得到全部其他隐藏层元素维度的权重，具体要作用在哪一层的时候，就直接将门控网络的输出维度设置成相同的即可。而在图的右上角我们可以看到门控网络的具体结构，是两层的MLP网络——第一层NN是以ReLU作为激活函数，第二层是sigmoid作为激活函数同时在输出之后和LHUC一样乘了“2”。PPNet 中的门控结构比较轻量化，而且很容易移植到工业界各个大厂的排序模型当中，因此在最近几年是一个比较火的网络子结构。</p>
+
+<p>这里我们简单提一下两层MLP的好处。因为要输出全部隐藏层（尤其是第一层是全部特征embedding拼接之后的维度）元素维度的权重，因此参数量一般会比较大。而两层的MLP可以通过降低第一层NN的输出维度，使得门控结构“先降维、后升维”从而降低参数量。类似的思想在SENet，或者大模型SFT的lora结构都有所体现。</p>
+
+<p>以上是门控机制在推荐模型中的一个应用实例。如前文所说，深度学习模型架构里很多东西都是相同的，后续会介绍更多使用了门控机制的网络架构，但本质上都和PPNet或者LHUC非常类似，其核心思想都是注意力机制，区别基本在于输入、输出和网络架构。</p>
+
+<h1>PEPNet</h1>
+
+<p>PEPNet全称是Parameter and Embedding Personalized Network，可以看到只在PPNet的基础上多了一个Embedding Personalized Network。体现在结构细节上，就是除了原先使用三个id特征做模型结构中间隐藏层的个性化之外，新增了使用场景特征对全部特征提前做一次个性化。</p>
+
+<center><img src="/images/2025/IMAG2025010333.jpg"></center>
+
+
+<center>PEPNet</center>
+
+
+<p></br></p>
+
+<p>如图所示，右侧依旧是PPNet，只是左下角新增了使用场景特征计算全部特征的个性化。有一个小细节就是场景特征同时作为门控的输入和主网络的输入，也就是二者共享embedding的。在其作为门控输入的时候进行stop gradient，防止其梯度影响主网络。</p>
+
+<h1>AdaSpase</h1>
+
+<p>AdaSparse，阿里2022年的论文《Learning Adaptively Sparse Structures for Multi-Domain Click-Through Rate Prediction》。文章也是使用到了门控机制，只是输入输出有一些差异，以及其中结合“稀疏”的思想体现了一些创新的出发点。模型如图所示，右侧②是门控网络的结构，可以看到输入使用了整个隐藏层的向量拼接上场景特征向量一起作为输入；网络结构结合了不同稀疏效果的设计了Binarization、Scaling、Fusion三种方法；最终也是作为权重与当前隐藏层进行元素乘，只是由于不同方法的稀疏性不同，所产生的效果不同。</p>
+
+<center><img src="/images/2025/IMAG2025010334.jpg"></center>
+
+
+<center>AdaSparse</center>
+
+
+<p></br></p>
+
+<p>AdaSparse将门控网络称之为”场景自适应的裁剪器“，其主要结构也是DNN，公式如下图：</p>
+
+<center><img src="/images/2025/IMAG2025010335.webp"></center>
+
+
+<p>第l层的隐藏层和相应的权重进行元素乘</p>
+
+<center><img src="/images/2025/IMAG2025010336.png"></center>
+
+
+<p>权重的输入是向量拼接后经过一层MLP和sigmoid，之后再输入到另一个函数S</p>
+
+<p>其中S则代表了Binarization、Scaling、Fusion三种方法。Binarization是将输入的绝对值和阈值ε输入符号函数sign中，如果输入的绝对值大于ε，那么经符号函数输出1，反之输出0。</p>
+
+<center><img src="/images/2025/IMAG2025010337.jpeg"></center>
+
+
+<p>Scaling方法则是：sigmoid之后乘上缩放因子β（类似于LHUC里面的”2“），再将符号函数的输出再乘上原来的值。大概思路是：经过符号函数变为1或者0，会损失信息，如果再乘上原来的值，不仅可以知道隐藏层对应位置的信息是否要保留（对应裁剪器同位置权重是否为1），还能知道权重的大小幅度。</p>
+
+<center><img src="/images/2025/IMAG2025010338.jpeg"></center>
+
+
+<p>Fusion方法则是将上述两种思路结合起来，我们从公式上可以看出来。</p>
+
+<center><img src="/images/2025/IMAG2025010339.png"></center>
+
+
+<p>以上是AdaSparse门控网络的几种形式，具体哪种效果好，我们可以通过实验来确定。那么其中的稀疏是如何得到的呢？论文中将是通过将L1正则项加入到loss中得到的，而这个loss会随着训练而慢慢增大，带来的效果就是训练初期参数比较稠密，最大程度保留信息；随着训练的进行，loss逐渐变大，从而得到稀疏权重。而稀疏的优点，论文中大概是说，可以提升泛化性——因为我们是将场景特征作为门控的输入的，也就是场景特征来控制哪些特征要保留——从而可以减少不同场景的互相影响，而提升泛化性吧。我个人是这么理解的。</p>
+
+<h1>M2M</h1>
+
+<p>出自阿里的论文《Leaving No One Behind: A Multi-Scenario Multi-Task Meta Learning Approach for Advertiser Modeling》，两个”M“，分别对应了多场景和多目标，其中多场景是使用门控机制来解决的，多目标使用的是传统的MMOE。而这里的门控网络并不是在输出权重作用在隐藏层上，而是通过Meta Unit模块，根据“场景”特征，动态生成权重，再reshape成一个MLP。</p>
+
+<center><img src="/images/2025/IMAG2025010340.jpg"></center>
+
+
+
+
+<center>M2M的Meta Unit结构</center>
+
+
+<p></br></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[【蘑菇先生】工业界大模型推荐实战经验梳理]]></title>
+    <link href="https://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice/"/>
+    <updated>2025-01-03T10:31:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/7387477310">https://zhuanlan.zhihu.com/p/7387477310</a></p>
+
+<p>大家好，我是蘑菇先生。好久不见，今天盘点下2024年工业界大模型在搜广推上的实战落地型工作。业界工作大体分为两类：</p>
+
+<ul>
+<li><p>用大模型做数据和知识增强、提取表征、通过prompt将推荐转成对话驱动的任务等，本质上没有修改LLM，属于信息增强和补充方法，无法直接建模海量协同信号。</p></li>
+<li><p>修改LLM直接建模搜广推海量数据中的协同信号，对输入输出范式改造，通过预训练/微调等过程建模海量数据，让模型同时拥有通用的世界知识和垂直领域海量协同信息。是能实现搜广推大模型scaling的前提，需要更复杂的工程架构支持。</p></li>
+</ul>
+
+
+<p>第一类工作层出不穷，大部分在工业界无法惊起水花，属于学术性的探索居多。第二类工作寥寥无几，需要资源算力和业务场景等支撑，但也是搜广推值得探索的前沿方向之一。本文重点分享第二类工作。本次分享4篇文章：GRs(Meta)、HLLMs(字节)、NoteLLM(小红书)、NoteLLM-2(小红书)等工作，基本都在各自场景验证了收益，最近又重读了下，常读常新，做一些梳理分享给大家。涵盖目前推荐系统两类主流范式：</p>
+
+<ul>
+<li><p>表征学习：NoteLLM\NoteLLM-2提供了一种使用LLMs训练item表征的范式，通过海量数据中的“共现”协同信号，应用对比学习目标来微调LLMs并提取多模态的item表征。学习的item表征可以用于I2I召回、排序特征提取器等。</p></li>
+<li><p>模型预估：GRs和HLLMs通过改造输入数据为行为序列，在自回归设定下，可以建模海量用户行为，从而达到推荐的目的。二者既可以作为召回模型、也可以用作排序模型，用于CXR预估。但二者在输入、架构、目标方面存在较大差异，下文会介绍。</p></li>
+</ul>
+
+
+<!--more-->
+
+
+<h1>Meta | GRs</h1>
+
+<p>全称：Actions speak louder than words: Trillion-parameter sequential transducers for generative recommendations.</p>
+
+<p>意义：为工业级别的搜广推应用中如何借鉴LLMs的能力指明了一条新的道路。</p>
+
+<p>整体方案一言以蔽之，通过生成式框架来重新定义召回和排序任务。在该生成式框架下，改造召排任务对应的输入输出范式、损失目标建模范式，在Transfomers架构上融入推荐系统DIN/MoE/SENet等主流设计思路，并通过算力优化达到线上推理条件。模型的输入不是文本，而是推荐系统标准的ID/结构化稀疏型特征构成的序列，借鉴LLMs模型架构，但没有用到预训练权重，意味着需要海量推荐系统数据进行训练才可能达到传统推荐模型的效果。</p>
+
+<p>更多技术细节参见：行动胜过言语: Meta落地工业界首个万亿级别参数的生成式推荐系统。本文主要补充更高阶的一些问题，也可参见：Meta生成式推荐模型GRs关键问题探讨。</p>
+
+<p>有2类关键问题想讨论：</p>
+
+<ul>
+<li><p>如何用生成式框架来重新定义召回和排序任务，在该生成式框架下，如何改造输入输出范式、损失目标建模范式；</p></li>
+<li><p>离线训练和在线推理阶段，输入输出范式存在什么差异？如何跨候选复用算力，做到更低时延？</p></li>
+</ul>
+
+
+<h2>关键问题1：如何用生成式框架来重新定义召回和排序任务？</h2>
+
+<p>从传统sequential recommender问题出发，探讨GRs如何改造传统建模范式。</p>
+
+<ul>
+<li><p>Ignorance of features other than user-interacted items： 传统的序列推荐，通常只使用用户交互过的正样本item来构造序列。这里面包含两层含义，仅使用itemID来表征item、仅使用正反馈来构造序列。前者会忽略item的各类category语义信息、后者无法捕捉一些真实后验行为(如ctr)。GR通过两方面来分别解决这两个问题。a. 通过引入辅助信息并合并到主序列实现对稀疏类别特征的建模。b. 对全正负反馈超长序列的target attention来间接捕获数值统计型特征，各类后验行为均保留着，就能够通过attention近似捕捉真实后验，间接体现数值型统计特征的作用，泛化性也更好。通过实验，我们可以发现如果GRs模型仅在有交互的正样本itemID上学习，指标会下降非常多，即：2.6% NE的下降、1.3%的HitRate@100的下降。</p></li>
+<li><p>User representations are computed in a target-independent setting： 用户的表征和待预测目标item之间互相独立，表达能力弱，这个主要是传统序列模型的问题，比如GRU4Rec、SASRec、BERT4Rec等，无法在输入侧进行交互，仅仅能通过输出侧的softmax来实现和目标item的弱交互。DLRMs中的DIN等模型，引入了target-attention机制来缓解该问题。GRs通过将action看做新的模态，交错插入item和action，能够实现在causal autoregressive的设定下，使用target-aware attention实现更强的交互能力。</p></li>
+<li><p>Discriminative formulations restrict applicability of prior sequential recommender work to pointwise settings: 传统的序列推荐是判别式的，只能在pointwise的设定下发挥作用。这类工作本质上学习的是或者在给定用户状态下推荐下一个item的条件概率。但在真实的推荐系统中，实际上可以拆解为两类概率过程，a. 推荐next content (召回)，b. 用户对该content的反馈action (排序)。生成式方法是联合学习content和action，即：。个人认为这是生成式范式有可能表现更好的本质原因，能更加无损地建模原始数据分布，配合LLM的架构，可以容纳更多数据和信息。</p></li>
+</ul>
+
+
+<p>如下图所示：Next Action Token prediction对应ranking任务，自回归预测的是前一个item在action上的概率分布，也即该item的行为类型。Next content token prediction对应retrieval任务。自回归预测的是next item，即在item物料上的概率分布。还是非常优雅的，将召排任务统一成“生成任务”视角。</p>
+
+<center><img src="/images/2025/IMAG2025010301.jpg"></center>
+
+
+<center>召排范式</center>
+
+
+<p></br></p>
+
+<p>模型对比图如下，左侧是传统的序列推荐模型，action只会在输入侧构建item表征时，作为额外的信息融入；输出端自回归的仍然是item本身；右侧是GR模型，输入端显式地将action也作为1种序列组成类型，输出端item和action均能够作为监督信号，来实现自回归预测。</p>
+
+<center><img src="/images/2025/IMAG2025010302.jpeg"></center>
+
+
+<center>模型架构</center>
+
+
+<p></br></p>
+
+<p>此处召排本质上可以是统一的模型，如图中所示，在1个任务中联合建模和，此处拆成两个任务有一定取舍，可能是为了适配现有推荐系统链路。</p>
+
+<p>除此之外，这一范式不仅能更好的建模数据分布，同时在可以通过beam search来生成item序列结果。这个相比于传统listwise的重排(如DPP和RL)，会更加有优势。也就是说，该方案还能充当重排层的角色，实现listwise的预测，这样就统一了召回、排序、重排，真正实现生成式推荐。</p>
+
+<h2>关键问题2：排序任务训练和推理阶段的差异在哪，如何跨候选复用算力？</h2>
+
+<p>训练： 下图是训练示意图，看示意图是个召排统一的GR模型，输出侧的监督信号包括了item和action。这个地方和前文描述的稍有出路。前文描述的排序任务输出侧监督信号主要是action，召回任务输出侧监督信号主要是item。但不影响理解。</p>
+
+<center><img src="/images/2025/IMAG2025010303.jpeg"></center>
+
+
+<center>训练</center>
+
+
+<p></br></p>
+
+<p>推理：</p>
+
+<p>排序在推理时，正常要对所有个候选都推理一遍。假设序列长度为，复杂度为。此处作者可以复用多个候选间的算力，一次性推理多个候选的打分(分batch)。</p>
+
+<p>如下图所示：将batch为大小的候选items拼接到输入行为序列末尾，可一次性推理出每个item的预测action概率分布。多个target之间复用历史行为序列，因此历史行为序列理论上只需要1次推理即可，不同target item之间通过mask机制，阻断互相attention，这样就能够实现b_{m}个候选同时预估，同时实现候选item和历史行为item的self-attention。即时叠加多层self-attention注意力机制，由于是causal self-attention，历史行为items表征中不会耦合待预测的target items表征信息。上述操作后，复杂度为O((n+m)<sup>2</sup> d)=O(n<sup>2d</sup>)。</p>
+
+<p>这样实现的效果等价于对b_m个候选分别拼接到历史行为序列中，各自做1次前向传播，一共做b_m次，这样会导致历史行为序列的计算冗余。改进后，在1次前向传播推理中同时预估b_m个候选，最大程度复用算力。</p>
+
+<center><img src="/images/2025/IMAG2025010304.jpeg"></center>
+
+
+<center>推理</center>
+
+
+<p></br></p>
+
+<p>除了跨候选复用算力，在跨请求之间，通过KV caching机制，比如HSTU中的K(X)和V(X)可以在跨batch和跨请求之间复用。</p>
+
+<p>总结一下：GRs将用户行为组织成序列行为，纳入了曝光/点击/交互等各类行为，将item和action都视作相同模态，作为序列的组成部分，每个item使用ID和结构化的稀疏特征来表示，抛弃了LLMs的预训练权重，通过海量数据自回归训练改造的Transformer架构HSTU。最终通过M-FALCON等算力优化手段实现线上推理。</p>
+
+<p>更多技术细节参见：行动胜过言语: Meta落地工业界首个万亿级别参数的生成式推荐系统。 ‍</p>
+
+<h1>字节 | HLLM</h1>
+
+<p>全称：Enhancing Sequential Recommendations via Hierarchical Large Language Models for Item and User Modeling</p>
+
+<p>意义：HLLM是国内第一个对标Meta的GRs工作，也是今年大模型推荐的大作。</p>
+
+<p>文章主要探讨了3个方面的问题：① 发挥LLM的预训练权重价值：研究预训练大型语言模型（LLMs）中包含的世界知识和推理能力在推荐系统任务中的具体价值，这一点与GRs的不同，GRs用了LLMs的模型架构，但没有使用预训练的权重，意味着HLLMs的数据效率可能更高。② 推荐任务微调：探讨如何为推荐任务进行特定微调（fine-tuning）。③ 模型的可扩展性：验证大语言模型在推荐系统中是否同样具备scaling能力，即模型性能是否随着模型参数量的增加而提升。</p>
+
+<p>为了解决这一难题，文章也同Meta GRs一样，将推荐任务形式化为“序列推荐”。并提出了层次化大语言模型，第一级是Item LLM，使用LLM从item的文本表述中提取丰富的语义信息，此处没有使用ID信息； 第二级是User LLM，利用第一级的item表征来建模用户行为序列，预测用户的未来兴趣，此处大概率只使用用户交互的正样本。思路比较清晰。</p>
+
+<p>模型整体结构如下：</p>
+
+<center><img src="/images/2025/IMAG2025010305.jpeg"></center>
+
+
+
+
+<center>模型结构</center>
+
+
+<p></br></p>
+
+<h2>Item LLM</h2>
+
+<p>本质上是使用LLM作为item侧的特征提取器，将丰富的文本信息压缩成1个item表征。主要改进就是在文本描述末尾新增特殊标记[ITEM]。然后过LLMs模型，将最后1层[ITEM]对应位置的hidden states作为item的表征。属于基本操作，在NoteLLM中也能见到。这个[ITEM]表征联同itemLLM的参数会在下游推荐任务中进行端到端微调。</p>
+
+<h2>User LLM</h2>
+
+<p>通过item表征，可以将用户行为ID序列U={I_1, I_2,...,I_n}转成表征序列 {E_1, E_2,...,E_n}，然后套一个LLMs，就能让item序列进行充分交叉。该LLMs的输入中把LLM预训练的word embedding丢掉，使用item LLM输出的item embedding替代，然后后续的Transformers建模序列结构保持一致。</p>
+
+<h2>训练目标</h2>
+
+<ul>
+<li>生成式目标：和GRs或传统的序列推荐任务都比较像，自回归预测下一个item。和GRs的差异点包括两个方面：① 使用了预训练模型的权重。② User LLMs的输入是item LLM输出的表征(也即根源输入是text-input features)，而GRs主要是ID和结构化的稀疏特征。具体自回归预测时，使用了InfoNCE。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010306.png"></center>
+
+
+<p>j是batch内的user编号下标，i是第j个user的序列中的第i个item，E<em>{j,i}是Item LLM输出的表征，\hat{E}</em>{j,i}是User LLM预测的表征。正样本是next item，负样本从batch内非该用户序列的其他样本中采样。</p>
+
+<ul>
+<li>判别式目标：判别式目标是给定用户表征、待预测的item表征，判断用户是否对该item感兴趣。这里头有2种建模方式，1种是把用户行为序列和item拼接起来过Transformers，这样能提前交互；另一种是使用LLMs作为User序列提取器，在末尾新增[USER]作为user表征，在输出端进行弱交互，可以复用行为序列表征计算过程，在线上推理时可跨候选间复用user表征，性能好很多。前者由于过早交互，行为序列和待预测的item信息耦合在一起，导致无法跨候选复用算力。此处采用logloss，应该也是基于用户序列来构造正负样本。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010307.png"></center>
+
+
+<p>最后的损失如下，可以看到生成式目标实际是作为辅助损失的，主目标是LogLoss分类目标，和DIEN很像。</p>
+
+<center><img src="/images/2025/IMAG2025010308.png"></center>
+
+
+<p>该目标训练的过程中，能够端到端联合训练Item LLM和user LLM。item LLM的产物[ITEM]对应的表征实际上还能用于其他推荐场景：如作为item表征输入到精排建模、用于召回等。</p>
+
+<p>实验部分也是做的比较完备的，值得一看。包括几个部分：</p>
+
+<ul>
+<li>LLMs预训练权重的重要性。“使用预训练”意味着在这些预训练LLMs权重基础上进一步微调、"不使用预训练(Scratch)"意味着丢弃预训练权重，复用架构从头开始训练，就像GRs中的一样。因为HLLMs的输入是item侧文本，预训练权重信息肯定是有用的，毋庸置疑。另外文中也说明了预训练的tokens数量越大，重要性越高。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010309.jpeg"></center>
+
+
+<ul>
+<li>LLMs微调的重要性。使用生成式目标和判别式目标微调[ITEM]，[User]以及对应LLM的参数，也非常重要。例如：item侧不微调，固定参数，使用LLM输出的最后1层hidden states进行pooling作为item表征，结果非常差。user侧同理。这说明基于next token预测训练的LLMs如果作为特征提取器是非常糟糕的。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010310.jpeg"></center>
+
+
+<ul>
+<li>对比实验：SASRec和HSTU(GRs)是ID-based模型，HLLMs、LEARN是text-based模型。HLLMs效果上好不少。但是这个地方由于输入数据和建模方式差异，个人认为这么对比可能不是公平的，不能发挥出GRs的优势。下面总结的时候会再说明下原因。</li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010311.jpeg"></center>
+
+
+<p>最后我们再聊聊HLLMs的A/B Test部分，也是满满细节：基座是TinyLlama-1.1B，训练了HLLM-1B。由于性能的考虑，总共分为了3个部分：</p>
+
+<ul>
+<li><p>Stage I: 端到端训练所有HLLMs参数：使用判别式损失训练Item LLM和User LLM。用户行为序列长度是150。</p></li>
+<li><p>Stage II: 先用Stage I训练Item LLM来编码和存储item表征。通过检索item表征来进一步微调User LLM，只训练User LLMs，因此可以将序列长度从150拓到1000。</p></li>
+<li><p>Stage III: HLLM参数固定，基于User LLM抽取user表征，联同Item LLM的表征和已经有的线上特征，喂给精排走流式学习。</p></li>
+</ul>
+
+
+<p>线上serving的时候，item表征在新item发布的时候就会抽取表征；user表征T+1例行化更新；U/I的embedding提前存储好，用于流式训练和serving，这种情况下线上耗时几乎没变。</p>
+
+<center><img src="/images/2025/IMAG2025010312.jpeg"></center>
+
+
+<p>到此我们可以总结下HLLM和GRs的差异点：</p>
+
+<ul>
+<li><p>输入数据：GRs输入用户全周期正负反馈行为序列，数据量更大，主要基于item侧的ID和结构化稀疏特征进行学习；HLLMs输入用户正反馈行为序列，数据量小很多，主要基于item侧的文本描述，没有使用ID特征进行学习。</p></li>
+<li><p>模型架构：由于输入的差异和数据量的差异，GRs可以使用LLMs架构从头预训练，将文本模态替换为ID/action进行端到端训练。也是真正意义上的端到端模型。HLLMs主要基于预训练LLMs，能够复用LLMs预训练权重蕴含的世界知识，需要遵循LLMs的文本模态输入，无法直接建模ID，转而添加【ITEM】，【User】来适配预训练LLMs并提炼关键信息，也就意味着微调非常重要。</p></li>
+<li><p>训练目标：由于海量数据，GRs可以以自回归为主要目标进行训练，使用更大参数量的模型，其scaling的潜力更大，是能真正替代现有的DNN搜广推模型。HLLMs在传统判别式目标之上新增自回归目标，个人认为scaling的天花板是有限的，也无法真正替代现有的DNN，文中实验部分关于这块的介绍也是比较简单，说服力不足。</p></li>
+<li><p>在线推理：late fusion的HLLMs类似双塔架构，通过解耦合item和user表征，复用user侧表征，但是交叉能力比较弱；GRs在双塔和完全体Transformers之间做了个折中，引入了action和item交错编排和target-attention机制，在交叉能力上是更好的，通过causal attention和候选之间mask机制也能实现跨候选间复用“用户历史行为表征”算力，但能达到更好的交叉能力。GRs的上线难度肯定是更大的。</p></li>
+</ul>
+
+
+<p>正是因为上述的差异，在相同数据集上对比HLLMs和HSTU可能不够公平，无法达到各自最优水平进行对比。</p>
+
+<h1>小红书 | NoteLLM</h1>
+
+<p>全称：A Retrievable Large Language Model for Note Recommendation。</p>
+
+<p><strong>意义：第一个使用大模型做I2I推荐的工作。也是使用LLM兼容语义信息和协同信息，提升item embedding学习的代表性工作之一。</strong></p>
+
+<p>小红书发表在WWW 2024上的工作，基于LLM的I2I推荐。本质上是通过LLM来学习笔记的表征，该表征能同时拥有大模型的语义世界知识，还能将小红书用户行为中的协同信号注入其中。其建模的关键假设是：notes frequently read together are likely related. 利用了共现笔记通常比较相似的假设，通过I2I相关笔记对比学习任务来提升item embedding的学习。除此之外，还引入了“标签/类目”生成任务来多目标学习。</p>
+
+<p>整体架构图如下，自下而上：包含了笔记压缩prompt、相关笔记对构建、生成对比学习和标签/类目生成多目标学习、最后应用于I2I推荐、笔记hashtag生成、笔记类目打标等任务。整体工作流大致是：先通过prompt来构造LLMs的输入，同时预留着[EMB]占位符节点，用于I2I协同信号对比学习和标签/类目生成学习，这样就能让共现高的笔记的[EMB]相近，同时还能保留LLMs的语义信息。</p>
+
+<center><img src="/images/2025/IMAG2025010313.jpeg"></center>
+
+
+
+
+<center>NoteLLM模型结构</center>
+
+
+<p></br></p>
+
+<h2>Note Compression Prompt</h2>
+
+<p>首先是Note Compression Prompt：为每个笔记样本构建一个统一的笔记压缩prompt，然后通过预训练LLMs进行解码学习item表征。prompt格式如下，[EMB]占位符就是学习的目标笔记表征。</p>
+
+<center><img src="/images/2025/IMAG2025010314.png"></center>
+
+
+<p>对于类目生成任务，引入了类目$c_i$等监督信号。</p>
+
+<center><img src="/images/2025/IMAG2025010315.jpeg"></center>
+
+
+<p>对于hashtag标签生成任务，引入了hashtags $tp_i$的监督信号。</p>
+
+<center><img src="/images/2025/IMAG2025010316.jpeg"></center>
+
+
+<p>通过上述步骤装配模版成文本tokens，通过LLMs得到上述tokens的表征序列，[EMB]处的表征会作为笔记表征，通过下面的GCL和CSFT进行预训练。</p>
+
+<h2>GCL</h2>
+
+<p>全称生成对比学习。为了引入海量数据协同信号，作者构建了相关笔记对，计算所有笔记对的用户行为共现得分，并为每个笔记形成共现得分集合。并选择集合中共现得分最高的笔记作为给定笔记的相关笔记。计算相似笔记的公式借鉴了类似swing的思路：即：</p>
+
+<p>$s<em>{n_A→n_B}=\sum</em>{i}^N\frac{1}{N_i}$</p>
+
+<p>接着通过生成对比学习（GCL）使用上述压缩标记作为每个笔记的表征，并训练LLMs从in-batch的负样本中识别出相关的正样本笔记。本质是利用共现笔记中的“协同信号”，来提升这个[EMB]的学习质量，让相似的note的EMB相近。</p>
+
+<center><img src="/images/2025/IMAG2025010317.png"></center>
+
+
+<h2>CSFT</h2>
+
+<p>全称协同监督微调。笔记的category和hashtags有一些监督信号，可以用于多任务学习，使用自回归生成损失建模即可。具体而言，作者采用了一种协同监督微调（CSFT）方法来训练模型为每个笔记生成标签/分类。由于I2I笔记推荐任务和标签/分类生成任务中学习到的压缩标记都旨在提取笔记内容的关键概念，CSFT可以有效增强笔记嵌入。</p>
+
+<center><img src="/images/2025/IMAG2025010318.jpeg"></center>
+
+
+<p>最后，训练好的模型可以同时做I2I向量检索、类目打标、话题生成等任务。</p>
+
+<p>从实验部分来看，</p>
+
+<ul>
+<li><p>LLaMA 2 zero-shot：直接提取item的表征，不使用任何prompt；</p></li>
+<li><p>PromptEOL zero-shot：zero-shot的sentence embedding方法，使用了one-word limitation prompt.</p></li>
+<li><p>SentenceBERT：基于共现笔记对比学习来学习笔记相似性，也是小红书线上的基线。</p></li>
+<li><p>PromptEOL+CSE：PromptEOL基础上基于共现笔记对比学习来训练LLM。</p></li>
+<li><p>RepLLaMA：使用LLM作为双编码器的向量检索模型，类似双塔模型训练，不使用任何any prompts.</p></li>
+<li><p>NoteLLM：本文方法。</p></li>
+</ul>
+
+
+<center><img src="/images/2025/IMAG2025010319.jpeg"></center>
+
+
+<h1>小红书 | NoteLLM-2</h1>
+
+<p>全称：Multimodal Large Representation Models for Recommendation。</p>
+
+<p>意义：第一个<strong>直接使用LLM来提升推荐系统多模态表征质量</strong>的工作，发挥LLMs和视觉Encoder各自的优势。</p>
+
+<p>同样出自小红书的工作，提出了一个端到端训练方法，能够方便地定制集成任何现有的LLMs和视觉Encoder，以构建高效的多模态表示模型（Multimodal Large Representation Models, MLRMs）。</p>
+
+<p>NoteLLM的Item表征主要建模文本信息，这篇工作在文本表征之外，重点建模了笔记的多模态信息，并用于多模态的I2I推荐。文章重点探讨了如何充分发挥LLM的文本理解能力，来弥补传统多模态模型对文本信息的忽视，取长补短。</p>
+
+<p>具体而言，在I2I推荐任务上，提出了一种端到端训练方法，和NoteLLM一样，使用I2I共现笔记对的对比学习，来增强多模态表征的学习。所以乍一看就是在note compression prompt设计上如何引入图像表征来形成多模态表征。方法也很简单，</p>
+
+<p>在NoteLLM的prompt基础上引入了图像表征占位。是placeholder, 后面会使用从原始图像中提取的vision embedding代替。</p>
+
+<center><img src="/images/2025/IMAG2025010320.png"></center>
+
+
+<p>具体而言，先使用上述prompt过tokenizer后得到text embedding。然后text embedding中占位符对应的word embedding使用vision encoder(例如CLIP/BLIP等)经过Connector(MLP层)得到的visual embedding来替换，形成多模态表征序列。然后使用LLMs处理该多模态表征序列，得到最后的last hidden states作为note的多模态表征。然后使用和NoteLLM一样的共现item pairs进行对比学习预训练。如下所示，和NoteLLM是一样的。</p>
+
+<center><img src="/images/2025/IMAG2025010321.jpeg"></center>
+
+
+<p>但这个简单的改造会面临的问题在于：LLMs在端到端训练中倾向于忽视图像信息，被文本信息主导。为此，文章提出2种方法：包括：① 从prompt的视角区分“文本信息”和“图像信息”，其实就是优化prompt，称为mICL(multimodal in-context learning)；② 在LLM接入下游I2I任务的输出端引入late fusion机制，在结构上显式地让原始图像信息发挥更大作用。整体架构图如下：</p>
+
+<center><img src="/images/2025/IMAG2025010322.jpeg"></center>
+
+
+<h2>mICL</h2>
+
+<p>首先是mICL，将prompt改造成如下格式，和NoteLLM的主要差异点是接入下游的时候有2个表征节点，新增的，因为Causal attention机制，这个节点仅提炼了前面的图像表征信息n_i<sup>v</sup>；另一个是整个prompt节点，即prompt尾巴处，提取了文本和图像多模态表征n_i<sup>m</sup>。这两个表征在下游I2I建模时都会发挥作用，以保留图像的信息。</p>
+
+<center><img src="/images/2025/IMAG2025010323.png"></center>
+
+
+<h2>Late Fusion</h2>
+
+<p>接着是Late Fusion机制：为图像表征和多模态表征都设置了门控融合机制，来自适应融合原始vision encoder的输出v和上述图像表征和多模态表征。例如图像表征如下，其中v是visual encoder(如BLIP/CLIP等)的原始表征，n_i<sup>v</sup>是上述经过LLM后的图像表征。二者通过门控机制融合得到\hat{n}_i^{v}。同理，多模态表征节点n_i<sup>m</sup>，也和v进行门控融合。</p>
+
+<center><img src="/images/2025/IMAG2025010324.jpeg"></center>
+
+
+<p>图像表征节点和多模态表征节点，分别过对比学习损失来建模。</p>
+
+<center><img src="/images/2025/IMAG2025010325.jpeg"></center>
+
+
+
+
+<center><img src="/images/2025/IMAG2025010326.png"></center>
+
+
+
+
+<center><img src="/images/2025/IMAG2025010327.png"></center>
+
+
+<p>从实验部分，</p>
+
+<ul>
+<li><p>MTomato-Base：MTomato是小红书自研的基于LLaMA 2的LLM，配合vision encoder CLIP ViT-B进行实验。</p></li>
+<li><p>MQwen-Base：使用Qwen Chat作为LLM，vision encoder也是用的CLIP ViT-B进行实验。</p></li>
+<li><p>MQwen-bigG：使用Qwen Chat作为LLM，vision encoder替换为ViT-bigG。</p></li>
+</ul>
+
+
+<p>LLM大部分都是采用7B左右的，效果来看 MQwen-bigG>MQwen-Base>MTomato-Base，说明LLM和vision encoder都很重要。mICL和late fusion通过放大vision encoder的作用，都能起到一定作用。</p>
+
+<center><img src="/images/2025/IMAG2025010328.jpeg"></center>
+
+
+<p>NoteLLM-2和NoteLLM的差异：</p>
+
+<ul>
+<li><p>prompt组织微调任务的输入：NoteLLM引入了[EMB]特殊标记来提炼文本模态表征、NoteLLM-2引入了[IMG-EMB]图像模态和整体多模态特殊标记来提炼图像表征和多模态表征，这些特殊标记会用于下游推荐系统任务微调；</p></li>
+<li><p>协同信号微调：微调任务都使用了共现笔记对，配合生成对比学习目标进行训练。此外，NoteLLM引入了话题标签和类目生成辅助目标共同引导[EMB]的学习；NoteLLM-2专注LLM和视觉编码器的协同，基于上述两个特殊标记引入两个Loss，通过late fusion机制优化LLMs对视觉信息的关注。</p></li>
+</ul>
+
+
+<h1>总结</h1>
+
+<p>基于上述工作，我们可以大致窥探出LLMs在搜广推上应用的范式：</p>
+
+<ul>
+<li><p>借鉴LLMs的架构，不用LLMs的预训练权重，此时尽可能保留原始海量的曝光日志数据，通过组织输入样式和ID类特征，自回归的训练大模型，有可能达到推荐系统领域的scaling，这种方法个人认为短期来说上限更高，但难度更大，对应用场景、用户行为频次、供给丰富性等，都有很高的要求，现阶段能真正能落地的很少。代表性工作是GRs。</p></li>
+<li><p>借鉴LLMs的架构和预训练权重，输入模态以文本为主，无法直接输入ID等，需要下游推荐任务的微调才能真正发挥价值。由于有预训练权重的存在，数据效率更高，如何设计好的下游微调任务成为了成败的关键。为了达到更好的微调，这里面需要做两个方面工作：① 输入数据如何适配LLMs；② 用什么目标来微调。借鉴字节和小红书等内容化平台的经验，输入数据适配通常配合prompt+特殊标记，通过特殊标记作为预训练LLMs和下游推荐任务的桥梁；在微调目标选择上，要么有显式的共现关系，类似NoteLLM和NoteLLM-2中的共现item对，通过对比学习微调；要么直接基于自回归目标，如HLLMs中结合判别式和生成式自回归目标。i2i方法有一定信息损失，在I2I推荐任务中可能表现不错，但非通用方法。在数据规模足够的场景下，自回归方法更加通用一些，适配的任务可能更多。</p></li>
+</ul>
+
+
+<h1>References</h1>
+
+<p>GRs | Zhai J, Liao L, Liu X, et al. Actions speak louder than words: Trillion-parameter sequential transducers for generative recommendations[J]. arXiv preprint arXiv:2402.17152, 2024.</p>
+
+<p>HLLMs | Chen J, Chi L, Peng B, et al. HLLM: Enhancing Sequential Recommendations via Hierarchical Large Language Models for Item and User Modeling[J]. arXiv preprint arXiv:2409.12740, 2024.</p>
+
+<p>NoteLLM | Zhang C, Wu S, Zhang H, et al. NoteLLM: A Retrievable Large Language Model for Note Recommendation[C]//Companion Proceedings of the ACM on Web Conference 2024. 2024: 170-179.</p>
+
+<p>NoteLLM-2 | Zhang C, Zhang H, Wu S, et al. NoteLLM-2: Multimodal Large Representation Models for Recommendation[J]. arXiv preprint arXiv:2405.16789, 2024. ‍</p>
+
+<p>‍</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Hulu视频广告系统中的算法实践]]></title>
+    <link href="https://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms/"/>
+    <updated>2024-07-19T14:40:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://www.infoq.cn/article/ko9yxouspj4kuoh9jut4">https://www.infoq.cn/article/ko9yxouspj4kuoh9jut4</a></p>
+
+<h1>概述</h1>
+
+<h2>Hulu 的广告产品</h2>
+
+<p>首先介绍一下 Hulu 以及 Hulu 的广告产品形态。</p>
+
+<p>Hulu 是一家美国的提供专业视频点播与直播的服务平台，成立于 2006 年，目前由迪士尼控股，拥有近 3000 万付费订阅用户，是全美用户数量增长最快的流媒体平台。</p>
+
+<p>① 产品形态：点播，直播，回看等；</p>
+
+<p>② 广告形态：以视频流中的 15 秒、30 秒的视频广告短片为主；</p>
+
+<p>③ 广告特点：</p>
+
+<ul>
+<li><p>以品牌类广告为主，品牌类广告看重长期效果，品牌的曝光度，用户认知等等；</p></li>
+<li><p>采用 CPM ( Cost Per Mille，千次展示 ) 方式计费，即无论用户是否点击，按照展示次数计价；</p></li>
+<li><p>以担保式广告订单为主，广告主希望其品牌曝光有一定量的保障，例如，某品牌希望在指定地区给指定用户群投放指定的次数；</p></li>
+<li><p>质量要求非常高，包括清晰度、创意、制作的精良程度等等。</p></li>
+</ul>
+
+
+<center><img src="/images/2024/IMAG2024071901.png"></center>
+
+
+
+
+<!--more-->
+
+
+<h2>核心算法问题</h2>
+
+<p>上面简单介绍了 Hulu 和 Hulu 的广告产品形态，接下来介绍下广告系统中我们主要面对的核心算法问题有哪些，以及算法发挥的主要作用。</p>
+
+<p><strong>广告生态系统有三个核心要素：广告主，用户，媒体方 ( Hulu )。每个要素都有自己的优化目标。</strong></p>
+
+<h3>广告主：</h3>
+
+<p>广告主的核心优化目标是广告的投放效率、有效性，以及 ROAS ( Return-On-Ad-Spend，广告支出回报率 )，算法的主要应用为：</p>
+
+<p>① 广告定向：使用机器学习算法进行受众定向、基于上下文的定向、lookalike 定向等；</p>
+
+<p>② 订单及价格优化：给广告主一些订单定向条件及价格的建议，使其在 Hulu 上更好的进行订单的购买和投放；</p>
+
+<p>③ 转化率优化：越来越多的品牌类的广告主也开始在意短期或者长期的转化率，使用机器学习方法提高转化率，把正确的广告投给正确的用户；</p>
+
+<h3>用户：</h3>
+
+<p>对于用户的核心优化目标是优化用户体验，尽可能减少广告对用户的干扰，给用户更有连贯性的观看体验，算法的主要应用为：</p>
+
+<p>① 个性化广告：给用户推荐更感兴趣，更相关的广告</p>
+
+<p>② 情景式广告：使用 AI 技术进行图像音频的识别、广告创意的生成，为用户带来浸入式广告体验</p>
+
+<p>③ 个性化频次控制：为用户提供个性化频次控制，避免重复及过量广告为用户带来的反感</p>
+
+<h3>媒体方（Hulu）：</h3>
+
+<p>最终的优化目标：广告收入最大化，吸引更多的广告商和用户；与此同时我们也会进行生产环境的工作效率优化，算法的主要应用为：</p>
+
+<p>① 库存预估：这是在担保式广告里面是一个必不可少的环节，在售卖广告以及做广告预算时发挥重要作用</p>
+
+<p>② 广告流量匹配：对广告订单与用户流量进行匹配，保证担保式广告能够按时按量且均匀的进行投放</p>
+
+<p>③ 定价策略优化：根据流量的热门程度及售卖压力，进行动态的定价，让整个系统得到一个收入的最大化。</p>
+
+<p>下图总结了在 Hulu 的视频广告系统中的 <strong>核心算法问题</strong>，也是我们研究员每天在做的事情：</p>
+
+<center><img src="/images/2024/IMAG2024071902.png"></center>
+
+
+<p>① 广告定向，涉及到：</p>
+
+<ul>
+<li><p>预估模型：例如用户标签的补全，构建 lookalike 模型等等</p></li>
+<li><p>主题模型：使用无监督方式挖掘用户属性</p></li>
+<li><p>图像识别技术：识别视频内容中物体、场景、氛围等等，投放上下文相关视频广告</p></li>
+</ul>
+
+
+<p>② 库存预估，涉及到：</p>
+
+<ul>
+<li>时序预测算法：库存预估一般被建模成时序预测问题</li>
+</ul>
+
+
+<p>③ 流量匹配，涉及到：</p>
+
+<ul>
+<li><p>凸优化：使用凸优化进行离线流量匹配</p></li>
+<li><p>自动化控制理论 ( PID Controller )：使用自动化控制理论进行线上动态调整</p></li>
+</ul>
+
+
+<p>④ 转化率优化，涉及到：</p>
+
+<ul>
+<li><p>CVR 预估模型</p></li>
+<li><p>Casual Inference ( 因果推断 )：使用因果推断，得到一个更加公正、有效的指标来评估转化是否有效。</p></li>
+<li><p>Bandit/增强学习：使用 Bandit 以及增强学习的方式来解决广告冷启动的问题</p></li>
+</ul>
+
+
+<p>⑤ 程序化交易广告，涉及到：</p>
+
+<ul>
+<li><p>RTB ( Real time bidding ) 策略研究</p></li>
+<li><p>流量预估/CVR 预估/投放节奏控制</p></li>
+</ul>
+
+
+<p>⑥ 用户/广告体验分析，涉及到：</p>
+
+<ul>
+<li><p>统计理论</p></li>
+<li><p>Casual Inference ( 因果推断 )</p></li>
+</ul>
+
+
+<p>⑦ 价格机制设计，涉及到：</p>
+
+<ul>
+<li><p>博弈问题</p></li>
+<li><p>增强学习</p></li>
+</ul>
+
+
+<h1>核心业务场景中的算法实践</h1>
+
+<p>由于篇幅有限，这里着重讲一下在三个比较核心的业务场景下，算法在 Hulu 广告系统中的实践与落地。</p>
+
+<h2>1. Ad Targeting 广告定向</h2>
+
+<center><img src="/images/2024/IMAG2024071903.png"></center>
+
+
+<p>广告定向在品牌类广告中，是最最重要的一个环节。</p>
+
+<p>在 Hulu 的场景下，主要有三种类型的广告定向：</p>
+
+<p>① 上下文相关：例如用户用的设备，在什么位置，在哪个频道，看什么样的视频内容，插播广告点前后的视频内容是什么情景等等。</p>
+
+<p>② 用户相关：例如用户年龄性别、用户基本属性以及根据用户历史行为挖掘出来的属性等。</p>
+
+<p>③ 用户广告交互相关：</p>
+
+<ul>
+<li><p>Remarketing ( 再营销 )：例如投放广告给最近访问过广告商网站的用户，为他加深品牌印象；</p></li>
+<li><p>Look-alike Targeting ( 相似访客定向 )：投放广告给与种子用户相似的受众，扩大受众人数，以及挖掘具有潜能的用户。</p></li>
+</ul>
+
+
+<p>下面分别介绍一下针对这三种类型的广告定向使用到的核心算法：</p>
+
+<center><img src="/images/2024/IMAG2024071904.png"></center>
+
+
+<h3>a. 用户相关定向：</h3>
+
+<p>我们构建了用户画像系统作为用户定向的基础。底层是一个核心用户平台，负责用户数据的管理，版本控制，每天的 ETL 等等。注入的数据来自三种数据源：</p>
+
+<p>① 来自第三方数据平台的用户标签、属性，</p>
+
+<p>② Hulu 自己本身的一些标签，这里有两类工作：</p>
+
+<ul>
+<li><p>第一类是工作是标签的补全，我们会用一些例如 XGBoost、DNN 的预测模型来对这些缺失标签的用户进行一个预估，得到用户具有哪些标签，以及概率是多少。</p></li>
+<li><p>第二类是无监督模式，我们从用户的历史行为以及其他属性中进行挖掘，挖掘出一些新的属性出来，会涉及聚类、主题模型、user2vec 的方式来生成用户的标签。</p></li>
+</ul>
+
+
+<p>③ 广告商提供的用户标签，针对这种标签最常用的就是进行 Lookalike 定向，我们会用机器学习的方式来进行预测，找到与种子用户相似的用户群体。</p>
+
+<h3>b. 上下文相关定向：</h3>
+
+<center><img src="/images/2024/IMAG2024071905.png"></center>
+
+
+<p>这里主要介绍一下 AI 在视频内容上下文情景广告中的应用。视频广告会插播在视频内容播放前以及播放中， 投放与视频上下文情节比较相关的广告，会减少广告对用户的干扰，举个例子：用户当前所看的是婚礼视频，如果此时投放的广告是珠宝广告，那就毫无违和感，甚至会激起用户的购买欲望。另外，我们需要探测视频中的的一些暴力血腥画面，在这些地方不适合投放广告。</p>
+
+<p>这个问题的核心是使用图像识别技术检测出视频每帧都出现了什么样的实体、情景以及氛围等。Hulu 结合业界的标准构建了自己的 Taxonomy 体系，分为情绪、物体、场景、位置以及声音几个大的分类。</p>
+
+<p>简要介绍一下图像检测大致流程：考虑到获取大量数据样本的人力物力成本较大，我们最开始会借助于公开数据集 ( 比如 Open Iamge、Places 365 等 )，使用 Inception V3、VGG 等模型去生成一些标签，接下来会根据 Hulu 的场景进行少量的人工标注，对模型进行 Finetune 以及使用多模型融合决定最终的标签。</p>
+
+<h3>c. 转化率优化：</h3>
+
+<center><img src="/images/2024/IMAG2024071906.png"></center>
+
+
+<p>虽然品牌类的广告点击率没有那么重要，但是越来越多的广告商开始和 Hulu 谈，我把我的转化数据给你，你帮我计算下我这次投放的转化率是多少。这就带来了另外一个问题，广告商最终还是希望优化自己广告的转化率，所以我们最近开始了这方面的研究。目前开展的研究是基于 Hulu 自己的广告的转化率优化，Hulu 在自己的视频里面也会放一些推广新剧的广告内容，例如一个 15 秒的预告，希望这些广告能投放给正确的用户，得到比较高的转化率。这个问题被建模成为 CVR 预估的问题，根据投放数据以及转化数据，通过机器学习来建模用户看到广告后的 7 天内、30 天内的转化率，再投放的时候把正确的广告投放给正确的用户。</p>
+
+<ul>
+<li>转化率优化中的特征 &amp; 模型</li>
+</ul>
+
+
+<center><img src="/images/2024/IMAG2024071907.png"></center>
+
+
+<p>特征主要分为三块：</p>
+
+<ul>
+<li><p>User related：基本的用户属性，如位置，活跃度，留存时间等，以及一些重要的历史行为，比如曾经看过哪些内容，搜索过哪些内容，收藏过哪些内容。</p></li>
+<li><p>Ad related：广告本身的属性，如行业、剧目本身的信息等等。</p></li>
+<li><p>User-Ad：用户这个广告看过多少次了，通过多次投放使用户加深印象。</p></li>
+</ul>
+
+
+<p>模型方面我们目前使用了 DIN + FM 模型进行建模，同时也在探索更好的模型优化。</p>
+
+<h3>d. 广告定向中不可忽视的问题：因果推断和共享账号</h3>
+
+<ul>
+<li>因果推断</li>
+</ul>
+
+
+<center><img src="/images/2024/IMAG2024071908.png"></center>
+
+
+<p>我们在评估广告转化率的时候，会考虑评估是否正确，广告是否有效，举个例子：假如有一群用户，不论你对不对他投放广告，他都会去买这辆车，如果把广告投放给这样的用户，最后评估广告的转化率的时候会评估的非常高，其实广告效果一般，因为你投不投他都会去买，其实是白白消耗了这次投放。这就需要引入 Casual Inference 作为评估指标，其核心思想是：评估这个用户看这个广告和不看这个广告的收益分别是怎么样，最后将两者之间的差作为评估指标，使用 Doubly Robust Estimator 进行建模。除此，更加重要的问题是怎么根据 Casual Inference 作为目标去进行转化率的优化，怎么找到这些广告增益最大的用户，然后把广告投放给这些用户。</p>
+
+<ul>
+<li>共享账号</li>
+</ul>
+
+
+<center><img src="/images/2024/IMAG2024071909.png"></center>
+
+
+<p>接下来是用户共享账号的问题，例如：一个账号，孩子晚上 8 点左右看动画片，妈妈晚上 10 点左右看综艺节目，爸爸周末看体育视频，妈妈使用该账号的时候，发现推荐的都是动画片，找不到自己喜欢看的内容。这个在推荐以及广告定向中都是非常重要的问题，例如有的广告商，希望这个体育类广告只推荐给家庭中的爸爸，如果是小孩和妈妈看是没有效果的。</p>
+
+<p>这个问题规划到三个方面来解决：</p>
+
+<p>① 探测这个账号背后有多少个虚拟用户</p>
+
+<p>② 给每个虚拟用户打上标签，预测他的行为模式</p>
+
+<p>③ 用户来到 app 的时候预估是哪个虚拟用户，推荐对应的广告和内容</p>
+
+<p>这个问题核心是一些聚类的算法和预估模型的问题，这也是我们目前正在解决的问题。</p>
+
+<h2>2. Inventory Prediction 流量预估</h2>
+
+<p>流量预估在担保式广告中是非常重要的环节，广告在售卖之前都要检查是否有足够多的库存余量卖给广告主，以保证售出的广告都能够保量完成投放。</p>
+
+<p>问题简单描述为：给定未来的一段时间，一些定向条件的组合，预估有多少广告流量库存。</p>
+
+<center><img src="/images/2024/IMAG2024071910.png"></center>
+
+
+<p>这个问题可以建模成时序预估的问题，通常有以下两个步骤：</p>
+
+<p>第一步：用时序预估模型来预估总的流量是多少；</p>
+
+<p>第二步：根据历史分布把流量分配到不同的排列组合，不同的维度上。</p>
+
+<ul>
+<li>Time Series Model</li>
+</ul>
+
+
+<p>我们目前尝试过以下三类模型：</p>
+
+<p>第一个是 ARIMA ( Autoregressive Integrated Moving Average model )，稳定时序预估中最常用的模型，第二个是来自 Facebook 的 Prophet 模型，第三个是 LSTM。</p>
+
+<p>ARIMA 作为最为直接简单的稳定时序预估模型，在我们的实验中，在短期时序的预估准确率很不错，但是对长期的预估相对来说就不那么稳定了。原因在于，以下一些因素都会影响到长期的广告流量时序数据：</p>
+
+<ul>
+<li><p>用户增长的因素</p></li>
+<li><p>季节性的因素</p></li>
+<li><p>每周的波动</p></li>
+<li><p>节假日和特殊事件</p></li>
+</ul>
+
+
+<p>Prophe 模型是专门为具有这几种特性的时序数据而设计的时序预估模型。</p>
+
+<center><img src="/images/2024/IMAG2024071911.png"></center>
+
+
+<p>Prophet 把时序数据拆成了三部分：趋势部分，周期性和季节性部分，节假日部分，每一部分会单独做预测模型，最后合到一起得到最终的预测结果。</p>
+
+<center><img src="/images/2024/IMAG2024071912.png"></center>
+
+
+<p>例如，上图为 Prophet 模型产生的几种因素的分解：左上角为趋势，左下角为节假日，右边为季度性，分别为每个月和每周的变化，可以观察到淡季和旺季的变化。目前，我们采用的是 Prophet 模型，在 Hulu 的广告流量预估问题上表现稳健。</p>
+
+<h2>3. Inventory Allocation 流量匹配</h2>
+
+<p>流量匹配在担保式广告的投放环节发挥着重要的作用，保证所有广告订单都可以按时按量并且节奏均匀的投放完成。</p>
+
+<center><img src="/images/2024/IMAG2024071913.png"></center>
+
+
+<p>流量匹配算法会分为以下几个步骤：</p>
+
+<p>第一步，把广告订单的投放目标拆分到每个小时，这个拆分会根据我们预估的流量和紧俏程度来进行分配；</p>
+
+<p>第二步，进行 Offline Solving，把问题建模成一个二步图匹配算法，然后使用优化算法进行压缩解的求解；</p>
+
+<p>第三步，进行线上调控，采用 PID ( Proportion Integration Differentiation ) 控制，根据真实的流量实时进行调控。</p>
+
+<p>第一个步骤比较简单，下面简单介绍一下第二、三步中具体用到的算法。</p>
+
+<center><img src="/images/2024/IMAG2024071914.png"></center>
+
+
+<p>在离线匹配中，我们把问题建模成一个二部图匹配问题。</p>
+
+<p>在广告中最主要有 SUPPLY 与 DEMAND 端的两个限制条件：上图中左边 SUPPLY 表示用户带来的流量，流量上会有一些标签，表示用户及广告位的属性，右边 DEMAND 表示广告商的订单，订单上也会有些属性，比如投给男性，或者某个地区的；SUPPLY 与 DEMAND 之间的连线表示这个广告位可以投放的广告。SUPPLY 端的限制条件为最多只有这么多的库存可以使用，DEMAND 端的限制条件为需要将每个广告订单都保量投放完成。</p>
+
+<p>之后可以根据二部图建模优化问题，求解目标是每个边的权重，表示该流量以多大的比例分配给某个广告订单。</p>
+
+<center><img src="/images/2024/IMAG2024071915.png"></center>
+
+
+<p>首先会将原始优化问题转化为拉格朗日对偶问题，求解得到对偶变量 αj​ 和 betaj​，表示的分别是广告的对偶变量和流量的对偶变量。根据最优解满足 KKT 条件，我们可以只将相对数量级较低的广告对偶变量 αj​ 记下来，提高存储效率，线上再根据 KKT 条件计算 betaj​ 和 xij​。αj​ 可以被看做各个订单重要程度影响因子，作为线上选择订单的权重。</p>
+
+<center><img src="/images/2024/IMAG2024071916.png"></center>
+
+
+<p>但是这里还是存在一个问题，这里全部都是用的预估的流量和订单来进行匹配，但实际上会发生一些变化。所以需要第三步，线上实时调控。第一可以保证适应真实的线上流量， 第二也可以进一步保证投放节奏的稳定性。一般使用 PID ( Proportion Integration Differentiation ) 控制技术，这是常用于机械、电气系统中的一种应用非常广泛的自动控制技术，分为比例调节、积分调节、微分调节这 3 项的调节，根据线上广告真实投放的快慢来调控接下来应该投放的速度。</p>
+
+<h1>作者介绍：</h1>
+
+<p>韦春阳，2012 年从北京大学硕士毕业后加入 Hulu，目前担任智能广告算法团队负责人。有 7 年的计算广告领域的从业经验，致力于利用机器学习、人工智能技术来推动 Hulu 广告业务的发展，负责包括精准广告定向、广告流量匹配、广告库存预估、广告转化率优化等项目。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[工业界推荐系统技术要点总结]]></title>
+    <link href="https://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary/"/>
+    <updated>2024-05-26T11:25:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary</id>
+    <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/689894486">https://zhuanlan.zhihu.com/p/689894486</a></p>
+
+<p>工业界的推荐系统技术要点有很多，想从事推荐系统相关方向的同学都建议刷一刷。</p>
+
+<h1>多目标排序模型</h1>
+
+<p>回顾一下推荐系统的链路</p>
+
+<center><img src="/images/2024/IMAG2024052601.jpg"></center>
+
+
+
+
+<!--more-->
+
+
+<p>常见的交互指标</p>
+
+<center><img src="/images/2024/IMAG2024052602.jpg"></center>
+
+
+<p>排序模型做的事情</p>
+
+<center><img src="/images/2024/IMAG2024052603.jpg"></center>
+
+
+<p>多目标模型就是要预测多个目标</p>
+
+<center><img src="/images/2024/IMAG2024052604.jpg"></center>
+
+
+<p>预测概率和实际是否交互求交叉熵损失</p>
+
+<center><img src="/images/2024/IMAG2024052605.jpg"></center>
+
+
+<p>训练时通常会遇到类别不平衡问题，可以考虑做采样</p>
+
+<center><img src="/images/2024/IMAG2024052606.jpg"></center>
+
+
+<p>采样可能导致预估点击率偏高</p>
+
+<center><img src="/images/2024/IMAG2024052607.jpg"></center>
+
+
+<p>可以通过校准公式进行校准</p>
+
+<center><img src="/images/2024/IMAG2024052608.jpg"></center>
+
+
+<p>Multi-gate Mixture-of-Experts</p>
+
+<p>几个专家就是放几个神经网络</p>
+
+<center><img src="/images/2024/IMAG2024052609.jpg"></center>
+
+
+<p>进一步考虑对多个神经网络的输出进行加权</p>
+
+<center><img src="/images/2024/IMAG2024052610.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052611.jpg"></center>
+
+
+<p>可能会出现极化的现象</p>
+
+<center><img src="/images/2024/IMAG2024052612.jpg"></center>
+
+
+<p>可以通过dropout的方式来解决极化</p>
+
+<center><img src="/images/2024/IMAG2024052613.jpg"></center>
+
+
+<p>多目标有多个预估分数就可以有不同融合方式</p>
+
+<center><img src="/images/2024/IMAG2024052614.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052615.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052616.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052617.jpg"></center>
+
+
+<p>视频播放建模</p>
+
+<center><img src="/images/2024/IMAG2024052618.jpg"></center>
+
+
+<p>播放时长建模</p>
+
+<center><img src="/images/2024/IMAG2024052619.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052620.jpg"></center>
+
+
+<p>视频完播用回归或分类都可以</p>
+
+<center><img src="/images/2024/IMAG2024052621.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052622.jpg"></center>
+
+
+<p>完播率通常和视频时长有关，不能直接把预估的完播率⽤到融分公式</p>
+
+<center><img src="/images/2024/IMAG2024052623.jpg"></center>
+
+
+<p>通常做个调整再用到融分公式</p>
+
+<center><img src="/images/2024/IMAG2024052624.jpg"></center>
+
+
+<h1>排序模型的特征</h1>
+
+<p>用户画像</p>
+
+<center><img src="/images/2024/IMAG2024052625.jpg"></center>
+
+
+<p>物品画像</p>
+
+<center><img src="/images/2024/IMAG2024052626.jpg"></center>
+
+
+<p>用户统计特征</p>
+
+<center><img src="/images/2024/IMAG2024052627.jpg"></center>
+
+
+<p>笔记统计特征</p>
+
+<center><img src="/images/2024/IMAG2024052628.jpg"></center>
+
+
+<p>场景特征</p>
+
+<center><img src="/images/2024/IMAG2024052629.jpg"></center>
+
+
+<p>特征处理</p>
+
+<center><img src="/images/2024/IMAG2024052630.jpg"></center>
+
+
+<p>特征覆盖率的概念</p>
+
+<center><img src="/images/2024/IMAG2024052631.jpg"></center>
+
+
+<p>数据服务分三步</p>
+
+<center><img src="/images/2024/IMAG2024052632.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052633.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052634.jpg"></center>
+
+
+<h1>粗排</h1>
+
+<p>精排模型的线上推理代价大</p>
+
+<center><img src="/images/2024/IMAG2024052635.jpg"></center>
+
+
+<p>双塔模型牺牲准确性换计算量</p>
+
+<center><img src="/images/2024/IMAG2024052636.jpg"></center>
+
+
+<p>粗排的三塔模型</p>
+
+<center><img src="/images/2024/IMAG2024052637.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052638.jpg"></center>
+
+
+<p>三塔模型的推理</p>
+
+<center><img src="/images/2024/IMAG2024052639.jpg"></center>
+
+]]></content>
+  </entry>
+  
+</feed>

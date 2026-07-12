@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 内容理解 | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/nei-rong-li-jie/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[【DataFunTalk】QQ音乐内容理解与精细化运营——推荐系统的精细化调控]]></title>
+    <link href="https://ibillxia.github.io/blog/2021/11/14/qqmusic-content-understanding-and-refined-operations-of-recsys/"/>
+    <updated>2021-11-14T21:43:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2021/11/14/qqmusic-content-understanding-and-refined-operations–of-recsys</id>
+    <content type="html"><![CDATA[<p>以下是上月底我在DataFunTalk上的分享材料：</p>
+
+
+<p><center>
+<embed width="780"
+    height="574"
+    name="plugin"
+    src="https://ibillxia.github.io/upload/DataFun-QQmusic-content-understanding-and-refined-operations–of-recsys.pdf"
+    type="application/pdf"
+/>
+</center></p>
+
+
+<p>详细文字版见公众号文章：</p>
+
+<p><a href="https://mp.weixin.qq.com/s/SaJcVARQzUSpPj2uugXypA">QQ音乐内容理解与精细化运营</a></p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 实验设计 | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/shi-yan-she-ji/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[【DataFun】因果推断与复杂AB测试]]></title>
+    <link href="https://ibillxia.github.io/blog/2024/07/09/causal-inference-complex-ab-testing/"/>
+    <updated>2024-07-09T15:51:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2024/07/09/causal-inference-complex-ab-testing</id>
+    <content type="html"><![CDATA[<h2>24年7月5-6北京站</h2>
+
+<h2><strong>eBay 基于Uplift Model的优惠券分发优化</strong></h2>
+
+<p><a href="https://drive.weixin.qq.com/s?k=AJEAIQdfAAoRew3eteAZgAQAbMAKM#/preview?fileId=s.1970325010981265.7204251960EC_f.720425750F67V">https://drive.weixin.qq.com/s?k=AJEAIQdfAAoRew3eteAZgAQAbMAKM#/preview?fileId=s.1970325010981265.7204251960EC_f.720425750F67V</a></p>
+
+<center><img src="/images/2024/IMAG2024070901.png"></center>
+
+
+
+
+<!--more-->
+
+
+
+
+<center><img src="/images/2024/IMAG2024070902.png"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024070903.png"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024070904.png"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024070905.png"></center>
+
+
+<h2><strong>字节 推荐场景下的复杂AB实验设计</strong></h2>
+
+<p><a href="https://drive.weixin.qq.com/s?k=AJEAIQdfAAo5EtQJwpAZgAQAbMAKM">DataFunCon2024-推荐场景的复杂AB实验设计.pdf</a>（抢先版）</p>
+
+<p><a href="https://drive.weixin.qq.com/s?k=AJEAIQdfAAosvCrHVWAZgAQAbMAKM">刘小可-抖音.pdf</a>（正式版）</p>
+
+<p>⼀、双边效应导致的策略效果评估有偏问题</p>
+
+<center><img src="/images/2024/IMAG2024070906.png"></center>
+
+
+<p>⼆、⽹络效应导致的策略效果评估有偏问题</p>
+
+<center><img src="/images/2024/IMAG2024070907.png"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024070908.png"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024070909.png"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024070910.png"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024070911.png"></center>
+
+]]></content>
+  </entry>
+  
+</feed>

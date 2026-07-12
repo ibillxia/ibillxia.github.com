@@ -1,0 +1,422 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>MySQL乱码问题详解与解决方案 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(function () {
+  addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">MySQL乱码问题详解与解决方案</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2015-10-28T17:12:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>本文节选自<a href="http://cenalulu.github.io/mysql/mysql-mojibake/">10分钟学会理解和解决MySQL乱码问题</a>   <br/>
+PS: 原文博主通过MySQL垂直深耕，成功进入Facebook了，祝福。</p>
+
+<h2>1. MySQL乱码的成因</h2>
+
+<center><img src="/images/2015/IMAG2015102801.png"></center>
+
+
+<p></p>
+
+<p>要了解为什么会出现乱码，需要理解从客户端发起请求到MySQL存储数据，再到取回客户端的过程中，哪些环节会有编码/解码的行为。</p>
+
+
+<p></p>
+
+<!--more-->   
+
+
+<h3>1.1 存入MySQL经历的编码转换</h3>
+
+<center><img src="/images/2015/IMAG2015102802.png"></center>
+
+
+<p></p>
+
+<p>存入过程有3次编码/解码：</p>
+
+
+<p></p>
+
+<p>1. Terminal根据字符编码转换成二进制流<br/>   
+2. Server通过character-set-client解码<br/>   
+3. 判断character-set-client和目标表的charset是否一致，不一致则转换</p>
+
+
+<p></p>
+
+<h3>1.2 从MySQL取出数据经历的编码转换</h3>
+
+<center><img src="/images/2015/IMAG2015102803.png"></center>
+
+
+<p></p>
+
+<p>取出过程同样有3次编码/解码：</p>
+
+
+<p></p>
+
+<p>1. 用表字符集编码进行解码<br/>   
+2. 将数据转换为character-set-client的编码<br/>   
+3. Server通过网络传输到远端client</p>
+
+
+<p></p>
+
+<h3>1.3出现乱码的原因</h3>
+
+<p>MySQL数据存入和读取过程有3次编码/解码的过程：客户端编码，MySQL Server解码，Client编码向表编码的转换   <br/>
+三步中，只要两步或者两部以上的编码有不一致就有可能出现编解码错误。   <br/>
+1. 存入和取出时对应环节的编码不一致    <br/>
+2. 单个流程中三步的编码不一致</p>
+
+<h2>2.如何避免乱码</h2>
+
+<p>理解了上面的内容，要避免乱码就显得很容易了。   <br/>
+只要做到“三位一体”，即 客户端，MySQL character-set-client，table charset三个字符集完全一致就可以保证一定不会有乱码出现了。</p>
+
+<p>最简单的方式是将客户端、连接、服务端统一设置为UTF-8（适合于还未写入数据造成乱码的情况，已经有乱码的修复见下文）：</p>
+
+<pre><code>SET NAMES 'utf8mb4';     
+-- 等同于以下三条语句：     
+SET character_set_client = utf8mb4;     
+SET character_set_results = utf8mb4;     
+SET character_set_connection = utf8mb4;     
+</code></pre>
+
+<h2>3.如何修复已经编码损坏的数据</h2>
+
+<p>原文有列举一些错误的方法，这里就略过了，直接说正确的方法</p>
+
+<h3>方法一 Dump &amp; Reload</h3>
+
+<p>这个方法比较笨，但也比较好操作和理解。简单的说分为以下三步：</p>
+
+<ul>
+<li>通过错进错出的方法，导出到文件</li>
+<li>用正确的字符集修改新表</li>
+<li>将之前导出的文件导回到新表中</li>
+</ul>
+
+
+<p>举例，我们用UTF-8将数据“错进”到latin1编码的表中。现在需要将表编码修改为UTF-8可以使用以下命令</p>
+
+<pre><code>shell&gt; mysqldump -u root -p -t --skip-set-charset --default-character-set=utf8 test charset_test_latin1 &gt; data.sql   
+#确保导出的文件用文本编辑器在UTF-8编码下查看没有乱码   
+shell&gt; mysql -uroot -p -e 'create table charset_test_latin1 (id int primary key auto_increment, char_col varchar(50)) charset = utf8' test   
+shell&gt; mysql -uroot -p  --default-character-set=utf8 test &lt; data.sql   
+</code></pre>
+
+<h3>方法二 Convert to Binary &amp; Convert Back</h3>
+
+<p>这种方法比较取巧，用的是将二进制数据作为中间数据的做法来实现的。由于，MySQL再将有编码意义的数据流，转换为无编码意义的二进制数据的时候并不做实际的数据转换。而从二进制数据准换为带编码的数据时，又会用目标编码做一次编码转换校验。通过这两个特性就相当于在MySQL内部模拟了一次“错出”，将乱码“拨乱反正”了。</p>
+
+<p>还是用上面那个例子举例，我们用UTF-8将数据“错进”到latin1编码的表中。现在需要将表编码修改为UTF-8可以使用以下命令</p>
+
+<pre><code>mysql&gt; ALTER TABLE charset_test_latin1 MODIFY COLUMN char_col VARBINARY(50);   
+mysql&gt; ALTER TABLE charset_test_latin1 MODIFY COLUMN char_col varchar(50) character set utf8;   
+</code></pre>
+
+<h2>参考资料</h2>
+
+<p>[1]<a href="https://cenalulu.github.io/mysql/mysql-mojibake/">10分钟学会理解和解决MySQL乱码问题</a><br/>
+[2]<a href="https://dev.mysql.com/doc/refman/8.0/en/charset.html">MySQL Character Sets文档</a></p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2015-10-28T17:12:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/mysql/'>MySQL</a>, <a class='tag' href='/blog/tags/zi-fu-ji/'>字符集</a>, <a class='tag' href='/blog/tags/shu-ju-ku/'>数据库</a>, <a class='tag' href='/blog/tags/bian-ma/'>编码</a></span>
+		
+    </p>
+    
+      
+         <div class="sharing">
+  
+  
+  
+</div>
+
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2015/03/26/google-cpp-style-guide/" title="Previous Post:
+        Google C++ 编程规范要点总结">&laquo; Google C++ 编程规范要点总结</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2015/11/03/tencent-analytics-architecture/"
+        title="Next Post: 【标点符】腾讯分析系统架构解析">【标点符】腾讯分析系统架构解析
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion/';
+        var disqus_url = 'https://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

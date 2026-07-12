@@ -1,0 +1,841 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 特征工程 | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/te-zheng-gong-cheng/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[特征平台需求层次理论]]></title>
+    <link href="https://ibillxia.github.io/blog/2024/05/14/feature-platform-hierarchy/"/>
+    <updated>2024-05-14T17:49:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2024/05/14/feature-platform-hierarchy</id>
+    <content type="html"><![CDATA[<h1>前言</h1>
+
+<p>原文链接：<a href="https://tech.ipalfish.com/blog/2021/05/31/feature-stores-a-hierarchy-of-needs/">https://tech.ipalfish.com/blog/2021/05/31/feature-stores-a-hierarchy-of-needs/</a></p>
+
+<p>本文是<a href="https://tech.ipalfish.com/blog/2021/05/31/mlsys-we-love/">「算法工程化实践调研」</a>系列的第 1 篇，翻译 <a href="https://twitter.com/eugeneyan">Eugene Yan</a> 的技术博客 <a href="https://eugeneyan.com/writing/feature-stores/">Feature Stores - A Hierarchy of Needs [1]</a>。</p>
+
+<p>出于开发伴鱼特征平台的需要，我最近阅读了很多关于特征平台的实践文章，但总有「一叶障目，不见泰山」之感——每个公司的算法工程化现状不尽相同，导致解决方案的侧重点不同，在架构上的区别也很大。正如我的前同事佘昶在他 2019 年的一篇文章中，到位地总结：我们缺乏一个系统性地思考特征平台的框架。[2]</p>
+
+<p>幸运的是，Eugene 的博客正好提供了这样一个思考框架，并将这个思考框架用于分析当前的各个特征平台上。我在征得 Eugene 的同意后，全文翻译，以飨中文读者。以下是译文。</p>
+
+<hr />
+
+<p>特征平台（feature store）最近很火。2020 年 12 月，<a href="https://aws.amazon.com/about-aws/whats-new/2020/12/introducing-amazon-sagemaker-feature-store/">AWS 发布了 SageMaker 特征平台</a>。上个月，<a href="https://splicemachine.com/press-releases/splice-machine-launches-the-splice-machine-feature-store-to-simplify-feature-engineering-and-democratize-machine-learning/">大数据平台 Splice Machine 也发布了一款特征平台</a>。Datanami 引用 Tecton.ai 联合创始人的话，称 2021 年为<a href="https://www.datanami.com/2021/01/19/2021-the-year-of-the-feature-store/">特征平台之年</a>。</p>
+
+<blockquote><p>根据我们的经验，管理特征是机器学习上线最大的瓶颈之一。—— Uber</p></blockquote>
+
+<p>特征和标签是机器学习模型的输入。在回归中，标签是因变量，特征是自变量。在表格中，标签是我们想要预测的列，特征是除 ID 外的其它列。</p>
+
+<p>大家对于「特征平台是什么」有很多种理解。有人把它简单地定义为「一个集中存储特征的地方」。也有人称特征平台能帮你「实现特征的一次创建，多处使用」或「百倍地提高模型部署效率」。之所以回答五花八门，是因为每个人想要特征平台做的事情都不同。</p>
+
+<p>我研究了<a href="https://github.com/eugeneyan/applied-ml#feature-stores">大量业界实践</a>，试图理解特征平台在不同场景下解决的问题。受心理学家马斯洛的启发，我发现特征平台的能力可以满足多个层次的需求。我称之为「特征平台的需求层次」，我将逐层介绍这些需求，并讨论业界的特征平台为满足该层次需求所做的实践。</p>
+
+<!--more-->
+
+
+<h1>特征平台的需求层次</h1>
+
+<p>马斯洛需求层次理论是一个心理动力理论，认为人类有五个层次的需求，呈金字塔形。该理论认为，人会首先满足最大最基本的需求（金字塔底），才会考虑更高层次的要求（金字塔顶）。</p>
+
+<p>关于「马斯洛需求层次理论」</p>
+
+<center><img src="/images/2024/IMAG2024051401.svg"></center>
+
+
+<p>（图注：马斯洛的需求层次金字塔，底层代表基本需求。<a href="https://en.wikipedia.org/wiki/Maslow's_hierarchy_of_needs">来源</a>）</p>
+
+<p>生理需求：是生存所必需的，例如空气、水、食物、住处等。不满足这个需求，人类身体将无法正常工作。只有满足了这一最重要的需求，才会考虑其它需求。</p>
+
+<p>安全需求：在生理需求被满足的前提下，需要保障安全，包括人身安全、健康、经济安全、就业、法律秩序、社会稳定等。这一需求通常由家庭、社会和政府满足。</p>
+
+<p>社交需求：感到社会群体对自己的认可和接受。这类群体包括同事、教友、职业机构、体育俱乐部、在线社区等，也包括家庭、朋友和导师。</p>
+
+<p>尊严需求：基于能力和成就。较低层次的尊严需求来自他人，包括他人的尊重认可和在其他人中的声誉。较高层次的尊严需求来自自己，包括对自己的尊重和内在的成就感。</p>
+
+<p>自我实现需求：最高层的需求，是个人潜力的完全实现。对自我实现的需求因人而异。有的人希望成为完美父母，而有的人强烈希望在经济上、学术上、体育上取得成功。人们通过发明、艺术、写作等方式表达这种需求。</p>
+
+<p>同样，特征平台会首先满足最必要和急迫的需求（包括特征读取和特征服务），再去考虑高阶需求。</p>
+
+<center><img src="/images/2024/IMAG2024051402.jpeg"></center>
+
+
+<p>（图注：特征平台需求层次）</p>
+
+<p>最底层是访问（access）的需求。这一层需求包括特征可读取、特征转换逻辑透明和特征血缘可溯。它们使得特征能被发现、分享和复用，减少重复。</p>
+
+<blockquote><p>从前，算法工程师进行机器学习开发时，60%的时间都花在编写特征转换逻辑上。—— Airbnb</p></blockquote>
+
+<p>其次是服务（serving）的需求。这一层的核心需求是为线上服务提供高吞吐、低延迟的特征读取能力，而无需通过 SQL 去数据仓库读取。其它需求还包括：与已有的离线特征存储集成，使得特征能够从离线特征存储同步到在线特征存储（例如 Redis）；实时的特征转换等。</p>
+
+<blockquote><p>通常，数据工程师会将数据科学家实现的特征重新实现为可以在生产环境运行的特征管道。这个重复实现的过程会让项目推迟数月交付，让跨团队合作极为复杂。—— GoJek</p></blockquote>
+
+<p>两个底层需求被满足后，我们诉诸准确（integrity）需求。最常见的需求是最小化 train-serve skew，确保特征在训练和服务环境下是一致的。另一个常见需求是 point-in-time correctness（又称 time-travel），以确保历史特征和标签被用于训练和评估时不存在 data leaks。</p>
+
+<blockquote><p>训练通常是离线的，而服务通常是实时的。保证训练和服务环境下的数据一致性极为重要。—— Uber</p></blockquote>
+
+<p>再往上，是便利的需求。特征平台需要足够简单好入手，例如提供简单直观的接口、易交互、易 debug 等，才能让大家采纳和受益。</p>
+
+<blockquote><p>记住，我们是个平台组。我们要搭建工具把提供给用户，让他们能够自己动手丰衣足食。—— Uber</p></blockquote>
+
+<p>最后是自治（autopilot）的需求，包括自动回填特征、对特征的分布进行监控和报警等。我知道有些公司有做这一层的事情，但我没怎么读到相关材料。</p>
+
+<blockquote><p>特征回填是训练集迭代最主要的瓶颈。解决这一问题能极大地加速数据科学家的工作流。—— Airbnb</p></blockquote>
+
+<p>并非所有团队都有全部五层需求，对大部分团队而言，满足第一、二层和部分第三层的需求就很受益了。不同团队对于每一层需求的程度要求也不同。在线场景少的团队相比每秒需要处理几百万请求的的 DoorDash 团队，当然更少关心特征服务的需求；如果模型和特征每天更新多次，则更少需要关心 point-in-time correctness。</p>
+
+<p>在逐层了解对特征平台的需求后，让我们来看看不同的公司是如何实现这些需求的。</p>
+
+<h1>对「创新者窘境」的借鉴</h1>
+
+<p>特征平台需求层次借鉴了<a href="https://en.wikipedia.org/wiki/The_Innovator%27s_Dilemma">「创新者窘境」</a>所介绍的产品演进模型。</p>
+
+<center><img src="/images/2024/IMAG2024051403.jpeg"></center>
+
+
+<p>（图注：竞争的演进，从功能、可靠、便利到价格）</p>
+
+<p>功能：当市场上没有一个产品满足功能方面的需求，竞争的基础在于功能。这款产品能否做到竞品做不到的事情？</p>
+
+<p>可靠：当超过两个产品能满足功能的需求，消费者会选择更可靠的产品。这款产品质量是否稳定？</p>
+
+<p>便利：当多个产品能满足可靠的需求，消费者会选择更便利的产品。这款产品是否容易使用？</p>
+
+<p>价格：最终，当多个产品都能满足便利的需求时，竞争的基础转移到价格上。这款产品是否更便宜？</p>
+
+<h1>访问：去重和复用</h1>
+
+<p>如果特征难以访问，以下情况会发生：</p>
+
+<ul>
+<li><p>不同团队反复实现同一个特征，导致同一特征可能有多达 10 个版本。</p></li>
+<li><p>部署多个相近的特征管道，浪费计算和存储资源。</p></li>
+<li><p>因为同一特征有多个版本，不同模型会使用不同版本的特征，很难得到一致的结果。</p></li>
+<li><p>迭代变慢。</p></li>
+</ul>
+
+
+<blockquote><p>表达同一业务概念的特征被多个团队反复开发，已有工作无法复用。—— GoJek</p></blockquote>
+
+<p>为了解决这一问题，<a href="https://www.gojek.io/blog/feast-bridging-ml-models-and-data">GoJek 搭建 Feast</a> 作为数据工程师、数据科学家和算法工程师合作的接口。数据工程师和数据科学家创建特征，并提交给特征平台。随后，算法工程师消费特征，而无需自己创建。</p>
+
+<p>（我很难评价这种做法，因为我认为<a href="https://eugeneyan.com/writing/end-to-end-data-science/">数据科学家应该端到端</a>。当然，GoJek 的做法或许和组织架构有关，因为它的数据工程团队主要在印度，而算法团队主要在新加坡。Feast 扮演了团队间沟通的接口。）</p>
+
+<p>Uber 也采用了相似的做法，通过搭建 <a href="https://www.infoq.com/presentations/michelangelo-palette-uber/">Palette 特征平台</a>，鼓励不同部门分享和复用 Palette 中的特征。这种做法最小化了重复工作，让机器学习的的结果更加一致，加速机器学习的进程。</p>
+
+<p>特征的可发现性使得特征易于发现和使用。我没有读到多少特征平台语境下的可发现性的相关讨论，估计它和我之前写过的<a href="https://eugeneyan.com/writing/data-discovery-platforms/">开源数据发现平台</a>很相似。</p>
+
+<p>在这个层次上，特征平台基本上是个包含很多特征的存储，和数据仓库的区别不大。把两者区分开的是特征平台还能满足特征下一层次的服务需求。</p>
+
+<h1>服务：在实时环境使用特征</h1>
+
+<p>我们常用批数据离线训练模型，然而在线模型服务需要实时读取这些特征。这难住了很多团队——应该如何为在线模型服务高吞吐、低延迟地提供（serve）这些特征？</p>
+
+<blockquote><p>我们在开发模型的过程中发现：很多用于训练的特征，并无法在生产环境中获取。—— Monzo Bank</p></blockquote>
+
+<p>Monzo Bank 能从离线分析环境（用于模型训练）中获取特征，但无法从生产环境（用于模型服务）中获取特征。Monzo Bank 采用了一个<a href="https://nlathia.github.io/2020/12/Building-a-feature-store.html">轻量的解决方案</a>，将离线分析存储（BigQuery）中的特征同步至在线存储（Cassandra）。</p>
+
+<ul>
+<li><p>首先，在离线分析环境的 SQL 建表语句中加入标签。这些表的更新频率在小时或天级别。</p></li>
+<li><p>特征平台中的 Go 服务检查特征表 schema 的正确性，例如必需的 subject_type 和 subject_id 列是否存在。</p></li>
+<li><p>有个 cron job 监听特征表的更新，将数据变动从 BigQuery 经过 Google Cloud Storage 的中转同步至 Cassandra。</p></li>
+</ul>
+
+
+<p>Uber 的 Palette 采取了类似的双存储设计。离线存储（Hive）保存特征快照，用于训练。在线存储（Cassandra）实时提供同样的特征。特征由 Flink 生成，写入 Cassandra。两个存储之间会进行特征同步：添加到 Hive 的特征会被复制到 Cassandra，添加到 Cassandra 的特征会被 ETL 到 Hive。</p>
+
+<center><img src="/images/2024/IMAG2024051404.jpeg"></center>
+
+
+<p>（图注：创建批特征（左边）和实时特征（右边），并在存储间同步。<a href="https://www.infoq.com/presentations/michelangelo-palette-uber/">来源</a>）</p>
+
+<p>DoorDash 搭建了<a href="https://www.infoq.com/presentations/michelangelo-palette-uber/">超大规模的特征平台</a>，将特征服务做到极致，满足以下需求：</p>
+
+<ul>
+<li><p>支持在可持久、可伸缩的存储中保存十亿级别条数的特征。DoorDash 有百万级别的特征实体（entity）和十亿级别的特征。</p></li>
+<li><p>支持百万级别 QPS（Queries per second）。特征平台有多个使用场景，其中包括餐厅排序。这一场景使用大量特征，每秒做出超过一百万次预测。综合来看，特征平台的 QPS 超过一千万。</p></li>
+<li><p>支持非实时特征每日一次的快速批更新，和实时特征（例如餐厅过去 20 分钟的平均送餐时长）一天内不断的更新。</p></li>
+</ul>
+
+
+<p>DoorDash 在评估了 Redis、Cassandra、CockroachDB、ScyllaDB 和 YugabyteDB 后，选择了 Redis。<a href="https://doordash.engineering/2020/11/19/building-a-gigascale-ml-feature-store-with-redis/">这篇好文</a>介绍了 DoorDash 的评估过程和针对 Redis 做的后续优化。</p>
+
+<p>另一个方法是实时计算特征。例如，阿里巴巴的特征服务平台实时计算用户行为特征的统计量（点击、点赞、购买等），用于「猜你喜欢」<a href="https://102.alibaba.com/detail?id=183">实时推荐</a>。<a href="https://eugeneyan.com/writing/real-time-recommendations/">这篇文章</a>介绍了更多实时推荐的内容。</p>
+
+<h1>准确：创建正确的在线和离线特征</h1>
+
+<p>在满足服务的需求后，我们来看准确需求。准确性解决的主要痛点是：</p>
+
+<ul>
+<li><p>难以创建 point-in-time correct 的特征，用于模拟生产环境。做不对的话，会导致 data leaks。</p></li>
+<li><p>训练和服务环境特征的不一致，导致模型上线后表现欠佳。</p></li>
+</ul>
+
+
+<p>为了解决第一个痛点，Netflix 实现了<a href="https://netflixtechblog.com/distributed-time-travel-for-feature-generation-389cccdd3907">分布式 time-travel</a>。它给离线和在线数据建立快照，快照内容包含成员类型、设备、当天时间等。</p>
+
+<center><img src="/images/2024/IMAG2024051405.jpeg"></center>
+
+
+<p>（图注：从离线和在线的微服务创建快照。<a href="https://netflixtechblog.com/distributed-time-travel-for-feature-generation-389cccdd3907">来源</a>）</p>
+
+<p>然而，为每一个 context 都建立快照的成本很高。因此，Netflix 对观看模式、设备类型、设备使用时长、地区等离线特征进行分层抽样，这些样本很好地代表了用于模型训练和评估的数据的分布。抽样通过 Spark 完成，快照存储在 S3 中。</p>
+
+<p>Netflix 也会对在线特征建立快照。数据产生自数百个微服务，数据包括观看历史、个性化观看列表、评分预测等。数据由 Spark 通过 <a href="https://medium.com/@Netflix_Techblog/prana-a-sidecar-for-your-netflix-paas-based-applications-and-services-258a5790a015">Prana</a> 并行获取，制成快照，以 Parquet 格式存储在 S3 上。</p>
+
+<p>为了解决 train-serve skew 这第二个痛点，GoJek 用 Apache Beam 实现数据处理管道，消费来自批和流数据源（例如 BigQuery 和 Kafka）的数据，注入离线和在线存储（例如 BigQuery 和 Redis），并提供统一的接口来读取历史和实时数据。这种做法避免了因在生产环境重写特征管道而引入 train-serve skew。</p>
+
+<center><img src="/images/2024/IMAG2024051406.jpeg"></center>
+
+
+<p>（图注：GoJek 基于 Apache Beam 的特征注入。<a href="https://www.gojek.io/blog/feast-bridging-ml-models-and-data">来源</a>）</p>
+
+<p>Netflix 则通过共享的特征编码器（encoder）解决这一痛点。尽管他们在离线（Spark）和在线环境实现了不同的特征生成管道，但不同管道共用特征编码器（即同样的类、库和数据格式）。这也保证了特征生成过程在训练和服务环境的一致性。</p>
+
+<center><img src="/images/2024/IMAG2024051407.jpeg"></center>
+
+
+<p>（图注：Netflix 的离线和在线特征生成使用同一个编码器。<a href="https://databricks.com/session/fact-store-scale-for-netflix-recommendations">来源</a>）</p>
+
+<p>我们在前文介绍过 Uber 如何保持离线（Hive）和在线（Cassandra）特征存储的数据同步。任意一个存储的新特征都会被复制到另一个存储，确保训练和服务环境中数据的一致性。</p>
+
+<p>为确保特征的准确，还需引入监控，回答以下问题：</p>
+
+<ul>
+<li><p>特征最近一次更新是什么时候？</p></li>
+<li><p>schema 正确吗？数据分布发生了偏移吗？</p></li>
+<li><p>特征服务达到了吞吐和延迟的要求吗？</p></li>
+</ul>
+
+
+<p>Airbnb Zipline UI 向数据科学家展示特征的分布、特征和标签之间的相关性、聚类分析（尚不清楚基于什么做聚类分析）。类似地，Uber <a href="https://eng.uber.com/monitoring-data-quality-at-scale/">Data Quality Monitor</a> 通过以下方法给用户展示每日数据质量分数和异常报警：</p>
+
+<ul>
+<li><p>首先，搜集特征的指标，例如数值特征的均值、中位数、最大值、最小值，以及类别特征的唯一值个数和缺失值个数。</p></li>
+<li><p>其次，基于指标建立多维时间序列，使用主成分分析（PCA）选取出要保留的主成分。</p></li>
+<li><p>最后，使用主成分建立时间序列。如果当前测量值和上一步的预测值不匹配，则将该特征标记为异常。</p></li>
+</ul>
+
+
+<center><img src="/images/2024/IMAG2024051408.jpeg"></center>
+
+
+<p>（图注：数据质量随时间的变化，以及当事故发生时。<a href="https://eng.uber.com/monitoring-data-quality-at-scale/">来源</a>）</p>
+
+<h1>便利：尽量简单</h1>
+
+<p>当前，关于特征平台的便利需求，讨论并不多。但显然，好用的工具和平台非常重要（想想 PyTorch 和 Tensorflow 的对比）。</p>
+
+<p>我找到的最好的例子来自 GoJek。GoJek 实现提供了统一的 Python、Java 和 Go SDKs，让用户可以在不同语言中几乎无区别地使用 <code>get_batch_features()</code> 和 <code>get_online_features()</code> 接口，简化从离线存储和在线存储中获取特征的过程。</p>
+
+<pre><code>customer_features = ['credit_score', 'balance', 'total_purchases', 'last_active']
+
+historical_features_df = feast.get_historical_features(customer_ids, customer_features)
+model = ml.fit(historical_features_df)  # pseudo code
+
+online_features = feast.get_online_features(customer_ids, customer_features)
+prediction = model.predict(online_features)
+</code></pre>
+
+<p>此外，Netflix 实现了简单的接口，让数据科学家能够容易地创建 point-in-time correct 和特征和标签。下面的例子展示如何读取电影 <a href="http://outatimemovie.com/">OUTATIME</a> 的观看历史快照。</p>
+
+<pre><code>val snapshot = new SnapshotDataManager(sqlContext)
+  .withTimestamp(1445470140000L)
+  .withContextID(OUTATIME)
+  .getViewingHistory
+</code></pre>
+
+<p>基于该快照，用户只需提供以下内容，即可进行 time-travel，创建用于训练和评估的特征：</p>
+
+<ul>
+<li><p>上下文：模型在何地何时被如何使用，例如国家、设备、成员档案、电影、时间等，其中时间非常关键。</p></li>
+<li><p>物品：要评分或排序的物品，例如电影、推荐名单、搜索项等。</p></li>
+<li><p>标签：监督学习的目标，例如点击、已看、观看分钟数等。无监督学习不需要这些内容。</p></li>
+<li><p>特征编码器：如何将上下文和物品组合起来创建特征，例如国家-电影、用户 ID-电影等。</p></li>
+</ul>
+
+
+<p>Uber Palette 的 DSL（含代码示例）</p>
+
+<p>Uber 也<a href="https://www.infoq.com/presentations/michelangelo-palette-uber/">详细介绍</a>了他们如何通过拓展 <a href="https://spark.apache.org/docs/latest/ml-pipeline.html#transformers">Spark Transformer</a> 和创建 DSL，进行特征读取和转换。</p>
+
+<ul>
+<li><p>Transformer：主要用于特征读取。</p></li>
+<li><p>Estimator：主要用于创建特征，而不是像 <a href="https://spark.apache.org/docs/latest/ml-pipeline.html#estimators">Spark Estimator</a> 一样用于模型训练。</p></li>
+</ul>
+
+
+<p>下面展示如何读取一个餐厅的特征。首先，从离线和在线特征存储中读取特征，并读取属性（可能来自事实表）。它们包括：订单数、准备时长、经纬度。</p>
+
+<pre><code>tx_p1 = PaletteTransformer([
+    "@palette:restaurant:realtime_feature:nMeal:r_id",
+    "@palette:restaurant:batch_feature:preptime:r_id",
+    "@palette:restaurant:property:lat:r_id",
+    "@palette:restaurant:property:log:r_id",
+])
+</code></pre>
+
+<p>其次，estimator 通过经纬度获知餐厅的地区 ID。</p>
+
+<pre><code>es_dsl1 = DSLEstimator(lambdas=[
+    ["region_id",
+     "regionId(@palette:restaurant:property:lat:r_id,
+               @palette:restaurant:property:log:r_id)"]
+])
+</code></pre>
+
+<p>然后，通过地区 ID 这一特征，可以获知该区域的忙碌程度。</p>
+
+<pre><code>tx_p2 = PaletteTransformer([
+    "@palette:region:service_feature:nBusy:region_id"
+])
+</code></pre>
+
+<p>最后，进行一些额外的特征处理，包括用均值来推算准备时长，将特征转化为数值等。</p>
+
+<pre><code>es_dsl2 = DSLEstimator(lambdas=[
+    ["prepTime": nFill(nVal("@palette:restaurant:batch_feature:prepTime:r_id"),
+                 avg("@palette:restaurant:batch_featuer:prepTime:r_id"))],
+    ["nMeal": nVal("@palette:restaurant:realtime_feature:nMean:r_id")],
+    ["nOrder": nVal("@basis:nOrder")],
+    ["nBusy": nVal("@palette:region:service_feature:nBusy:region_id")]
+])
+</code></pre>
+
+<p>DSL 为特征读取和转换提供了一个抽象层，让用户可以很容易地在规定范围内使用。但我不清楚如何在不执行的前提下验证 DSL 的正确性，也不确定 DSL 是否容易定制化拓展。</p>
+
+<h1>自治：尽量自动</h1>
+
+<p>最顶层是自治需求。自治可以降低开发难度和运维成本，否则数据科学家需要花时间进行枯燥的手动操作。目前，有些公司分享了相关经验，但自治在业界还不普遍。</p>
+
+<p>Airbnb 发现数据回填成为数据科学家迭代模型实验的瓶颈。因此，Zipline 支持自动特征回填。数据科学家可以在简单的 UI 上定义新特征，指定开始和结束日期，以及回填任务的并行进程个数，随后这些特征就会<a href="https://speakerdeck.com/artwr/using-apache-airflow-as-a-platform-for-data-engineering-frameworks?slide=16">通过 Airflow 管道</a>添加到到已有的训练特征集中。</p>
+
+<center><img src="/images/2024/IMAG2024051409.jpeg"></center>
+
+
+<p>（图注：Airbnb 特征回填 UI，和它所创建的 Airflow DAG。<a href="https://speakerdeck.com/artwr/using-apache-airflow-as-a-platform-for-data-engineering-frameworks?slide=17">来源</a>）</p>
+
+<p>下面是自治方面的其它实践：</p>
+
+<ul>
+<li><p>Netflix <a href="https://netflixtechblog.com/metacat-making-big-data-discoverable-and-meaningful-at-netflix-56fb36a53520">Metacat</a> 提供了特征表的成本和存储空间指标，便于删除不用的特征表，节约成本。</p></li>
+<li><p>Uber <a href="https://eng.uber.com/monitoring-data-quality-at-scale/">Data Quality Monitor</a> 进行自动的异常检测，基于数据质量指标和每日数据质量分数进行通知。</p></li>
+<li><p>Uber 实验支持自动特征选择。用户只需提供要预测的标签，Palette 就能推荐出与标签有关的特征。</p></li>
+</ul>
+
+
+<h1>总结：取决于你的需求</h1>
+
+<p>我希望现在大家对「特征平台是什么」有了更清晰的理解。如果我们从零开始，我们所需的不过是访问和服务，加上一点点准确性。如果我们在大厂搭建特征平台，则需更早考虑便利和自治。如有问题，欢迎联系 <a href="https://twitter.com/eugeneyan">@eugeneyan</a> ！</p>
+
+<p>想开始搭建特征平台吗？<a href="https://github.com/feast-dev/feast">Feast</a> 是个不错的选择。它满足了访问和服务的需求，并提供了一致的接口，让训练和服务可以使用相似的代码。最棒的一点是，它是开源（免费）的。不妨告诉我进展如何！</p>
+
+<p>参考文献</p>
+
+<p>[1] <a href="https://eugeneyan.com/writing/feature-stores/">Feature Stores - A Hierarchy of Needs.</a></p>
+
+<p>[2] <a href="https://medium.com/data-for-ai/rethinking-feature-stores-74963c2596f0">Rethinking Feature Stores.</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[【Python机器学习】使用sklearn做单机特征工程]]></title>
+    <link href="https://ibillxia.github.io/blog/2018/04/04/sklearn-feature-engineering/"/>
+    <updated>2018-04-04T13:01:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2018/04/04/sklearn-feature-engineering</id>
+    <content type="html"><![CDATA[<h1>1 特征工程是什么？</h1>
+
+<p>　　有这么一句话在业界广泛流传：数据和特征决定了机器学习的上限，而模型和算法只是逼近这个上限而已。那特征工程到底是什么呢？顾名思义，其本质是一项工程活动，目的是最大限度地从原始数据中提取特征以供算法和模型使用。通过总结和归纳，人们认为特征工程包括以下方面：</p>
+
+<center><img src="/images/2018/IMAG2018040445.png"></center>
+
+
+
+
+<!--more-->
+
+
+<p><br>
+　　特征处理是特征工程的核心部分，sklearn提供了较为完整的特征处理方法，包括数据预处理，特征选择，降维等。首次接触到sklearn，通常会被其丰富且方便的算法模型库吸引，但是这里介绍的特征处理库也十分强大！</p>
+
+<p>　　本文中使用sklearn中的IRIS（鸢尾花）数据集来对特征处理功能进行说明。IRIS数据集由Fisher在1936年整理，包含4个特征（Sepal.Length（花萼长度）、Sepal.Width（花萼宽度）、Petal.Length（花瓣长度）、Petal.Width（花瓣宽度）），特征值都为正浮点数，单位为厘米。目标值为鸢尾花的分类（Iris Setosa（山鸢尾）、Iris Versicolour（杂色鸢尾），Iris Virginica（维吉尼亚鸢尾））。导入IRIS数据集的代码如下：</p>
+
+<pre><code class="python">from sklearn.datasets import load_iris
+
+#导入IRIS数据集
+iris = load_iris()
+#特征矩阵
+iris.data
+#目标向量
+iris.target
+</code></pre>
+
+<h1>2 数据预处理</h1>
+
+<p>　　通过特征提取，我们能得到未经处理的特征，这时的特征可能有以下问题：</p>
+
+<ul>
+<li><p>不属于同一量纲：即特征的规格不一样，不能够放在一起比较。无量纲化可以解决这一问题。</p></li>
+<li><p>信息冗余：对于某些定量特征，其包含的有效信息为区间划分，例如学习成绩，假若只关心“及格”或不“及格”，那么需要将定量的考分，转换成“1”和“0”表示及格和未及格。二值化可以解决这一问题。</p></li>
+<li><p>定性特征不能直接使用：某些机器学习算法和模型只能接受定量特征的输入，那么需要将定性特征转换为定量特征。最简单的方式是为每一种定性值指定一个定量值，但是这种方式过于灵活，增加了调参的工作。通常使用哑编码的方式将定性特征转换为定量特征：假设有N种定性值，则将这一个特征扩展为N种特征，当原始特征值为第i种定性值时，第i个扩展特征赋值为1，其他扩展特征赋值为0。哑编码的方式相比直接指定的方式，不用增加调参的工作，对于线性模型来说，使用哑编码后的特征可达到非线性的效果。</p></li>
+<li><p>存在缺失值：缺失值需要补充。</p></li>
+<li><p>信息利用率低：不同的机器学习算法和模型对数据中信息的利用是不同的，之前提到在线性模型中，使用对定性特征哑编码可以达到非线性的效果。类似地，对定量变量多项式化，或者进行其他的转换，都能达到非线性的效果。</p></li>
+</ul>
+
+
+<p>　　我们使用sklearn中的preproccessing库来进行数据预处理，可以覆盖以上问题的解决方案。</p>
+
+<h2>2.1 无量纲化</h2>
+
+<p>　　无量纲化使不同规格的数据转换到同一规格。常见的无量纲化方法有标准化和区间缩放法。标准化的前提是特征值服从正态分布，标准化后，其转换成标准正态分布。区间缩放法利用了边界值信息，将特征的取值区间缩放到某个特点的范围，例如[0, 1]等。</p>
+
+<h3>2.1.1 标准化</h3>
+
+<p>　　标准化需要计算特征的均值和标准差，公式表达为：</p>
+
+<p>　　使用preproccessing库的StandardScaler类对数据进行标准化的代码如下：</p>
+
+<pre><code class="python">from sklearn.preprocessing import StandardScaler
+
+#标准化，返回值为标准化后的数据
+StandardScaler().fit_transform(iris.data)
+</code></pre>
+
+<h3>2.1.2 区间缩放法</h3>
+
+<p>　　区间缩放法的思路有多种，常见的一种为利用两个最值进行缩放，公式表达为：</p>
+
+<p>　　使用preproccessing库的MinMaxScaler类对数据进行区间缩放的代码如下：</p>
+
+<pre><code class="python">from sklearn.preprocessing import MinMaxScaler
+
+#区间缩放，返回值为缩放到[0, 1]区间的数据
+MinMaxScaler().fit_transform(iris.data)
+</code></pre>
+
+<h3>2.1.3 标准化与归一化的区别</h3>
+
+<p>　　简单来说，标准化是依照特征矩阵的列处理数据，其通过求z-score的方法，将样本的特征值转换到同一量纲下。归一化是依照特征矩阵的行处理数据，其目的在于样本向量在点乘运算或其他核函数计算相似性时，拥有统一的标准，也就是说都转化为“单位向量”。规则为l2的归一化公式如下：</p>
+
+<p>　　使用preproccessing库的Normalizer类对数据进行归一化的代码如下：</p>
+
+<pre><code class="python">from sklearn.preprocessing import Normalizer
+
+#归一化，返回值为归一化后的数据
+Normalizer().fit_transform(iris.data)
+</code></pre>
+
+<h2>2.2 对定量特征二值化</h2>
+
+<p>　　定量特征二值化的核心在于设定一个阈值，大于阈值的赋值为1，小于等于阈值的赋值为0，公式表达如下：</p>
+
+<center><img src="/images/2018/IMAG2018040446.png"></center>
+
+
+<p><br>
+　　使用preproccessing库的Binarizer类对数据进行二值化的代码如下：</p>
+
+<pre><code class="python">from sklearn.preprocessing import Binarizer
+
+#二值化，阈值设置为3，返回值为二值化后的数据
+Binarizer(threshold=3).fit_transform(iris.data)
+</code></pre>
+
+<h2>2.3 对定性特征哑编码</h2>
+
+<p>　　由于IRIS数据集的特征皆为定量特征，故使用其目标值进行哑编码（实际上是不需要的）。使用preproccessing库的OneHotEncoder类对数据进行哑编码的代码如下：</p>
+
+<pre><code class="python">from sklearn.preprocessing import OneHotEncoder
+
+#哑编码，对IRIS数据集的目标值，返回值为哑编码后的数据
+OneHotEncoder().fit_transform(iris.target.reshape((-1,1)))
+</code></pre>
+
+<p>2.4 缺失值计算</p>
+
+<p>　　由于IRIS数据集没有缺失值，故对数据集新增一个样本，4个特征均赋值为NaN，表示数据缺失。使用preproccessing库的Imputer类对数据进行缺失值计算的代码如下：</p>
+
+<pre><code class="python">from numpy import vstack, array, nan2from sklearn.preprocessing import Imputer
+
+#缺失值计算，返回值为计算缺失值后的数据
+#参数missing_value为缺失值的表示形式，默认为NaN
+#参数strategy为缺失值填充方式，默认为mean（均值）
+Imputer().fit_transform(vstack((array([nan, nan, nan, nan]), iris.data)))
+</code></pre>
+
+<p>2.5 数据变换</p>
+
+<p>　　常见的数据变换有基于多项式的、基于指数函数的、基于对数函数的。4个特征，度为2的多项式转换公式如下：</p>
+
+<center><img src="/images/2018/IMAG2018040447.png"></center>
+
+
+<p><br>
+　　使用preproccessing库的PolynomialFeatures类对数据进行多项式转换的代码如下：</p>
+
+<pre><code class="python">from sklearn.preprocessing import PolynomialFeatures
+
+#多项式转换4#参数degree为度，默认值为2
+PolynomialFeatures().fit_transform(iris.data)
+</code></pre>
+
+<p>　　基于单变元函数的数据变换可以使用一个统一的方式完成，使用preproccessing库的FunctionTransformer对数据进行对数函数转换的代码如下：</p>
+
+<pre><code class="python">from numpy import log1p
+from sklearn.preprocessing import FunctionTransformer
+
+#自定义转换函数为对数函数的数据变换
+#第一个参数是单变元函数
+FunctionTransformer(log1p).fit_transform(iris.data)
+</code></pre>
+
+<h2>2.6 回顾</h2>
+
+<table>
+<thead>
+<tr>
+<th> 类 </th>
+<th> 功能 </th>
+<th> 说明 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> StandardScaler </td>
+<td> 无量纲化 </td>
+<td> 标准化，基于特征矩阵的列，将特征值转换至服从标准正态分布 </td>
+</tr>
+<tr>
+<td> MinMaxScaler </td>
+<td> 无量纲化 </td>
+<td> 区间缩放，基于最大最小值，将特征值转换到[0, 1]区间上 </td>
+</tr>
+<tr>
+<td> Normalizer </td>
+<td> 归一化 </td>
+<td> 基于特征矩阵的行，将样本向量转换为&quot;单位向量” </td>
+</tr>
+<tr>
+<td> Binarizer </td>
+<td> 二值化 </td>
+<td> 基于给定阈值，将定量特征按阈值划分 </td>
+</tr>
+<tr>
+<td> OneHotEncoder </td>
+<td> 哑编码 </td>
+<td> 将定性数据编码为定量数据 </td>
+</tr>
+<tr>
+<td> Imputer </td>
+<td> 缺失值计算 </td>
+<td> 计算缺失值，缺失值可填充为均值等 </td>
+</tr>
+<tr>
+<td> PolynomialFeatures </td>
+<td> 多项式数据转换 </td>
+<td> 多项式数据转换 </td>
+</tr>
+<tr>
+<td> FunctionTransformer </td>
+<td> 自定义单元数据转换 </td>
+<td> 使用单变元的函数来转换数据 </td>
+</tr>
+</tbody>
+</table>
+
+
+<h1>3 特征选择</h1>
+
+<p>　　当数据预处理完成后，我们需要选择有意义的特征输入机器学习的算法和模型进行训练。通常来说，从两个方面考虑来选择特征：</p>
+
+<ul>
+<li><p>特征是否发散：如果一个特征不发散，例如方差接近于0，也就是说样本在这个特征上基本上没有差异，这个特征对于样本的区分并没有什么用。</p></li>
+<li><p>特征与目标的相关性：这点比较显见，与目标相关性高的特征，应当优选选择。除方差法外，本文介绍的其他方法均从相关性考虑。</p></li>
+</ul>
+
+
+<p>　　根据特征选择的形式又可以将特征选择方法分为3种：</p>
+
+<ul>
+<li><p>Filter：过滤法，按照发散性或者相关性对各个特征进行评分，设定阈值或者待选择阈值的个数，选择特征。</p></li>
+<li><p>Wrapper：包装法，根据目标函数（通常是预测效果评分），每次选择若干特征，或者排除若干特征。</p></li>
+<li><p>Embedded：嵌入法，先使用某些机器学习的算法和模型进行训练，得到各个特征的权值系数，根据系数从大到小选择特征。类似于Filter方法，但是是通过训练来确定特征的优劣。</p></li>
+</ul>
+
+
+<p>　　我们使用sklearn中的feature_selection库来进行特征选择。</p>
+
+<h2>3.1 Filter</h2>
+
+<h3>3.1.1 方差选择法</h3>
+
+<p>　　使用方差选择法，先要计算各个特征的方差，然后根据阈值，选择方差大于阈值的特征。使用feature_selection库的VarianceThreshold类来选择特征的代码如下：</p>
+
+<pre><code class="python">from sklearn.feature_selection import VarianceThreshold
+
+#方差选择法，返回值为特征选择后的数据
+#参数threshold为方差的阈值
+VarianceThreshold(threshold=3).fit_transform(iris.data)
+</code></pre>
+
+<h3>3.1.2 相关系数法</h3>
+
+<p>　　使用相关系数法，先要计算各个特征对目标值的相关系数以及相关系数的P值。用feature_selection库的SelectKBest类结合相关系数来选择特征的代码如下：</p>
+
+<pre><code class="python">from sklearn.feature_selection import SelectKBest
+from scipy.stats import pearsonr
+
+#选择K个最好的特征，返回选择特征后的数据
+#第一个参数为计算评估特征是否好的函数，该函数输入特征矩阵和目标向量，输出二元组（评分，P值）的数组，数组第i项为第i个特征的评分和P值。在此定义为计算相关系数
+#参数k为选择的特征个数
+SelectKBest(lambda X, Y: array(map(lambda x:pearsonr(x, Y), X.T)).T, k=2).fit_transform(iris.data, iris.target)
+</code></pre>
+
+<h3>3.1.3 卡方检验</h3>
+
+<p>　　经典的卡方检验是检验定性自变量对定性因变量的相关性。假设自变量有N种取值，因变量有M种取值，考虑自变量等于i且因变量等于j的样本频数的观察值与期望的差距，构建统计量：</p>
+
+<center><img src="/images/2018/IMAG2018040448.png"></center>
+
+
+<p><br>
+这个统计量的含义简而言之就是自变量对因变量的相关性。用feature_selection库的SelectKBest类结合卡方检验来选择特征的代码如下：</p>
+
+<pre><code class="python">from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2
+
+#选择K个最好的特征，返回选择特征后的数据
+SelectKBest(chi2, k=2).fit_transform(iris.data, iris.target)
+</code></pre>
+
+<p>3.1.4 互信息法</p>
+
+<p>　　经典的互信息也是评价定性自变量对定性因变量的相关性的，互信息计算公式如下：</p>
+
+<center><img src="/images/2018/IMAG2018040449.png"></center>
+
+
+<p><br>
+　　为了处理定量数据，最大信息系数法被提出，使用feature_selection库的SelectKBest类结合最大信息系数法来选择特征的代码如下：</p>
+
+<pre><code class="python">from sklearn.feature_selection import SelectKBest 
+from minepy import MINE 
+
+#由于MINE的设计不是函数式的，定义mic方法将其为函数式的，返回一个二元组，二元组的第2项设置成固定的P值0.5 
+def mic(x, y):
+    m = MINE()
+    m.compute_score(x, y)
+    return (m.mic(), 0.5) 
+
+#选择K个最好的特征，返回特征选择后的数据
+SelectKBest(lambda X, Y: array(map(lambda x:mic(x, Y), X.T)).T, k=2).fit_transform(iris.data, iris.target)
+</code></pre>
+
+<h2>3.2 Wrapper</h2>
+
+<h3>3.2.1 递归特征消除法</h3>
+
+<p>　　递归消除特征法使用一个基模型来进行多轮训练，每轮训练后，消除若干权值系数的特征，再基于新的特征集进行下一轮训练。使用feature_selection库的RFE类来选择特征的代码如下：</p>
+
+<pre><code class="python">from sklearn.feature_selection import RFE
+from sklearn.linear_model import LogisticRegression
+
+#递归特征消除法，返回特征选择后的数据
+#参数estimator为基模型
+#参数n_features_to_select为选择的特征个数
+RFE(estimator=LogisticRegression(), n_features_to_select=2).fit_transform(iris.data, iris.target)
+</code></pre>
+
+<h2>3.3 Embedded</h2>
+
+<h3>3.3.1 基于惩罚项的特征选择法</h3>
+
+<p>　　使用带惩罚项的基模型，除了筛选出特征外，同时也进行了降维。使用feature_selection库的SelectFromModel类结合带L1惩罚项的逻辑回归模型，来选择特征的代码如下：</p>
+
+<pre><code class="python">from sklearn.feature_selection import SelectFromModel
+from sklearn.linear_model import LogisticRegression
+
+#带L1惩罚项的逻辑回归作为基模型的特征选择
+SelectFromModel(LogisticRegression(penalty="l1", C=0.1)).fit_transform(iris.data, iris.target)
+</code></pre>
+
+<p>L1惩罚项降维的原理在于保留多个对目标值具有同等相关性的特征中的一个，所以没选到的特征不代表不重要。故，可结合L2惩罚项来优化。具体操作为：若一个特征在L1中的权值为1，选择在L2中权值差别不大且在L1中权值为0的特征构成同类集合，将这一集合中的特征平分L1中的权值，故需要构建一个新的逻辑回归模型：</p>
+
+<pre><code class="python">from sklearn.linear_model import LogisticRegression
+
+class LR(LogisticRegression):
+    def __init__(self, threshold=0.01, dual=False, tol=1e-4, C=1.0,
+                 fit_intercept=True, intercept_scaling=1, class_weight=None,
+                 random_state=None, solver='liblinear', max_iter=100,
+                 multi_class='ovr', verbose=0, warm_start=False, n_jobs=1):
+
+        #权值相近的阈值
+        self.threshold = threshold
+        LogisticRegression.__init__(self, penalty='l1', dual=dual, tol=tol, C=C,
+                 fit_intercept=fit_intercept, intercept_scaling=intercept_scaling, class_weight=class_weight,
+                 random_state=random_state, solver=solver, max_iter=max_iter,
+                 multi_class=multi_class, verbose=verbose, warm_start=warm_start, n_jobs=n_jobs)
+        #使用同样的参数创建L2逻辑回归
+        self.l2 = LogisticRegression(penalty='l2', dual=dual, tol=tol, C=C, fit_intercept=fit_intercept, intercept_scaling=intercept_scaling, class_weight = class_weight, random_state=random_state, solver=solver, max_iter=max_iter, multi_class=multi_class, verbose=verbose, warm_start=warm_start, n_jobs=n_jobs)
+
+    def fit(self, X, y, sample_weight=None):
+        #训练L1逻辑回归
+        super(LR, self).fit(X, y, sample_weight=sample_weight)
+        self.coef_old_ = self.coef_.copy()
+        #训练L2逻辑回归
+        self.l2.fit(X, y, sample_weight=sample_weight)
+
+        cntOfRow, cntOfCol = self.coef_.shape
+        #权值系数矩阵的行数对应目标值的种类数目
+        for i in range(cntOfRow):
+            for j in range(cntOfCol):
+                coef = self.coef_[i][j]
+                #L1逻辑回归的权值系数不为0
+                if coef != 0:
+                    idx = [j]
+                    #对应在L2逻辑回归中的权值系数
+                    coef1 = self.l2.coef_[i][j]
+                    for k in range(cntOfCol):
+                        coef2 = self.l2.coef_[i][k]
+                        #在L2逻辑回归中，权值系数之差小于设定的阈值，且在L1中对应的权值为0
+                        if abs(coef1-coef2) &lt; self.threshold and j != k and self.coef_[i][k] == 0:
+                            idx.append(k)
+                    #计算这一类特征的权值系数均值
+                    mean = coef / len(idx)
+                    self.coef_[i][idx] = mean
+        return self
+</code></pre>
+
+<p>　　使用feature_selection库的SelectFromModel类结合带L1以及L2惩罚项的逻辑回归模型，来选择特征的代码如下：</p>
+
+<pre><code class="python">from sklearn.feature_selection import SelectFromModel
+
+#带L1和L2惩罚项的逻辑回归作为基模型的特征选择4#参数threshold为权值系数之差的阈值
+SelectFromModel(LR(threshold=0.5, C=0.1)).fit_transform(iris.data, iris.target)
+</code></pre>
+
+<h3>3.3.2 基于树模型的特征选择法</h3>
+
+<p>　　树模型中GBDT也可用来作为基模型进行特征选择，使用feature_selection库的SelectFromModel类结合GBDT模型，来选择特征的代码如下：</p>
+
+<pre><code class="python">from sklearn.feature_selection import SelectFromModel
+from sklearn.ensemble import GradientBoostingClassifier
+
+#GBDT作为基模型的特征选择
+SelectFromModel(GradientBoostingClassifier()).fit_transform(iris.data, iris.target)
+</code></pre>
+
+<h2>3.4 回顾</h2>
+
+<table>
+<thead>
+<tr>
+<th> 类 </th>
+<th> 所属方式 </th>
+<th> 说明 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> VarianceThreshold </td>
+<td> Filter </td>
+<td> 方差选择法 </td>
+</tr>
+<tr>
+<td> SelectKBest </td>
+<td> Filter </td>
+<td> 可选关联系数、卡方校验、最大信息系数作为得分计算的方法 </td>
+</tr>
+<tr>
+<td> RFE </td>
+<td> Wrapper </td>
+<td> 递归地训练基模型，将权值系数较小的特征从特征集合中消除 </td>
+</tr>
+<tr>
+<td> SelectFromModel </td>
+<td> Embedded </td>
+<td> 训练基模型，选择权值系数较高的特征 </td>
+</tr>
+</tbody>
+</table>
+
+
+<h1>4 降维</h1>
+
+<p>　　当特征选择完成后，可以直接训练模型了，但是可能由于特征矩阵过大，导致计算量大，训练时间长的问题，因此降低特征矩阵维度也是必不可少的。常见的降维方法除了以上提到的基于L1惩罚项的模型以外，另外还有主成分分析法（PCA）和线性判别分析（LDA），线性判别分析本身也是一个分类模型。PCA和LDA有很多的相似点，其本质是要将原始的样本映射到维度更低的样本空间中，但是PCA和LDA的映射目标不一样：PCA是为了让映射后的样本具有最大的发散性；而LDA是为了让映射后的样本有最好的分类性能。所以说PCA是一种无监督的降维方法，而LDA是一种有监督的降维方法。</p>
+
+<h2>4.1 主成分分析法（PCA）</h2>
+
+<p>　　使用decomposition库的PCA类选择特征的代码如下：</p>
+
+<pre><code class="python">from sklearn.decomposition import PCA
+
+#主成分分析法，返回降维后的数据4#参数n_components为主成分数目
+PCA(n_components=2).fit_transform(iris.data)
+</code></pre>
+
+<h2>4.2 线性判别分析法（LDA）</h2>
+
+<p>　　使用lda库的LDA类选择特征的代码如下：</p>
+
+<pre><code class="python">from sklearn.lda import LDA
+
+#线性判别分析法，返回降维后的数据4#参数n_components为降维后的维数
+LDA(n_components=2).fit_transform(iris.data, iris.target)
+</code></pre>
+
+<h2>4.3 回顾</h2>
+
+<table>
+<thead>
+<tr>
+<th> 库 </th>
+<th> 类 </th>
+<th> 说明 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> decomposition </td>
+<td> PCA </td>
+<td> 主成分分析法 </td>
+</tr>
+<tr>
+<td> lda </td>
+<td> LDA </td>
+<td> 线性判别分析法 </td>
+</tr>
+</tbody>
+</table>
+
+
+<h1>5 总结</h1>
+
+<p>　　再让我们回归一下本文开始的特征工程的思维导图，我们可以使用sklearn完成几乎所有特征处理的工作，而且不管是数据预处理，还是特征选择，抑或降维，它们都是通过某个类的方法fit_transform完成的，fit_transform要不只带一个参数：特征矩阵，要不带两个参数：特征矩阵加目标向量。这些难道都是巧合吗？还是故意设计成这样？方法fit_transform中有fit这一单词，它和训练模型的fit方法有关联吗？接下来，我将在《使用sklearn优雅地进行数据挖掘》中阐述其中的奥妙！</p>
+
+<h1>6 参考资料</h1>
+
+<ol>
+<li><p><a href="http://www.ats.ucla.edu/stat/mult_pkg/faq/general/dummy.htm">FAQ: What is dummy coding?</a></p></li>
+<li><p><a href="http://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_iris.html#sklearn.datasets.load_iris">IRIS（鸢尾花）数据集</a></p></li>
+<li><p><a href="http://wiki.mbalib.com/wiki/%E5%8D%A1%E6%96%B9%E6%A3%80%E9%AA%8C">卡方检验</a></p></li>
+<li><p><a href="http://dataunion.org/14072.html">干货：结合Scikit-learn介绍几种常用的特征选择方法</a></p></li>
+<li><p><a href="http://www.zhihu.com/question/28641663/answer/41653367">机器学习中，有哪些特征选择的工程方法？</a></p></li>
+<li><p><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/01/08/lda-and-pca-machine-learning.html">机器学习中的数学(4)-线性判别分析（LDA）, 主成分分析(PCA)</a></p></li>
+</ol>
+
+
+<p>原文链接: <a href="http://www.cnblogs.com/jasonfreak/p/5448385.html">http://www.cnblogs.com/jasonfreak/p/5448385.html</a></p>
+]]></content>
+  </entry>
+  
+</feed>

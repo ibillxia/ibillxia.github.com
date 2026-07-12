@@ -1,0 +1,1092 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>阿里巴巴大数据之路笔记 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2019/01/21/alibaba-big-data-platform-notes">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(function () {
+  addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">阿里巴巴大数据之路笔记</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2019-01-21T11:58:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><center><img src="/images/2019/IMAG2019012100.webp"></center>
+
+
+<p><br></p>
+
+<p>原书pdf：<a href="https://github.com/singgel/BIGDATA_LINE/tree/master">https://github.com/singgel/BIGDATA_LINE/tree/master</a></p>
+
+<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/32140719">https://zhuanlan.zhihu.com/p/32140719</a>，多篇笔记合并到一篇，有删改。</p>
+
+<!--more-->
+
+
+<h1>一、概览</h1>
+
+<p>2014 年，马云提出，“入类正从 IT 时代走向 DT 时代。如果说在IT时代是以自我控制、自我管理为主，那么到了 DT(Data Technology)时代，则是以服务大众、激发生产力为主。以互联网（或者物联网）、云计算、大数据和入工智能为代表的新技术革命正在渗透至各行各业，悄悄地改变着我们的生活。</p>
+
+<p>阿里巴巴大数据系统体系架构图：</p>
+
+<center><img src="/images/2019/IMAG2019012101.jpeg"></center>
+
+
+<p><br></p>
+
+<p>从图中可以清晰地看到数据体系主要分为数据采集、数据计算、数据服务和数据应用四大层次：</p>
+
+<ul>
+<li><p>数据采集层：数据采集包括日志采集和数据库数据同步两部分，其中日志采集包括：Aplus.JS是Web端日志采集技术方案；UserTrack是APP端日志采集技术方案。</p></li>
+<li><p>数据计算层：阿里巴巴的数据计算层包括两大体系：数据存储及计算云平台（离线计算平台MaxCompute和实时计算平台StreamCompute）和数据整合及管理体系（内部称之为“OneData”）。从数据计算频率角度来看，阿里数据仓库可以分为离线数据仓库和实时数据仓库。离线数据仓库主要是指传统的数据仓库概念，数据计算频率主要以天（包含小时、周和月）为单位；如T-1，则每天凌晨处理上一天的数据。阿里数据仓库的数据加工链路也是遵循业界的分层理念，包括操作数据层（Operational Data Store，ODS）、明细数据层（Data Warehouse Detail，DWD）、汇总数据层（Data Warehouse Summary，DWS）和应用数据层（Application Data Store，ADS）。</p></li>
+<li><p>数据服务层：数据服务层对外提供数据服务主要是通过统一的数据服务平台（为方便阅读，简称为“OneService”）。OneService以数据仓库整合计算好的数据作为数据源，对外通过接口的方式提供数据服务，主要提供简单数据查询服务、复杂数据查询服务（承接集团用户识别、用户画像等复杂数据查询服务）和实时数据推送服务三大特色数据服务。</p></li>
+<li><p>数据应用层：对内，阿里数据平台产品主要有实时数据监控、自助式的数据网站或产品构建的数据小站、宏观决策分析支撑平台、对象分析工具、行业数据分析门户、流量分析平台等。对外，有服务于商家的数据产品——生意参谋。</p></li>
+</ul>
+
+
+<hr />
+
+<h1>二、数据采集&amp;同步</h1>
+
+<h2>2.1、阿里巴巴的日志采集体系方案包括两大体系：</h2>
+
+<ul>
+<li><p>Aplus.JS是Web端（ 基于浏览器）日志采集技术方案；</p></li>
+<li><p>UserTrack是APP端（无线客户端）日志采集技术方案。</p></li>
+</ul>
+
+
+<h2>2.2、浏览器的页面日志采集（Aplus.JS）</h2>
+
+<ul>
+<li>页面浏览（展现）日志采集</li>
+</ul>
+
+
+<p>顾名思义，页面浏览日志是指当一个页面被浏览器加载呈现时采集的日志。此类日志是最基础的互联网日志，也是目前所有互联网产品的两大基本指标：页面浏览量（Page View，PV）和访客数（UniqueVisitors，UV）的统计基础。</p>
+
+<center><img src="/images/2019/IMAG2019012102.jpeg"></center>
+
+
+<p><br></p>
+
+<p>在HTML文档内植入日志采集脚本的动作可以业务服务器在响应业务请求时动态执行，也可以在开发页面时由开发人员手动植入。在阿里巴巴，这两种方式均有采用，其中自动方式的占比较高。</p>
+
+<ul>
+<li>页面交互日志采集</li>
+</ul>
+
+
+<p>当页面加载和渲染完成之后，用户可以在页面上执行各类操作。随着互联网前端技术的不断发展，用户可在浏览器内与网页进行的互动已经丰富到只有想不到没有做不到的程度，互动设计都要求采集用户的互动行为数据，以便通过量化获知用户的兴趣点或者体验优化点。交互日志采集就是为此类业务场景而生的。</p>
+
+<p>交互日志呈现高度自定义的业务特征（例如活动页面的游戏交互和购物车页面的功能交互两者截然不同）。在阿里巴巴，通过“黄金令箭”的采集方案来解决交互日志的采集问题。</p>
+
+<p>黄金令箭的步骤：配置元数据->业务方把交互日志采集代码植入目标页面，并将采集代码与需要监测的交互行为做绑定->当用户在页面上产生交互行为时，采集代码触发执行。</p>
+
+<ul>
+<li>页面日志的服务端清洗和预处理</li>
+</ul>
+
+
+<p>A、依托算法识别非正常的流量并归纳出对应的过滤规则集加以滤除。</p>
+
+<p>B、数据缺项补正：例如，用户登录后对登录前的日志做身份信息的回补。</p>
+
+<p>C、无效数据剔除：某些情况下，因业务变更或配置不当导致的无效数据。</p>
+
+<p>D、日志隔离分发：基于数据安全，某些日志在进入公共环境之前需要做隔离。</p>
+
+<h2>2.3、无线客户端的日志采集（UserTrack）</h2>
+
+<p>无线客户端的日志采集采用SDK来完成，在阿里巴巴内部使用名为UserTrack的SDK来进行无线客户端的日志采集。无线客户端的日志采集和浏览器的日志采集方式有所不同，移动端的日志采集根据不同的用户行为分成不同的事件，“事件”为无线客户端日志行为的最小单位。基于常规的分析，UserTrack（UT）把事件分成了几类，常用的包括页面事件（同前述的页面浏览）和控件点击事件（同前述的页面交互）等。</p>
+
+<ul>
+<li>页面事件</li>
+</ul>
+
+
+<p>阿里巴巴提供了对页面事件的无痕埋点，即无须开发者进行任何编码即可实现。对于手动方式埋点，UT提供了两个接口分别用于页面展现和页面退出时调用（这样可以得到停留时长），还提供了添加页面扩展信息的接口。</p>
+
+<p>为了节约计算和分析的成本，UT提供了透传参数功能：把当前页面的某些信息，传递到下一个页面，甚至下下个页面的日志中。可以使用阿里SPM超级位置模型来进行来源去向的追踪。</p>
+
+<ul>
+<li>控件点击及其他事件</li>
+</ul>
+
+
+<p>和浏览器客户端的日志采集一样，交互日志也呈现出高度自定义的业务特征。记录了：基本的设备信息、用户信息、控件所在页面名称、控件名称和控件的业务参数。</p>
+
+<h2>2.4、高级功能</h2>
+
+<ul>
+<li><p>无线客户端曝光日志预聚合：可以利用无线客户端的本地存储进行曝光日志预聚合。</p></li>
+<li><p>无线客户端回退识别：由于无线客户端存在明显的回退行为，需要利用页面生命周期，识别页面的复用，配合栈的深度来识别是否是回退行为。</p></li>
+</ul>
+
+
+<center><img src="/images/2019/IMAG2019012103.jpeg"></center>
+
+
+<p><br></p>
+
+<ul>
+<li>H5和native日志统一</li>
+</ul>
+
+
+<p>APP的native页面采用sdk进行采集，而H5页面采用基于浏览器的页面日志采集方案，因此目前这是两套不同的方案，需要一种方式进行统一。阿里巴巴选择将H5日志归到Native日志的方案：H5页面浏览->触发JS脚本并搜集当前页面参数->JS脚本将所采集的数据打包到一个对象中，然后调用WebView框架的JSBridge接口，调用移动客户端对应的接口方法，将埋点数据对象当作参数传入。</p>
+
+<ul>
+<li>设备标识</li>
+</ul>
+
+
+<p>对于登录用户，可以使用用ID进行唯一标识，但是很多日志行为并不要求用户登录，这就导致很多情况下采集上来的日志都没有用户ID。阿里巴巴采用UTDID方案，但就目前的进展来说，UTDID还未实现其使命。</p>
+
+<center><img src="/images/2019/IMAG2019012104.jpeg"></center>
+
+
+<p><br></p>
+
+<ul>
+<li>无线客户端日志传输</li>
+</ul>
+
+
+<p>无线客户端的日志传输，一般不是产生一条上传一条，而是先存储在本地，然后再伺机上传。</p>
+
+<h2>2.5、日志采集的挑战</h2>
+
+<ul>
+<li><p>日志分流与定制处理：由于数据量巨大，尽可能早的进行分流。</p></li>
+<li><p>采集与计算一体化设计：对应于PV日志的解决方案是SPM规范（在页面的URL内可以看见SPM参数）和SPM元数据中心；对应于自定义日志的解决方案是黄金令箭/APP端的日志规范及其配置中心。</p></li>
+</ul>
+
+
+<p>2016年的双11，阿里日志采集浏览等核心用户行为日志均实现了100%全量及实时服务，支持天猫所有会场的实时推荐。在双11中，用户的浏览、点击、滚屏等每个操作行为，都实时影响到后续为其推荐的商品，很好的提高了用户体验。</p>
+
+<h2>2.6、数据同步</h2>
+
+<p>数据同步的几种方式：</p>
+
+<ul>
+<li><p>直连同步：通过ODBC/JDBC等接口直连数据库，对源系统性能影响较大。</p></li>
+<li><p>数据文件同步：简单，实用，松耦合，可加密、可压缩。</p></li>
+<li><p>数据库日志解析同步：比如oracle的ogg，对源系统影响小。需要注意的是：要根据业务系统的实际情况，选择D删除记录的处理逻辑。</p></li>
+</ul>
+
+
+<p>阿里巴巴的数据同步方式：</p>
+
+<ul>
+<li><p>批量数据同步：通过DataX来实现，能满足多方向、高自由度的异构数据交换服务产品；对于不同的数据源，能够通过插件的形式提供支持。</p></li>
+<li><p>实时数据同步：通过TT来实现。</p></li>
+</ul>
+
+
+<p>数据同步遇到的问题与解决方案：</p>
+
+<ul>
+<li><p>分库分表的同步：阿里巴巴是通过TDDL分布式数据库引擎把多张表的访问变成单张表的访问。</p></li>
+<li><p>增量与全量同步的合并：当然增量和前一天的全量合并，传统是采用merge方式（update+insert），但大数据平台基本都不支持update操作，现在比较推荐的方式是：将当天的增量数据和前一天的全量数据做全外连接，重新加载最新的全量数据。这种方式的性能比update要高得多。</p></li>
+</ul>
+
+
+<p>数据漂移的处理：</p>
+
+<ul>
+<li><p>数据漂移是指ODS表的同一个业务日期中包含前一天或后一天凌晨附近的数据或者丢失当天的变更数据。</p></li>
+<li><p>处理方法：多获取一部分第二天的数据（比如跨日以后的15分钟），然后根据可以判断业务时间的字段，过滤，排序等方式来得到需要的数据。</p></li>
+<li><p>阿里的上述方法，涉及到排序，其实代价也是有点高的，如果没有标准的处理模块，自己写起逻辑来也是有些麻烦。很多情况下，如果数据稍微差一点关系不大的业务，我们都选择不做处理。</p></li>
+</ul>
+
+
+<hr />
+
+<h1>三、数据计算</h1>
+
+<h2>3.1、阿里巴巴的数据计算层包括：</h2>
+
+<ul>
+<li><p>数据存储及计算平台（离线计算平台MaxCompute和实时计算平台StreamCompute）</p></li>
+<li><p>数据整合及管理体系（OneData）</p></li>
+</ul>
+
+
+<h2>3.2、统一计算平台MaxCompute（离线）</h2>
+
+<ul>
+<li><p>有几万台机器，存储近1000PB</p></li>
+<li><p>功能组件：SQL、MR、Graph、Spark、R、Volume</p></li>
+</ul>
+
+
+<h2>3.3、统一开发平台</h2>
+
+<p>开发工作流程：</p>
+
+<center><img style="max-width: 400px;" src="/images/2019/IMAG2019012112.png" alt="开发工作流程"></img></center>
+
+
+<p><br></p>
+
+<p>对应于开发工作流的产品和工具：</p>
+
+<center><img style="max-width: 400px;" src="/images/2019/IMAG2019012113.png" alt="开发工作流程"></img></center>
+
+
+<p><br></p>
+
+<ul>
+<li><p>D2（在云端）：集成任务开发、调试及发布，生产任务调度及大数据运维，数据权限申请及管理等功能的一站式数据开发平台，并能承担数据分析工作台的功能。</p></li>
+<li><p>使用D2进行数据开发的基本流程：用户使用IDE进行计算节点的创建，可以是SQL/MR任务，也可以是Shell任务等，设置好节点属性及依赖关系，进行试运行，并可以发布到生产环境。</p></li>
+<li><p>SQLSCAN：包括代码规范类规则检查（命名规范等）、代码质量类规则检查（分母为0等）、代码性能类规则检查（大表扫描等）。</p></li>
+<li><p>DQC：数据质量监控规则包括--主键监控、表数据量及波动监控、重要字段的非空监控、重要枚举字段的离散值监控、指标值波动监控、业务规则监控等。阿里数据仓库采用非侵入式清洗策略，在数据同步过程中不进行清洗，避免影响同步效率，在数据进入ODS层之后进行清洗。</p></li>
+<li><p>在彼岸：用于大数据系统的自动化测试平台，将通用性、重复性的操作沉淀在测试平台中，避免被“人肉”，提高测试效率。</p></li>
+<li><p>在彼岸--数据对比：表级对比规则主要包括数据量和全文对比；字段级对比规则主要包括字段的统计值（如sum、avg、max、min等）、枚举值、空值、去重数、长度值等。</p></li>
+<li><p>在彼岸-数据分布：提取表和字段的一些特征值，并将这些特征值与预期值进行比对。表级数据特征提取主要包括数据量、主键等；字段级数据特征提取主要包括字段枚举值分布、空值分布、统计值、去重数、长度值等。</p></li>
+<li><p>数据脱敏：将敏感数据模糊化。</p></li>
+</ul>
+
+
+<h2>3.4、任务调度系统</h2>
+
+<ul>
+<li>调度配置：常规的配置是手工方式，如果出错；阿里巴巴采用手工配置和自动识别相结合的方式。任务提交时，SQL解析引擎自动识别此任务的输入表和输出表，输入表自动关联产出此表的任务，输出表亦然。通过此种方式，解决了上述问题，可以自动调整任务依赖，避免依赖配置错误。</li>
+</ul>
+
+
+<h2>3.5、数据时效性</h2>
+
+<ul>
+<li><p>离线：延迟时间粒度为天；准实时：延迟时间粒度为小时；实时：延迟时间粒度为秒。</p></li>
+<li><p>离线和准实时都可以在批处理系统中实现，比如Hadoop、MaxCompute等，只是调度周期不一样而已，而实时数据则需要在流式处理系统中完成。</p></li>
+</ul>
+
+
+<h2>3.6、流式技术架构</h2>
+
+<p>流式技术架构中的系统跟离线处理是有交叉的，两套技术方案并不是完全独立的，并且在业界中有合并的趋势。</p>
+
+<ul>
+<li>数据采集</li>
+</ul>
+
+
+<p>不管是数据库变更日志，还是引擎访问日志，都会在服务器上落地成文件，所以只要监控文件的内容发生变化，采集工具就可以把最新的数据采集下来。一般情况下，出于吞吐量以及系统压力上的考虑，并不是新增一条记录就采集一次，而是基于下面的原则，按批次对数据进行采集：数据大小限制原则--当数据大小达到限制条件时触发采集；时间阈值原则--当时间达到一定条件时触发采集。实时采集下来的数据一般放入数据中间件，比如Kafka、TimeTunnel等。</p>
+
+<ul>
+<li>数据处理</li>
+</ul>
+
+
+<p>实时处理计算引擎有Storm、SparkStreaming、Flink、StreamingCompute等。StreamingCompute：在Storm基础上包装一层SQL语义，方便开发人员通过写SQL就可以实现实时计算，而不需要关心计算状态细节；当然，它也支持传统模式的开发；还提供了流计算开发平台，在这个平台上就可以完成应用的相关运维工作，而不需要登录服务器操作，极大提高运维效率。</p>
+
+<p>实时数据处理遇到的几个典型问题：</p>
+
+<p>A、去重指标：模糊去重的第一个--布隆过滤器在实时指标计算中的应用；模糊去重的第二个方法--基数估计，估算的去重值可能比真实值小，也可以大，存储1亿条数据只需要几KB的内存，适用统计精读要求不高，统计维度非常粗的情况，比如整个大盘的UV数据，基数估计在各个维度值之间不能共用，比如统计全天小时的UV数据，就需要有24个基数估计对象。</p>
+
+<p>B、数据倾斜：数据倾斜是ETL中经常遇到的问题，比如计算一天中全网访客数或者成交额时，最终的结果只有1个，通常应该是在一个节点上完成相关的计算任务。因此，在数据量非常大的时候，单个节点的处理能力是有限的，就需要进行分桶处理，充分利用每个桶的CPU和内存资源。第一种情况是去重指标分桶--通过对去重值进行分桶Hash，相同的值一定会被放在同一个桶中去重，最后再把每个桶里面的值进行加和得到总值；第二种情况是非去重指标分桶--此时数据随机分发到每个桶中，最后再把每个桶的值汇总。</p>
+
+<p>C、事务处理：上面提到的几个流计算系统几乎都提供了数据自动ACK、失败重发以及事务信息等机制，这些机制都是为了保证数据的幂等性。</p>
+
+<ul>
+<li>数据存储</li>
+</ul>
+
+
+<p>在实践中一般使用HBase、MongoDB等列式存储系统，这些系统的读写效率都能达到毫秒级。但是这些系统的缺点也是明显的，以HBase为例，一张表必须要有rowkey，而rowkey是按照ASCII码来排序的，这就像关系型数据库的索引一样，rowkkey的规则限制了读取数据的方式，如果业务方需要使用另一种读取数据的方式，则必须重新输出rowkey。从这个角度来看，HBase没有关系数据库方便，但HBase可以存储几十TB的海量数据库，而关系数据库必须要分库分表才能实现这个量级的数据存储。因此，对于海量数据的实时计算，一般会采用NoSql数据库，以应对大量的多并发读写。</p>
+
+<ul>
+<li>数据服务：</li>
+</ul>
+
+
+<p>实时数据落地到存储系统后，使用方就可以通过OneService等把数据对外进行共享。</p>
+
+<p>流式数据模型：实时数据模型是离线数据模型的一个子集，在实时数据处理过程中，很多模型设计就是参考离线数据模型实现的。</p>
+
+<ul>
+<li>数据分层：</li>
+</ul>
+
+
+<p>ODS（实时接口层）、DWD（实时明细数据层）、DWS（实时通用汇总层）、ADS（实时个性化维度汇总层）、DIM（维表层）。一般ODS和DWD会放在数据中间件中，供下游订阅使用，而DWS和ADS会落地到在线存储系统中，DIM一般离线处理。在每一层中，可以按照重要性划分等级，优先保障最高等级的实时任务。</p>
+
+<p>通过一个简单的例子来说明每一层存储的数据：</p>
+
+<p>A、ODS层：订单粒度的变更过程，一笔订单有多条记录。</p>
+
+<p>B、DWD层：订单粒度的支付记录，一笔订单只有一条记录。</p>
+
+<p>C、DWS层：卖家的实时成交金额，一个卖家只有一条记录，并且指标在实时刷新。</p>
+
+<p>D、ADS层：外卖地区的实时成交金额，只有外卖业务使用。</p>
+
+<p>D、DIM层：订单商品类目和行业的对应关系维表。</p>
+
+<ul>
+<li>多流关联：</li>
+</ul>
+
+
+<p>实时采集两张表的数据，每到来一条新数据时都在对方内存表截止当前的全量数据中查找，如果能找到则说明关联成功直接输出，否则需要把数据放在内存中的自己表数据集合中等待。另外，不管是否关联成功，内存数据都需要备份到外部存储系统中。还有，订单记录的变更可能发生多次，需要根据订单ID去重，避免A表和B表多次关联成功。同时，考虑到内存关联查找数据的性能，一般会把数据按照关联主键进行分桶处理。</p>
+
+<ul>
+<li>维表使用：</li>
+</ul>
+
+
+<p>在实时计算中，一般会使用当前的实时数据（T）去关联T-2的维表数据。因为到达零点时，T-1的维表数据还没准备好，所以一般在实时计算中维表关联都统一使用T-2的数据，这样对于业务来说，起码关联到的维表数据是确定的（虽然维表数据有一定的延时，但是许多业务的维表在两天之间变化是很少的）。如果维表数据量不是特别大，可以全量加载到内存使用；如果维表数据量特别大，则可以增量查找和LRU过期的形式，让最热门的数据留在内存中。</p>
+
+<hr />
+
+<h1>四、数据服务</h1>
+
+<h2>4.1、数据服务架构</h2>
+
+<p>阿里数据服务架构演进过程如下：</p>
+
+<center><img src="/images/2019/IMAG2019012114.png"></center>
+
+
+<p><br></p>
+
+<ul>
+<li><p>DWSOA：一个需求一个接口，编码实现接口，接口数量5000/年。开发效率低，投入成本高，扩展性差。</p></li>
+<li><p>OpenAPI：一类需求一个接口，配置实现接口，接口数量200/年。相比上一种方式，这种方式有效收敛了数量。</p></li>
+<li><p>SmartDQ：所有需求一个接口，配置实现接口，接口数量1，缺点是服务形式不够丰富，只能满足简单的查询服务需求（毕竟SQL并不能解决复杂的业务逻辑）。SmartDQ通过在OpenAPI的基础上，再抽象一层，用DSL（领域专用语言）来描述取数需求，新做一套DSL必然有学习成本，因此采用标准的SQL语法。</p></li>
+<li><p>OneService：提供多种服务类型来满足用户需求。</p>
+
+<ul>
+<li><p>A、OneService-SmartDQ：通过SQL语法提供简单的查询服务需求。</p></li>
+<li><p>B、OneService-Lego：采用插件方式满足个性化需求，为了避免插件之间相互影响，我们将插件做成微服务，使用Docker做隔离。Lego可以采用轻量级的Node.JS技术栈实现，适合处理高并发、低延迟的IO密集型场景。</p></li>
+<li><p>C、OneService-iPush：主要提供websocket和long polling两种方式，其应用场景主要是商家端实时直播。比如双11，此时使用websocket方式可以有效缓解服务器压力，给用户带来最实时的体验。</p></li>
+<li><p>D、OneService-uTiming：主要提供即时任务和定时任务两种模式，其主要应用场景是满足用户运行大数据量任务的需求。</p></li>
+</ul>
+</li>
+</ul>
+
+
+<h2>4.2、最佳实践</h2>
+
+<ul>
+<li><p>资源分配：复杂的计算逻辑可以提前计算；Get接口只返回一条记录，查询代价小响应时间短，List接口返回多条记录，查询时间相对较长，可以设计Get线程池和List线程池两个独立的线程池避免Get接口和List接口相互影响；查询可以在引擎层自动进行拆分查询，然后再把查询结果进行合并。</p></li>
+<li><p>缓存优化：元数据缓存、模型缓存、结果缓存。</p></li>
+<li><p>查询能力：由于离线数据和实时数据存放在不同地方，并且离线数据最准确，需要优先使用离线数据，如果离线数据还未产出，则改用实时数据，这就是要对离线和实时进行合并查询；能采用推送的，就不采用轮询，因为轮询对服务器压力大。</p></li>
+<li><p>限流、降级：限流就是直接降到0，降级就是只将存在问题的资源置为失效状态。</p></li>
+</ul>
+
+
+<hr />
+
+<h1>五、数据挖掘</h1>
+
+<h2>5.1、概述</h2>
+
+<p>2012年以前，由于数据的规模还不是特别庞大，大部分挖掘应用所需处理的样本量在百万以内，而处理的特征一般也少于100维，那时像SAS、SPSS、Clementine等单机版的数据挖掘软件已经能满足大部分挖掘应用的需求。</p>
+
+<p>随着数据量的爆炸，如今挖掘平台面对的训练数据量动辄上亿，特征维度动辄百万，因此需要分布式、可视化的数据挖掘算法平台。</p>
+
+<p>就数据挖掘的商业场景而言，可以分为两大类：个体挖掘和关系挖掘。个体挖掘是指对单个实体的行为特征进行预测与分析，关系挖掘是指研究多个实体间的关系特征，如商品的相似关系和竞争关系。</p>
+
+<p>就数据挖掘的技术而言，可以分为两大类：数据挖掘数据中台、数据挖掘算法中台。</p>
+
+<h3>5.2、数据中台</h3>
+
+<ul>
+<li><p>数据挖掘的过程中包括两类数据：特征数据和结果数据。算法需要的特征变量就是特征数据，算法最终输出的商品销量的预测结果就是结果数据。</p></li>
+<li><p>对于特征数据，挖掘项目中80%的时间可能都是在处理特征，这些特征的提取、清洗、标准化以及基于业务场景的再组合和二次加工往往工作繁重。因此，就想到可以按照标准、规范构建一个全局特征库，每个挖掘工程师只需访问几张物理表就能迅速搜集到大部分自己想要的特征。</p></li>
+<li><p>对于结果数据，可以进行分层存储：通用结果和个性化结果。</p></li>
+<li><p>基于以上分析，可以把挖掘数据中台分为三层：特征层FDM（Featural Data Mining Layer）、个体中间层IDM（Individual Data Mining Layer）、关系中间层RDM（Relational Data Mining Layer）和应用层ADM（Application-oriented Data Mining Layer）；分层架构见下图。</p></li>
+<li><p>特征层：用于存储在模型训练前常用的特征指标，并进行统一的清洗和去噪处理。</p></li>
+<li><p>中间层：个体中间层IDM和关系中间层RDM统一称为中间层。其中，IDM面向个体挖掘场景，用于存储通用性强的结果数据；RDM面向关系挖掘场景，用于存储通用性强的结果数据。</p></li>
+<li><p>应用层：用来沉淀比较个性应用的数据挖掘结果指标。</p></li>
+</ul>
+
+
+<center><img src="/images/2019/IMAG2019012115.png"></center>
+
+
+<p><br></p>
+
+<h3>5.3、算法平台</h3>
+
+<ul>
+<li><p>算法中台的建设目的是从各种各样的挖掘场景中抽象出有代表性的几类场景，并形成相应的方法论和实操模板。</p></li>
+<li><p>比较有代表性的数据挖掘应用场景：</p></li>
+</ul>
+
+
+<center><img src="/images/2019/IMAG2019012116.png"></center>
+
+
+<p><br></p>
+
+<h1>六、数据建模</h1>
+
+<h2>6.1、综述</h2>
+
+<p>1、典型的数据仓库建模方法论</p>
+
+<ul>
+<li><p>ER模型：数据仓库之父Bill Inmon提出从全企业的高度设计一个3NF模型，用ER模型来描述企业业务。数据仓库中的3NF与OLTP系统中的3NF的区别在于数据仓库是站在企业角度面向主题的抽象，而不是针对某个具体业务流程的实体对象关系的抽象。其具有几个特点--需要全面了解企业业务和数据，实施周期长，对建模人员的能力要求非常高。ER模型的典型代表是Teradata公司发布的金融业务模型FS-LDM。</p></li>
+<li><p>维度模型：数据仓库领域的Ralph Kimball大师所倡导的，维度建模从分析决策的需求出发构建模型，为分析需求服务，因此它重点关注用户如何更快速地完成需求分析，同时具有较好的大规模复杂查询的响应性能。其典型的代表是星兴模型，以及在一些特殊场景下使用的雪花模型。</p></li>
+</ul>
+
+
+<p>2、阿里巴巴数据模型实践综述</p>
+
+<ul>
+<li><p>第一个阶段：只有两层--ODS+DSS</p></li>
+<li><p>第二个阶段：ODL（操作数据层）+BDL（基础数据层）+IDL（接口数据层）+ADL（应用数据层）；ODL和源系统保持一致，BDL希望引入ER模型构建一致的基础数据模型，IDL基于维度模型方法构建集市层，ADL完成应用的个性化和基于展现需求的数据组装。实际情况是，ER模型迟迟不能产出，因此得到一个经验--在不太成熟、快速变化的业务面前，构建ER模型的风险非常大，不太适合去构建ER模型。</p></li>
+<li><p>第三个阶段：选择以Kimball的维度建模为核心理念的模型方法论，同时对其进行一定的升级和扩展，构建阿里巴巴集团的公共层模型数据架构体系。</p></li>
+</ul>
+
+
+<p>阿里巴巴数据公共层建设的指导方法是一套统一化的集团数据整合及管理的方法体系（OneData），其包括一致性的指标定义体系、模型设计方法体系以及配套工具。</p>
+
+<h2>6.2、阿里巴巴数据整合及管理体系</h2>
+
+<p>1、目标：可管理、可追溯、可规避重复建设。</p>
+
+<p>2、规范定义：以维度建模作为理论基础，构建总线矩阵，划分和定义数据域、业务过程、维度、度量/原子指标、修饰类型、修饰词、时间周期、派生指标。</p>
+
+<center><img src="/images/2019/IMAG2019012105.jpeg"></center>
+
+
+<p><br></p>
+
+<ul>
+<li><p>指标定义：事务型指标--指对业务活动进行衡量的指标，例如新发商品数、新增会员数等。存量型指标--指对实体对象某些状态的统计，例如商品总数、会员总数。复合型指标--包括比率型、比例型、变化量型、变化率型等。</p></li>
+<li><p>指标命名规范：需要对原子指标、派生指标进行命名规范。</p></li>
+</ul>
+
+
+<p>3、模型层次</p>
+
+<center><img src="/images/2019/IMAG2019012106.jpeg"></center>
+
+
+<p><br></p>
+
+<ul>
+<li><p>模型设计原则：高内聚低耦合、核心模型与扩展模型分离、公共处理逻辑下沉及单一、成本与性能平衡、数据可回滚、一致性、命名清晰可理解。</p></li>
+<li><p>模型实施方法：Kimball模型实施方法、OneData模型实施方法（见下图）。</p></li>
+</ul>
+
+
+<center><img src="/images/2019/IMAG2019012107.jpeg"></center>
+
+
+<p><br></p>
+
+<center><img src="/images/2019/IMAG2019012108.jpeg"></center>
+
+
+<p><br></p>
+
+<center><img src="/images/2019/IMAG2019012109.jpeg"></center>
+
+
+<p><br></p>
+
+<h2>6.3、维度设计</h2>
+
+<p>1、基本概念：在维度建模中，将度量成为“事实”，将环境称为“维度”。代理键和自然键--例如，对于前台应用系统来说，商品ID是代理键；而对于数据仓库系统来说，商品ID则属于自然键。</p>
+
+<p>2、规范化和反规范化：当属性层次被实例化为一系列维度，而不是单一维度时被称为雪花模型。大多数OLTP系统模型采用雪花模型这种规范化操作。采用雪花模型，除了可以节约一部分存储外，对于OLAP系统来说没有其他效用，而现阶段存储的成本很低，所以在实际应用中几乎总是使用维表的空间来换取简明性和查询性能。</p>
+
+<p>3、维度整合</p>
+
+<ul>
+<li><p>命名规范的统一</p></li>
+<li><p>字段类型的统一</p></li>
+<li><p>公共代码及代码值的统一</p></li>
+<li><p>业务含义相同的表的统一：通常有3种方式--主从表（将多个表都有的字段放在主表中，而从属信息分别放在各自的从表中）、直接合并、不合并，具体可以根据源表重合度及差异等状况确定。</p></li>
+<li><p>垂直整合：不同的来源表包含相同的数据集，比如淘宝会员在源系统中有多个表，包括会员基础信息表、会员扩展信息表等，可以尽量垂直整合到会员维度模型中。</p></li>
+<li><p>水平整合：不同的来源表包含不同的数据集，不同子集之间无交叉，也可以存在部分交叉，如果要整合则可以采用各子集的自然键作为联合主键的方式来实现。</p></li>
+</ul>
+
+
+<p>4、维度拆分</p>
+
+<ul>
+<li><p>水平拆分：比如商品表，可以分为淘宝商品、天猫商品、飞猪商品等，而飞猪航旅商品与普通的淘系商品有相同的地方，也有不同的地方，那么如何处理呢？方案1是将维度的不同分类实例化为不同的维度，同时在主维度中保存公共属性；方案2是维度单一维度，包含所有可能的属性。可以根据维度不同分类的属性差异情况、及业务的关联程度确定采用哪种方案。</p></li>
+<li><p>垂直拆分：出于扩展性、产出时间、易用性等方面的考虑，设计主从维度，主维表存放稳定、产出时间早、热度高的属性，从维表存放变化较快、产出时间晚、热度低的属性，比如商品主维表在每日的1：30左右产出，而商品扩展维度在每日的3：00左右产出。</p></li>
+</ul>
+
+
+<p>5、维度变化</p>
+
+<ul>
+<li><p>缓慢变化维：有三种处理方式--1、重写维度值，不保留历史数据；2、插入新的维度行，保留历史数据，这种方式不能将变化前后记录的事实归一化为变化前或变化后的维度；3、添加维度列，记录新旧维度值，可以解决方案2的不足。</p></li>
+<li><p>阿里巴巴内部处理缓慢变化维的方法是采用快照维表方式。</p></li>
+</ul>
+
+
+<p>6、特殊维度</p>
+
+<ul>
+<li><p>递归维度：可以直接采用递归模型支撑递归维度，但很多工具不支持递归SQL，且递归SQL成本高，所以可以在维度模型中对层次结构进行扁平化处理。大部分时候，扁平化设计足够满足需求了。</p></li>
+<li><p>多值维度：常见的有三种处理方式--1、降低事实表的粒度，避免出现多值；2、采用多字段来处理多值维度（如果值的数量固定）；3、采用桥接表来表达一对多关系（复杂成本高需慎重）。</p></li>
+</ul>
+
+
+<h3>6.4、事实表设计</h3>
+
+<p>1、事实表特性：作为度量业务过程的事实，有可加性、半可加性（一般是时间维度不可加）、不可加性。</p>
+
+<p>2、事实表类型</p>
+
+<ul>
+<li><p>事务事实表：用来描述业务过程，跟踪空间或时间上某点的度量事件，保存的是最原子的数据，也称为原子事实表。</p></li>
+<li><p>周期快照事实表：以具有规律性、可预见的时间间隔记录事实，时间间隔如每天、每月、每年等。一般针对长生命周期的对象，比如用户。</p></li>
+<li><p>累计快照事实表：用来描述过程开始和结束之间的关键步骤事件，覆盖过程的整个生命周期，通常具有多个日期字段来记录关键时间点，当过程随着生命周期不断变化时，记录也会随着过程的变化而被修改。一般针对短生命周期的对象，比如交易过程。</p></li>
+</ul>
+
+
+<p>3、事实表设计原则</p>
+
+<ul>
+<li><p>尽可能包含所有与业务过程相关的事实</p></li>
+<li><p>只选择与业务过程相关的事实</p></li>
+<li><p>分解不可加性事实为可加事实</p></li>
+<li><p>在选择维度和事实之前必须先声明粒度</p></li>
+<li><p>在同一个事实表中不能有多个不同粒度的事实</p></li>
+<li><p>事实的单位要保持一致</p></li>
+<li><p>对事实的null值要处理</p></li>
+<li><p>使用退化维度提高事实表的易用性</p></li>
+<li><p>事实完整性（尽可能多的获取业务过程相关的度量）、事实一致性（有一些事实可以提前计算好确保下游使用的一致性）、事实可加性。</p></li>
+</ul>
+
+
+<p>4、事务事实表</p>
+
+<ul>
+<li><p>单事务事实表：针对每个业务过程设计一个事实表。</p></li>
+<li><p>多事务事实表：多事务事实表在设计时有两种方法进行事实的处理--1、不同业务过程的事实使用不同的事实字段进行存放；2、不同业务过程的事实使用同一个事实字段进行存放，但增加一个业务过程标签。</p></li>
+<li><p>多事务事实表的选择：当不同业务过程的度量比较相似、差异不大时，可以采用第二种多事务事实表的设计方式，使用同一个字段来表示度量数据，但存在一个问题--在同一个周期内会有多条记录存在。当不同业务过程的度量差异较大时，可以选择第一种多事务事实表的设计方式。</p></li>
+<li><p>例子：淘宝交易事务事实表如下</p></li>
+</ul>
+
+
+<center><img src="/images/2019/IMAG2019012110.jpeg"></center>
+
+
+<p><br></p>
+
+<p>5、周期快照事实表的注意事项</p>
+
+<ul>
+<li><p>事务事实表与周期快照事实表往往是成对设计的，互相补充，以满足更多的下游统计分析需求。</p></li>
+<li><p>附加事实：一般在设计周期快照事实表时会附加一些上一个采样周期的状态度量。</p></li>
+</ul>
+
+
+<p>6、累计快照事实表的物理实现</p>
+
+<ul>
+<li><p>第一种方式是全量表，一般按日期分区，每天分区存储昨天的全量+当天的增量合并的结果。适用于全量数据比较少的情况。</p></li>
+<li><p>第二种方式是全量表的变化形式，针对事实表数据量很大的情况，根据业务实体从产生到消亡的最大时间间隔来测算，比如交易订单以200天计算最大间隔。</p></li>
+<li><p>第三种方式是以业务实体的结束时间分区，每天的分区存放当天结束的数据，设计一个时间非常大的分区，比如3000-12-31，存放截止当前未结束的数据，每天将当天结束的数据归档至当天分区中。</p></li>
+</ul>
+
+
+<p>7、三种事实表的比较</p>
+
+<center><img src="/images/2019/IMAG2019012111.jpeg"></center>
+
+
+<p><br></p>
+
+<hr />
+
+<h1>七、数据管理</h1>
+
+<h2>7.1、元数据</h2>
+
+<p>按照传统的定义，元数据（ Metadata ）是关于数据的数据。</p>
+
+<p>元数据打通了源数据、数据仓库、数据应用，记录了数据从产生到消费的全过程。元数据主要记录数据仓库中模型的定义、各层级间的映射关系、监控数据仓库的数据状态及ETL 的任务运行状态。在数据仓库系统中，元数据可以帮助数据仓库管理员和开发人员非常方便地找到他们所关心的数据，用于指导其进行数据管理和开发工作，提高工作效率。</p>
+
+<p>将元数据按用途的不同分为两类：技术元数据（ Technical Metadata)和业务元数据（ Bu siness Metadata ）。</p>
+
+<p>元数据有重要的应用价值，是数据管理、数据内容、数据应用的基础，在数据管理方面为集团数据提供在计算、存储、成本、质量、安全、模型等治理领域上的数据支持</p>
+
+<p>统一元数据体系建设思路:</p>
+
+<center><img src="/images/2019/IMAG2019012117.png"></center>
+
+
+<p><br></p>
+
+<p><strong>元数据应用</strong></p>
+
+<ul>
+<li><p>Data Profile: 为纷繁复杂的数据建立一个脉络清晰的血缘图谱。通过图计算、标签传播算法等技术，系统化、自动化地对计算与存储平台上的数据进行打标、整理、归档。形象地说， Data Profile 实际承担的是为元数据“画像”的任务。Data Profile 共有四类标签：</p>
+
+<ul>
+<li>基础标签：针对数据的存储情况、访问情况、安全等级等进行打标。</li>
+<li>数仓标签：针对数据是增量还是全量、是否可再生、数据的生命周期来进行标签化处理。</li>
+<li>业务标签：根据数据归属的主题域、产品线、业务类型为数据打上不同的标签。</li>
+<li>潜在标签：这类标签主要是为了说明数据潜在的应用场景， 比如社交、媒体、广告、电商、金融等</li>
+</ul>
+</li>
+<li><p>元数据门户：元数据门户致力打造一站式的数据管理平台、高效的一体化数据市场。包括“前台”和“后台”：</p>
+
+<ul>
+<li>“前台”产品为数据地图，定位消费市场，实现检索数据、理解数据等“找数据”需求。</li>
+<li>“后台”产品为数据管理，定位于一站式数据管理，实现成本管理、安全管理、质量管理等。</li>
+</ul>
+</li>
+<li><p>应用链路分析：通过应用链路分析，产出表级血缘、字段血缘和表的应用血缘。常见的应用链路分析应用主要有影响分析、重要性分析、下线分析、链路分析、寻根溯源、故障排查等。</p></li>
+<li><p>数据建模：可以通过下游所使用的元数据指导数据参考建模。</p></li>
+<li><p>驱动ETL 开发：通过元数据，指导ETL 工作，提高ETL 的效率。</p></li>
+</ul>
+
+
+<h2>7.2、计算管理</h2>
+
+<p>如何降低计算资源的消耗，提高任务执行的性能，降低任务产出的时间，是计算平台和ETL 开发工程师孜孜追求的目标。</p>
+
+<p><strong>1）计算平台系统优化</strong></p>
+
+<ul>
+<li>HBO (History-Based Optimiz町， 基于历史的优化器）</li>
+</ul>
+
+
+<p>HBO是根据任务历史执行情况为任务分配更合理的资源，包括内存、CPU 以及Instance 个数。HBO 是对集群资源分配的一种优化，概括起来就是：任务执行历史＋集群状态信息＋优化规则→更优的执行配置。</p>
+
+<ul>
+<li>CBO (Cost-Based Optimizer ， 基于代价的优化器）</li>
+</ul>
+
+
+<p>对于更多的、更准确的统计信息， CBO 则可能生成代价更小的执行计划。但对表和列上统计信息的收集也是有代价的，尤其是在大数据环境下，表的体量巨大，消耗大量资源收集的统计信息利用率很低。</p>
+
+<p>阿里Max Compute 采用各种抽样统计算法，通过较少的资源获得大量的统计信息，基于先进的优化模型，具备了完善的CBO 能力，与传统的大数据计算系统相比，性能提升明显。</p>
+
+<p><strong>2）任务计算优化</strong></p>
+
+<p>主要从数据倾斜方面讨论数据计算优化。</p>
+
+<ul>
+<li><p>Map 倾斜</p>
+
+<ul>
+<li>对上游合并小文件，同时调节本节点的小文件的参数来进行优化。</li>
+<li>使用“ distribute by rand （）”来打乱数据分布，使数据尽可能分布均匀。</li>
+</ul>
+</li>
+<li><p>Join 倾斜</p>
+
+<ul>
+<li>如果某路输入比较小，则可以采用MapJoin</li>
+<li>Join 因为空值导致长尾： 可以将空值处理成随机值</li>
+<li>Join 因为热点值导致长尾：对于主表数据用热点key 切分成热点数据和非热点数据两部分分别处理，最后合并</li>
+</ul>
+</li>
+<li><p>Reduce 倾斜： 很多是由Count Distinct 问题引起的</p>
+
+<ul>
+<li>Map 端直接做聚合时出现key 值分布不均匀，造成Reduce 端长尾： 以对热点key 进行单独处理，最后合并</li>
+<li>动态分区数过多时可能造成小文件过多，从而引起Reduce 端长尾：引人额外一级的Reduce Task ，把相同的目标分区交由同一个（或少量几个） Reduce Instance 来写人</li>
+<li>多个Distinct 同时出现，数据膨胀N 倍，还会把长尾现象放大N 倍： 先分别进行查询，），然后在子查询外Group By 原表粒度，最后进行join</li>
+</ul>
+</li>
+</ul>
+
+
+<h2>7.3、存储和成本管理</h2>
+
+<p>主要从数据压缩、数据重分布、存储治理项优化、生命周期管理等的角度介绍存储管理优化。</p>
+
+<ul>
+<li>数据压缩</li>
+</ul>
+
+
+<p>将数据保存为RAID file 的形式，数据不再简单地保存为3 份，而是使用盘古RAID file 的默认值（ 6 ,3 ）格式的文件，即6 份数据＋3 份校验块的方式，这样能够有效地将存储比约为1 :3 提高到1: 1.5 ，大约能够省下一半的物理空间。</p>
+
+<ul>
+<li>数据重分布</li>
+</ul>
+
+
+<p>基于列存储的方式，由于每个表的数据分布不同，插人数据的顺序不一样，会导致压缩效果有很大的差异。</p>
+
+<p>通过修改distribute by 和sort by 字段的方法进行数据重分布</p>
+
+<ul>
+<li>存储泊理顶优化</li>
+</ul>
+
+
+<p>目前已有的存储治理优化项有未管理表、空表、最近62 天未访问表、数据无更新无任务表、数据无更新有任务表、开发库数据大于lOOGB 且无访问表、长周期表等。</p>
+
+<p>通过对该优化项的数据诊断， 形成治理项，治理项通过流程的方式进行运转、管理，最终推动各个E TL 开发人员进行操作，优化存储管理，并及时回收优化的存储效果。</p>
+
+<ul>
+<li><p>生命周期管理</p>
+
+<ul>
+<li>周期性删除策略：所存储的数据都有一定的有效期，从数据创建开始到过时，可以周期性删除X 天前的数据</li>
+<li>彻底删除策略：无用表数据或者ETL 过程产生的临时数据，以及不需要保留的数据</li>
+<li>永久保留策略：重要且不可恢复的底层数据和应用数据</li>
+<li>极限存储策略：极限存储可以超高压缩重复镜像数据</li>
+<li>冷数据管理：是永久保留策略的扩展。永久保留的数据需要迁移到冷数据中心进行永久保存</li>
+<li>增量表merge 全量表策略</li>
+</ul>
+</li>
+</ul>
+
+
+<h2>7.4、数据质量</h2>
+
+<p>数据质量是数据分析结论有效性和准确性的基础，也是这一切的前提。</p>
+
+<ul>
+<li>数据质量保障原则</li>
+</ul>
+
+
+<p>主要从四个方面进行评估，即完整性、准确性、一致性和及时性</p>
+
+<ul>
+<li>数据质量万法
+
+<ul>
+<li>消费场景知晓：主要通过数据资产等级和基于元数据的应用链路分析解决消费场景知晓的问题</li>
+<li>数据生产加工各个环节卡点校验</li>
+<li>风险点监控：监控、告警</li>
+<li>质量衡量；起夜率、质量事件、故障体系</li>
+<li>质量配套工具</li>
+</ul>
+</li>
+</ul>
+
+
+<hr />
+
+<h1>八、数据应用</h1>
+
+<p>主要介绍两个应用：提供给外部商家使用的数据产品平台一一生意参谋和服务于阿里巴巴内部的数据产品平台。</p>
+
+<h2>8.1、对外-生意参谋</h2>
+
+<p>前平台共有七个板块，除首页外，还有实时直播、经营分析、市场行情、自助取数、专题工具、数据学院，如图所示。</p>
+
+<center><img src="/images/2019/IMAG2019012118.png"></center>
+
+
+<p><br></p>
+
+<p>从商家实际应用场景来看，这些数据服务可以划分为三个维度，即看我情、看行情和看敌情。</p>
+
+<h2>8.2、对内-数据产品平台</h2>
+
+<p>它的用户是公司的员工，包括销售、BD 、运营、产品、技术、客服、管理者等多种角色： 解决的痛点是用户对业务发展中的数据监控、问题分析、机会洞察、决策支持等诉求，提供给用户高效率获取数据、合理分析框架、数据辅助业务决策的价值。</p>
+
+<p>阿里巴巴对内数据产品平台，即阿里数据平台，包括P C 版和A PP版，共有四个层次，即数据监控、专题分析、应用分析和数据决策，如图所示</p>
+
+<center><img src="/images/2019/IMAG2019012119.png"></center>
+
+
+<p><br></p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2019/01/21/alibaba-big-data-platform-notes/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2019-01-21T11:58:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/bigdata/'>BigData</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a>, <a class='tag' href='/blog/tags/shu-ju-zhong-tai/'>数据中台</a>, <a class='tag' href='/blog/tags/shu-ju-cang-ku/'>数据仓库</a>, <a class='tag' href='/blog/tags/a-li-ba-ba/'>阿里巴巴</a></span>
+		
+    </p>
+    
+      
+         <div class="sharing">
+  
+  
+  
+</div>
+
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2018/08/14/spotify-echo-nest/" title="Previous Post:
+        探秘Spotify的Echo Nest">&laquo; 探秘Spotify的Echo Nest</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2019/03/19/eleme-metadata-management/"
+        title="Next Post: 饿了么元数据管理实践之路">饿了么元数据管理实践之路
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://ibillxia.github.io/blog/2019/01/21/alibaba-big-data-platform-notes/';
+        var disqus_url = 'https://ibillxia.github.io/blog/2019/01/21/alibaba-big-data-platform-notes/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

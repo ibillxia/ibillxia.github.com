@@ -1,0 +1,1935 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: REST | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/rest/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Elasticsearch安装与使用指南]]></title>
+    <link href="https://ibillxia.github.io/blog/2019/04/24/elasticsearch-guide/"/>
+    <updated>2019-04-24T17:55:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2019/04/24/elasticsearch-guide</id>
+    <content type="html"><![CDATA[<center><img src="/images/2019/IMAG2019042401.svg"></center>
+
+
+<p><br></p>
+
+<p>Elasticsearch（简称ES）是一个基于Apache Lucene(TM)的开源搜索引擎，无论在开源还是专有领域，Lucene可以被认为是迄今为止最先进、性能最好的、功能最全的搜索引擎库。</p>
+
+<h1>一、Elasticsearch简介</h1>
+
+<h2>1.1 Elasticsearch是什么</h2>
+
+<p>Elasticsearch是一个基于Apache Lucene(TM)的开源搜索引擎，无论在开源还是专有领域，Lucene可以被认为是迄今为止最先进、性能最好的、功能最全的搜索引擎库。</p>
+
+<p>但是，Lucene只是一个库。想要发挥其强大的作用，你需使用Java并要将其集成到你的应用中。Lucene非常复杂，你需要深入的了解检索相关知识来理解它是如何工作的。</p>
+
+<p>Elasticsearch也是使用Java编写并使用Lucene来建立索引并实现搜索功能，但是它的目的是通过简单连贯的RESTful API让全文搜索变得简单并隐藏Lucene的复杂性。</p>
+
+<!--more-->
+
+
+<p>不过，Elasticsearch不仅仅是Lucene和全文搜索引擎，它还提供：</p>
+
+<ul>
+<li><p>分布式的实时文件存储，每个字段都被索引并可被搜索</p></li>
+<li><p>实时分析的分布式搜索引擎</p></li>
+<li><p>可以扩展到上百台服务器，处理PB级结构化或非结构化数据</p></li>
+</ul>
+
+
+<p>而且，所有的这些功能被集成到一台服务器，你的应用可以通过简单的RESTful API、各种语言的客户端甚至命令行与之交互。上手Elasticsearch非常简单，它提供了许多合理的缺省值，并对初学者隐藏了复杂的搜索引擎理论。它开箱即用（安装即可使用），只需很少的学习既可在生产环境中使用。Elasticsearch在Apache 2 license下许可使用，可以免费下载、使用和修改。</p>
+
+<p>随着知识的积累，你可以根据不同的问题领域定制Elasticsearch的高级特性，这一切都是可配置的，并且配置非常灵活。</p>
+
+<h2>1.2 Elasticsearch中涉及到的重要概念</h2>
+
+<p>Elasticsearch有几个核心概念。从一开始理解这些概念会对整个学习过程有莫大的帮助。</p>
+
+<h3>（1） 接近实时（NRT）</h3>
+
+<p>Elasticsearch是一个接近实时的搜索平台。这意味着，从索引一个文档直到这个文档能够被搜索到有一个轻微的延迟（通常是1秒）。</p>
+
+<h3>（2） 集群（cluster）</h3>
+
+<p>一个集群就是由一个或多个节点组织在一起，它们共同持有你整个的数据，并一起提供索引和搜索功能。一个集群由一个唯一的名字标识，这个名字默认就是“elasticsearch”。这个名字是重要的，因为一个节点只能通过指定某个集群的名字，来加入这个集群。在产品环境中显式地设定这个名字是一个好习惯，但是使用默认值来进行测试/开发也是不错的。</p>
+
+<h3>（3） 节点（node）</h3>
+
+<p>一个节点是你集群中的一个服务器，作为集群的一部分，它存储你的数据，参与集群的索引和搜索功能。和集群类似，一个节点也是由一个名字来标识的，默认情况下，这个名字是一个随机的漫威漫画角色的名字，这个名字会在启动的时候赋予节点。这个名字对于管理工作来说挺重要的，因为在这个管理过程中，你会去确定网络中的哪些服务器对应于Elasticsearch集群中的哪些节点。</p>
+
+<p>一个节点可以通过配置集群名称的方式来加入一个指定的集群。默认情况下，每个节点都会被安排加入到一个叫做“elasticsearch”的集群中，这意味着，如果你在你的网络中启动了若干个节点，并假定它们能够相互发现彼此，它们将会自动地形成并加入到一个叫做“elasticsearch”的集群中。</p>
+
+<p>在一个集群里，只要你想，可以拥有任意多个节点。而且，如果当前你的网络中没有运行任何Elasticsearch节点，这时启动一个节点，会默认创建并加入一个叫做“elasticsearch”的集群。</p>
+
+<h3>（4） 索引（index）</h3>
+
+<p>一个索引就是一个拥有几分相似特征的文档的集合。比如说，你可以有一个客户数据的索引，另一个产品目录的索引，还有一个订单数据的索引。一个索引由一个名字来标识（必须全部是小写字母的），并且当我们要对对应于这个索引中的文档进行索引、搜索、更新和删除的时候，都要使用到这个名字。索引类似于关系型数据库中Database的概念。在一个集群中，如果你想，可以定义任意多的索引。</p>
+
+<h3>（5） 类型（type）</h3>
+
+<p>在一个索引中，你可以定义一种或多种类型。一个类型是你的索引的一个逻辑上的分类/分区，其语义完全由你来定。通常，会为具有一组共同字段的文档定义一个类型。比如说，我们假设你运营一个博客平台并且将你所有的数据存储到一个索引中。在这个索引中，你可以为用户数据定义一个类型，为博客数据定义另一个类型，当然，也可以为评论数据定义另一个类型。类型类似于关系型数据库中Table的概念。</p>
+
+<h3>（6）文档（document）</h3>
+
+<p>一个文档是一个可被索引的基础信息单元。比如，你可以拥有某一个客户的文档，某一个产品的一个文档，当然，也可以拥有某个订单的一个文档。文档以JSON（Javascript Object Notation）格式来表示，而JSON是一个到处存在的互联网数据交互格式。</p>
+
+<p>在一个index/type里面，只要你想，你可以存储任意多的文档。注意，尽管一个文档，物理上存在于一个索引之中，文档必须被索引/赋予一个索引的type。文档类似于关系型数据库中Record的概念。实际上一个文档除了用户定义的数据外，还包括<em>index、</em>type和_id字段。</p>
+
+<h3>（7） 分片和复制（shards &amp; replicas）</h3>
+
+<p>一个索引可以存储超出单个结点硬件限制的大量数据。比如，一个具有10亿文档的索引占据1TB的磁盘空间，而任一节点都没有这样大的磁盘空间；或者单个节点处理搜索请求，响应太慢。</p>
+
+<p>为了解决这个问题，Elasticsearch提供了将索引划分成多份的能力，这些份就叫做分片。当你创建一个索引的时候，你可以指定你想要的分片的数量。每个分片本身也是一个功能完善并且独立的“索引”，这个“索引”可以被放置到集群中的任何节点上。</p>
+
+<p>分片之所以重要，主要有两方面的原因：</p>
+
+<ul>
+<li><p>允许你水平分割/扩展你的内容容量</p></li>
+<li><p>允许你在分片（潜在地，位于多个节点上）之上进行分布式的、并行的操作，进而提高性能/吞吐量</p></li>
+</ul>
+
+
+<p>至于一个分片怎样分布，它的文档怎样聚合回搜索请求，是完全由Elasticsearch管理的，对于作为用户的你来说，这些都是透明的。</p>
+
+<p>在一个网络/云的环境里，失败随时都可能发生，在某个分片/节点不知怎么的就处于离线状态，或者由于任何原因消失了。这种情况下，有一个故障转移机制是非常有用并且是强烈推荐的。为此目的，Elasticsearch允许你创建分片的一份或多份拷贝，这些拷贝叫做复制分片，或者直接叫复制。复制之所以重要，主要有两方面的原因：</p>
+
+<ul>
+<li><p>在分片/节点失败的情况下，提供了高可用性。因为这个原因，注意到复制分片从不与原/主要（original/primary）分片置于同一节点上是非常重要的。</p></li>
+<li><p>扩展你的搜索量/吞吐量，因为搜索可以在所有的复制上并行运行</p></li>
+</ul>
+
+
+<p>总之，每个索引可以被分成多个分片。一个索引也可以被复制0次（意思是没有复制）或多次。一旦复制了，每个索引就有了主分片（作为复制源的原来的分片）和复制分片（主分片的拷贝）之别。分片和复制的数量可以在索引创建的时候指定。在索引创建之后，你可以在任何时候动态地改变复制数量，但是不能改变分片的数量。</p>
+
+<p>默认情况下，Elasticsearch中的每个索引被分片5个主分片和1个复制，这意味着，如果你的集群中至少有两个节点，你的索引将会有5个主分片和另外5个复制分片（1个完全拷贝），这样的话每个索引总共就有10个分片。一个索引的多个分片可以存放在集群中的一台主机上，也可以存放在多台主机上，这取决于你的集群机器数量。主分片和复制分片的具体位置是由ES内在的策略所决定的。</p>
+
+<h1>二、 Elasticsearch安装与配置</h1>
+
+<h2>2.1 安装与运行</h2>
+
+<p>(1) 从这里下载Elasticsearch安装包。一共提供4种格式的安装包（ZIP、TAR.GZ、DEB和RPM），可以根据自己所使用的系统平台选择相应格式的安装包进行下载。（建议使用Linux系统，本人在2台windows机器上尝试启动过，一台机器上无法正常启动，另外一台可以）</p>
+
+<p>(2) 对下载的安装包进行解压缩即可完成安装操作。下面以在Ubuntu操作系统下使用TAR.GZ格式的1.5.0版本的安装包为例进行安装。在Linux shell中输入下面的命令解压缩。</p>
+
+<pre><code>tar –vxf elasticsearch-1.5.0.tar.gz
+</code></pre>
+
+<p>安装成功，下面运行ES。</p>
+
+<blockquote><p>注意：Elasticsearch需要Java虚拟机的支持，在运行之前保证机器上安装了JDK，并且JDK版本不能低于1.7_55。</p></blockquote>
+
+<p>(3) 现在可以直接使用默认配置启动Elasticsearch了。</p>
+
+<p>假设安装包解压后的目录路径为【/home/elasticsearch/elasticsearch-1.5.0】，下面军用$ES_HOME来表示这个路径。执行下面的命令：</p>
+
+<pre><code>cd /home/elasticsearch/elasticsearch-1.5.0/bin/ 
+chmod +x *  
+./elasticsearch
+</code></pre>
+
+<p>如果出现如图所示的界面（最后打印出started），则说明Elasticsearch启动成功。</p>
+
+<center><img src="/images/2019/IMAG2019042401.jpeg"></center>
+
+
+<p><br></p>
+
+<p>下面来验证一下是否真的启动成功。打开浏览器，访问网址 <code>http://host:9200</code>（这里的host是ES的安装主机地址，如果安装在本机，就是 <code>http://127.0.0.1:9200</code>）。如果显示下面的信息，则表示ES安装成功。</p>
+
+<pre><code>{
+  "status" : 200,
+  "name" : "Captain Zero",
+  "cluster_name" : "elasticsearch",
+  "version" : {
+    "number" : "1.5.0",
+    "build_hash" : "544816042d40151d3ce4ba4f95399d7860dc2e92",
+    "build_timestamp" : "2015-03-23T14:30:58Z",
+    "build_snapshot" : false,
+    "lucene_version" : "4.10.4"
+  },
+  "tagline" : "You Know, for Search"
+}
+</code></pre>
+
+<p>上面是前台启动方式，一旦关闭Linux shell，ES服务就会停止。所以是实际使用过程中，绝对不会使用这种方式去启动ES。除了上面的启动方式外，还可以加上一定的启动参数。例如：</p>
+
+<pre><code> ./elasticsearch –d #在后台运行Elasticsearch
+ ./elasticsearch -d -Xmx2g -Xms2g #后台启动，启动时指定内存大小（2G）
+ ./elasticsearch -d -Des.logger.level=DEBUG  #可以在日志中打印出更加详细的信息。
+</code></pre>
+
+<h2>2.2 ES的配置</h2>
+
+<p>配置文件所在的目录路径如下：<code>$ES_HOME/config/elasticsearch.yml</code>。</p>
+
+<p>下面介绍一些重要的配置项及其含义。</p>
+
+<p>（1）cluster.name: elasticsearch</p>
+
+<p>配置elasticsearch的集群名称，默认是elasticsearch。elasticsearch会自动发现在同一网段下的集群名为elasticsearch的主机，如果在同一网段下有多个集群，就可以用这个属性来区分不同的集群。生成环境时建议更改。</p>
+
+<p>（2）node.name: “Franz Kafka”</p>
+
+<p>节点名，默认随机指定一个name列表中名字，该列表在elasticsearch的jar包中config文件夹里name.txt文件中，其中有很多作者添加的有趣名字，大部分是漫威动漫里面的人物名字。生成环境中建议更改以能方便的指定集群中的节点对应的机器</p>
+
+<p>（3）node.master: true</p>
+
+<p>指定该节点是否有资格被选举成为node，默认是true，elasticsearch默认集群中的第一台启动的机器为master，如果这台机挂了就会重新选举master。</p>
+
+<p>（4）node.data: true</p>
+
+<p>指定该节点是否存储索引数据，默认为true。如果节点配置node.master:false并且node.data: false，则该节点将起到负载均衡的作用</p>
+
+<p>（5）index.number_of_shards: 5</p>
+
+<p>设置默认索引分片个数，默认为5片。经本人测试，索引分片对ES的查询性能有很大的影响，在应用环境，应该选择适合的分片大小。</p>
+
+<p>（6）index.number_of_replicas:</p>
+
+<p>设置默认索引副本个数，默认为1个副本。此处的1个副本是指index.number_of_shards的一个完全拷贝；默认5个分片1个拷贝；即总分片数为10。</p>
+
+<p>（7）path.conf: /path/to/conf</p>
+
+<p>设置配置文件的存储路径，默认是es根目录下的config文件夹。</p>
+
+<p>（8）path.data:/path/to/data1,/path/to/data2</p>
+
+<p>设置索引数据的存储路径，默认是es根目录下的data文件夹，可以设置多个存储路径，用逗号隔开。</p>
+
+<p>（9）path.work:/path/to/work</p>
+
+<p>设置临时文件的存储路径，默认是es根目录下的work文件夹。</p>
+
+<p>（10）path.logs: /path/to/logs</p>
+
+<p>设置日志文件的存储路径，默认是es根目录下的logs文件夹</p>
+
+<p>（11）path.plugins: /path/to/plugins</p>
+
+<p>设置插件的存放路径，默认是es根目录下的plugins文件夹</p>
+
+<p>更多配置项及说明参考： <a href="https://zhuanlan.zhihu.com/p/41850863">https://zhuanlan.zhihu.com/p/41850863</a></p>
+
+<h1>三、ES中的常用Rest API</h1>
+
+<p>ES为开发者提供了非常丰富的基于HTTP协议的Rest API，只需要向ES服务端发送简单的Rest请求，就可以实现非常强大的功能。</p>
+
+<p>查询是ES的核心。作为一个先进的搜索引擎，ES中提供了多种查询接口。</p>
+
+<h2>3.1  Mapping详解</h2>
+
+<p>Mapping是ES中的一个很重要的内容，它类似于传统关系型数据中table的schema，用于定义一个索引（index）的某个类型（type）的数据的结构。</p>
+
+<p>在传统关系型数据库，我们必须首先创建table并同时定义其schema，如下面的SQL语句。下面代码中小括号内的代码的作用就是定义person_info的schema（模式）。</p>
+
+<pre><code>create table person_info(
+  name varchar(20),
+  age tinyint
+)
+</code></pre>
+
+<p>在ES中，我们无需手动创建type（相当于table）和mapping(相当于schema)。在默认配置下，ES可以根据插入的数据自动地创建type及其mapping。在下面的API介绍部分中，会做相关的试验。当然，在实际使用过程中我们可能就想硬性规定mapping，可以通过配置文件关闭ES的自动创建mapping功能。</p>
+
+<p>mapping中主要包括字段名、字段数据类型和字段索引类型这3个方面的定义。</p>
+
+<p>字段名：这就不用说了，与传统数据库字段名作用一样，就是给字段起个唯一的名字，好让系统和用户能识别。</p>
+
+<p>字段数据类型：定义该字段保存的数据的类型，不符合数据类型定义的数据不能保存到ES中。下表列出的是ES中所支持的数据类型。（大类是对所有类型的一种归类，小类是实际使用的类型。）</p>
+
+<table>
+<thead>
+<tr>
+<th> 大类 </th>
+<th> 包含的小类 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> String </td>
+<td> string </td>
+</tr>
+<tr>
+<td> Whole number </td>
+<td> byte, short, integer, long </td>
+</tr>
+<tr>
+<td> Floating point </td>
+<td> float, double </td>
+</tr>
+<tr>
+<td> Boolean </td>
+<td> boolean </td>
+</tr>
+<tr>
+<td> Date </td>
+<td> date </td>
+</tr>
+</tbody>
+</table>
+
+
+<p><br>
+字段索引类型：索引是ES中的核心，ES之所以能够实现实时搜索，完全归功于Lucene这个优秀的Java开源索引。在传统数据库中，如果字段上建立索引，我们仍然能够以它作为查询条件进行查询，只不过查询速度慢点。而在ES中，字段如果不建立索引，则就不能以这个字段作为查询条件来搜索。也就是说，不建立索引的字段仅仅能起到数据载体的作用。string类型的数据肯定是日常使用得最多的数据类型，下面介绍mapping中string类型字段可以配置的索引类型。</p>
+
+<table>
+<thead>
+<tr>
+<th> 索引类型 </th>
+<th> 解释 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> analyzed </td>
+<td> 首先分析这个字符串，然后再建立索引。换言之，以全文形式索引此字段。 </td>
+</tr>
+<tr>
+<td> not_analyzed </td>
+<td> 索引这个字段，使之可以被搜索，但是索引内容和指定值一样。不分析此字段。 </td>
+</tr>
+<tr>
+<td> no </td>
+<td> 不索引这个字段。这个字段不能被搜索到。 </td>
+</tr>
+</tbody>
+</table>
+
+
+<p><br>
+如果索引类型设置为analyzed，在表示ES会先对这个字段进行分析（一般来说，就是自然语言中的分词），ES内置了不少分析器（analyser），如果觉得它们对中文的支持不好，也可以使用第三方分析器。由于笔者在实际项目中仅仅将ES用作普通的数据查询引擎，所以并没有研究过这些分析器。如果将ES当做真正的搜索引擎，那么挑选正确的分析器是至关重要的。</p>
+
+<p>mapping中除了上面介绍的3个主要的内容外，还有其他的定义内容，详见官网文档。</p>
+
+<h2>3.2 常用的Rest API介绍</h2>
+
+<p>下面介绍一下ES中的一些常用的Rest API。掌握了这些API的用法，基本上就可以简单地使用ES了。</p>
+
+<p>我们需要借助能够发送HTTP请求的工具调用这些API，工具是可以任意的，包括网页浏览器。这里利用Linux上的curl命令来发送HTTP请求。基本的命令结构为：</p>
+
+<pre><code>curl &lt;-Xaction&gt; url -d 'body' # 这里的action表示HTTP协议中的各种动作，包括GET、POST、PUT、DELETE等。
+</code></pre>
+
+<blockquote><p>注意：文中的示例代码里面包含了用户注释的文字，就是 # 号后面的文字。运行代码时，请注意删除这些注释。</p></blockquote>
+
+<h3>查看集群（Cluster）信息相关API</h3>
+
+<p>（1）查看集群健康信息。</p>
+
+<pre><code>  curl -XGET "192.168.1.101:9200/_cat/heath?v"
+</code></pre>
+
+<p>返回结果的主要字段意义：</p>
+
+<ul>
+<li><p>cluster：集群名，是在ES的配置文件中配置的cluster.name的值。</p></li>
+<li><p>status：集群状态。集群共有green、yellow或red中的三种状态。green代表一切正常（集群功能齐全），yellow意味着所有的数据都是可用的，但是某些复制没有被分配（集群功能齐全），red则代表因为某些原因，某些数据不可用。如果是red状态，则要引起高度注意，数据很有可能已经丢失。</p></li>
+<li><p>node.total：集群中的节点数。</p></li>
+<li><p>node.data：集群中的数据节点数。</p></li>
+<li><p>shards：集群中总的分片数量。</p></li>
+<li><p>pri：主分片数量，英文全称为private。</p></li>
+<li><p>relo：复制分片总数。</p></li>
+<li><p>unassign：未指定的分片数量，是应有分片数和现有的分片数的差值（包括主分片和复制分片）。</p></li>
+</ul>
+
+
+<p>我们也可以在请求中添加help参数来查看每个操作返回结果字段的意义。</p>
+
+<pre><code>curl -XGET "192.168.1.101:9200/_cat/heath?help"
+</code></pre>
+
+<p>返回结果如下：</p>
+
+<table>
+<thead>
+<tr>
+<th> 字段 </th>
+<th> 类型 </th>
+<th> 含义 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> epoch         </td>
+<td> t,time                                   </td>
+<td> seconds since1970-01-0100:00:00    </td>
+</tr>
+<tr>
+<td> timestamp     </td>
+<td> ts,hms,hhmmss                            </td>
+<td> timein HH:MM:SS                    </td>
+</tr>
+<tr>
+<td> cluster       </td>
+<td> cl                                       </td>
+<td> cluster name                       </td>
+</tr>
+<tr>
+<td> status        </td>
+<td> st                                       </td>
+<td> health status                      </td>
+</tr>
+<tr>
+<td> node.total    </td>
+<td> nt,nodeTotal                             </td>
+<td> total numberof nodes               </td>
+</tr>
+<tr>
+<td> node.data     </td>
+<td> nd,nodeData                              </td>
+<td> numberof nodes that can store data </td>
+</tr>
+<tr>
+<td> shards        </td>
+<td> t,sh,shards.total,shardsTotal            </td>
+<td> total numberof shards              </td>
+</tr>
+<tr>
+<td> pri           </td>
+<td> p,shards.primary,shardsPrimary           </td>
+<td> numberof primary shards           </td>
+</tr>
+<tr>
+<td> relo          </td>
+<td> r,shards.relocating,shardsRelocating     </td>
+<td> numberof relocating nodes         </td>
+</tr>
+<tr>
+<td> init          </td>
+<td> i,shards.initializing,shardsInitializing </td>
+<td> numberof initializing nodes       </td>
+</tr>
+<tr>
+<td> unassign      </td>
+<td> u,shards.unassigned,shardsUnassigned     </td>
+<td> numberof unassigned shards        </td>
+</tr>
+<tr>
+<td> pending_tasks </td>
+<td> pt,pendingTasks                          </td>
+<td> numberof pending tasks            </td>
+</tr>
+</tbody>
+</table>
+
+
+<p><br>
+确实是很好很强大。有了这个东东，就可以减少看文档的时间。ES中许多API都可以添加help参数来显示字段含义，哪些可以这么做呢？每个API都试试就知道了。</p>
+
+<p>（2）查看集群中的节点信息。</p>
+
+<pre><code>curl -XGET "192.168.1.101:9200/_cat/nodes?v"
+</code></pre>
+
+<p>（3）查看集群中的索引信息。</p>
+
+<pre><code>curl -XGET "192.168.1.101:9200/_cat/indices?v"
+</code></pre>
+
+<p>更多的查看和监视ES的API参见官网文档。</p>
+
+<h2>3.3 索引（Index）相关API</h2>
+
+<p>（1）创建一个新的索引。</p>
+
+<pre><code>curl -XPUT "192.168.1.101:9200/index_test"
+</code></pre>
+
+<p>如果返回下面的信息，则说明索引创建成功。如果不是，则ES会返回相应的异常信息。通常可以通过异常信息的最后一项推断出失败的原因。</p>
+
+<pre><code>{
+  "acknowledged": true
+}
+</code></pre>
+
+<p>上面的操作使用默认的配置信息创建一个索引。大多数情况下，我们想在索引创建的时候就将我们所需的mapping和其他配置确定好。下面的操作就可以在创建索引的同时，创建settings和mapping。</p>
+
+<pre><code>curl -XPUT "192.168.1.101:9200/index_test"-d' # 注意这里的'号
+{
+  "settings": {
+    "index": {
+      "number_of_replicas": "1",  # 设置复制数
+      "number_of_shards": "5"  # 设置主分片数    
+    }  
+  },
+  "mappings": { # 创建mapping
+    "test_type": {  # 在index中创建一个新的type(相当于table)
+      "properties": {
+        "name": {  # 创建一个字段（string类型数据，使用普通索引）"type": "string",
+          "index": "not_analyzed"        
+        },
+        "age": {
+          "type": "integer"        
+        }      
+      }    
+    }  
+  }
+}'
+</code></pre>
+
+<p>（2）删除一个索引。</p>
+
+<pre><code>curl -XDELETE "192.168.1.101:9200/index_test"
+</code></pre>
+
+<p>如果返回与创建索引同样的信息，则说明删除成功。反之，则返回相应的异常信息。更多的索引操作参见ES官网文档。</p>
+
+<h2>3.4 映射（Mapping）相关API</h2>
+
+<p>（1）创建索引的mapping。</p>
+
+<pre><code>curl -XPUT 'localhost:9200/index_test/_mapping/test_type' -d ' 
+{  
+  "test_type": { # 注意，这里的test_type与url上的test_type名保存一致
+    "properties": {
+      "name": {
+        "type": "string",
+        "index": "not_analyzed"
+      },
+      "age": {
+        "type": "integer"
+      }
+    }
+  }
+}'
+</code></pre>
+
+<p>如果不想单独创建mapping，可以使用上一节的方法（创建索引时创建mappings）。</p>
+
+<p>假设我们的项目中有多个环境（开发环境、测试环境等），那每一个环境的mapping总要一致的吧，那每次创建一次mappings就比较麻烦了，而且还容易导致数据不一致。莫急，ES还给我们准备另外一种创建mapping的方式。可以按照下面的步骤来做。</p>
+
+<p>步骤1 创建一个扩展名为test_type.json的文件名，其中type_test就是mapping所对应的type名。</p>
+
+<p>步骤2 在test_type.json中输入mapping信息。假设你的mapping如下：</p>
+
+<pre><code>{
+  "test_type": {  # 注意，这里的test_type与json文件名必须一致
+    "properties": {
+      "name": {
+        "type": "string",
+        "index": "not_analyzed"        
+      },
+      "age": {
+        "type": "integer"        
+      }      
+    }    
+  }  
+}
+</code></pre>
+
+<p>步骤3 在$ES_HOME/config/路径下创建mappings/index_test子目录，这里的index_test目录名必须与我们要建立的索引名一致。将test_type.json文件拷贝到index_tes目录下。</p>
+
+<p>步骤4 创建index_test索引。操作如下：</p>
+
+<pre><code>curl -XPUT "192.168.1.101:9200/index_test"  # 注意，这里的索引名必须与mappings下新建的index_test目录名一致
+</code></pre>
+
+<p>这样我们就创建了一个新的索引，并且使用了test_type.json所定义的mapping作为索引的mapping。就是这么简单方便！</p>
+
+<p>（2）删除mapping。</p>
+
+<pre><code>curl -XDELETE 'localhost:9200/index_test/_mapping/test_type'
+</code></pre>
+
+<p>（3）查看索引的mapping。</p>
+
+<pre><code>curl -XGET 'localhost:9200/index_test/_mapping/test_type'
+</code></pre>
+
+<p>更多的mapping相关操作参加官网文档。</p>
+
+<h2>3.5 文档（document）相关API</h2>
+
+<p>（1）新增一个文档。</p>
+
+<pre><code>curl -XPUT '192.168.1.101:9200/index_test/test_type/1?pretty' -d ' # 这里的pretty参数的作用是使得返回的json显示地更加好看。1是文档的id值（唯一键）。
+{
+  "name": "zhangsan",
+  "age" : "12"
+}'
+</code></pre>
+
+<p>（2）更新一个文档</p>
+
+<pre><code>curl -XPOST '192.168.1.101:9200/index_test/test_type/1?pretty' -d ' # 这里的1必须是索引中已经存在id，否则就会变成新增文档操作
+{
+  "name": "lisi",
+  "age" : "12"
+}'
+</code></pre>
+
+<p>（3）删除一个文档</p>
+
+<pre><code>curl -XDELETE '192.168.1.101:9200/index_test/test_type/1?pretty' # 这里的1必须是索引中已经存在id
+</code></pre>
+
+<p>（4）查询单个文档</p>
+
+<pre><code>curl -XGET '192.168.1.101:9200/index_test/test_type/1?pretty'
+</code></pre>
+
+<h2>3.6 源代码中提供的Rest API文档结构</h2>
+
+<p>ES的源代码托管在Github上。将源代码下载下来之后，里面有一个文件夹专门存放ES中绝大部分的Rest API。有了这些文档，就不必每次都要到官网上查询接口文档了（PS：ES的官网真的很慢）。</p>
+
+<p>下面以cat.health.json文件为例简单地介绍这些Rest API文档的结构。一旦结构搞清楚了，文档看起来就比较顺心，ES用起来就更加得心应手了！</p>
+
+<pre><code>{
+  "cat.health": {
+    "documentation": "http://www.elastic.co/guide/en/elasticsearch/reference/master/cat-health.html", # 该文档对应的官方站点
+    "methods": ["GET"],
+    "url": {  # url部分可选
+      "path": "/_cat/health",
+      "paths": ["/_cat/health"],
+      "parts": {
+      },
+      "params": {
+        "local": {
+          "type" : "boolean",
+          "description" : "Return local information, do not retrieve the state from master node (default: false)"        
+        },
+        "master_timeout": {
+          "type" : "time",
+          "description" : "Explicit operation timeout for connection to master node"        
+        },
+        "h": {
+          "type": "list",
+          "description" : "Comma-separated list of column names to display"        
+        },
+        "help": {
+          "type": "boolean",
+          "description": "Return help information",
+          "default": false        
+        },
+        "ts": {
+          "type": "boolean",
+          "description": "Set to false to disable timestamping",
+          "default": true        
+        },
+        "v": {
+          "type": "boolean",
+          "description": "Verbose mode. Display column headers",
+          "default": true        
+        }      
+      }    
+  },
+  "body": null  
+  }
+}
+</code></pre>
+
+<p>上面文档接口所对应的Reqeust操作如下：</p>
+
+<pre><code>curl -XGET "localhost:9200/_cat/health?v" -d 'body'
+</code></pre>
+
+<p>该操作命令可划分为5个部分，下面把这5个部分与文档对应起来。通过这个例子，就可以在阅读其他文档后，使用正确的操作了。</p>
+
+<ol>
+<li><p>第1部分（-XGET）：对应文档中methods所包含的GET操作。</p></li>
+<li><p>第2部分（localhost:9200）：是ES服务端所在主机的hostname和port。</p></li>
+<li><p>第3部分（/_cat/health）：对应文档中的url。其中path是最简单的url；paths是除了path之外的其他url；parts描述和解释paths里面的url的可变部分（通常用{}包裹，如{index}）。</p></li>
+<li><p>第4部分v：表示参数，对应文档中的params。像“v”这种boolean类型的参数，不需要特意指定其布尔值（true或者false），出现即表示true，否则为false。</p></li>
+<li><p>第5部分body：表示要传递的数据主体,对应文档中的body。如果body里面指明“required=true”,则表示必须传入body数据。具体body里面需要传怎样的数据，则可以访问文档中的documentation字段所指明的官方站点进行查询。</p></li>
+</ol>
+
+
+<h1>四、查询API</h1>
+
+<h2>4.1 数据示例</h2>
+
+<p>下表是本文数据表的表结构，表名（type）为“student”。注意，studentNo是本表的id，也就是_id字段的值与studentNo的值保持一致。</p>
+
+<table>
+<thead>
+<tr>
+<th> 字段名 </th>
+<th> 字段含义 </th>
+<th> 类型 </th>
+<th> 是否能被索引 </th>
+<th> 备注 </th>
+<th>  </th>
+<th>  </th>
+<th>  </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> studentNo </td>
+<td> 学号 </td>
+<td> string </td>
+<td> 是 </td>
+<td> id </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+</tr>
+<tr>
+<td> name </td>
+<td> 姓名 </td>
+<td> string </td>
+<td> 是 </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+</tr>
+<tr>
+<td> sex </td>
+<td> 性别 </td>
+<td> string </td>
+<td> 是 </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+</tr>
+<tr>
+<td> age </td>
+<td> 年龄 </td>
+<td> integer </td>
+<td> 是 </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+</tr>
+<tr>
+<td> birthday </td>
+<td> 出生年月 </td>
+<td> date </td>
+<td> 是 </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+</tr>
+<tr>
+<td> address </td>
+<td> 家庭住址 </td>
+<td> string </td>
+<td> 是 </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+</tr>
+<tr>
+<td> classNo </td>
+<td> 班级 </td>
+<td> string </td>
+<td> 是 </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+</tr>
+<tr>
+<td> isLeader </td>
+<td> 是否为班干部 </td>
+<td> boolean </td>
+<td> 是 </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+</tr>
+</tbody>
+</table>
+
+
+<p>上面的表结构所对应的mapping如下，将数据保存在索引名为“student”的索引中。</p>
+
+<pre><code>{
+  "student": {
+    "properties": {
+      "studentNo": {
+        "type": "string",
+        "index": "not_analyzed"      
+      },
+      "name": {
+        "type": "string",
+        "index": "not_analyzed"      
+      },
+      "male": {
+        "type": "string",
+        "index": "not_analyzed"      
+      },
+      "age": {
+        "type": "integer"      
+      },
+      "birthday": {
+        "type": "date",
+        "format": "yyyy-MM-dd"      
+      },
+      "address": {
+        "type": "string",
+        "index": "not_analyzed"      
+      },
+      "classNo": {
+        "type": "string",
+        "index": "not_analyzed "      
+      },
+      "isLeader": {
+        "type": "boolean"      
+      }    
+    }  
+  }
+}
+</code></pre>
+
+<p>索引中保存的数据如下，下面介绍的所有API都将基于这个数据表。</p>
+
+<table>
+<thead>
+<tr>
+<th> studentNo </th>
+<th> name </th>
+<th> male </th>
+<th> age </th>
+<th> birthday </th>
+<th> classNo </th>
+<th> address </th>
+<th> isLeader </th>
+<th>  </th>
+<th>  </th>
+<th>  </th>
+<th>  </th>
+<th>  </th>
+<th>  </th>
+<th>  </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> 1 </td>
+<td> 刘备 </td>
+<td> 男 </td>
+<td> 24 </td>
+<td> 1985-02-03 </td>
+<td> 1 </td>
+<td> 湖南省长沙市 </td>
+<td> true </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+</tr>
+<tr>
+<td> 2 </td>
+<td> 关羽 </td>
+<td> 男 </td>
+<td> 22 </td>
+<td> 1987-08-23 </td>
+<td> 2 </td>
+<td> 四川省成都市 </td>
+<td> false </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+</tr>
+<tr>
+<td> 3 </td>
+<td> 糜夫人 </td>
+<td> 女 </td>
+<td> 19 </td>
+<td> 1990-06-12 </td>
+<td> 1 </td>
+<td> 上海市 </td>
+<td> false </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+</tr>
+<tr>
+<td> 4 </td>
+<td> 张飞 </td>
+<td> 男 </td>
+<td> 20 </td>
+<td> 1989-07-30 </td>
+<td> 3 </td>
+<td> 北京市 </td>
+<td> false </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+</tr>
+<tr>
+<td> 5 </td>
+<td> 诸葛亮 </td>
+<td> 男 </td>
+<td> 18 </td>
+<td> 1992-04-27 </td>
+<td> 2 </td>
+<td> 江苏省南京市 </td>
+<td> true </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+</tr>
+<tr>
+<td> 6 </td>
+<td> 孙尚香 </td>
+<td> 女 </td>
+<td> 16 </td>
+<td> 1994-05-21 </td>
+<td> 3 </td>
+<td> false </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+</tr>
+<tr>
+<td> 7 </td>
+<td> 马超 </td>
+<td> 男 </td>
+<td> 19 </td>
+<td> 1991-10-20 </td>
+<td> 1 </td>
+<td> 黑龙江省哈尔滨市 </td>
+<td> false </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+</tr>
+<tr>
+<td> 8 </td>
+<td> 赵云 </td>
+<td> 男 </td>
+<td> 23 </td>
+<td> 1986-10-26 </td>
+<td> 2 </td>
+<td> 浙江省杭州市 </td>
+<td> false </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+<td>  </td>
+</tr>
+</tbody>
+</table>
+
+
+<h2>4.2 查询API</h2>
+
+<p>ES中的查询非常灵活，为用户提供了非常方便而强大的API。个人觉得ES的调用接口设计得非常好，所有接口合理且风格一致，值得好好研究！</p>
+
+<p>ES为用户提供两类查询API，一类是在查询阶段就进行条件过滤的query查询，另一类是在query查询出来的数据基础上再进行过滤的filter查询。这两类查询的区别是：</p>
+
+<ul>
+<li><p>query方法会计算查询条件与待查询数据之间的相关性，计算结果写入一个score字段，类似于搜索引擎。filter仅仅做字符串匹配，不会计算相关性，类似于一般的数据查询，所以filter得查询速度比query快。</p></li>
+<li><p>filter查询出来的数据会自动被缓存，而query不能。</p></li>
+</ul>
+
+
+<p>query和filter可以单独使用，也可以相互嵌套使用，非常灵活。</p>
+
+<h3>4.2.1 Query查询</h3>
+
+<p>下面的情况下适合使用query查询：</p>
+
+<ul>
+<li><p>需要进行全文搜索。</p></li>
+<li><p>查询结果依赖于相关性，即需要计算查询串和数据的相关性。</p></li>
+</ul>
+
+
+<h4>（1）Match All Query</h4>
+
+<p>查询所有的数据，相当于不带条件查询。下面的代码是一个典型的match_all查询的调用方式。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '{
+  "query": {
+    "match_all": {}
+  }
+}'
+</code></pre>
+
+<p>查询结果如下。其他所有的查询都是返回这种格式的数据。</p>
+
+<pre><code>{  
+  "took": 156, // 查询耗时（毫秒）
+  "timed_out": false, // 是否超时
+  "_shards": {
+    "total": 5, // 总共查询的分片数
+    "successful": 5, // 查询成功的分片数
+    "failed": 0 // 查询失败的分片数  
+  },
+  "hits": {
+    "total": 8,  // 本次查询的记录数
+    "max_score": 1, // 查询所有数据中的最大score
+    "hits": [ // 数据列表      
+      {
+        "_index": "student",    // 数据所属的索引名
+        "_type": "student",     // 数据所属的type
+        "_id": "4",             // 数据的id值
+        "_score": 1,            // 该记录的score
+        "_source": {            // ES将原始数据保存到_source字段中
+          "studentNo": "4",
+          "name": "张飞",
+          "male": "男",
+          "age": "20",
+          "birthday": "1989-07-30",
+          "classNo": "3",
+          "isLeader": "F"
+        }
+      },
+      { ……  // 其他的数据格式相同，就不列出来了 
+      }    
+    ]
+  }
+}
+</code></pre>
+
+<p>查询时，你会发现无论数据量有多大，每次最多只能查到10条数据。这是因为ES服务端默认对查询结果做了分页处理，每页默认的大小为10。如果想自己指定查询的数据，可使用from和size字段，并且按指定的字段排序。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '
+{
+  "query": {
+    "match_all": {}
+  },
+  "from": 2,        // 从2条记录开始取
+  "size": 4,        // 取4条数据
+  "sort": {
+    "studentNo": {  // 按studentNo字段升序
+    "order": "asc"  // 降序为desc
+    }
+  } 
+}'
+</code></pre>
+
+<p>注意：不要把from设得过大（超过10000），否则会导致ES服务端因频繁GC而无法正常提供服务。其实实际项目中也没有谁会翻那么多页，但是为了ES的可用性，务必要对分页查询的页码做一定的限制。</p>
+
+<h4>（2）term query</h4>
+
+<p>词语查询，如果是对未分词的字段进行查询，则表示精确查询。查找名为“诸葛亮”的学生，查询结果为学号为5的记录。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '{  "query": {    "term": {      "name": "诸葛亮"    }  }}'
+</code></pre>
+
+<h4>（3）Bool Query</h4>
+
+<p>Bool（布尔）查询是一种复合型查询，它可以结合多个其他的查询条件。主要有3类逻辑查询：</p>
+
+<ul>
+<li><p>must：查询结果必须符合该查询条件（列表）。</p></li>
+<li><p>should：类似于in的查询条件。如果bool查询中不包含must查询，那么should默认表示必须符合查询列表中的一个或多个查询条件。</p></li>
+<li><p>must_not：查询结果必须不符合查询条件（列表）。</p></li>
+</ul>
+
+
+<p>查找2班的班干部，查询结果为学号为5的记录。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "classNo": "2"          
+          }        
+        },
+        {
+          "term": {
+            "isLeader": "true"          
+          }        
+        }      ]    
+    }  
+  }
+}
+'
+</code></pre>
+
+<h4>（4）Ids Query</h4>
+
+<p>id字段查询。查询数据id值为1和2的同学，由于id的值与studentNo相同，故查询结果为学号为1和2的学生。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '
+{
+  "query": {
+    "ids": {
+      "type": "student",
+      "values": ["1","2"]    
+    }  
+  }
+}'
+</code></pre>
+
+<h4>（5）Prefix Query</h4>
+
+<p>前缀查询。查找姓【赵】的同学，查询结果是学号为8的赵云。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '
+{
+  "query": {
+    "prefix": {
+      "name": "赵"    
+    }  
+  }
+}'
+</code></pre>
+
+<h4>（6）Range Query</h4>
+
+<p>范围查询，针对date和number类型的数据。查找年龄到18~20岁的同学，查询结果是学号为3、4、5、7的记录。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '
+{
+  "query": {
+    "range": {
+      "age": {
+        "gte": "18", // 表示&gt;=
+        "lte": "20"  // 表示&lt;=
+      }
+    }
+  }
+}'
+</code></pre>
+
+<p>实际上，对于date类型的数据，ES中以其时间戳（长整形）的形式存放的。</p>
+
+<h4>（7）Terms Query</h4>
+
+<p>多词语查询，查找符合词语列表的数据。如果要查询的字段索引为not_analyzed类型，则terms查询非常类似于关系型数据库中的in查询。下面查找学号为1，3的学生。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '
+{
+  "query": {
+    "terms": {
+      "studentNo": ["1","3"]    
+    }  
+  }
+}'
+</code></pre>
+
+<h4>（8）Wildcard Query</h4>
+
+<p>通配符查询，是简化的正则表达式查询，包括下面两类通配符：</p>
+
+<ul>
+<li><ul>
+<li>代表任意（包括0个）多个字符</li>
+</ul>
+</li>
+<li><p>? 代表任意一个字符</p></li>
+</ul>
+
+
+<p>查找名字的最后一个字是“亮”的同学，查询结果是学号为5的诸葛亮。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '
+{
+  "query": {
+    "wildcard": {
+      "name": "*亮"    
+    }  
+  }
+}'
+</code></pre>
+
+<h4>（9）Regexp Query</h4>
+
+<p>正则表达式查询，这是最灵活的字符串类型字段查询方式。查找家住长沙市的学生，查询结果为学号为1的学生。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '
+{
+  "query": {
+    "regexp": {
+      "address": ".*长沙市.*" // 这里的.号表示任意一个字符
+    }
+  }
+}'
+</code></pre>
+
+<h3>4.2.2 Filter查询</h3>
+
+<p>下面的情况下适合使用filter查询：</p>
+
+<ul>
+<li><p>yes/no的二元查询</p></li>
+<li><p>针对精确值进行查询</p></li>
+</ul>
+
+
+<p>filter和query的查询方式有不少是重叠的，所以本节仅仅介绍API的调用，一些通用的注意的事项就不再重复了。</p>
+
+<h4>（1）Term Filter</h4>
+
+<p>词语查询，如果是对未分词的字段进行查询，则表示精确查询。查找名为“诸葛亮”的学生，查询结果为学号为5的记录。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '
+{
+  "filter": {
+    "term": {
+      "name": "诸葛亮",
+      "_cache" : true    // 与query主要是这里的区别，可以设置数据缓存
+    }  
+  }
+}'
+</code></pre>
+
+<p>filter查询方式都可以通过设置_cache为true来缓存数据。如果下一次恰好以相同的查询条件进行查询并且该缓存没有过期，就可以直接从缓存中读取数据，这样就大大加快的查询速度。</p>
+
+<h4>（2）Bool Filter</h4>
+
+<p>查找2班的班干部，查询结果为学号为5的记录。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '
+{
+  "filter": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "classNo": "2"          
+          }        
+        },
+        {
+          "term": {
+            "isLeader": "true"          
+          }        
+        }
+      ]    
+    }  
+  }
+}'
+</code></pre>
+
+<h4>（3）And Filter</h4>
+
+<p>And逻辑连接查询，连接1个或1个以上查询条件。它与bool查询中的must查询非常相似。实际上，and查询可以转化为对应的bool查询。查找2班的班干部，查询结果为学号为5的学生。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '
+{
+  "filter": {
+    "and": [
+      {
+        "term": {
+          "classNo": "2"          
+        }        
+      },
+      {
+        "term": {
+          "isLeader": "true"          
+        }        
+      }      ]  
+  }
+}'
+</code></pre>
+
+<h4>（4）Or Filter</h4>
+
+<p>Or连接查询，表示逻辑或。。查找2班或者是班干部的学生名单，查询结果为学号为1、2、5、8的学生。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '
+{
+  "filter": {
+    "or": [
+      {
+        "term": {
+          "classNo": "2"          
+        }        
+      },
+      {
+        "term": {
+          "isLeader": "true"          
+        }        
+      }
+    ]  
+  }
+}'
+</code></pre>
+
+<h4>（5）Exists Filter</h4>
+
+<p>存在查询，查询指定字段至少包含一个非null值的数据。如果字段索引为not_analyzed类型，则查询sql中的is not null查询方式。查询地址存在学生，查询结果为除了6之外的所有学生。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '
+{
+  "filter": {
+    "exists": {
+      "field": "address"    
+    }  
+  }
+}'
+</code></pre>
+
+<h4>（6）Missing Filter</h4>
+
+<p>缺失值查询，与Exists查询正好相反。查询地址不存在的学生，查询结果为学号为6的学生。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '
+{
+  "filter": {
+    "missing": {
+      "field": "address"    
+    }  
+  }
+}'
+</code></pre>
+
+<h4>（7）Prefix Filter</h4>
+
+<p>前缀查询。查找姓【赵】的同学，查询结果是学号为8的赵云。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '
+{
+  "filter": {
+    "prefix": {
+      "name": "赵"    
+    }  
+  }
+}'
+</code></pre>
+
+<h4>（8）Range Filter</h4>
+
+<p>范围查询，针对date和number类型的数据。查找年龄到18~20岁的同学，查询结果是学号为3、4、5、7的记录。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '
+{
+  "filter": {
+    "range": {
+      "age": {
+        "gte": "18",
+        "lte": "20"      
+      }    
+    }  
+  }
+}'
+</code></pre>
+
+<h4>（9）Terms Filter</h4>
+
+<p>多词语查询，查找符合词语列表的数据。如果要查询的字段索引为not_analyzed类型，则terms查询非常类似于关系型数据库中的in查询。下面查找学号为1，3的学生。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '{
+  "filter": {
+    "terms": {
+      "studentNo": [
+        "1",
+        "3"      ]    
+    }  
+  }
+}'
+</code></pre>
+
+<h4>（10）Regexp Filter</h4>
+
+<p>正则表达式查询，是最灵活的字符串类型字段查询方式。查找家住长沙市的学生，查询结果为学号为1的学生。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '{
+  "filter": {
+    "regexp": {
+      "address": ".*长沙市.*"    
+    }  
+  }
+}'
+</code></pre>
+
+<h1>五、聚合API</h1>
+
+<h2>5.1. 概述</h2>
+
+<p>ES中的Aggregations API是从Facets功能基础上发展而来，官网正在进行替换计划，建议用户使用Aggregations API，而不是Facets API。ES中的聚合上可以分为下面两类：</p>
+
+<ul>
+<li><p>metric（度量）聚合：度量类型聚合主要针对的number类型的数据，需要ES做比较多的计算工作</p></li>
+<li><p>bucketing（桶）聚合：划分不同的“桶”，将数据分配到不同的“桶”里。非常类似sql中的group语句的含义。</p></li>
+</ul>
+
+
+<p>metric既可以作用在整个数据集上，也可以作为bucketing的子聚合作用在每一个“桶”中的数据集上。当然，我们可以把整个数据集合看做一个大“桶”，所有的数据都分配到这个大“桶”中。</p>
+
+<p>ES中的聚合API的调用格式如下：</p>
+
+<pre><code>"aggregations" : {                  // 表示聚合操作，可以使用aggs替代
+  "&lt;aggregation_name&gt;" : {          // 聚合名，可以是任意的字符串。用做响应的key，便于快速取得正确的响应数据。
+    "&lt;aggregation_type&gt;" : {        // 聚合类别，就是各种类型的聚合，如min等
+      &lt;aggregations_body&gt;&gt;          // 聚合体，不同的聚合有不同的body
+    }
+    [,"aggregations" : { [&lt;sub_aggregation&gt;]+ } ]?   // 嵌套的子聚合，可以有0或多个
+  }
+  [,"aggregation_name_2" : { ... } ]* // 另外的聚合，可以有0或多个
+}
+</code></pre>
+
+<h2>5.2 度量类型（metric）聚合</h2>
+
+<h3>（1）Min Aggregation</h3>
+
+<p>最小值查询，作用于number类型字段上。查询2班最小的年龄值。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search" -d '{
+  "query": {  // 可以先使用query查询得到需要的数据集
+    "term": {
+      "classNo": "2"    
+    }  
+  },
+  "aggs": {
+    "min_age": {
+      "min": {
+        "field": "age"      
+      }    
+    }  
+  }
+}
+'
+</code></pre>
+
+<p>查询结果为：</p>
+
+<pre><code>{
+  "took": 19,   // 前面部分数据与普通的查询数据相同
+  "timed_out": false,
+  "_shards": {
+    "total": 5,
+    "successful": 5,
+    "failed": 0  
+  },
+  "hits": {
+    "total": 3,
+    "max_score": 1.4054651,
+    "hits": [
+      {
+        "_index": "student",
+        "_type": "student",
+        "_id": "2",
+        "_score": 1.4054651,
+        "_source": {
+          "studentNo": "2",
+          "name": "关羽",
+          "male": "男",
+          "age": "22",
+          "birthday": "1987-08-23",
+          "classNo": "2",
+          "isLeader": "false"        
+        }      
+      },
+      {
+        "_index": "student",
+        "_type": "student",
+        "_id": "8",
+        "_score": 1,
+        "_source": {
+          "studentNo": "8",
+          "name": "赵云",
+          "male": "男",
+          "age": "23",
+          "birthday": "1986-10-26",
+          "classNo": "2",
+          "isLeader": "false"        
+        }      
+      },
+      {
+        "_index": "student",
+        "_type": "student",
+        "_id": "5",
+        "_score": 0.30685282,
+        "_source": {
+          "studentNo": "5",
+          "name": "诸葛亮",
+          "male": "男",
+          "age": "18",
+          "birthday": "1992-04-27",
+          "classNo": "2",
+          "isLeader": "true"        
+        }      
+      }    ]  
+  },
+  "aggregations": {  // 聚合结果
+    "min_age": {     // 前面输入的聚合名
+      "value": 18,   // 聚合后的数据
+      "value_as_string": "18.0"    
+    }  
+  }
+}
+</code></pre>
+
+<p>上面的聚合查询有两个要注意的点：</p>
+
+<ul>
+<li><p>可以通过query先过滤数据</p></li>
+<li><p>返回的结果会包含聚合操作所作用的数据全集</p></li>
+</ul>
+
+
+<p>有时候我们对作用的数据全集并不太敢兴趣，我们仅仅需要最终的聚合结果。可以通过查询类型（search_type）参数来实现这个需求。下面查询出来的数据量会大大减少，ES内部也会在查询时减少一些耗时的步骤，所以查询效率会提高。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search?search_type=count" -d  // 注意这里的search_type=count 
+'{
+  "query": {  // 可以先使用query查询得到需要的数据集
+    "term": {
+      "classNo": "2"    
+    }  
+  },
+  "aggs": {
+    "min_age": {
+      "min": {
+        "field": "age"      
+      }    
+    }  
+  }
+}'
+</code></pre>
+
+<p>本次的查询结果为：</p>
+
+<pre><code>{...
+  "aggregations": {       // 聚合结果
+    "min_age": {          // 前面输入的聚合名
+      "value": 18,        // 聚合后的数据
+      "value_as_string": "18.0"
+    }  
+  }
+}
+</code></pre>
+
+<h3>（2）Max Aggregation</h3>
+
+<p>最大值查询。下面查询2班最大的年龄值，查询结果为23。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search?search_type=count" -d '{
+  "query": {
+    "term": {
+      "classNo": "2"    
+    }  
+  },
+  "aggs": {
+    "max_age": {
+      "max": {
+        "field": "age"      
+      }    
+    }  
+  }
+}'
+</code></pre>
+
+<h3>（3）Sum Aggregation</h3>
+
+<p>数值求和。下面统计查询2班的年龄总和，查询结果为63。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search?search_type=count" -d '{
+  "query": {
+    "term": {
+      "classNo": "2"    
+    }  
+  },
+  "aggs": {
+    "sum_age": {
+      "sum": {
+        "field": "age"      
+      }    
+    }  
+  }
+}'
+</code></pre>
+
+<h3>（4）Avg Aggregation</h3>
+
+<p>计算平均值。下面计算查询2班的年龄平均值，结果为21。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search?search_type=count" -d '{
+  "query": {
+    "term": {
+      "classNo": "2"    
+    }  
+  },
+  "aggs": {
+    "avg_age": {
+      "avg": {
+        "field": "age"      
+      }    
+    }  
+  }
+}'
+</code></pre>
+
+<h3>（5）Stats Aggregation</h3>
+
+<p>统计查询，一次性统计出某个字段上的常用统计值。下面对整个学校的学生进行简单地统计。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search?search_type=count" -d '{
+  "aggs": {
+    "stats_age": {
+      "stats": {
+        "field": "age"      
+      }    
+    }  
+  }
+}'
+</code></pre>
+
+<p>查询结果为：</p>
+
+<pre><code>{  ...  // 次要数据省略
+  "aggregations": {
+    "stats_age": {
+      "count": 8,        // 含有年龄数据的学生计数
+      "min": 16,         // 年龄最小值
+      "max": 24,         // 年龄最大值
+      "avg": 20.125,     // 年龄平均值
+      "sum": 161,        // 年龄总和
+      "min_as_string": "16.0",      
+      "max_as_string": "24.0",      
+      "avg_as_string": "20.125",      
+      "sum_as_string": "161.0"
+    }
+  }
+}
+</code></pre>
+
+<h3>（6）Top hits Aggregation</h3>
+
+<p>取符合条件的前n条数据记录。下面查询全校年龄排在前2位的学生，仅需返回学生姓名和年龄。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search?search_type=count" -d '{
+  "aggs": {
+    "top_age": {
+      "top_hits": {
+        "sort": [  // 排序
+          {
+            "age": {  // 按年龄降序
+              "order": "desc"            
+            }          
+          }],
+        "_source": {
+          "include": [  // 指定返回字段
+            "name",
+            "age" ]
+        },
+        "size": 2      // 取前2条数据
+      }    
+    }  
+  }
+}'
+</code></pre>
+
+<p>返回结果为：</p>
+
+<pre><code>{  ...  "aggregations": {
+  "top_age": {
+    "hits": {
+      "total": 9,
+      "max_score": null,
+      "hits": [ {
+          "_index": "student",
+          "_type": "student",
+          "_id": "1",
+          "_score": null,
+          "_source": {
+            "name": "刘备",
+            "age": "24"            
+          },
+          "sort": [24]          
+        }, {
+          "_index": "student",
+          "_type": "student",
+          "_id": "8",
+          "_score": null,
+          "_source": {
+            "name": "赵云",
+            "age": "23"            
+          },
+          "sort": [23]          
+        } ]      
+    }    
+  }  
+}}
+</code></pre>
+
+<h2>5.3 桶类型（bucketing）聚合</h2>
+
+<h3>（1）Terms Aggregation</h3>
+
+<p>按照指定的1或多个字段将数据划分成若干个小的区间，计算落在每一个区间上记录数量，并按指定顺序进行排序。下面统计每个班的学生数，并按学生数从大到小排序，取学生数靠前的2个班级。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search?search_type=count" -d '{
+  "aggs": {
+    "terms_classNo": {
+      "terms": {
+        "field": "classNo",  // 按照班号进行分组
+        "order": {  // 按学生数从大到小排序
+          "_count": "desc"        
+        },
+        "size": 2   // 取前两名
+      }    
+    }  
+  }
+}
+'
+</code></pre>
+
+<p>值得注意的，取得的前2名的学生数实际上是一个近似值，ES的实现方式参见这里。如果想要取得精确值，可以不指定size值，使其进行一次全排序，然后在程序中自行去取前2条记录。当然，这样做会使得ES做大量的排序运算工作，效率比较差。</p>
+
+<h3>（2）Range Aggregation</h3>
+
+<p>自定义区间范围的聚合，我们可以自己手动地划分区间，ES会根据划分出来的区间将数据分配不同的区间上去。下面将全校学生按照年龄划分为5个区间段：16岁以下、16~18、19~21、22~24、24岁以上，要求统计每一个年龄段内的学生数。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search?search_type=count" -d '{
+  "aggs": {
+    "range_age": {
+      "range": {
+        "field": "age",
+        "ranges": [
+          {
+            "to": 15          
+          },
+          {
+            "from": "16",
+            "to": "18"          
+          },
+          {
+            "from": "19",
+            "to": "21"          
+          },
+          {
+            "from": "22",
+            "to": "24"          
+          },
+          {
+            "from": "25"          
+          } ]      
+      }    
+    }  
+  }
+}'
+</code></pre>
+
+<h3>（3）Date Range Aggregation</h3>
+
+<p>时间区间聚合专门针对date类型的字段，它与Range Aggregation的主要区别是其可以使用时间运算表达式。主要包括+（加法）运算、-（减法）运算和/（四舍五入）运算，每种运算都可以作用在不同的时间域上面，下面是一些时间运算表达式示例。</p>
+
+<ul>
+<li><p>now+10y：表示从现在开始的第10年。</p></li>
+<li><p>now+10M：表示从现在开始的第10个月。</p></li>
+<li><p>1990-01-10||+20y：表示从1990-01-01开始后的第20年，即2010-01-01。</p></li>
+<li><p>now/y：表示在年位上做舍入运算。今天是2015-09-06，则这个表达式计算结果为：2015-01-01。说好的rounding运算呢？结果是做的flooring运算，不知道为啥，估计是我理解错了-_-!!</p></li>
+</ul>
+
+
+<p>下面查询25年前及更早出生的学生数。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search?search_type=count" -d '{
+  "aggs": {
+    "range_age": {
+      "date_range": {
+        "field": "birthday",
+        "ranges": [
+          {
+            "to": "now-25y"          
+          } ]      
+      }    
+    }  
+  }
+}'
+</code></pre>
+
+<h3>（4）Histogram Aggregation</h3>
+
+<p>直方图聚合，它将某个number类型字段等分成n份，统计落在每一个区间内的记录数。它与前面介绍的Range聚合非常像，只不过Range可以任意划分区间，而Histogram做等间距划分。既然是等间距划分，那么参数里面必然有距离参数，就是interval参数。下面按学生年龄统计各个年龄段内的学生数量，分隔距离为2岁。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search?search_type=count" -d '{
+  "aggs": {
+    "histogram_age": {
+      "histogram": {
+        "field": "age",
+        "interval": 2,     // 距离为2
+        "min_doc_count": 1 // 只返回记录数量大于等于1的区间
+      }    
+    }  
+  }
+}'
+</code></pre>
+
+<h3>（5）Date Histogram Aggregation</h3>
+
+<p>时间直方图聚合，专门对时间类型的字段做直方图聚合。这种需求是比较常用见得的，我们在统计时，通常就会按照固定的时间断（1个月或1年等）来做统计。下面统计学校中同一年出生的学生数。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search?search_type=count" -d '{
+  "aggs": {
+    "data_histogram_birthday": {
+      "date_histogram": {
+        "field": "birthday",
+        "interval": "year",  // 按年统计
+        "format": "yyyy"     // 返回结果的key的格式
+      }    
+    }  
+  }
+}
+'
+</code></pre>
+
+<p>返回结果如下，可以看到由于上面的”format”: “yyyy”，所以返回的key_as_string只返回年的信息。</p>
+
+<pre><code>{
+  "buckets": [
+    {
+      "key_as_string": "1985",
+      "key": 473385600000,
+      "doc_count": 1    
+    },
+    {
+      "key_as_string": "1986",
+      "key": 504921600000,
+      "doc_count": 1    
+    },
+    {
+      "key_as_string": "1987",
+      "key": 536457600000,
+      "doc_count": 1    
+    },
+    {
+      "key_as_string": "1989",
+      "key": 599616000000,
+      "doc_count": 1    
+    },
+    {
+      "key_as_string": "1990",
+      "key": 631152000000,
+      "doc_count": 1    
+    },
+    {
+      "key_as_string": "1991",
+      "key": 662688000000,
+      "doc_count": 1    
+    },
+    {
+      "key_as_string": "1992",
+      "key": 694224000000,
+      "doc_count": 1    
+    },
+    {
+      "key_as_string": "1994",
+      "key": 757382400000,
+      "doc_count": 1    
+    }  ]
+}
+</code></pre>
+
+<h3>（6）Missing Aggregation</h3>
+
+<p>值缺损聚合，它是一类单桶聚合，也就是最终只会产生一个“桶”。下面统计学生信息中地址栏缺损的记录数量。由于只有学号为6的孙尚香的地址缺损，所以统计值为1。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search?search_type=count" -d '{
+  "aggs": {
+    "missing_address": {
+      "missing": {
+        "field": "address"      
+      }    
+    }  
+  }
+}'
+</code></pre>
+
+<h2>5.4 嵌套使用</h2>
+
+<p>前面已经说过，聚合操作是可以嵌套使用的。通过嵌套，可以使得metric类型的聚合操作作用在每一“桶”上。我们可以使用ES的嵌套聚合操作来完成稍微复杂一点的统计功能。下面统计每一个班里最大的年龄值。</p>
+
+<pre><code>curl -XPOST "192.168.1.101:9200/student/student/_search?search_type=count" -d '{
+  "aggs": {
+    "missing_address": {
+      "terms": {
+        "field": "classNo"      
+      },
+      "aggs": {  // 在这里嵌套新的子聚合
+        "max_age": {
+          "max": {   // 使用max聚合
+            "field": "age"          
+          }        
+        }      
+      }    
+    }  
+  }
+}
+'
+</code></pre>
+
+<p>返回结果如下：</p>
+
+<pre><code>{
+  "buckets": [
+    {
+      "key": "1",
+      "doc_count": 3,
+      "max_age": {
+        "value": 24,
+        "value_as_string": "24.0"      
+      }    
+    },
+    {
+      "key": "2",
+      "doc_count": 3,
+      "max_age": {
+        "value": 23,
+        "value_as_string": "23.0"      
+      }    
+    },
+    {
+      "key": "3",
+      "doc_count": 1,
+      "max_age": {
+        "value": 20,
+        "value_as_string": "20.0"      
+      }    
+    },
+    {
+      "key": "4",
+      "doc_count": 1,
+      "max_age": {
+        "value": 16,
+        "value_as_string": "16.0"      
+      }    
+    }  ]
+}
+</code></pre>
+
+<p>六、参考</p>
+
+<p><a href="https://www.elastic.co/docs/api/doc/elasticsearch/">Elastic Search官方文档</a> <br/>
+<a href="https://wjw465150.github.io/Elasticsearch/">Elastic Search权威指南中文版</a></p>
+]]></content>
+  </entry>
+  
+</feed>

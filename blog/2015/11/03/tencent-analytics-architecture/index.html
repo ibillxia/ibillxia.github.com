@@ -1,0 +1,453 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>【标点符】腾讯分析系统架构解析 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2015/11/03/tencent-analytics-architecture">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(function () {
+  addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">【标点符】腾讯分析系统架构解析</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2015-11-03T15:54:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><center><img src="/images/2015/IMAG2015110300.jpg"></center>
+
+
+<p>TA（Tencent Analytics，腾讯分析）是一款面向第三方站长的免费网站分析系统，在数据稳定性、及时性方面广受站长好评，其秒级的实时数据更新频率也获得业界的认可。本文将从实时数据处理、数据存储等多个方面带你深入探寻TA的系统架构及实现原理。</p>
+
+<p>网站分析（Web Analytics）主要指的是基于网站的用户浏览行为，对网站的点击流数据和运营数据进行分析，以监控网站的运营状况，为网站的优化提供决策依据。网站分析系统已成为站长日常运营必不可少的工具，业界比较流行的网站分析系统主要有Google Analytics、CNZZ和百度统计等产品。</p>
+
+<p>TA作为网站分析产品的后起之秀在社区分析、用户画像、网站工具等多方面形成了自己的特色，其秒级的实时数据更新频率更是业界翘楚。在数据稳定性、准确性和及时性方面，TA在站长圈也是享有良好的口碑。随着接入业务量的不断发展，TA日均需要处理和计算的数据量达到TB级。如此庞大的数据量想要达到秒级实时且保证系统的高可用并非件易事。</p>
+
+<p>TA的实时计算框架借鉴了一些业界流行的流式计算系统的思路。虽然在构建系统中遇到了一些问题，但由于海量数据的实时处理、实时存储具备一定的典型性与通用性，所以将TA的解决方案分享出来，希望能给大家一些启示。</p>
+
+<!--more-->
+
+
+<h2>基本原理及系统架构</h2>
+
+<p>TA的基本原理是通过嵌入站长网站的JavaScript脚本收集用户访问行为数据，并发送TA采集集群，采集集群收到数据后将其过滤、编码、格式化后继续向后分发。数据处理集群负责按照业务逻辑计算数据，并将计算结果"写入"到数据存储集群，最后将结果数据展现给广大站长使用。TA的基本原理如图所示。</p>
+
+<center><img src="/images/2015/IMAG2015110301.png"></center>
+
+
+<p>TA后台是一套完整的数据流处理系统：由JavaScript采集的用户行为数据像川流不息的河水一样流入TA后台，经过清洗、计算后源源不断地流出到TA存储集群，供用户浏览和查询。TA的具体架构及核心部件如图所示。</p>
+
+<center><img src="/images/2015/IMAG2015110302.png"></center>
+
+
+<p>TA的后台分为离线和实时两部分：实时部分负责系统的主要功能计算，数据更新频率为秒级；离线部分负责系统复杂的关联分析及跨天计算，数据更新频率为天级。</p>
+
+<ul>
+<li><p>Http Access：主要负责HTTP协议的解析，数据的清洗及格式化。</p></li>
+<li><p>ESC：Event Streaming Coder，主要负责将系统不可枚举的数据类型编码成为整型，并将对应关系持久化。</p></li>
+<li><p>ESP：Event Streaming Processor，主要负责将数据按照站点、UID重新组织并计算PV、UV、停留时长和蹦失率等网站分析指标。</p></li>
+<li><p>ESA：Event Streaming Aggregator，主要负责汇总ESP计算后的数据按照站点，并写入到Redis。</p></li>
+<li><p>Center：系统的中心节点，负责系统配置、数据路由管理，并承担容灾切换功能。</p></li>
+<li><p>Logserver：负责将Access收集到的数据以字符串形式写入文件，并上传到TDCP上。</p></li>
+<li><p>TDCP：腾讯分布式计算平台，负责离线数据的计算，并由脚本将结果数据写入MySQL中。</p></li>
+</ul>
+
+
+<h2>实时解决方案</h2>
+
+<p>在介绍TA实时解决方案前，我们先来了解下TA支撑的业务量。当前TA日均需要处理几十万网站的上TB级数据，处理过后的URL个数仍有上亿条，系统存储的key个数超过十亿。如何高效、低延迟地处理如此大量的业务数据是TA实时系统面临的主要挑战。TA解决方案的主要思路可以概括为数据全二进制化、计算全内存化、存储NoSQL化。下面就实时计算和实时存储这两大子系统进行深入的讨论。</p>
+
+<h3>实时计算</h3>
+
+<p>对于计算子系统，我们参考了Hadoop、S4和Storm等开源项目，力图设计为一个较为通用，扩展性较强的全内存实时Event处理系统（或者套用流行的术语称为流式实时Event处理系统）。对于这样的一个系统，我们设计支持的典型输入输出流程大致如图所示。</p>
+
+<center><img src="/images/2015/IMAG2015110303.png"></center>
+
+
+<p>实时计算系统的设计要点在数据组织、协议和增量计算模型上。</p>
+
+<p>数据组织。万物皆int，考虑到内存以及计算过程的性能需求，我们将所有非int的数据类型转化为int。可以枚举的数据类型，将其配置化映射为唯一int；不可枚举的数据类型，则利用MD5算法近似得到唯一的int。例如，页面URL属于不可枚举的类型，则预处理通过MD5算法近似得到唯一的int；UserAgent里的浏览器类型字符串则属于可枚举的数据，则预先配置化映射为int。这个方法节省了较多内存，提高了整个系统的计算性能。</p>
+
+<p>协议。协议层面上，我们首先设计实现了一种可扩展的Event结构，这种Event结构支持半自动化的序列化/反序列化机制（参考自msgpack的设计）和紧凑的二进制编码（基于Zigzag编码，参考Protobuf的实现）。这种Event结构在流式高性能I/O（网络传输和持久化）方面表现得相当良好。实时计算子系统被设计为可以扩展支持任意的Event实现。</p>
+
+<p>增量计算模型。增量计算模型，指的是基本计算过程，被定义为以下三部分（如图所示）</p>
+
+<center><img src="/images/2015/IMAG2015110304.png"></center>
+
+
+<ul>
+<li><p>Processor：负责具体业务逻辑的计算处理。</p></li>
+<li><p>Data Holder：负责保存增量结果数据，以及计算依赖的中间状态数据。</p></li>
+<li><p>Emitter：负责定期输出清空增量计算结果。</p></li>
+</ul>
+
+
+<p>具体到流程方面，分为以下三步（如图所示）。</p>
+
+<center><img src="/images/2015/IMAG2015110305.png"></center>
+
+
+<ul>
+<li><p>接收Event，计算处理—Processor。</p></li>
+<li><p>保存计算结果以及计算依赖中间数据—DataHolder。</p></li>
+<li><p>定时触发输出时间片内计算结果，清空计算结果—Emitter。</p></li>
+</ul>
+
+
+<p>增量计算模型弱化了分布式系统中单台机器的事务状态，相应地简化了分布式计算系统的实现，同时也提高了整个系统的性能。</p>
+
+<h3>实时存储</h3>
+
+<p>在TA系统中，实时存储的数据都是需要通过Web展示层读取的统计数据。这类数据存在两个典型特点。</p>
+
+<ul>
+<li><p>频繁更新写。更新频度视系统实时性而定，每条统计结果更新频度最快可以达到1秒。</p></li>
+<li><p>少量读取。"少量"是相对上述更新而言的。同时根据业务逻辑，可将统计数据划分为两类。</p></li>
+<li><p>固定不变数据：主要是URL、搜索关键词等数据。这一部分数据理论上是在不停地增加，不会修改旧有数据。</p></li>
+<li><p>动态数据：主要是频繁更新的结果统计数据。这一部分数据则需要不停地更新。例如，www.qq.com域名下的PV和UV统计结果。</p></li>
+</ul>
+
+
+<p>考虑到上述的TA实时统计数据的特点，我们选择NoSQL实现我们的存储系统；同时，针对两类不同的数据类型，分别选用LevelDB和Redis来存储。</p>
+
+<h3>Redis</h3>
+
+<p>TA实时存储的主要构件。考虑到TA系统本身就是一个比较完善的分布式集群系统，因此我们需要的存储构件是"not clustering, but sharding"。也就是说像HBase和MongoDB这样的"重武器"并不适合TA，而NoSQL数据库中的"瑞士军刀"Redis凭借其出色的性能走入我们的视野。同</p>
+
+<p>时TA的结果数据类型也比较丰富，有像站点PV、UV、VV和IP等Hash类型的数据，也有像用户访问轨迹这样set类型的"动态数据"，而Redis丰富的数据结构很好地完成了这项任务。</p>
+
+<p>选择Redis的另一个原因是它足够简单且易于扩展。在实际应用的过程中，我们发现的问题都可以通过扩展Redis命令来解决。</p>
+
+<p>例如，TA中有这样的一种应用场景：为了消除ESA模块的状态，存储在Redis中的数据往往并不是最终的结果数据，而是还需要进一步运算的中间数据。像bounce rate这个指标（bouncerate=bounce session数/total session数），需要前台查询两次再做一次运算后最终展示给用户。在高并发的情况下，无疑会影响系统的响应速度。</p>
+
+<p>本着"移动计算，而不是移动数据"的原则，我们对Redis的sort、hmget命令进行了扩展使其支持四则运算，成功地将原来的两次查询优化为一次。扩展四则运算的另外一个目的是可以"通过计算换取存储"，例如需要将两种类型加总成总和的类型数据，可以只存储两份，加总数据"通过计算换取"。</p>
+
+<p>除了数据读取，数据的写入也可以进行类似合并数据的优化。例如，TA在写入URL的PV、UV、VV、IP、停留时长和bounce rate这6个指标时，需要调用6次Redis命令。而实际上这6个指标是存储在同一个Hash内的，通过扩展hmincrby命令，支持将Hash的所有field一次更改，便能将调用次数优化至一次。上线之后也取得了良好的效果，峰值时的CPU利用率几乎下降了一半，同时也大幅提升了上层模块ESA的吞吐量。</p>
+
+<h3>LevelDB</h3>
+
+<p>它是Redis的有效补充。考虑到Redis为内存数据库，而使用内存的成本要高于硬盘，因此选择引入了基于磁盘存储的LevelDB作为补充。由于LevelDB的写性能足够好，而读性能也远远超过目前"在线少量读取"的需求，所以我们选择LevelDB存储"固定不变数据"。</p>
+
+<p>在数据存储的架构设计上，由于实时数据服务与在线系统，可靠性要求较高，因此我们主要采取双写复制+Sharding的设计方法。</p>
+
+<p>双写复制。所有的数据存储都会至少同步写两份，以提高在线系统服务的可用性。</p>
+
+<p>数据分片（Sharding）。</p>
+
+<p>基于域名：所有的数据以域名为单位组织分片；任何域名可以调整到任意分片中；单个域名数据原则上存储在一个分片中。</p>
+
+<p>动态调整（如图所示）：只调整分片策略，不移动数据；基于数据量计算分片负载。</p>
+
+<center><img src="/images/2015/IMAG2015110306.png"></center>
+
+
+<p>此外，针对分片集群数据的查询，我们主要做了三项工作（如图所示）。</p>
+
+<center><img src="/images/2015/IMAG2015110307.png"></center>
+
+
+<ul>
+<li><p>Redis Protocol Stack是一个较为完整的Redis协议栈，是上层应用的基础。直接用Redis协议作为对外提供查询的通用协议，这样外部用户可直接通过目前各种Redis Client实现来查询访问数据。Query Rule Engine是一个灵活的查询引擎。能够根据规则智能地在多个Redis、LevelDB数据源中查询，执行类join的操作；也简单扩展支持其他的异构数据源，如MySQL、HBase等。</p></li>
+<li><p>Query Compute Engine是一个实时查询计算引擎，能根据基础查询结果实时计算。引入此部分的主要目的在于减少Redis数据空间占用。</p></li>
+</ul>
+
+
+<h2>未来展望</h2>
+
+<p>目前TA虽然在后台上已经做到数据秒级更新，但展示方式仍为传统的静态方式。后续TA会在数据的动态刷新上进行更多尝试，让站长可以第一时间了解网站营销效果，时刻感受网站心跳。</p>
+
+<h2>参考资料</h2>
+
+<p>[1]<a href="https://www.biaodianfu.com/tencent-analytics.html">腾讯分析系统架构解析 - 标点符</a></p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2015/11/03/tencent-analytics-architecture/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2015-11-03T15:54:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/engineering/'>Engineering</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a>, <a class='tag' href='/blog/tags/shi-shi-ji-suan/'>实时计算</a>, <a class='tag' href='/blog/tags/jia-gou/'>架构</a>, <a class='tag' href='/blog/tags/teng-xun/'>腾讯</a></span>
+		
+    </p>
+    
+      
+         <div class="sharing">
+  
+  
+  
+</div>
+
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2015/10/28/mysql-charset-and-confusion/" title="Previous Post:
+        MySQL乱码问题详解与解决方案">&laquo; MySQL乱码问题详解与解决方案</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2015/11/05/inside-spotify-and-the-future-of-music-streaming/"
+        title="Next Post: 揭秘：Spotify 是如何实现歌曲的个人品味精准推送的">揭秘：Spotify 是如何实现歌曲的个人品味精准推送的
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://ibillxia.github.io/blog/2015/11/03/tencent-analytics-architecture/';
+        var disqus_url = 'https://ibillxia.github.io/blog/2015/11/03/tencent-analytics-architecture/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,409 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>《Neural Networks: A Comprehensive Foundation》读书笔记 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2018/07/07/reading-neural-networks-a-comprehensive-approach">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(function () {
+  addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">《Neural Networks: A Comprehensive Foundation》读书笔记</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2018-07-07T23:38:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><center><img src="/images/2018/IMAG2018070701.png"></center>
+
+
+<p>近几年AI大火，深度学习作为AI领域最火的研究子方向，从最早的RBM、Auto-encoder、最原始的CNN、RNN到LeNet、AlexNet、VGG、GoogLeNet、ResNet等多样化的深度网络，深度学习的算法和模型层出不穷，发展迅猛，但所有这些模型的低层原理和子单元却是大同小异殊途同归的。Simon Haykins 这本书详细解读了神经网模型的底层原理、中层的方法论和思想总结、上层复杂模型的构建和应用，虽然这本书出版比较早，但其中的基础原理和方法论一点也不过时，对于理解神经网络和深度学习模型很有帮助，非常值得仔细研读。</p>
+
+<p>以下是精读过程中，做的一些简要的记录，对该书感兴趣而又没有时间细读全书的同学，可以根据以下内容，选择性的挑选相关章节阅读 :) （个人认为前三部分内容是比较普适性的方法论，讲得比较精彩，推荐精读）</p>
+
+<!-- more -->
+
+
+<h3>一、关于Knowledge Representation</h3>
+
+<p>第一章主要介绍性的内容，值得一提的是1.7节中关于Knowledge Representation的内容讲得比较好！（在我的blog中也有具体记述：<a href="http://ibillxia.github.io/blog/2013/03/27/learning-process-of-neural-networks/">神经网络的学习方法概述</a>）</p>
+
+<p>首先是知识的定义，然后是知识的表示，再然后该书将现实世界的知识分为先验知识和观察数据两种，其中后者包含有label的和无label的。</p>
+
+<p>后面还详细讲述了在Neural Networks模型中知识的表示应该满足的4个规则、2种将先验知识融入NN中的方法、3种将Invariances(不变性，恒定性)融入到NN的方法等。具体可以看blog。</p>
+
+<h3>二、关于Learning Process</h3>
+
+<p>该书的第二章主要讲的是NN的学习方法。</p>
+
+<p>主要从基本学习方法（5种）、学习策略（Credit-Assignment问题、监督/非监督学习）、学习任务（6种）、自适应（Adaptation）、学习过程的统计学理论等方面来讲述。</p>
+
+<p>其中前面几部分在上述blog中有所简略记述，关于学习过程的统计学理论方面，该书首先提到了其中的期望、方差估计等，然后提出了一个很重要的问题，即关于Variance/Bias Dilemma的问题。再然后将实际问题用严谨的统计学理论来表述和建模，并提出了结构风险最小化原理、VC维的概念实例及其估算、学习机器泛化能力的边界约束等。最后讲述了学习机器的PAC（Probably Approximate Correct，概率近似正确）理论。</p>
+
+<h3>三、关于感知机（Perceptron）</h3>
+
+<p>第3章讲单层感知机，第4章讲多层感知机。</p>
+
+<p>第3章中值得一提的是，在3.3节中在提出了梯度下降的学习方法后，指出该方法学习速率难定等缺陷，然后提出了Newton方法、Gauss-Newton方法等。</p>
+
+<p>第4章中值得一提的是，在4.6节的第一段中就指出了多层感知机（MLP）的BP算法的由于其可设置的参数太多而被称为more of an art than a science，其好坏在很大程度上是与设计者的经验有关的，并指出八个有利于提升算法效率的方面：</p>
+
+<ul>
+<li>（1）sequencial mode is computationally faster than batch mode；</li>
+<li>（2）maximizing information content；实现方法是：选择那些是训练误差更大的样本、与之前出现的样本差异更大的样本；</li>
+<li>（3）激活函数：一般而言反对称的激活函数（如tanh函数）比非对称的激活函数（如logistic函数）学习得更快；</li>
+<li>（4）Target values：目标输出应该落在激活函数的值域范围内；</li>
+<li>（5）输入数据规整：训练集输入数据的均值应该接近0，数据点之间不相关，每个维度上的方差相近；</li>
+<li>（6）初始化：初始化的权重的均值为0，方差为神经元链接到的突触的个数的-1/2次方；</li>
+<li>（7）Learning from hints：将关于训练数据的一些先验知识引入进来，比如方差信息、对称性等，以加快训练速度，同时提升系统性能；</li>
+<li>（8）学习速率：每个神经元的学习速率最好是相同的，一般上层的比下层的具有更大的局部梯度，这样上层的学习速率应该设置得更小；另外，包含更多输入的神经元的学习速率应该更小。</li>
+</ul>
+
+
+<p>这几个经验非常重要。</p>
+
+<p>还有，在4.15节中讲到了NN的裁剪技术，主要有两种思路，一种是Regularization（正则化），另一种是Deletion（删除）。</p>
+
+<h3>四、径向基（RBF）神经网络</h3>
+
+<p>第5章主要讲RBF（Radial Basis Function）神经网络。</p>
+
+<p>RBF神经网络是一个三层网络，除了输入、输出外仅有一个隐层，隐层的激活函数是高斯函数等钟形函数，输入节点与权重的距离作为高斯函数的指数，由于距离是径向同性的，因而称为径向基函数。</p>
+
+<p>在5.11节，将RBF与MLP进行了详细比较。</p>
+
+<p>在5.13节中介绍了几种RBF的学习策略，主要是中心点的选取，而关于网络的训练、优化、正则化、泛化等则再前几节中讲解了。</p>
+
+<h3>五、SVM、Boosting、PCA等</h3>
+
+<p>为什么在神经网络的书中单独开一章来讲SVM呢？因为最基本的SVM是线性模型，可以看做是单层感知机或多层感知机的顶层。而引入核函数后，就变成非线性分类器，但仍然可以看作为NN中的某一层。</p>
+
+<p>关于SVM的具体原理和方法这本书就讲得不是很详细了，可以参看John Shawe-Taylor &amp; Nello Cristianini编写的两本书：《Support Vector Machines》和《Kernel Methods for Pattern Analysis》。</p>
+
+<p>第7章讲的Committee Machine（委员会机）的基本思想是分而治之，即将输入样本分为几分，每一份分别用各自的模型或方法来学习，然后综合这多个系统的结果来进行决策。最典型的例子就是Boosting。</p>
+
+<p>第8章将主成分分析（Principal Component Analysis，PCA），对特征进行线性变换，用于降维等。最后还提到了Kernel-PCA，这就是对特征的非线性变换了。</p>
+
+<h3>六、自组织特征映射（SOM）神经网络</h3>
+
+<p>第9章讲自组织特征映射（Self-Organise Map，SOM）神经网络。</p>
+
+<p>SOM的基本思想是网络在接受外界输入模式时，将会分为不同的对应区域，各区域对输入模式具有不同的相应特征，并且这个过程是自动完成的。SOM与人脑的自组织特征类似。</p>
+
+<p>9.4节将SOM算法的步骤进行了总结，将其分为5大步：初始化、采样、相似性匹配、更新、Continuation(附加)。</p>
+
+<p>9.5节对SOM的一些重要特性进行了梳理，主要是4个方面：输入空间的逼近、拓扑顺序、疏密匹配、特征选择。</p>
+
+<h3>七、信息论与统计机器学习</h3>
+
+<p>第10章讲信息论，第11章将统计机器学习。</p>
+
+<p>信息论里面主要讲到了熵（Entropy）、最大熵原则、互信息、K-L距离、互信息最大化原则等基本概念和原理，还有就是信息熵的应用，比如用来做冗余消除（Redundancy Reduction），独立成分分析（independent component analysis，ICA）等等。</p>
+
+<p>统计机器学习里面主要内容有统计原理、Markov链、Metropolis算法、模拟退火算法、吉布斯采样、玻尔兹曼机、置信网络、Holmholtz机等。Markov链在语音识别中用得比较多，而Metropolis算法是用来生成可逆Markov链的，进而可以构造MCMC算法。而模拟退火算法是基于Monte-Carlo迭代求解策略的一种随机寻优算法，理论上具有概率的全局优化性。吉布斯采样与Metropolis算法类似，只是它是用来生成基于Gibbs分布Markov链。Holmholtz机类似与Sigmoid置信网络，只是他的网络连接分为前向连接（用于识别）和反向连接（类似生成模型），而其学习过程分为清醒和睡眠两个过程，分别对这两部分连接的权重进行学习。</p>
+
+<h3>八、增强学习</h3>
+
+<p>第12章讲神经元动态规划。</p>
+
+<p>神经元动态规划中主要讲了Markovian决策过程、Bellman优化准则、策略迭代、值迭代、Q-学习等。其中最基础的是马尔科夫决策过程，而后面的一些理论和方法都是MDP的学习策略和算法。</p>
+
+<h3>九、其他话题</h3>
+
+<p>第13章讲在时间序列中使用网络模型。第14章和第15章主要是反馈（Recurrent）神经网络。</p>
+
+<p>神经网络用于时间序列识别的模型有NETtalk、TDNN、TLFN等。</p>
+
+<p>反馈神经网络主要包含Hopfield模型、Cohen-Grossberg理论、Attractor（吸引子）、Chaotic（混沌）、状态-空间模型、Kalman滤波等。</p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2018/07/07/reading-neural-networks-a-comprehensive-approach/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2018-07-07T23:38:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/reading/'>Reading</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/shen-jing-wang-luo/'>神经网络</a></span>
+		
+    </p>
+    
+      
+         <div class="sharing">
+  
+  
+  
+</div>
+
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2018/06/02/tencent-univercity-ceo-comming/" title="Previous Post:
+        《腾讯大学-CEO来了》笔记">&laquo; 《腾讯大学-CEO来了》笔记</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2018/07/22/spark-windows-setup/"
+        title="Next Post: Spark在Windows下的环境搭建">Spark在Windows下的环境搭建
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://ibillxia.github.io/blog/2018/07/07/reading-neural-networks-a-comprehensive-approach/';
+        var disqus_url = 'https://ibillxia.github.io/blog/2018/07/07/reading-neural-networks-a-comprehensive-approach/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 安全 | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/an-quan/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[【高可用架构】腾讯基于用户画像大数据的电商防刷架构]]></title>
+    <link href="https://ibillxia.github.io/blog/2015/11/24/tencent-anti-fraud-architecture/"/>
+    <updated>2015-11-24T13:53:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2015/11/24/tencent-anti-fraud-architecture</id>
+    <content type="html"><![CDATA[<h2>一、背景介绍</h2>
+
+<p>最近1~2年电商行业飞速发展，各种创业公司犹如雨后春笋大量涌现，商家通过各种活动形式的补贴来获取用户、培养用户的消费习惯。</p>
+
+<p>但任何一件事情都具有两面性，高额的补贴、优惠同时了也催生了"羊毛党"。</p>
+
+<p>"羊毛党"的行为距离欺诈只有一步之遥，他们的存在严重破环了活动的目的，侵占了活动的资源，使得正常的用户享受不到活动的直接好处。</p>
+
+<p>今天主要分享下腾讯自己是如何通过大数据、用户画像、建模来防止被刷、恶意撞库的。</p>
+
+<!--more-->
+
+
+<h2>二、黑产现状介绍</h2>
+
+<p>"羊毛党"一般先利用自动机注册大量的目标网站的账号，当目标网站搞促销、优惠等活动的时候，利用这些账号参与活动刷取较多的优惠，最后通过淘宝等电商平台转卖获益。</p>
+
+<h3>2.1、羊毛党分工</h3>
+
+<p>他们内部有着明确的分工，形成了几大团伙，全国在20万人左右：</p>
+
+<ol>
+<li><p>软件制作团伙：专门制作各种自动、半自动的黑产工具，比如注册自动机、刷单自动机等；他们主要靠出售各种黑产工具、提供升级服务等形式来获利。</p></li>
+<li><p>短信代接平台：实现手机短信的自动收发，其实一些平台亦正亦邪，不但提供给正常的商家使用，一些黑产也会购买相关的服务。</p></li>
+<li><p>账号出售团伙：他们主要是大量注册各种账号，通过转卖账号来获利；该团伙与刷单团伙往往属于同一团伙。</p></li>
+<li><p>刷单团伙：到各种电商平台刷单，获取优惠，并且通过第三方的电商平台出售优惠，实现套现。</p></li>
+</ol>
+
+
+<center><img src="/images/2015/IMAG2015112401.png"></center>
+
+
+<h3>2.2、"羊毛党"从业特点</h3>
+
+<p>这些黑产团队，有三个特点：</p>
+
+<ol>
+<li><p>专业化：专业团队、人员、机器来做。</p></li>
+<li><p>团伙化：黑产已经形成一定规模的团伙，而且分工明确；从刷单软件制作、短信代收发平台、电商刷单到变卖套现等环节，已经形成完整的刷单团伙。</p></li>
+<li><p>地域化：黑产刷单团伙基本分布在沿海的一些经济发达城市，比如，北京、上海、广东等城市，这或许跟发达城市更加容易接触到新事物、新观念有关。</p></li>
+</ol>
+
+
+<center><img src="/images/2015/IMAG2015112402.png"></center>
+
+
+<h3>2.3、对抗刷单的思路</h3>
+
+<p>对抗刷单，一般来讲主要从三个环节入手：</p>
+
+<ol>
+<li><p>注册环节：识别虚假注册、减少"羊毛党"能够使用的账号量。在注册环节识别虚假注册的账号，并进行拦截和打击。</p></li>
+<li><p>登录场景：提高虚假账号登录门槛，从而减少能够到达活动环节的虚假账号量。比如，登录环节通过验证码、短信验证码等手段来降低自动机的登录效率，从而达到减少虚假账号登录量、减轻活动现场安全压力的目的。</p></li>
+<li><p>活动环节：这个是防刷单对抗的主战场，也是减少"羊毛党"获利的直接战场；这里的对抗措施，一般有两个方面：</p></li>
+</ol>
+
+
+<p>1）通过验证码（短信、语音）降低黑产刷单的效率。</p>
+
+<p>2）大幅度降低异常账号的优惠力度。</p>
+
+<h2>三、腾讯内部防刷架构</h2>
+
+<h3>3.1、腾讯内部防刷的架构图</h3>
+
+<center><img src="/images/2015/IMAG2015112403.png"></center>
+
+
+<h3>3.2、模块详细介绍</h3>
+
+<h4>1、风险学习引擎</h4>
+
+<p>风险学习引擎：效率问题。由于主要的工作都是线下进行，所以线上系统不存在学习的效率问题。线上采用的都是C++实现的DBScan等针对大数据的快速聚类算法，基本不用考虑性能问题。</p>
+
+<p>风险学习引擎：采用了黑/白双分类器风险判定机制。之所以采用黑/白双分类器的原因就在于减少对正常用户的误伤。</p>
+
+<p>例如，某个IP是恶意的IP，那么该IP上可能会有一些正常的用户，比如大网关IP。</p>
+
+<p>再比如，黑产通过ADSL拨号上网，那么就会造成恶意与正常用户共用一个IP的情况。</p>
+
+<p>黑分类器：根据特征、机器学习算法、规则/经验模型，来判断本次请求异常的概率。</p>
+
+<p>白分类器：判断属于正常请求的概率。</p>
+
+<center><img src="/images/2015/IMAG2015112404.jpeg"></center>
+
+
+<h4>2、矩阵式逻辑框架</h4>
+
+<p>我们以黑分类器为例来剖析下分类器的整个逻辑框架。</p>
+
+<p>总的来讲我们采用了矩阵式的逻辑框架，最开始的黑分类器我们也是一把抓，随意的建立一个个针对黑产的检测规则、模型。</p>
+
+<p>结果发现不是这个逻辑漏过了，而是那个逻辑误伤量大，要对那一类的账号加强安全打击力度，改动起来也非常麻烦。</p>
+
+<p>因此我们就设计了这个一个矩阵式的框架来解决上述问题。</p>
+
+<center><img src="/images/2015/IMAG2015112405.jpeg"></center>
+
+
+<p>矩阵的横向采用了Adaboost方法，该方法是一种迭代算法，其核心思想是针对同一个训练集训练不同的弱分类器，然后把这些分类器集合起来，构成一个最终的分类器。</p>
+
+<p>而我们这里每一个弱分类器都只能解决一种帐号类型的安全风险判断，集中起来才能解决所有账户的风险检测。</p>
+
+<p>那么在工程实践上带来三个好处：</p>
+
+<ol>
+<li><p>便于实现轻重分离，比如某平台虚假账号集中在邮箱账号，策略就可以加大对邮箱账号的打击力度，影响范围也局限在邮箱帐号，而不是该平台所有的账号。</p></li>
+<li><p>减少模型训练的难度，模型训练最大的难度在于样本的均衡性问题，拆分成子问题，就不需要考虑不同账号类型之间的数据配比、均衡性问题，大大降低了模型训练时正负样本比率的问题。</p></li>
+<li><p>逻辑的健壮性，某一个分类器的训练出现了问题，受影响的范围不至于扩展到全局。</p></li>
+</ol>
+
+
+<p>矩阵纵向采用了Bagging方法，该方法是一种用来提高学习算法准确度的方法，该方法在同一个训练集合上构造预测函数系列，然后以一定的方法将他们组合成一个预测函数，从而来提高预测结果的准确性。</p>
+
+<h2>四、腾讯大数据收集纬度</h2>
+
+<p>大数据一直在安全对抗领域发挥着重要的作用，从我们的对抗经验来看，大数据不仅仅是数据规模很大，而且还包括两个方面：</p>
+
+<ol>
+<li><p>数据广度：要有丰富的数据类型。比如，不仅仅要有社交领域的数据、还要有游戏、支付、自媒体等领域的数据，这样就提供了一个广阔的视野让我们来看待黑产的行为特点。</p></li>
+<li><p>数据深度：黑产的对抗。我们一直强调纵深防御，我们不仅仅要有注册数据，还要有登录，以及账号的使用的数据，这样我们才能更好的识别恶意。</p></li>
+</ol>
+
+
+<p>所以想要做风控和大数据的团队，一定要注意在自己的产品上多埋点，拿到足够多的数据，先沉淀下来。</p>
+
+<h2>五、腾讯大数据处理平台－魔方</h2>
+
+<p>我们的团队研发了一个叫魔方的大数据处理和分析的平台，底层我们集成了MySQL、MongoDB，Spark、Hadoop等技术，在用户层面我们只需要写一些简单的SQL语句、完成一些配置就可以实现例行分析。</p>
+
+<p>这里我们收集了社交、电商、支付、游戏等场景的数据，针对这些数据我们建立一些模型，发现哪些是恶意的数据，并且将数据沉淀下来。</p>
+
+<p>沉淀下来的对安全有意义的数据，一方面就存储在魔方平台上，供线下审计做模型使用；另一方面会做成实时的服务，提供给线上的系统查询使用。</p>
+
+<h3>5.1、腾讯用户画像沉淀方法</h3>
+
+<p>画像，本质上就是给账号、设备等打标签。</p>
+
+<p>用户画像 ＝ 打标签</p>
+
+<p>我们这里主要从安全的角度出发来打标签，比如IP画像，我们会标注IP是不是代理IP，这些对我们做策略是有帮助的。</p>
+
+<p>以QQ的画像为例，比如，一个QQ只登录IM、不登录其他腾讯的业务、不聊天、频繁的加好友、被好友删除、QQ空间要么没开通、要么开通了QQ空间但是评论多但回复少，这种号码我们一般会标注QQ养号（色情、营销），类似的我们也会给QQ打上其他标签。</p>
+
+<p>标签的类别和明细，需要做风控的人自己去设定，比如：地理位置，按省份标记。性别，安男女标记。其他细致规则以此规律自己去设定。</p>
+
+<p>我们看看腾讯的IP画像，沉淀的逻辑如下图：</p>
+
+<center><img src="/images/2015/IMAG2015112406.jpeg"></center>
+
+
+<p>一般的业务都有针对IP的频率、次数限制的策略，那么黑产为了对抗，必然会大量采用代理IP来绕过限制。</p>
+
+<p>既然代理IP的识别如此重要，那我们就以代理IP为例来谈下腾讯识别代理IP的过程。</p>
+
+<p>识别一个IP是不是代理IP，技术不外乎就是如下四种：</p>
+
+<ol>
+<li><p>反向探测技术：扫描IP是不是开通了80,8080等代理服务器经常开通的端口，显然一个普通的用户IP不太可能开通如上的端口。</p></li>
+<li><p>HTTP头部的X_Forwarded_For：开通了HTTP代理的IP可以通过此法来识别是不是代理IP；如果带有XFF信息，该IP是代理IP无疑。</p></li>
+<li><p>Keep-alive报文：如果带有Proxy-Connection的Keep-alive报文，该IP毫无疑问是代理IP。</p></li>
+<li><p>查看IP上端口：如果一个IP有的端口大于10000，那么该IP大多也存在问题，普通的家庭IP开这么大的端口几乎是不可能的。</p></li>
+</ol>
+
+
+<p>以上代理IP检测的方法几乎都是公开的，但是盲目去扫描全网的IP，被拦截不说，效率也是一个很大的问题。</p>
+
+<p>因此，我们的除了利用网络爬虫爬取代理IP外，还利用如下办法来加快代理IP的收集：通过业务建模，收集恶意IP（黑产使用代理IP的可能性比较大）然后再通过协议扫描的方式来判断这些IP是不是代理IP。每天腾讯都能发现千万级别的恶意IP，其中大部分还是代理IP。</p>
+
+<h3>5.2、腾讯用户画像类别概览</h3>
+
+<center><img src="/images/2015/IMAG2015112407.jpeg"></center>
+
+
+<h3>5.3、防御逻辑</h3>
+
+<center><img src="/images/2015/IMAG2015112408.jpeg"></center>
+
+
+<p>实时系统使用C/C++开发实现，所有的数据通过共享内存的方式进行存储，相比其他的系统，安全系统更有他自己特殊的情况，因此这里我们可以使用"有损"的思路来实现，大大降低了开发成本和难度。</p>
+
+<p>数据一致性，多台机器，使用共享内存，如何保障数据一致性？</p>
+
+<p>其实，安全策略不需要做到强数据一致性。</p>
+
+<p>从安全本身的角度看，风险本身就是一个概率值，不确定，所以有一点数据不一致，不影响全局。</p>
+
+<p>但是安全系统也有自己的特点，安全系统一般突发流量比较大，我们这里就需要设置各种应急开关，而且需要微信号、短信等方式方便快速切换，避免将影响扩散到后端系统。</p>
+
+<h3>5.4、接入系统</h3>
+
+<center><img src="/images/2015/IMAG2015112409.png"></center>
+
+
+
+
+<center><img src="/images/2015/IMAG2015112410.jpeg"></center>
+
+
+<p>适应的场景包括：</p>
+
+<ul>
+<li><p>电商o2o刷单、刷券、刷红包</p></li>
+<li><p>防止虚假账号注册</p></li>
+<li><p>防止用户名、密码被撞库</p></li>
+<li><p>防止恶意登录</p></li>
+</ul>
+
+
+<h2>Q&amp;A</h2>
+
+<p>Q：风险学习引擎是自研的，还是使用的开源库？</p>
+
+<p>风险学习引擎包括两个部分，线上和线下两部分：</p>
+
+<ul>
+<li><p>线上：自己利用c/c++来实现。</p></li>
+<li><p>线下：涉及利用python开源库来做的，主要是一些通用算法的训练和调优。</p></li>
+</ul>
+
+
+<p>Q：请问魔方平台中用到的MongDB是不是经过改造？因为MongDB一直不被看好，出现问题也比较多。</p>
+
+<p>我们做了部分改造，主要是DB的引擎方面。</p>
+
+<p>Q：请问黑分类器和白分类器有什么区别？</p>
+
+<p>白分类器主要用来识别正常用户，黑分类器识别虚假用户。</p>
+
+<p>Q：风险概率的权重指标是如何考虑的？</p>
+
+<p>先通过正负样本进行训练，并且做参数显著性检查；然后，人工会抽查一些参数的权重，看看跟经验是否相符。</p>
+
+<p>Q：安全跟风控职责如何区分呢？</p>
+
+<p>相比安全，风控的外延更丰富，更注重宏观全局；针对一个公司来讲，风控是包括安全、法务、公关、媒体、客服等在内一整套应急处理预案。</p>
+
+<p>Q：如果识别错了，误伤了正常用户会造成什么后果么？比如影响单次操作还是会一直失败。</p>
+
+<p>如果识别错了正常用户不会被误伤，但是会导致体验多加了一个环节，如弹出验证码、或者人工客服核对等。</p>
+
+<p>作者：颜国平，原腾讯云－天御系统研发负责人。一直负责腾讯自有验证码、业务安全、防刷、账号安全等研发工作。内部支持的产品（游戏、电商、腾讯投资的O2O企业）非常广泛。在业务安全领域项目经验丰富，并且具备深度学习、大数据架构搭建等实战经验。</p>
+
+<h2>参考资料</h2>
+
+<p>[1]<a href="https://cloud.tencent.com/developer/article/1004423">基于用户画像大数据的电商防刷架构 - 高可用架构</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[PHP字符串安全过滤全攻略]]></title>
+    <link href="https://ibillxia.github.io/blog/2010/09/24/PHP-string-filter-methods-for-safety/"/>
+    <updated>2010-09-24T13:28:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2010/09/24/PHP-string-filter-methods-for-safety</id>
+    <content type="html"><![CDATA[<p>php安全过滤是防止注入的第一道防线，不得大意。提到PHP的安全过滤，不得不提的两个东西是`set_magic_quotes_runtime` 和 `magic_quotes_gpc`。</p>
+
+
+
+
+<p>`set_magic_quotes_runtime()` 可以让程序员在代码中动态开启或关闭 `magic_quotes_runtime`，`set_magic_quotes_runtime(1)` 表示开启，
+`set_magic_quotes_runtime(0)` 则表示关闭。当`set_magic_quotes_runtime(1)`时，从数据库或通过`fread`之类的函数读取的文本，将自动对' "和\自动
+加上反斜杠\进行转义，防止溢出。这在对数据库的数据进行转移的时候非常有用。但在一般情况下，应当将其关闭，否则从数据库读取出来的数据单引
+号、双引号和反斜杠都会被加上\，导致显示不正常。像Discuz，PHPWind都在公共文件的头部加上一句 `set_magic_quotes_runtime(0);` 强制关闭 
+`magic_quotes_runtime` 。</p>
+
+
+
+
+<p>`magic_quotes_gpc` 和 `magic_quotes_runtime` 的区别在于，`magic_quotes_gpc` 是对通过GET、POST、COOKIE传递的数据进行转义，一般在数据入库前
+要先进行转义，`magic_quotes_gpc`不能在代码中动态开启或关 闭，需要到`php.ini`将`magic_quotes_gpc`设置为on或off，代码中可以用`get_magic_quotes_gpc`
+获取 `magic_quotes_gpc`的状态。当`magic_quotes_gpc`为off时，需要手工对数据进行addslashes，代码如下：</p>
+
+
+<!--more-->
+
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>if (!get_magic_quotes_gpc()) {  &lt;br/>
+</span><span class='line'>     add_slashes($&lt;em>GET);
+</span><span class='line'>     add_slashes($&lt;/em>POST);
+</span><span class='line'>     add_slashes($_COOKIE);
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>function add_slashes($string) {  &lt;br/>
+</span><span class='line'>     if (is_array($string)) {  &lt;br/>
+</span><span class='line'>         foreach ($string as $key => $value) {  &lt;br/>
+</span><span class='line'>             $string[$key] = add_slashes($value);  &lt;br/>
+</span><span class='line'>         }  &lt;br/>
+</span><span class='line'>     } else {  &lt;br/>
+</span><span class='line'>         $string = addslashes($string);  &lt;br/>
+</span><span class='line'>     }  &lt;br/>
+</span><span class='line'>     return $string;  &lt;br/>
+</span><span class='line'>}&lt;br/></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>php防注入函数,字符过滤函数</p>
+
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span></span><span class="c1">//解码</span>
+</span><span class='line'><span class="k">function</span> <span class="nf">htmldecode</span><span class="p">(</span><span class="nv">$str</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="k">empty</span><span class="p">(</span><span class="nv">$str</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="nv">$str</span><span class="o">==</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">return</span> <span class="nv">$str</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;sel&amp;#101;ct&quot;</span><span class="p">,</span><span class="s2">&quot;select&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;jo&amp;#105;n&quot;</span><span class="p">,</span><span class="s2">&quot;join&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;un&amp;#105;on&quot;</span><span class="p">,</span><span class="s2">&quot;union&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;wh&amp;#101;re&quot;</span><span class="p">,</span><span class="s2">&quot;where&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;ins&amp;#101;rt&quot;</span><span class="p">,</span><span class="s2">&quot;insert&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;del&amp;#101;te&quot;</span><span class="p">,</span><span class="s2">&quot;delete&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;up&amp;#100;ate&quot;</span><span class="p">,</span><span class="s2">&quot;update&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;lik&amp;#101;&quot;</span><span class="p">,</span><span class="s2">&quot;like&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;dro&amp;#112;&quot;</span><span class="p">,</span><span class="s2">&quot;drop&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;cr&amp;#101;ate&quot;</span><span class="p">,</span><span class="s2">&quot;create&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;mod&amp;#105;fy&quot;</span><span class="p">,</span><span class="s2">&quot;modify&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;ren&amp;#097;me&quot;</span><span class="p">,</span><span class="s2">&quot;rename&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;alt&amp;#101;r&quot;</span><span class="p">,</span><span class="s2">&quot;alter&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;ca&amp;#115;&quot;</span><span class="p">,</span><span class="s2">&quot;cast&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;&amp;amp;&quot;</span><span class="p">,</span><span class="s2">&quot;&amp;amp;&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;&amp;gt;&quot;</span><span class="p">,</span><span class="s2">&quot;&gt;&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;&amp;lt;&quot;</span><span class="p">,</span><span class="s2">&quot;&amp;lt;&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;&amp;nbsp;&quot;</span><span class="p">,</span><span class="nb">chr</span><span class="p">(</span><span class="mi">32</span><span class="p">),</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;&amp;nbsp;&quot;</span><span class="p">,</span><span class="nb">chr</span><span class="p">(</span><span class="mi">9</span><span class="p">),</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//$str=str_replace(&quot;&amp;#160;&amp;#160;&amp;#160;&amp;#160;&quot;,chr(9),$str);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;&amp;amp;&quot;</span><span class="p">,</span><span class="nb">chr</span><span class="p">(</span><span class="mi">34</span><span class="p">),</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;&amp;#39;&quot;</span><span class="p">,</span><span class="nb">chr</span><span class="p">(</span><span class="mi">39</span><span class="p">),</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;&lt;br /&gt;&quot;</span><span class="p">,</span><span class="nb">chr</span><span class="p">(</span><span class="mi">13</span><span class="p">),</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;&#39;&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nv">$str</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="c1">//编码</span>
+</span><span class='line'><span class="k">function</span> <span class="nf">htmlencode</span><span class="p">(</span><span class="nv">$str</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="k">empty</span><span class="p">(</span><span class="nv">$str</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="nv">$str</span><span class="o">==</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">return</span> <span class="nv">$str</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">trim</span><span class="p">(</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;&amp;amp;&quot;</span><span class="p">,</span><span class="s2">&quot;&amp;amp;&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">,</span><span class="s2">&quot;&amp;gt;&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;&amp;lt;&quot;</span><span class="p">,</span><span class="s2">&quot;&amp;lt;&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="mi">32</span><span class="p">),</span><span class="s2">&quot;&amp;nbsp;&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="mi">9</span><span class="p">),</span><span class="s2">&quot;&amp;nbsp;&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//$str=str_replace(chr(9),&quot;&amp;#160;&amp;#160;&amp;#160;&amp;#160;&quot;,$str);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="mi">34</span><span class="p">),</span><span class="s2">&quot;&amp;amp;&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="mi">39</span><span class="p">),</span><span class="s2">&quot;&amp;#39;&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="mi">13</span><span class="p">),</span><span class="s2">&quot;&lt;br /&gt;&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;&#39;&#39;&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;select&quot;</span><span class="p">,</span><span class="s2">&quot;sel&amp;#101;ct&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;join&quot;</span><span class="p">,</span><span class="s2">&quot;jo&amp;#105;n&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;union&quot;</span><span class="p">,</span><span class="s2">&quot;un&amp;#105;on&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;where&quot;</span><span class="p">,</span><span class="s2">&quot;wh&amp;#101;re&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;insert&quot;</span><span class="p">,</span><span class="s2">&quot;ins&amp;#101;rt&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;delete&quot;</span><span class="p">,</span><span class="s2">&quot;del&amp;#101;te&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;update&quot;</span><span class="p">,</span><span class="s2">&quot;up&amp;#100;ate&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;like&quot;</span><span class="p">,</span><span class="s2">&quot;lik&amp;#101;&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;drop&quot;</span><span class="p">,</span><span class="s2">&quot;dro&amp;#112;&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;create&quot;</span><span class="p">,</span><span class="s2">&quot;cr&amp;#101;ate&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;modify&quot;</span><span class="p">,</span><span class="s2">&quot;mod&amp;#105;fy&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;rename&quot;</span><span class="p">,</span><span class="s2">&quot;ren&amp;#097;me&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;alter&quot;</span><span class="p">,</span><span class="s2">&quot;alt&amp;#101;r&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$str</span><span class="o">=</span><span class="nb">str_replace</span><span class="p">(</span><span class="s2">&quot;cast&quot;</span><span class="p">,</span><span class="s2">&quot;ca&amp;#115;&quot;</span><span class="p">,</span><span class="nv">$str</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nv">$str</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[伪造IP地址的原理]]></title>
+    <link href="https://ibillxia.github.io/blog/2010/08/31/the-elements-of-ip-faking/"/>
+    <updated>2010-08-31T09:41:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2010/08/31/the-elements-of-ip-faking</id>
+    <content type="html"><![CDATA[<p>入侵者使用假IP地址发送包，利用基于IP地址证实的应用程序。其结果是未授权的远端用户进入带有防火墙的主机系统。</p>
+
+
+
+
+<p>假设有两台主机A、B和入侵者控制的主机X。假设B授予A某些特权，使得A能够获得B所执行的一些操作。X的目标就是得到与B相同的权利。
+为了实现该目标，X必须执行两步操作：首先，与B建立一个虚假连接；然后，阻止A向B报告网络证实系统的问题。主机X必须假造A的IP地址，
+从而使B相信从X发来的包的确是从A发来的。</p>
+
+
+
+
+<p>我们同时假设主机A和B之间的通信遵守TCP／IP的三次握手机制。握手方法是：</p>
+
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>A->：SYN（序列号=M）
+</span><span class='line'>B->A：SYN（序列号＝N），ACK（应答序号=M+1）
+</span><span class='line'>A->B：ACK（应答序号＝N+1）</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<!--more-->
+
+
+<p>主机X伪造IP地址步骤如下：首先，X冒充A，向主机B发送一个带有随机序列号的SYN包。主机B响应，向主机A发送一个带有应答号的SYN+ACK包、
+该应答号等于原序列号加1。同时，主机B产生自己发送包序列号，并将其与应答号一起发送。为了完成三次握手，主机X需要向主</p>
+
+
+
+
+<p>机B回送一个应答包，其应答号等于主机B向主机A发送的包序列号加1。假设主机X与A和B不同在一个子网内，则不能检测到B的包，
+主机X只有算出B的序列号，才能创建TCP连接。其过程描述如下：</p>
+
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>X->B：SYN（序列号=M），SRC=A
+</span><span class='line'>B->A：SYN（序列号=N），ACK（应答号=M+1）
+</span><span class='line'>X->B：ACK（应答号＝N+1），SRC＝A</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>同时，主机X应该阻止主机A响应主机B的包。为此，X可以等到主机A因某种原因终止运行，或者阻塞主机A的操作系统协议部分，使它不能响应主机B。
+一旦主机X完成了以上操作，它就可以向主机B发送命令。主机B将执行这些命令，认为他们是由合法主机A发来的。</p>
+
+]]></content>
+  </entry>
+  
+</feed>

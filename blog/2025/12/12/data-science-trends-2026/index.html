@@ -1,0 +1,708 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>数据科学与机器学习2026年趋势展望 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(function () {
+  addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">数据科学与机器学习2026年趋势展望</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2025-12-12T10:27:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>分享两篇关于数据科学与机器学习趋势的文章，供大家参考。总结下来，最最重要的两大趋势：</p>
+
+<ul>
+<li><p>实际应用中，<strong>小模型</strong>（Qwen-8B etc）将越来越受到关注</p></li>
+<li><p><strong>Agent和AutoML</strong>将越来越受到关注</p></li>
+</ul>
+
+
+<h1><a href="https://towardsdatascience.com/data-science-in-2026-is-it-still-worth-it/">1. Data Science in 2026: Is It Still Worth It?</a></h1>
+
+<center><img src="/images/2025/IMAG2025121201.png"></center>
+
+
+<p>Are you thinking about switching to Data Science in 2026?</p>
+
+<p>If the answer is “yes,” this article is for you.</p>
+
+<!--more-->
+
+
+<p>I’m Sabrine. I have spent the last 10 years working in the AI field across Europe—from big companies and startups to research labs. And if I had to start over again today, I would honestly still choose this field. Why?</p>
+
+<p>For the same reasons that brought many of us here: the intellectual challenge, the impact you can have, the love for mathematics and code, and the possibility to solve real-life problems.</p>
+
+<p>But looking toward 2026… is it still worth it?</p>
+
+<p>If you scroll through LinkedIn, you will see two teams fighting: one saying “Data Science is dead,” and the other saying it is growing thanks to the AI trend.</p>
+
+<p>When I look around me, I personally think we will always need computational skills. We will always need people who can understand data and help make decisions. Numbers have always been everywhere, and why would they disappear in 2026?</p>
+
+<p>However, the market has changed. And to navigate it now, you need good guidance and clear information.</p>
+
+<p>In this article, I’ll share my own experience from working in research and industry, and from mentoring more than 200 Data Scientists over the last few years.</p>
+
+<h2>So what is happening in the market now?</h2>
+
+<p>I will be honest and not sell you any dream about it.</p>
+
+<p>The goal is not to introduce biases, but to give you enough information to make your own decision.</p>
+
+<h2>Is the Data Science job family broader than ever?</h2>
+
+<p>Source: <a href="https://pixabay.com/photos/sea-wave-splash-big-wave-ocean-5499649/">pixabay</a> (Kanenori)</p>
+
+<center><img src="/images/2025/IMAG2025121201.jpeg"></center>
+
+
+<p>One of the biggest mistakes of junior Data Scientists is thinking Data Science is one single job.</p>
+
+<p>In 2026, Data Science is a large family of roles. Before writing a single line of code, you need to understand where you fit.</p>
+
+<p>People are fascinated by AI: how ChatGPT talks, how Neuralink stimulates brains, and how algorithms affect health and security. But let’s be honest: not all aspiring Data Scientists will build these types of projects.</p>
+
+<p>These roles need strong applied math and advanced coding skills. Does that mean you will never reach them? No. But they are often for people with PhDs, computational scientists, and engineers trained exactly for these niche jobs.</p>
+
+<p>Let’s take a real example: a Machine Learning/Data Scientist job offer I saw today (Nov 27) at a GAFAM company.</p>
+
+<p><em>Screenshot taken by the author</em></p>
+
+<center><img src="/images/2025/IMAG2025121202.png"></center>
+
+
+<p>If you look at the description, they ask for:</p>
+
+<ul>
+<li><p>Patents</p></li>
+<li><p>First-author publications</p></li>
+<li><p>Research contributions</p></li>
+</ul>
+
+
+<p>Does everyone interested in Data Science have a patent or a publication? Of course not.</p>
+
+<p>This is why you must avoid moving blindly.</p>
+
+<p>If you just finished a bootcamp or are early in your studies, applying for jobs that explicitly require research publications will only bring frustration. These very specialized jobs are usually for people with advanced academic backgrounds (PhD, post-doc, or computational engineering).</p>
+
+<p>My advice: be strategic. Focus on roles that match your skills.</p>
+
+<p>Don’t waste time applying everywhere.</p>
+
+<p>Use your energy to build a portfolio that aligns with your goals.</p>
+
+<p>You must understand the different sub-fields inside Data Science and choose what fits your background. For example:</p>
+
+<ul>
+<li><p><strong>Product Data Analyst / Scientist:</strong> product lifecycle and user needs</p></li>
+<li><p><strong>Machine Learning Engineer:</strong> deploying models</p></li>
+<li><p><strong>GenAI Engineer:</strong> works on LLMs</p></li>
+<li><p><strong>Classic Data Scientist:</strong> inference and prediction</p></li>
+</ul>
+
+
+<p>If you look at a Product Data Scientist role at Meta, the technical level is often more adapted to most Data Scientists on the market compared to a Core AI Research Engineer or Senior Data Scientist role.</p>
+
+<p>These roles are more realistic for someone without a PhD.</p>
+
+<center><img src="/images/2025/IMAG2025121203.png"></center>
+
+
+<p><em>Screenshot taken by the author</em></p>
+
+<center><img src="/images/2025/IMAG2025121204.png"></center>
+
+
+<p>Even if you don’t want to work at GAFAM, keep in mind:</p>
+
+<p><strong>They set the direction. What they require today becomes the norm everywhere else tomorrow.</strong></p>
+
+<h2>Now, how about coding and math in 2026?</h2>
+
+<p>Source: <a href="https://pixabay.com/photos/heart-couple-together-1731755/">pixabay</a> (NoName_13)</p>
+
+<center><img src="/images/2025/IMAG2025121205.jpeg"></center>
+
+
+<p>Here is a controversial but honest truth for 2026: <strong>Analytical and mathematical skills matter more than just coding.</strong></p>
+
+<p>Why? Almost every company now uses AI tools to help write code. But AI cannot replace your ability to:</p>
+
+<ul>
+<li><p>understand trends</p></li>
+<li><p>explain where the value comes from</p></li>
+<li><p>design a valid experiment</p></li>
+<li><p>interpret a model in a real context</p></li>
+</ul>
+
+
+<p>Coding is still important, but you cannot be a “General Importer”—someone who only imports sklearn and runs .fit() and .predict().</p>
+
+<p>Very soon, an AI agent may do that part for us.</p>
+
+<p>But your math and analytical skills are still important, and will always be.</p>
+
+<p>A simple example:</p>
+
+<p>You can ask an AI: <em>“Explain PCA like I’m 2 years old.”</em></p>
+
+<p>But your real value as a Data Scientist comes when you ask something like:</p>
+
+<p>“I need to optimize the water production of my company in a specific region. This region is facing issues that make the network unavailable in specific patterns. I have hundreds of features about this state of the network. How can I use PCA and be sure the most important variables are represented in the PC I’m using?”</p>
+
+<p>-> This human context is your value.</p>
+
+<p>-> AI writes the code.</p>
+
+<p>-> You bring the logic.</p>
+
+<h2>And how about the Data Science toolbox?</h2>
+
+<p>Let’s start with Python. As a programming language with a large data community, Python is still essential and probably the first language to learn as a future Data Scientist.</p>
+
+<p>The same for Scikit-learn, a classic library for machine learning tasks.</p>
+
+<p><em>Screenshot taken by the author</em></p>
+
+<center><img src="/images/2025/IMAG2025121206.png"></center>
+
+
+<p>We can also see on Google Trends (late 2025) that:</p>
+
+<ul>
+<li><p>PyTorch is now more popular than TensorFlow</p></li>
+<li><p>GenAI integration is growing much faster than classical libraries</p></li>
+<li><p>Data Analyst interest stays stable</p></li>
+<li><p>Data Engineer and AI Specialist roles interested more people than general Data Scientist roles</p></li>
+</ul>
+
+
+<p>Don’t ignore these patterns; they are very helpful for making decisions.</p>
+
+<p>You need to stay flexible.</p>
+
+<p><em>If the market wants PyTorch and GenAI, don’t stay stuck with only Keras and old NLP.</em></p>
+
+<h2>And what about the new stack for 2026?</h2>
+
+<p>This is where the 2026 roadmap is different from 2020.</p>
+
+<p>To get hired today, you need to be <strong>production-ready</strong>.</p>
+
+<p><strong>Version Control (Git):</strong> You will use it daily. And to be honest, this is one of the first skills you need to learn at the beginning. It helps you organize your projects and everything you learn.</p>
+
+<p>Whether you are starting a Master’s program or beginning a bootcamp, please don’t forget to create your first GitHub repository and learn a few basic commands before going further.</p>
+
+<p><strong>AutoML:</strong> Understand how it works and when to use it. Some companies use AutoML tools, especially for Data Scientists who are more product-oriented.</p>
+
+<p>The tool I have in mind, and that you can access for free, is <strong>Dataiku</strong>. They have a great academy with free certifications. It is one of the AutoML tools that has exploded in the market in the last two years.</p>
+
+<p>If you don’t know what AutoML is: it is a tool that lets you build ML models <em>without coding</em>. Yes, it exists.</p>
+
+<p>Remember what I said earlier about coding? This is one of the reasons why other skills are becoming more important, especially if you are a product-oriented Data Scientist.</p>
+
+<p><strong>MLOps:</strong> Notebooks are not enough anymore. This applies to everyone. Notebooks are good for exploration, but if at some point you need to deploy your model in production, you must learn other tools.</p>
+
+<p>And even if you don’t like data engineering, you still need to understand these tools so you can communicate with data engineers and work together.</p>
+
+<p>When I talk about this, I think about tools like <strong>Docker</strong> (<a href="https://medium.com/code-like-a-girl/mlops-fundamentals-a-beginners-guide-to-docker-containerization-4f5a984e7117">check out my article</a>), <strong>MLflow</strong> (<a href="https://towardsdatascience.com/model-management-with-mlflow-azure-and-docker-2920b51a5bdd/">link here</a>), and <strong>FastAPI</strong>.</p>
+
+<p><strong>LLMs and RAG:</strong> You don’t need to be an expert, but you should know the basics: how the LangChain API works, how to train a small language model, what RAG means, and how to implement it. This will really help you stand out in the market and maybe move further if you need to build a project that involves an AI Agent.</p>
+
+<h2>Portfolio: Quality over quantity</h2>
+
+<p>In this fast and competitive market, how can you prove you can do the job? I remember I’ve written an article about how to create a portfolio 2 years ago and what I’m going to say here can look a bit contradictory, but let me explain. Before ChatGPT and AI tools flooded the market, having a portfolio with a bunch of projects to show your different skills like data cleaning and data processing was very important, but today all these basic steps are often done using AI tools that are ready for that, so we will focus more on building something that will make you different and make the recruiter want to meet you.</p>
+
+<p><strong><em>I would say: “Avoid burnout. Build smart.”</em></strong></p>
+
+<p>Don’t think you need 10 projects. If you’re a student or a junior, one or two good projects are enough.</p>
+
+<p>Take advantage of the time you have during your internship or your final bootcamp project to build it. Please don’t use simple Kaggle datasets. Look online: you can find a huge amount of real use-case data, or research datasets that are more often used in industry and labs to build new architectures.</p>
+
+<p>If your goal is not to go deep into the technical side, you can still show other skills in your portfolio: slides, articles, explanations of how you thought about the business value, what results you got, and how these results can be used in reality. Your portfolio depends on the job you want.</p>
+
+<ul>
+<li><p>If your goal is more math-oriented, the recruiter will probably want to see your literature review and how you implemented the latest architecture on your data.</p></li>
+<li><p>If you are more product-oriented, I would be more interested in your slides and how you interpret your ML results than in the quality of your code.</p></li>
+<li><p>If you are more MLOps-oriented, the recruiter will look at how you deployed, monitored, and tracked your model in production.</p></li>
+</ul>
+
+
+<p>To finish, I want to remind you that the market is changing fast, but it is not the end of Data Science. It just means you need to be more aware of where you fit, what skills you want to grow, and how you present yourself.</p>
+
+<p>Keep learning, and build a portfolio that truly reflects who you are. You will find your place</p>
+
+<p>If you enjoyed this article, feel free to follow me on LinkedIn for more honest insights about AI, Data Science, and careers.</p>
+
+<p> <strong>LinkedIn:</strong> <em>Sabrine Bendimerad</em></p>
+
+<p> <strong>Medium:</strong> <a href="https://medium.com/@sabrine.bendimerad1">https://medium.com/@sabrine.bendimerad1</a></p>
+
+<hr />
+
+<h1><a href="https://medium.com/data-science-collective/whats-trending-in-data-science-and-ml-preparing-for-2026-7b6983b2866d">2. What's Trending in Data Science and ML Preparing for 2026</a></h1>
+
+<p><em>Was it time well spent?</em></p>
+
+<p>Last week, I attended the <em>Nordic DS/ML Summit 2025</em> in Stockholm 🇸🇪, a two-day event bringing together industry leaders, researchers, and practitioners to share how data science and machine learning are evolving.</p>
+
+<p>The lineup included big names like Meta, NVIDIA, and Google DeepMind.</p>
+
+<p>And of course, the hottest topic was….🥁… <strong>Agentic AI</strong> (no surprise there)<a href="https://substackcdn.com/image/fetch/$s_!SSnz!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fca699d07-a7ec-4eaa-9fc7-1a36f9bd3faf_3200x2408.jpeg"></a></p>
+
+<center><img src="/images/2025/IMAG2025121210.jpeg"></center>
+
+
+<p>Panel discussion on the topic of “Building the Future of AI: Scaling Foundation Models and Agents for Real-World Applications“. Image by NDSML.</p>
+
+<p>This photo is from an interesting panel discussion featuring:</p>
+
+<ul>
+<li><p>Chi Wang, Senior Staff Research Scientist at Google DeepMind and Founder of AutoGen (now AG2)</p></li>
+<li><p>Rohit Patel, Director at Meta Superintelligence Labs</p></li>
+<li><p>Sepideh Pashami, Acting Director of Data Analysis at RISE Research Institutes of Sweden</p></li>
+</ul>
+
+
+<p><em>So I would say yes, it was definitely time well spent!</em></p>
+
+<p>Today, I’m going to break down my learnings, the key trends I observed, and,<strong> towards the end,</strong> tie it all back to what we, Data Scientists, should pay attention to as we enter 2026.</p>
+
+<p>Let’s get to it!</p>
+
+<h1>Three key trends that stood out (to me) the most</h1>
+
+<center><img src="/images/2025/IMAG2025121211.jpeg"></center>
+
+
+<p>Cartoon depicting the motivation behind AutoGen. Image by AutoGen.</p>
+
+<p>These are the trends that stuck with me during the event, and that, in some way or another, have gained enough momentum to be worth following closely.</p>
+
+<h3>1）. From traditional analytics to <em>agentic analytics</em></h3>
+
+<p>We’re entering a new phase of analytics. One where dashboards and static reports aren’t enough anymore.</p>
+
+<p><em>I foresee this will become an even bigger topic by the beginning of 2026</em>.</p>
+
+<p>The focus will be on creating more dynamic systems that can speed up the path from data to insight, making analytics more adaptive and less dependent on manual exploration, which many are starting to refer to as Agentic Analytics.</p>
+
+<blockquote><p>💡 One thing is clear, the companies who will lead the way in this Agentic Analytics shift, will be those who have the foresight to build a strong data engineering foundation and invest in their semantic modeling. That’s ultimately what will enable AI agents to interact with their data in meaningful ways. <em>More on this later in the article.</em></p></blockquote>
+
+<h3>2）. Small language models are the next big thing</h3>
+
+<p>Small language models (sLMs) are becoming surprisingly capable.</p>
+
+<p>Models like <strong>Phi-3</strong>, <strong>Mistral</strong>, and <strong>Llama 3 8B</strong> show that you don’t need massive infrastructure to get strong performance. With some fine-tuning, they can even outperform larger models on focused tasks.</p>
+
+<blockquote><p>💡 For developers and smaller teams, this also means we can now run fast, private, and low-cost models, on a regular laptop or even a phone.</p></blockquote>
+
+<h3>3）. The rise of specialized multi-agent systems</h3>
+
+<p>A big theme that kept coming up was the move toward <strong>hierarchical multi-agent systems</strong>. Instead of relying on a single agent to handle an entire workflow, newer architectures now use an <strong>orchestrator agent</strong> that breaks tasks into smaller pieces and delegates them to specialized sub-agents.</p>
+
+<p>Each sub-agent focuses on one tiny, well-defined task, like cleaning data, summarizing findings, or generating code, and becomes extremely good at that single thing. Together, they form a coordinated system that’s faster, cheaper, and more reliable than one general-purpose agent working alone.</p>
+
+<blockquote><p>💡 This “divide and conquer” approach also opens the door for <strong>sLMs</strong> to play a bigger role. Since each sub-agent only needs to handle a narrow task, even lightweight models can perform well when combined in a well-orchestrated system.</p></blockquote>
+
+<p>It’s a design pattern we’ll likely see more of as agentic systems mature and move into production use.</p>
+
+<h2>What should Data Scientists pay attention to?</h2>
+
+<p>My recommendation, especially to mid-senior data scientists who want to take the next leap in their career growth: <strong>Lead the way in the Agentic Analytics shift at your company.</strong></p>
+
+<p>From what I’ve seen, most organizations are still just waking up to this change.</p>
+
+<p>That means you have a real opportunity to lead, whether it’s by championing modern enterprise tools that enable agentic analytics or by building your own agents that make analysis faster, more interactive, and closer to decision-making.</p>
+
+<p>The people who learn to bridge that gap early, between AI agents and analytics, will be the ones shaping how Data Science is practiced in the next decade.</p>
+
+<h3>Five real-world agentic AI use cases in Data Science</h3>
+
+<center><img src="/images/2025/IMAG2025121212.jpeg"></center>
+
+
+<p>Diagram of how TimeGPT takes the historical values of the target values and additional exogenous variables as inputs to produce the forecasts. Image by TimeGPT.</p>
+
+<p>These are some use cases where GenAI and Agentic AI are already starting to make an impact:</p>
+
+<ol>
+<li><p><strong>Conversational dashboards for fast insights</strong>Think dashboards you can talk to, ask questions in plain English, and get instant summaries or visualizations. Power BI Copilot and Tableau Pulse are early examples, but the concept applies to any workflow where non-technical users need fast answers from data.</p></li>
+<li><p><strong>EDA and data cleaning agents</strong>AI agents are starting to automate the time-consuming work of detecting outliers, normalizing data, and generating initial visualizations during EDA. Tools like Tableau’s Data Pro hint at how you can build agents to accelerate your data prep process.</p></li>
+<li><p><strong>Foundation models for analytics</strong>Instead of training a new model for every metric or product, foundation models like TimeGPT are starting to handle forecasting, anomaly detection, and other analytic tasks straight from raw data. This makes advanced analytics more accessible, even for teams without deep expertise in time series or model building.</p></li>
+<li><p><strong>Agentic monitoring and proactive analytics</strong>Rather than waiting for a human to check a dashboard, agentic systems can watch KPIs, detect shifts, and trigger alerts or recommendations. Tableau Inspector and Adverity are pushing this, but it’s a pattern any analyst can explore with the right setup.</p></li>
+<li><p><strong>Multi-agent orchestration of the ML workflow</strong>Platforms like causaLens are an example of what’s possible with AI agents that collaborate, some clean the data, others build models, and others explain results. It’s not just automation, it’s coordination, and it’s a glimpse of how future ML workflows could run.</p></li>
+</ol>
+
+
+<h3>🔑 Don’t ignore this: The Semantic Layer</h3>
+
+<p>I wanted to mention this concept again since I feel it might get overlooked by a lot of you reading this article, and that would be a BIG mistake.<a href="https://substackcdn.com/image/fetch/$s_!mQOI!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F6ed5744b-a2a4-4fc4-826f-e455a91c5818_960x498.png"></a></p>
+
+<center><img src="/images/2025/IMAG2025121213.png"></center>
+
+
+<p>Semantic Layer architecture. Image by Tallius.</p>
+
+<p>Over the past 6 months or so, I’ve been spending more time building my own AI workflows to optimise and automate much of my data science work. And recently, I deployed a talk-to-your-data Slackbot that is slowly redefining the meaning of self-serve analytics at my company.</p>
+
+<p>One of the keys to the success of these tools has been defining the semantic layer.</p>
+
+<blockquote><p><em>📌 </em>This is also why I’m teaching it to the 22 Data Scientists currently enrolled in my</p></blockquote>
+
+<p>The idea is simple: the semantic layer creates a shared definition of metrics and business logic so data scientists, stakeholders, and most importantly, AI agents, all work from the same source of truth.<a href="https://substackcdn.com/image/fetch/$s_!KeLe!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc2b78cee-94e2-45fc-a05f-8803027a9b2d_1072x814.webp"></a></p>
+
+<center><img src="/images/2025/IMAG2025121214.jpeg"></center>
+
+
+<p>Example of a semantic layer YAML file. Image by dbt.</p>
+
+<p>And believe me, you don’t need to be a data engineer to start building a semantic layer to enhance your AI agents.</p>
+
+<p><a href="https://read.futureproofds.com/p/whats-trending-in-data-science-and-ml-2026#poll-395619"></a></p>
+
+<p>POLL</p>
+
+<h3>Should I write an entire article on this topic?</h3>
+
+<p>Yes</p>
+
+<p>96%</p>
+
+<p>No, I’m good</p>
+
+<p>4%</p>
+
+<p>45 VOTES · POLL CLOSED</p>
+
+<h2>Honorable mentions</h2>
+
+<p>Here are some cool tools and products I didn’t get to cover, but thought deserved at least a quick mention:</p>
+
+<ul>
+<li><p>Orion: An on-device autonomous agent that orchestrates your AI tools and runs locally for cross-platform automation.</p></li>
+<li><p>AG2: Open-source framework (formerly AutoGen) for building and orchestrating multi-agent systems.</p></li>
+<li><p>HP ZGX Nan AI Station: A nano AI workstation for prototyping and fine-tuning inference models of up to 200B parameters locally.</p></li>
+</ul>
+
+
+<h1>Closing thoughts</h1>
+
+<p>If there’s one thing this year’s summit made clear, it’s that the gap between <em>AI research</em> and <em>real-world data science</em> is closing faster than ever.</p>
+
+<p>Agentic systems, small models, and better data foundations aren’t just trends; they’re signals that our field is evolving into something more intelligent.</p>
+
+<p>For data scientists, this next phase isn’t about chasing every new tool that comes out. It’s about understanding the direction we’re heading and learning how to apply these ideas where they actually create impact.</p>
+
+<p>If you do that, if you stay curious, experiment with these concepts, and think beyond your notebook, you won’t just keep up with the changes. You’ll help shape what data science looks like in 2026 and beyond.</p>
+
+<h2>A couple of other great resources:</h2>
+
+<ul>
+<li><p><strong>🚀 Ready to take the next step? </strong>Build real</p></li>
+<li><p>💼 <strong>Job searching?</strong></p></li>
+<li><p><strong>🤖 Struggling to keep up with AI/ML?</strong></p></li>
+</ul>
+
+
+<p><em>Thank you for reading! I hope these insights give you a competitive advantage as we prepare to enter 2026.</em></p>
+
+<p><em>- Andres Vourakis</em></p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2025-12-12T10:27:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/datascience/'>DataScience</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/shu-ju-ke-xue/'>数据科学</a>, <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/zhi-ye-fa-zhan/'>职业发展</a>, <a class='tag' href='/blog/tags/qu-shi/'>趋势</a></span>
+		
+    </p>
+    
+      
+         <div class="sharing">
+  
+  
+  
+</div>
+
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2025/06/18/gen-rec-servey-notes/" title="Previous Post:
+        GenRec综述论文笔记">&laquo; GenRec综述论文笔记</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2026/01/05/5d-agent-course-by-google/"
+        title="Next Post: Google&Kaggle五天Agent强化课程">Google&Kaggle五天Agent强化课程
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026/';
+        var disqus_url = 'https://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

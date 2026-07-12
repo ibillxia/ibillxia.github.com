@@ -1,0 +1,1155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Program | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/categories/program/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Maven中settings配置文件详解]]></title>
+    <link href="https://ibillxia.github.io/blog/2022/10/06/maven-settings-configuration/"/>
+    <updated>2022-10-06T19:07:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2022/10/06/maven-settings-configuration</id>
+    <content type="html"><![CDATA[<p>一、简介</p>
+
+<p>Maven 翻译为"专家"、"内行"，是 Apache 下的一个纯 Java 开发的开源项目。基于项目对象模型（缩写：POM）概念，Maven利用一个中央信息片断能管理一个项目的构建、报告和文档等步骤。</p>
+
+<p>Maven 是一个项目管理工具，可以对 Java 项目进行构建、依赖管理。</p>
+
+<p>Maven 也可被用于构建和管理各种项目，例如 C#，Ruby，Scala 和其他语言编写的项目。Maven 曾是 Jakarta 项目的子项目，现为由 Apache 软件基金会主持的独立 Apache 项目。</p>
+
+<p>基本介绍可见<a href="%E2%80%8Bwww.runoob.com/maven/maven-tutorial.html">菜鸟教程Maven 教程 | 菜鸟教程</a></p>
+
+<!--more-->
+
+
+<h2>二、setting文件配置</h2>
+
+<ul>
+<li>标签</li>
+</ul>
+
+
+<pre><code class="text">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!--
+ | 官方文档: https://maven.apache.org/settings.html
+ |
+ | Maven 提供以下两种 level 的配置:
+ |
+ |  1. User Level.      当前用户独享的配置, 通常在 ${user.home}/.m2/settings.xml 目录下。 
+ |                      可在 CLI 命令行中通过以下参数设置:  -s /path/to/user/settings.xml
+ |
+ |  2. Global Level.    同一台计算机上的所有 Maven 用户共享的全局配置。 通常在${maven.home}/conf/settings.xml目录下。
+ |                      可在 CLI 命令行中通过以下参数设置:  -gs /path/to/global/settings.xml
+ |
+ |  备注:  User Level 优先级 &gt; Global Level
+ |--&gt;
+
+&lt;settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd"&gt;
+    &lt;!--
+     | Maven 依赖搜索顺序, 当我们执行 Maven 命令时, Maven 开始按照以下顺序查找依赖的库: 
+     |
+     | 步骤 1 － 在本地仓库中搜索, 如果找不到, 执行步骤 2, 如果找到了则执行其他操作。
+     | 步骤 2 － 在中央仓库中搜索, 如果找不到, 并且有一个或多个远程仓库已经设置, 则执行步骤 4, 如果找到了则下载到本地仓库中已被将来引用。
+     | 步骤 3 － 如果远程仓库没有被设置, Maven 将简单的停滞处理并抛出错误（无法找到依赖的文件）。
+     | 步骤 4 － 在一个或多个远程仓库中搜索依赖的文件, 如果找到则下载到本地仓库已被将来引用, 否则 Maven 将停止处理并抛出错误（无法找到依赖的文件）。
+     |--&gt;
+
+    &lt;!-- 地仓库路径, 默认值: ${user.home}/.m2/repository --&gt;
+    &lt;localRepository&gt;${user.home}/workspace/env/maven/repository&lt;/localRepository&gt;
+
+    &lt;!-- 当 maven 需要输入值的时候, 是否交由用户输入, 默认为true；false 情况下 maven 将根据使用配置信息进行填充 --&gt;
+    &lt;interactiveMode&gt;true&lt;/interactiveMode&gt;
+
+    &lt;!-- 是否支持联网进行 artifact 下载、 部署等操作, 默认: false --&gt;
+    &lt;offline&gt;false&lt;/offline&gt;
+
+    &lt;!-- 
+     | 搜索插件时, 如果 groupId 没有显式提供时, 则以此处配置的 groupId 为默认值, 可以简单理解为默认导入这些 groupId 下的所有 artifact（需要时才下载）
+     | 默认情况下该列表包含了 org.apache.maven.plugins和org.codehaus.mojo
+     |
+     | 查看插件信息: 
+     |    mvn help:describe -Dplugin=org.apache.maven.plugins:maven-compiler-plugin:3.5.1 -Ddetail
+     |--&gt;
+    &lt;pluginGroups&gt;
+
+        &lt;!-- plugin 的 groupId --&gt;
+        &lt;!--
+        &lt;pluginGroup&gt;com.your.plugins&lt;/pluginGroup&gt;
+        --&gt;
+
+    &lt;/pluginGroups&gt;
+
+    &lt;!-- 进行远程服务器访问时所需的授权配置信息。通过系统唯一的 server-id 进行唯一关联 --&gt;
+    &lt;servers&gt;
+        &lt;server&gt;
+            &lt;!-- 这是 server 的 id, 该 id 与 distributionManagement 中 repository 元素的id 相匹配 --&gt;
+            &lt;id&gt;server_id&lt;/id&gt;
+
+            &lt;!-- 鉴权用户名 --&gt;
+            &lt;username&gt;auth_username&lt;/username&gt;
+
+            &lt;!-- 鉴权密码 --&gt;
+            &lt;password&gt;auth_pwd&lt;/password&gt;
+
+            &lt;!-- 鉴权时使用的私钥位置。和前两个元素类似, 私钥位置和私钥密码指定了一个私钥的路径（默认是/home/hudson/.ssh/id_dsa）以及如果需要的话, 一个密钥 --&gt;
+            &lt;privateKey&gt;path/to/private_key&lt;/privateKey&gt;
+
+            &lt;!-- 鉴权时使用的私钥密码, 非必要, 非必要时留空 --&gt;
+            &lt;passphrase&gt;some_passphrase&lt;/passphrase&gt;
+
+            &lt;!-- 
+             | 文件被创建时的权限。如果在部署的时候会创建一个仓库文件或者目录, 这时候就可以使用权限（permission）
+             | 这两个元素合法的值是一个三位数字, 其对应了unix文件系统的权限, 如664, 或者775 
+             |--&gt;
+            &lt;filePermissions&gt;664&lt;/filePermissions&gt;
+
+            &lt;!-- 目录被创建时的权限 --&gt;
+            &lt;directoryPermissions&gt;775&lt;/directoryPermissions&gt;
+
+            &lt;!-- 传输层额外的配置项 --&gt;
+            &lt;configuration&gt;&lt;/configuration&gt;
+
+        &lt;/server&gt;
+    &lt;/servers&gt;
+
+    &lt;!-- 
+   | 从远程仓库才下载 artifacts 时, 用于替代指定远程仓库的镜像服务器配置；
+   | 
+   | 例如当您无法连接上国外的仓库是, 可以指定连接到国内的镜像服务器；
+   |
+   | pom.xml 和 setting.xml 中配置的仓库和镜像优先级关系（mirror 优先级高于 repository）: 
+   |
+   |    repository（setting.xml） &lt; repository（pom.xml） &lt; mirror（setting.xml）
+   |
+   |    例如, 如果配置了 mirrorOf = *,  则 不管项目的 pom.xml 配置了什么仓库, 最终都会被镜像到 镜像仓库
+   |
+   |  私服的配置推荐用profile配置而不是mirror
+   |--&gt;
+    &lt;mirrors&gt;
+
+        &lt;!-- 
+         | 【mirro 匹配顺序】: 
+         | 多个 mirror 优先级 按照 id字母顺序进行排列（即与编写的顺序无关）
+         | 在第一个 mirror 找不到 artifact, 不会继续超找下一个镜像。
+         | 只有当 mirror 无法链接的时候, 才会尝试链接下一个镜像, 类似容灾备份。
+         |--&gt;
+
+        &lt;mirror&gt;
+
+            &lt;!-- 该镜像的唯一标识符, id用来区分不同的 mirror 元素, 同时会套用使用 server 中 id 相同授权配置链接到镜像 --&gt;
+            &lt;id&gt;aliyun&lt;/id&gt;
+
+            &lt;!-- 镜像名称, 无特殊作用, 可视为简述 --&gt;
+            &lt;name&gt;sjtug maven proxy&lt;/name&gt;
+
+            &lt;!-- 镜像地址 --&gt;
+            &lt;url&gt;https://mirrors.sjtug.sjtu.edu.cn/maven-central/&lt;/url&gt;
+            &lt;!-- 被镜像的服务器的id, 必须与 repository 节点设置的 ID 一致。但是 This must not match the mirror id
+             | mirrorOf 的配置语法: 
+             | *           = 匹配所有远程仓库。 这样所有 pom 中定义的仓库都不生效
+             | external:*  = 匹配除 localhost、使用 file:// 协议外的所有远程仓库
+             | repo1,repo2 = 匹配仓库 repo1 和 repo2
+             | *,!repo1    = 匹配所有远程仓库, repo1 除外
+             |--&gt;
+            &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
+        &lt;/mirror&gt;
+
+    &lt;/mirrors&gt;
+
+    &lt;!-- 用来配置不同的代理, 多代理 profiles 可以应对笔记本或移动设备的工作环境: 通过简单的设置 profile id 就可以很容易的更换整个代理配置 --&gt;
+    &lt;proxies&gt;
+
+        &lt;!-- 代理元素包含配置代理时需要的信息 --&gt;
+        &lt;proxy&gt;
+
+            &lt;!-- 代理的唯一定义符, 用来区分不同的代理元素 --&gt;
+            &lt;id&gt;example_proxy&lt;/id&gt;
+
+            &lt;!-- 该代理是否是激活的那个。true则激活代理。当我们声明了一组代理, 而某个时候只需要激活一个代理的时候, 该元素就可以派上用处 --&gt;
+            &lt;active&gt;false&lt;/active&gt;
+
+            &lt;!-- 代理的协议 --&gt;
+            &lt;protocol&gt;https&lt;/protocol&gt;
+
+            &lt;!-- 代理的主机名 --&gt;
+            &lt;host&gt;proxy.molo.com&lt;/host&gt;
+
+            &lt;!-- 代理的端口 --&gt;
+            &lt;port&gt;443&lt;/port&gt;
+
+            &lt;!-- 代理服务器认证的登录名 --&gt;
+            &lt;username&gt;proxy_user&lt;/username&gt;
+
+            &lt;!-- 代理服务器认证登录密码 --&gt;
+            &lt;password&gt;proxy_pwd&lt;/password&gt;
+
+            &lt;!-- 不该被代理的主机名列表。该列表的分隔符由代理服务器指定；例子中使用了竖线分隔符, 使用逗号分隔也很常见 --&gt;
+            &lt;nonProxyHosts&gt;*.google.com|ibiblio.org&lt;/nonProxyHosts&gt;
+
+        &lt;/proxy&gt;
+
+    &lt;/proxies&gt;
+
+    &lt;!--
+     | 构建方法的配置清单, maven 将根据不同环境参数来使用这些构建配置。
+     | settings.xml 中的 profile 元素是 pom.xml 中 profile 元素的裁剪版本。
+     | settings.xml 负责的是整体的构建过程, pom.xml 负责单独的项目对象构建过程。
+     | settings.xml 只包含了id, activation, repositories, pluginRepositories 和 properties 元素。
+     | 
+     | 如果 settings 中的 profile 被激活, 它的值会覆盖任何其它定义在 pom.xml 中或 profile.xml 中的相同 id 的 profile。
+     |
+     | 查看当前激活的 profile:
+     |   mvn help:active-profiles
+     |--&gt;
+    &lt;profiles&gt;
+
+        &lt;profile&gt;
+
+            &lt;!-- 该配置的唯一标识符 --&gt;
+            &lt;id&gt;profile_id&lt;/id&gt;
+
+            &lt;!--
+             | profile 的激活条件配置；
+             | 其他激活方式: 
+             | 1. 通过 settings.xml 文件中的 activeProfile 元素进行指定激活。
+             | 2. 在命令行, 使用-P标记和逗号分隔的列表来显式的激活, 如: mvn clean package -P myProfile）。 
+             |--&gt;
+            &lt;activation&gt;
+
+                &lt;!-- 是否默认激活 --&gt;
+                &lt;activeByDefault&gt;false&lt;/activeByDefault&gt;
+
+                &lt;!--  内建的 java 版本检测, 匹配规则: https://maven.apache.org/enforcer/enforcer-rules/versionRanges.html --&gt;
+                &lt;jdk&gt;9.9&lt;/jdk&gt;
+
+                &lt;!-- 内建操作系统属性检测, 配置规则: https://maven.apache.org/enforcer/enforcer-rules/requireOS.html --&gt;
+                &lt;os&gt;
+
+                    &lt;!-- 操作系统 --&gt;
+                    &lt;name&gt;Windows XP&lt;/name&gt;
+
+                    &lt;!-- 操作系统家族 --&gt;
+                    &lt;family&gt;Windows&lt;/family&gt;
+
+                    &lt;!-- 操作系统 --&gt;
+                    &lt;arch&gt;x86&lt;/arch&gt;
+
+                    &lt;!-- 操作系统版本 --&gt;
+                    &lt;version&gt;5.1.2600&lt;/version&gt;
+
+                &lt;/os&gt;
+
+                &lt;!--
+                 | 如果Maven检测到某一个属性（其值可以在POM中通过${名称}引用）, 并且其拥有对应的名称和值, Profile就会被激活。
+                 | 如果值字段是空的, 那么存在属性名称字段就会激活profile, 否则按区分大小写方式匹配属性值字段
+                 |--&gt;
+                &lt;property&gt;
+
+                    &lt;!-- 属性名 --&gt;
+                    &lt;name&gt;mavenVersion&lt;/name&gt;
+
+                    &lt;!-- 属性值 --&gt;
+                    &lt;value&gt;2.0.3&lt;/value&gt;
+
+                &lt;/property&gt;
+
+                &lt;!-- 根据文件存在/不存在激活profile --&gt;
+                &lt;file&gt;
+
+                    &lt;!-- 如果指定的文件存在, 则激活profile --&gt;
+                    &lt;exists&gt;/path/to/active_on_exists&lt;/exists&gt;
+
+                    &lt;!-- 如果指定的文件不存在, 则激活profile --&gt;
+                    &lt;missing&gt;/path/to/active_on_missing&lt;/missing&gt;
+
+                &lt;/file&gt;
+
+            &lt;/activation&gt;
+            &lt;!-- 扩展属性设置。扩展属性可以在 POM 中的任何地方通过 ${扩展属性名} 进行引用
+             |
+             | 属性引用方式（包括扩展属性, 共 5 种属性可以引用）: 
+             |
+             | env.x                  : 引用 shell 环境变量, 例如, "env.PATH"指代了 $path 环境变量（在 Linux / Windows 上是 %PATH% ）.
+             | project.x              : 引用 pom.xml（根元素就是 project） 中 xml 元素内容.例如 ${project.artifactId} 可以获取 pom.xml 中设置的 &lt;artifactId /&gt; 元素的内容
+             | settings.x             : 引用 setting.xml（根元素就是 setting） 中 xml 元素内容, 例如 ${settings.offline}
+             | Java System Properties : 所有可通过 java.lang.System.getProperties() 访问的属性都能在通过 ${property_name} 访问, 例如 ${java.home}
+             | x                      : 在 &lt;properties/&gt; 或者 外部文件 中设置的属性, 都可以 ${someVar} 的形式使用
+             | 
+             |--&gt;
+            &lt;properties&gt;
+
+                &lt;!-- 在当前 profile 被激活时,  ${profile.property} 就可以被访问到了 --&gt;
+                &lt;profile.property&gt;this.property.is.accessible.when.current.profile.actived&lt;/profile.property&gt;
+
+            &lt;/properties&gt;
+
+            &lt;!-- 远程仓库列表 --&gt;
+            &lt;repositories&gt;
+                &lt;!-- 
+                 | releases vs snapshots
+                 | maven 针对 releases、snapshots 有不同的处理策略, POM 就可以在每个单独的仓库中, 为每种类型的 artifact 采取不同的策略
+                 | 例如: 
+                 |     开发环境 使用 snapshots 模式实时获取最新的快照版本进行构建
+                 |     生成环境 使用 releases 模式获取稳定版本进行构建
+                 | 参见repositories/repository/releases元素 
+                 |--&gt;
+
+                &lt;!--
+                 | 依赖包不更新问题:                
+                 | 1. Maven 在下载依赖失败后会生成一个.lastUpdated 为后缀的文件。如果这个文件存在, 那么即使换一个有资源的仓库后, Maven依然不会去下载新资源。
+                 |    可以通过 -U 参数进行强制更新、手动删除 .lastUpdated 文件：
+                 |      find . -type f -name "*.lastUpdated" -exec echo {}" found and deleted" \; -exec rm -f {} \;
+                 |
+                 | 2. updatePolicy 设置更新频率不对, 导致没有触发 maven 检查本地 artifact 与远程 artifact 是否一致
+                 |--&gt;
+                &lt;repository&gt;
+
+                    &lt;!-- 远程仓库唯一标识 --&gt;
+                    &lt;id&gt;maven_repository_id&lt;/id&gt;
+
+                    &lt;!-- 远程仓库名称 --&gt;
+                    &lt;name&gt;maven_repository_name&lt;/name&gt;
+
+                    &lt;!-- 远程仓库URL, 按protocol://hostname/path形式 --&gt;
+                    &lt;url&gt;http://host/maven&lt;/url&gt;
+
+                    &lt;!-- 
+                    | 用于定位和排序 artifact 的仓库布局类型-可以是 default（默认）或者 legacy（遗留）
+                    | Maven 2为其仓库提供了一个默认的布局；然而, Maven 1.x有一种不同的布局。我们可以使用该元素指定布局是default（默认）还是legacy（遗留）
+                    | --&gt;
+                    &lt;layout&gt;default&lt;/layout&gt;
+
+                    &lt;!-- 如何处理远程仓库里发布版本的下载 --&gt;
+                    &lt;releases&gt;
+
+                        &lt;!-- 是否允许该仓库为 artifact 提供 发布版 / 快照版 下载功能 --&gt;
+                        &lt;enabled&gt;false&lt;/enabled&gt;
+
+                        &lt;!-- 
+                         | 每次执行构建命令时, Maven 会比较本地 POM 和远程 POM 的时间戳, 该元素指定比较的频率。
+                         | 有效选项是: 
+                         |     always（每次构建都检查）, daily（默认, 距上次构建检查时间超过一天）, interval: x（距上次构建检查超过 x 分钟）、 never（从不）
+                         |
+                         | 重要: 
+                         |     设置为 daily, 如果 artifact 一天更新了几次, 在一天之内进行构建, 也不会从仓库中重新获取最新版本
+                         |--&gt;
+                        &lt;updatePolicy&gt;always&lt;/updatePolicy&gt;
+
+                        &lt;!-- 当 Maven 验证 artifact 校验文件失败时该怎么做: ignore（忽略）, fail（失败）, 或者warn（警告） --&gt;
+                        &lt;checksumPolicy&gt;warn&lt;/checksumPolicy&gt;
+
+                    &lt;/releases&gt;
+
+                    &lt;!-- 如何处理远程仓库里快照版本的下载 --&gt;
+                    &lt;snapshots&gt;
+                        &lt;enabled /&gt;
+                        &lt;updatePolicy /&gt;
+                        &lt;checksumPolicy /&gt;
+                    &lt;/snapshots&gt;
+
+                &lt;/repository&gt;
+
+                &lt;!-- 
+                    国内可用的 maven 仓库地址（updated @ 2019-02-08）：
+
+                    http://maven.aliyun.com/nexus/content/groups/public
+                    http://maven.wso2.org/nexus/content/groups/public/
+                    http://jcenter.bintray.com/
+                    http://maven.springframework.org/release/
+                    http://repository.jboss.com/maven2/
+                    http://uk.maven.org/maven2/
+                    http://repo1.maven.org/maven2/
+                    http://maven.springframework.org/milestone
+                    http://maven.jeecg.org/nexus/content/repositories/
+                    http://repo.maven.apache.org/maven2
+                    http://repo.spring.io/release/
+                    http://repo.spring.io/snapshot/
+                    http://mavensync.zkoss.org/maven2/
+                    https://repository.apache.org/content/groups/public/
+                    https://repository.jboss.org/nexus/content/repositories/releases/   
+                --&gt;
+
+            &lt;/repositories&gt;
+
+            &lt;!-- 
+             | maven 插件的远程仓库配置。maven 插件实际上是一种特殊类型的 artifact。
+             | 插件仓库独立于 artifact 仓库。pluginRepositories 元素的结构和 repositories 元素的结构类似。
+             |--&gt;
+            &lt;!--
+            &lt;pluginRepositories&gt;
+                &lt;pluginRepository&gt;
+                    &lt;releases&gt;
+                        &lt;enabled /&gt;
+                        &lt;updatePolicy /&gt;
+                        &lt;checksumPolicy /&gt;
+                    &lt;/releases&gt;
+                    &lt;snapshots&gt;
+                        &lt;enabled /&gt;
+                        &lt;updatePolicy /&gt;
+                        &lt;checksumPolicy /&gt;
+                    &lt;/snapshots&gt;
+                    &lt;id /&gt;
+                    &lt;name /&gt;
+                    &lt;url /&gt;
+                    &lt;layout /&gt;
+                &lt;/pluginRepository&gt;
+            &lt;/pluginRepositories&gt;
+            --&gt;
+
+        &lt;/profile&gt;
+
+    &lt;/profiles&gt;
+
+    &lt;!--
+     | 手动激活 profiles 的列表, 按照 profile 被应用的顺序定义 activeProfile
+     | 任何 activeProfile, 不论环境设置如何, 其对应的 profile 都会被激活, maven 会忽略无效（找不到）的 profile
+     |--&gt;
+    &lt;!--
+    &lt;activeProfiles&gt;
+        &lt;activeProfile&gt;not-exits-profile&lt;/activeProfile&gt;
+    &lt;/activeProfiles&gt;
+    --&gt;
+
+&lt;/settings&gt;
+</code></pre>
+
+<hr />
+
+<h2>三、镜像仓库（mirror）</h2>
+
+<ul>
+<li>为什么需要配置镜像仓库</li>
+</ul>
+
+
+<p>1、在不配置镜像的情况下,maven默认会使用中央库.</p>
+
+<p>2、maven中央库在国外,有时候访问会很慢,尤其是下载较大的依赖的时候,有时候速度会很慢,甚至会出现无法下载的情况.</p>
+
+<p>3、为了解决依赖下载速度的问题,需要配置maven国内镜像</p>
+
+<ul>
+<li><p>配置多个镜像仓库</p></li>
+<li><p>配置多个镜像仓库，他不是我们想的一个找不到就在下一个镜像中寻找，只有在第一个镜像仓库链接不上的情况下，才会去下一个镜像仓库中寻找。而我们想要的效果是：当a.jar在第一个mirror中不存在的时候，maven会去第二个mirror中查询下载，但是maven不会这样做！</p></li>
+<li><p>多个 mirror 优先级 按照 id字母顺序进行排列（即与编写的顺序无关）</p></li>
+<li><p>常见镜像仓库</p></li>
+</ul>
+
+
+<pre><code class="text">&lt;mirror&gt;
+    &lt;id&gt;alimaven&lt;/id&gt;
+    &lt;name&gt;aliyun maven&lt;/name&gt;
+    &lt;url&gt;http://maven.aliyun.com/nexus/content/groups/public/&lt;/url&gt;
+    &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
+&lt;/mirror&gt;
+&lt;mirror&gt;
+    &lt;id&gt;alimaven&lt;/id&gt;
+    &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
+    &lt;name&gt;aliyun maven&lt;/name&gt;
+    &lt;url&gt;http://maven.aliyun.com/nexus/content/repositories/central/&lt;/url&gt;
+&lt;/mirror&gt;
+
+&lt;mirror&gt;
+    &lt;id&gt;ibiblio&lt;/id&gt;
+    &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
+    &lt;name&gt;Human Readable Name for this Mirror.&lt;/name&gt;
+    &lt;url&gt;http://mirrors.ibiblio.org/pub/mirrors/maven2/&lt;/url&gt;
+&lt;/mirror&gt;
+&lt;mirror&gt;
+    &lt;id&gt;jboss-public-repository-group&lt;/id&gt;
+    &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
+    &lt;name&gt;JBoss Public Repository Group&lt;/name&gt;
+    &lt;url&gt;http://repository.jboss.org/nexus/content/groups/public&lt;/url&gt;
+&lt;/mirror&gt;
+
+&lt;mirror&gt;
+    &lt;id&gt;central&lt;/id&gt;
+    &lt;name&gt;Maven Repository Switchboard&lt;/name&gt;
+    &lt;url&gt;http://repo1.maven.org/maven2/&lt;/url&gt;
+    &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
+&lt;/mirror&gt;
+&lt;mirror&gt;
+    &lt;id&gt;repo2&lt;/id&gt;
+    &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
+    &lt;name&gt;Human Readable Name for this Mirror.&lt;/name&gt;
+    &lt;url&gt;http://repo2.maven.org/maven2/&lt;/url&gt;
+&lt;/mirror&gt;
+</code></pre>
+
+<ul>
+<li>注意</li>
+</ul>
+
+
+<p><mirror>标签中<mirrorof>*</mirrorof></p>
+
+<p>*：表示匹配所有远程仓库，这样pom中定义的仓库和<profile>中定义的仓库将失效</p>
+
+<ul>
+<li>jar包搜索顺序</li>
+</ul>
+
+
+<pre><code class="text">1、本地仓库 
+2、maven settings profile中的repository；
+3、pom.xml中profile中定义的repository；
+4、pom.xml中的repositorys(定义多个repository，按定义顺序找)；
+5、mirror
+</code></pre>
+
+<p>但若如上所说，<mirrorof><em></mirrorof>配置为</em>号，则其他地址失效。</p>
+
+<hr />
+
+<h2>四、参考</h2>
+
+<p><a href="%E2%80%8Bwww.jb51.net/article/189795.htm">Maven镜像地址配置示例大全<em>java</em>脚本之家</a></p>
+
+<p><a href="%E2%80%8Bwww.jb51.net/article/189796.htm">Maven中央仓库地址配置大全<em>java</em>脚本之家</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[SVN迁移到Git的过程与技巧]]></title>
+    <link href="https://ibillxia.github.io/blog/2019/05/07/svn-to-git-migration/"/>
+    <updated>2019-05-07T09:49:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2019/05/07/svn-to-git-migration</id>
+    <content type="html"><![CDATA[<p>关于在VCS中SVN和Git之间的迁移（Clone）这个部分网上已经有大批的文章介绍，而且都非常不错，能够满足我们的常见的需求，这里介绍的是我自己整理的一些技巧和使用中出现的一些问题和疑问。</p>
+
+<p>阅读本篇文章，请先有一些Git和SVN的使用经验（又是经验，经验到底是什么？我都不知道）。</p>
+
+<h1>一、基础迁移：分支和tags同步</h1>
+
+<p>今天的实验对象是，把 <a href="http://code.google.com/p/jdbcdslog-exp">http://code.google.com/p/jdbcdslog-exp/</a> 这个使用SVN管理的project迁移到 Git上面，Git托管网站选择github。SVN迁移到Git，当然要清楚git svn 命令了。</p>
+
+<p>首先请在github上面创建一个repository，这个简单，就不说了，然后就是使用强大的git了。</p>
+
+<pre><code>$ git svn init https://jdbcdslog-exp.googlecode.com/svn/ -s   
+$ git svn fetch  
+</code></pre>
+
+
+
+<!--more-->
+
+
+<p>当然上面的两步，可以作一步处理</p>
+
+<pre><code>$ git svn clone https://jdbcdslog-exp.googlecode.com/svn/ -s  
+</code></pre>
+
+<p>注： -s 参数是表面使用的是svn标准命名方法，即 trunk，tags，branches，这个参数有时很重要，建议使用，命令后面还可以加个文件夹名字作为clone后的目录，如果没有默认是当前路径。</p>
+
+<p>git svn fetch 这个步骤，可能碰到只想从某个版本开始进行fetch，那么请需要–r 参数。</p>
+
+<p>例如：</p>
+
+<pre><code>$ git svn fetch -r 1342:HEAD  
+</code></pre>
+
+<p>注：1342是你想要从这个版本开始fetch，如何查看这个版本号，你可以使用 svn 命令（windows下需要安装Subversion Client，e.g. sliksvn），简单使用就是 svn log svn_url ,这个时候，你可能看到整屏在刷新，没关系，看到log就行。当然更简单的就是使用TortoiseSVN-> Show log。</p>
+
+<p>亦或者你可以这样使用：</p>
+
+<pre><code>$ git svn clone https://jdbcdslog-exp.googlecode.com/svn/ -sr 1342:HEAD jdbcdslog-exp  
+</code></pre>
+
+<p>到这步的时候，本地已经clone了SVN仓库，现在需要的就是提交到远程了。首先，关联github远程仓库，如下：</p>
+
+<pre><code>$ git remote add origin git@github.com:usc/jdbcdslog-exp.git  
+</code></pre>
+
+<p>普通青年这个时候，肯定就会选择使用</p>
+
+<pre><code>$ git push -u origin master  
+</code></pre>
+
+<p>到github上面查看这个仓库(repository),大致效果如下 <a href="https://github.com/usc/jdbcdslog-exp">https://github.com/usc/jdbcdslog-exp</a></p>
+
+<center><img src="/images/2019/IMAG2019050701.png"></center>
+
+
+<p><br></p>
+
+<p>二逼青年当然要看看文档或者仓库信息，有没有什么值得注意的，你瞧瞧，出现了很多branches，并没有tag（SVN仓库目录是标准目录，其中tags下有几个版本的代码，而branches下是没有代码的），是不是很奇怪（上图实际上也说明了一些问题，只有一个branches），既然出现了这样，就要想办法解决了。</p>
+
+<center><img src="/images/2019/IMAG2019050702.png"></center>
+
+
+<p><br></p>
+
+<p>问题的解决直接来自《Pro Git》电子书，下面一段copy自《Pro Git》。</p>
+
+<p>你还需要一点post-import（导入后）清理工作。最起码的，应该清理一下git svn 创建的那些怪异的索引结构。首先要移动标签，把它们从奇怪的远程分支变成实际的标签，然后把剩下的分支移动到本地。</p>
+
+<p>要把标签变成合适的Git 标签，运行</p>
+
+<pre><code>$ cp -Rf .git/refs/remotes/tags/\* .git/refs/tags/
+$ rm -Rf .git/refs/remotes/tags  
+</code></pre>
+
+<p>该命令将原本以tag/ 开头的远程分支的索引变成真正的（轻巧的）标签。</p>
+
+<p>接下来，把refs/remotes 下面剩下的索引变成本地分支：</p>
+
+<pre><code>$ cp -Rf .git/refs/remotes/\* .git/refs/heads/
+$ rm -Rf .git/refs/remotes   
+</code></pre>
+
+<p>现在所有的旧分支都变成真正的Git 分支，所有的旧标签也变成真正的Git 标签。最后，一项工作就是把新建的Git 服务器添加为远程服务器并且向它推送。为了让所有的分支和标签都得到上传，我们使用这条命令：</p>
+
+<pre><code>$ git push origin –all  
+</code></pre>
+
+<p>所有的分支和标签现在都应该整齐干净的躺在新的Git 服务器里了。</p>
+
+<p>【引用完毕】</p>
+
+<p>上面最后部分（git push origin –all），我运行发现有些问题的，并不能如它所说，分支和标签(branches and tags)都在git服务器中，请看下面截图：</p>
+
+<center><img src="/images/2019/IMAG2019050703.jpg"></center>
+
+
+<p><br></p>
+
+<center><img src="/images/2019/IMAG2019050704.png"></center>
+
+
+<p><br></p>
+
+<p>实际上，只提交了branches到github上面，并没有提交tags，当然，很简单，你可以使用 git push –h 查看下帮助，就会发现，你应该知道怎么做了，使用git push –tags就可以了。</p>
+
+<center><img src="/images/2019/IMAG2019050705.png"></center>
+
+
+<p><br></p>
+
+<p>（使用git push –tags效果）</p>
+
+<center><img src="/images/2019/IMAG2019050706.png"></center>
+
+
+<p><br></p>
+
+<p>为了完整，还是说说文艺青年吧。文艺青年还需要搞技术吗？当然是找个上面的普通青年或者二逼青年就搞定了。</p>
+
+<h1>二、进阶迁移：commit logs和ignores</h1>
+
+<p>到此，任务已经差不多完成了，之所以说差不多了，是因为在《Pro Git》发现了两个更让人遗忘的技巧。</p>
+
+<h2>第一, Log中的信息（主要是作者）</h2>
+
+<p>请看完成上面步骤后产生的git log，会是如何</p>
+
+<center><img src="/images/2019/IMAG2019050707.png"></center>
+
+
+<p><br></p>
+
+<p>《Pro Git》上面也有说明，需要先把作者信息抓取出来，写到一个文件(假如是user.txt，放在git 当前目录下)中，</p>
+
+<pre><code>git svn clone https://jdbcdslog-exp.googlecode.com/svn/ -sr 1342:HEAD --authors-file=user.txt --no-metadata jdbcdslog   
+</code></pre>
+
+<p>再来看看效果</p>
+
+<center><img src="/images/2019/IMAG2019050708.jpg"></center>
+
+
+<p><br></p>
+
+<h2>第二，git ignores</h2>
+
+<p>【下面来自《Pro Git》第八章】</p>
+
+<p>假如克隆了一个包含了svn:ignore 属性的Subversion 仓库，就有必要建立对应的.gitignore 文件来防止意外提交一些不应该提交的文件。git svn 有两个有益于改善该问题的命令。第一个是git svn create-ignore，它自动建立对应的.gitignore 文件，以便下次提交的时候可以包含它。</p>
+
+<p>第二个命令是git svn show-ignore，它把需要放进.gitignore 文件中的内容打印到标</p>
+
+<p>准输出，方便我们把输出重定向到项目的黑名单文件：</p>
+
+<pre><code>$ git svn show-ignore &gt; .git/info/exclude  
+</code></pre>
+
+<p>这样一来，避免了.gitignore 对项目的干扰。如果你是一个Subversion 团队里唯一的</p>
+
+<p>Git 用户，而其他队友不喜欢项目包含.gitignore，该方法是你的不二之选。</p>
+
+<p>【引用结束】</p>
+
+<h1>三、SVN和Git的并行</h1>
+
+<p>现在代码即在SVN(google code)上面托管着，也在Git(github)上面托管着，当然提交代码的时候，就需要注意点点。代码的提交大致会有两种情况，提交到SVN还是Git。</p>
+
+<ul>
+<li>提交到SVN</li>
+</ul>
+
+
+<p>开发以SVN为主，大部分Members 都使用SVN，那么如果你使用Git管理你的代码，那么如何同步到SVN上面了？很简单，使用下面命令就可以了，</p>
+
+<pre><code>$ git svn rebase
+$ git svn dcommit   
+</code></pre>
+
+<p>原则和SVN提交差不多，先更新后提交（个人总结）</p>
+
+<ul>
+<li>提交到Git</li>
+</ul>
+
+
+<p>如果想提交到Git上面，当然先要拉取SVN Repo最新的代码，当你push的时候，你可能就会发现有些问题，</p>
+
+<center><img src="/images/2019/IMAG2019050709.jpg"></center>
+
+
+<p><br></p>
+
+<p>根据提示，你可以很容易就知道如何处理，实际上，这也是git方便的地方，很多时候，提示 + -h 都能搞定问题。好了，整个步骤如下:</p>
+
+<pre><code>$ git svn rebase
+$ git pull
+$ git commit –am "xxx"
+$ git push  
+</code></pre>
+
+<h1>四、其他补充</h1>
+
+<p>随着Project的开发，可能SVN URL改变了（很多原因，比如域名改变，比如版本升级，再比如一不小心使用了http，想换到https等），那么如果使用SVN，很简单，直接relocate就可以了，但是以前同步使用的Git Project如何跟着变化了，上网查了一下，发现比较有效的来自下面。</p>
+
+<p><a href="https://git.wiki.kernel.org/articles/g/i/t/GitSvnSwitch_8828.html">https://git.wiki.kernel.org/articles/g/i/t/GitSvnSwitch_8828.html</a></p>
+
+<p>【引用开始】</p>
+
+<p>General Case</p>
+
+<p>What immediately sprang to mind, and what was suggested e.g. on the mailing list, was to simply edit your .git/config, and change the url= in the section [svn-remote "svn"]. That doesn't work, however. Instead, I found several suggestions to use variations of this theme:</p>
+
+<ul>
+<li><p>Edit the svn-remote url URL in .git/config to point to the new domain name</p></li>
+<li><p>Run git svn fetch - <span style="color: red">This needs to fetch at least one new revision from svn!</span></p></li>
+<li><p>Change svn-remote url back to the original url</p></li>
+<li><p>Run git svn rebase -l to do a local rebase (with the changes that came in with the last fetch operation)</p></li>
+<li><p>Change svn-remote url back to the new url</p></li>
+<li><p>Run git svn rebase should now work again!</p></li>
+</ul>
+
+
+<p>This will only work, if the git svn fetch step actually fetches anything! (Took me a while to discover that... I had to put in a dummy revision to our svn repository to make it happen!)</p>
+
+<p>【引用结束】</p>
+
+<p>注：红色部分请注意下。</p>
+
+<p>本人已经验证这个方法是可以成功切换SVN URL的。</p>
+
+<p>如果想更了解清楚，请参考《Pro Git》第八章——Git 与其他系统。实际上这些内容，全部在《Pro Git》一书中，以前也没仔细阅读，现在发现，它不仅提供了基础知识，而且还想到了我们会出现困难或者疑问的地方，并给出了解决办法或思路。</p>
+
+<p>碰到问题再想着解决，这种“需求驱动学习”的方式是最能让你铭记的。</p>
+
+<p>如果有兴趣的话，后面可以介绍下，在不同的google code project中进行同步（sync）或者备份（SVN迁移到SVN）。</p>
+
+<h1>参考</h1>
+
+<p><a href="http://progit.org/book/">http://progit.org/book/</a></p>
+
+<p><a href="http://progit.org/book/zh/">http://progit.org/book/zh/</a></p>
+
+<p><a href="http://rubynroll.iteye.com/blog/203133">SVN+GIT=鱼与熊掌兼得</a></p>
+
+<p><a href="http://www.ooso.net/archives/576">git svn实战</a></p>
+
+<p><a href="http://www.robinlu.com/blog/archives/194">如何在svn系统中使用git</a></p>
+
+<p><a href="http://bigwhite.blogbus.com/logs/100700290.html">小试git-svn</a></p>
+
+<p><a href="https://git.wiki.kernel.org/articles/g/i/t/GitSvnSwitch_8828.html">https://git.wiki.kernel.org/articles/g/i/t/GitSvnSwitch_8828.html</a></p>
+
+<p>原文链接： <a href="http://www.blogjava.net/lishunli/archive/2012/01/15/368562.html">SVN迁移到Git的过程（+ 一些技巧）</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[MySQL常用系统命令]]></title>
+    <link href="https://ibillxia.github.io/blog/2019/05/06/mysql-system-commands/"/>
+    <updated>2019-05-06T22:30:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2019/05/06/mysql-system-commands</id>
+    <content type="html"><![CDATA[<h1>1 show processlist</h1>
+
+<p>SHOW PROCESSLIST显示哪些线程正在运行。您也可以使用mysqladmin processlist语句得到此信息。如果您有SUPER权限，您可以看到所有线程。否则，您只能看到您自己的线程（也就是，与您正在使用的MySQL账户相关的线程）。如果有线程在update或者insert 某个表，此时进程的status为updating 或者 sending data。</p>
+
+<p>如果您得到“too many connections”错误信息，并且想要了解正在发生的情况，本语句是非常有用的。MySQL保留一个额外的连接，让拥有SUPER权限的账户使用，以确保管理员能够随时连接和检查系统（假设您没有把此权限给予所有的用户）。</p>
+
+<!-- more -->
+
+
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Checking table</td>
+<td>正在检查数据表（这是自动的）。</td>
+</tr>
+<tr>
+<td>Closing tables</td>
+<td>正在将表中修改的数据刷新到磁盘中，同时正在关闭已经用完的表。这是一个很快的操作，如果不是这样的话，就应该确认磁盘空间是否已经满了或者磁盘是否正处于重负中。</td>
+</tr>
+<tr>
+<td>Connect Out</td>
+<td>复制从服务器正在连接主服务器。</td>
+</tr>
+<tr>
+<td>Copying to tmp table on disk</td>
+<td>由于临时结果集大于tmp_table_size，正在将临时表从内存存储转为磁盘存储以此节省内存。</td>
+</tr>
+<tr>
+<td>Creating tmp table</td>
+<td>正在创建临时表以存放部分查询结果。</td>
+</tr>
+<tr>
+<td>deleting from main table</td>
+<td>服务器正在执行多表删除中的第一部分，刚删除第一个表。</td>
+</tr>
+<tr>
+<td>deleting from reference tables</td>
+<td>服务器正在执行多表删除中的第二部分，正在删除其他表的记录。</td>
+</tr>
+<tr>
+<td>Flushing tables</td>
+<td>正在执行FLUSH TABLES，等待其他线程关闭数据表。</td>
+</tr>
+<tr>
+<td>Killed</td>
+<td>发送了一个kill请求给某线程，那么这个线程将会检查kill标志位，同时会放弃下一个kill请求。MySQL会在每次的主循环中检查kill标志位，不过有些情况下该线程可能会过一小段才能死掉。如果该线程程被其他线程锁住了，那么kill请求会在锁释放时马上生效。</td>
+</tr>
+<tr>
+<td>Locked</td>
+<td>被其他查询锁住了。</td>
+</tr>
+<tr>
+<td>Sending data</td>
+<td>正在处理SELECT查询的记录，同时正在把结果发送给客户端。</td>
+</tr>
+<tr>
+<td>Sorting for group</td>
+<td>正在为GROUP BY做排序。</td>
+</tr>
+<tr>
+<td>Sorting for order</td>
+<td>正在为ORDER BY做排序。</td>
+</tr>
+<tr>
+<td>Opening tables</td>
+<td>这个过程应该会很快，除非受到其他因素的干扰。例如，在执ALTER TABLE或LOCK TABLE语句行完以前，数据表无法被其他线程打开。正尝试打开一个表。</td>
+</tr>
+<tr>
+<td>Removing duplicates</td>
+<td>正在执行一个SELECT DISTINCT方式的查询，但是MySQL无法在前一个阶段优化掉那些重复的记录。因此，MySQL需要再次去掉重复的记录，然后再把结果发送给客户端。</td>
+</tr>
+<tr>
+<td>Reopen table</td>
+<td>获得了对一个表的锁，但是必须在表结构修改之后才能获得这个锁。已经释放锁，关闭数据表，正尝试重新打开数据表。</td>
+</tr>
+<tr>
+<td>Repair by sorting</td>
+<td>修复指令正在排序以创建索引。</td>
+</tr>
+<tr>
+<td>Repair with keycache</td>
+<td>修复指令正在利用索引缓存一个一个地创建新索引。它会比Repair by sorting慢些。</td>
+</tr>
+<tr>
+<td>Searching rows for update</td>
+<td>正在讲符合条件的记录找出来以备更新。它必须在UPDATE要修改相关的记录之前就完成了。</td>
+</tr>
+<tr>
+<td>Sleeping</td>
+<td>正在等待客户端发送新请求。</td>
+</tr>
+<tr>
+<td>System lock</td>
+<td>正在等待取得一个外部的系统锁。如果当前没有运行多个mysqld服务器同时请求同一个表，那么可以通过增加--skip-external-locking参数来禁止外部系统锁。</td>
+</tr>
+<tr>
+<td>Upgrading lock</td>
+<td>INSERT DELAYED正在尝试取得一个锁表以插入新记录。</td>
+</tr>
+<tr>
+<td>Updating</td>
+<td>正在搜索匹配的记录，并且修改它们。</td>
+</tr>
+<tr>
+<td>User Lock</td>
+<td>正在等待GET_LOCK()。</td>
+</tr>
+<tr>
+<td>Waiting for tables</td>
+<td>该线程得到通知，数据表结构已经被修改了，需要重新打开数据表以取得新的结构。然后，为了能的重新打开数据表，必须等到所有其他线程关闭这个表。以下几种情况下会产生这个通知：FLUSH TABLES tbl_name, ALTER TABLE, RENAME TABLE, REPAIR TABLE, ANALYZE TABLE,或OPTIMIZE TABLE。</td>
+</tr>
+<tr>
+<td>waiting for handler insert</td>
+<td>INSERT DELAYED已经处理完了所有待处理的插入操作，正在等待新的请求。</td>
+</tr>
+</tbody>
+</table>
+
+
+<p><br>
+大部分状态对应很快的操作，只要有一个线程保持同一个状态好几秒钟，那么可能是有问题发生了，需要检查一下。还有其他的状态没在上面中列出来，不过它们大部分只是在查看服务器是否有存在错误是才用得着。</p>
+
+<h1>2 show full processlist</h1>
+
+<p><code>show processlist;</code>只列出前100条，如果想全列出请使用<code>show full processlist;</code></p>
+
+<h1>3 show open tables</h1>
+
+<p>这条命令能够查看当前有那些表是打开的。In_use列表示有多少线程正在使用某张表，Name_locked表示表名是否被锁，这一般发生在Drop或Rename命令操作这张表时。所以这条命令不能帮助解答我们常见的问题：当前某张表是否有死锁，谁拥有表上的这个锁等。
+<code>show open tables from database;</code></p>
+
+<h1>4 show status like ‘%lock%’</h1>
+
+<p>查看服务器状态。</p>
+
+<h1>5 show engine innodb status\G</h1>
+
+<p>MySQL 5.1之前的命令是：<code>show innodbstatus\G;</code>，MySQL 5.5使用上面命令即可查看innodb引擎的运行时信息。</p>
+
+<h1>6 show variables like ‘%timeout%’</h1>
+
+<p>查看服务器配置参数。</p>
+
+<h2>参考资料</h2>
+
+<p><a href="http://www.imysql.cn/node/165">mysql5.0经常出现 err=1205 - Lockwait timeout exceeded; try restarting transaction</a> <br/>
+<a href="http://www.cnblogs.com/JulyZhang/archive/2011/01/28/1947165.html">mysql show processlist命令详解</a> <br/>
+<a href="http://blog.csdn.net/c__ilikeyouma/article/details/8541195">MySQL锁</a> <br/>
+<a href="http://www.itpub.net/thread-1454597-1-1.html">SHOW INNODB STATUS提示语法错误？</a> <br/>
+<a href="http://blog.sina.com.cn/s/blog_4d1f40c00100rsse.html">SHOW OPEN TABLES – what is in your tablecache</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[MySQL乱码问题详解与解决方案]]></title>
+    <link href="https://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion/"/>
+    <updated>2015-10-28T17:12:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion</id>
+    <content type="html"><![CDATA[<p>本文节选自<a href="http://cenalulu.github.io/mysql/mysql-mojibake/">10分钟学会理解和解决MySQL乱码问题</a>   <br/>
+PS: 原文博主通过MySQL垂直深耕，成功进入Facebook了，祝福。</p>
+
+<h2>1. MySQL乱码的成因</h2>
+
+<center><img src="/images/2015/IMAG2015102801.png"></center>
+
+
+<p></p>
+
+<p>要了解为什么会出现乱码，需要理解从客户端发起请求到MySQL存储数据，再到取回客户端的过程中，哪些环节会有编码/解码的行为。</p>
+
+
+<p></p>
+
+<!--more-->   
+
+
+<h3>1.1 存入MySQL经历的编码转换</h3>
+
+<center><img src="/images/2015/IMAG2015102802.png"></center>
+
+
+<p></p>
+
+<p>存入过程有3次编码/解码：</p>
+
+
+<p></p>
+
+<p>1. Terminal根据字符编码转换成二进制流<br/>   
+2. Server通过character-set-client解码<br/>   
+3. 判断character-set-client和目标表的charset是否一致，不一致则转换</p>
+
+
+<p></p>
+
+<h3>1.2 从MySQL取出数据经历的编码转换</h3>
+
+<center><img src="/images/2015/IMAG2015102803.png"></center>
+
+
+<p></p>
+
+<p>取出过程同样有3次编码/解码：</p>
+
+
+<p></p>
+
+<p>1. 用表字符集编码进行解码<br/>   
+2. 将数据转换为character-set-client的编码<br/>   
+3. Server通过网络传输到远端client</p>
+
+
+<p></p>
+
+<h3>1.3出现乱码的原因</h3>
+
+<p>MySQL数据存入和读取过程有3次编码/解码的过程：客户端编码，MySQL Server解码，Client编码向表编码的转换   <br/>
+三步中，只要两步或者两部以上的编码有不一致就有可能出现编解码错误。   <br/>
+1. 存入和取出时对应环节的编码不一致    <br/>
+2. 单个流程中三步的编码不一致</p>
+
+<h2>2.如何避免乱码</h2>
+
+<p>理解了上面的内容，要避免乱码就显得很容易了。   <br/>
+只要做到“三位一体”，即 客户端，MySQL character-set-client，table charset三个字符集完全一致就可以保证一定不会有乱码出现了。</p>
+
+<p>最简单的方式是将客户端、连接、服务端统一设置为UTF-8（适合于还未写入数据造成乱码的情况，已经有乱码的修复见下文）：</p>
+
+<pre><code>SET NAMES 'utf8mb4';     
+-- 等同于以下三条语句：     
+SET character_set_client = utf8mb4;     
+SET character_set_results = utf8mb4;     
+SET character_set_connection = utf8mb4;     
+</code></pre>
+
+<h2>3.如何修复已经编码损坏的数据</h2>
+
+<p>原文有列举一些错误的方法，这里就略过了，直接说正确的方法</p>
+
+<h3>方法一 Dump &amp; Reload</h3>
+
+<p>这个方法比较笨，但也比较好操作和理解。简单的说分为以下三步：</p>
+
+<ul>
+<li>通过错进错出的方法，导出到文件</li>
+<li>用正确的字符集修改新表</li>
+<li>将之前导出的文件导回到新表中</li>
+</ul>
+
+
+<p>举例，我们用UTF-8将数据“错进”到latin1编码的表中。现在需要将表编码修改为UTF-8可以使用以下命令</p>
+
+<pre><code>shell&gt; mysqldump -u root -p -t --skip-set-charset --default-character-set=utf8 test charset_test_latin1 &gt; data.sql   
+#确保导出的文件用文本编辑器在UTF-8编码下查看没有乱码   
+shell&gt; mysql -uroot -p -e 'create table charset_test_latin1 (id int primary key auto_increment, char_col varchar(50)) charset = utf8' test   
+shell&gt; mysql -uroot -p  --default-character-set=utf8 test &lt; data.sql   
+</code></pre>
+
+<h3>方法二 Convert to Binary &amp; Convert Back</h3>
+
+<p>这种方法比较取巧，用的是将二进制数据作为中间数据的做法来实现的。由于，MySQL再将有编码意义的数据流，转换为无编码意义的二进制数据的时候并不做实际的数据转换。而从二进制数据准换为带编码的数据时，又会用目标编码做一次编码转换校验。通过这两个特性就相当于在MySQL内部模拟了一次“错出”，将乱码“拨乱反正”了。</p>
+
+<p>还是用上面那个例子举例，我们用UTF-8将数据“错进”到latin1编码的表中。现在需要将表编码修改为UTF-8可以使用以下命令</p>
+
+<pre><code>mysql&gt; ALTER TABLE charset_test_latin1 MODIFY COLUMN char_col VARBINARY(50);   
+mysql&gt; ALTER TABLE charset_test_latin1 MODIFY COLUMN char_col varchar(50) character set utf8;   
+</code></pre>
+
+<h2>参考资料</h2>
+
+<p>[1]<a href="https://cenalulu.github.io/mysql/mysql-mojibake/">10分钟学会理解和解决MySQL乱码问题</a><br/>
+[2]<a href="https://dev.mysql.com/doc/refman/8.0/en/charset.html">MySQL Character Sets文档</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Google C++ 编程规范要点总结]]></title>
+    <link href="https://ibillxia.github.io/blog/2015/03/26/google-cpp-style-guide/"/>
+    <updated>2015-03-26T18:45:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2015/03/26/google-cpp-style-guide</id>
+    <content type="html"><![CDATA[<center><img src="/images/2015/IMAG2015032601.png"></center>
+
+
+<p>Google C++ Style Guide是业界最为著名的C++编程规范之一。本文对其核心要点进行梳理总结，涵盖头文件管理、命名规范、类设计、内存管理等方面。</p>
+
+<h1>1. 头文件（Header Files）</h1>
+
+<p>通常每个 <code>.cc</code> 文件应该有一个配套的 <code>.h</code> 文件. 常见的例外情况包括单元测试和仅有 <code>main()</code> 函数的 <code>.cc</code> 文件.   <br/>
+正确使用头文件会大大改善代码的可读性和执行文件的大小、性能.</p>
+
+<ul>
+<li>每个.cc文件都应有一个对应的.h文件</li>
+<li>使用#define保护头文件防止多重包含，格式：<code>PROJECT_PATH_FILE_H_</code></li>
+<li>尽量使用前置声明（Forward Declarations）减少 <code>#include</code> 的数量</li>
+<li>内联函数不超过10行</li>
+</ul>
+
+
+<!--more-->   
+
+
+<h1>2. 命名规范（Naming）</h1>
+
+<p>最重要的一致性规则是命名管理. 命名的风格能让我们在不需要去查找类型声明的条件下快速地了解某个名字代表的含义: 类型, 变量, 函数, 常量, 宏, 等等, 甚至. 我们大脑中的模式匹配引擎非常依赖这些命名规则.</p>
+
+<p>命名规则具有一定随意性, 但相比按个人喜好命名, 一致性更重要, 所以无论你认为它们是否重要, 规则总归是规则.</p>
+
+<ul>
+<li><b>文件名</b>：全部小写，用下划线连接，如 <code>my_useful_class.cc</code></li>
+<li><b>类型名</b>：大驼峰，如 <code>MyExcitingClass</code></li>
+<li><b>变量名</b>：全部小写加下划线，如 <code>table_name</code>；类成员变量加尾部下划线 <code>table_name_</code></li>
+<li><b>常量名</b>：以k开头后跟大驼峰，如 <code>kDaysInAWeek</code></li>
+<li><b>函数名</b>：大驼峰，如 <code>AddTableEntry()</code></li>
+<li><b>命名空间</b>：全部小写加下划线</li>
+</ul>
+
+
+<h1>3. 类（Classes）</h1>
+
+<p>类 (class) 是 C++ 中最基本的代码单元. 因此，类在 C++ 中被广泛使用.</p>
+
+<ul>
+<li>构造函数中不要做过于复杂的初始化，考虑使用 <code>Init()</code> 方法</li>
+<li>必须定义拷贝构造函数和赋值操作符，或使用 <code>DISALLOW_COPY_AND_ASSIGN</code> 宏禁用</li>
+<li>优先使用组合（Composition）而非继承（Inheritance）</li>
+<li>接口类只有纯虚函数和静态成员</li>
+<li>声明顺序：<code>public</code> → <code>protected</code> → <code>private</code></li>
+</ul>
+
+
+<h1>4. 格式（Formatting）</h1>
+
+<p>每个人都可能有自己的代码风格和格式, 但如果一个项目中的所有人都遵循同一风格的话, 这个项目就能更顺利地进行. <br/>
+每个人未必能同意下述的每一处格式规则, 而且其中的不少规则需要一定时间的适应, 但整个项目服从统一的编程风格是很重要的, 只有这样才能让所有人轻松地阅读和理解代码.</p>
+
+<ul>
+<li>每行最多80个字符</li>
+<li>使用2个空格缩进，不使用Tab</li>
+<li>函数声明和定义的返回类型与函数名在同一行</li>
+</ul>
+
+
+<h1>5. 其他C++特性</h1>
+
+<ul>
+<li>优先使用const引用传递参数</li>
+<li>避免使用异常（Exceptions）</li>
+<li>使用C++风格的类型转换（static_cast等），禁止C风格强转</li>
+<li>使用前置递增（++i）而非后置递增（i++）</li>
+<li>使用nullptr替代NULL和0</li>
+</ul>
+
+
+<h1>参考资料</h1>
+
+<p>[1]<a href="https://google.github.io/styleguide/cppguide.html">Google C++ Style Guide</a>   <br/>
+[2]<a href="https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/contents.html">C++ 风格指南</a></p>
+]]></content>
+  </entry>
+  
+</feed>

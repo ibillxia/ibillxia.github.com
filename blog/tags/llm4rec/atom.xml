@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: LLM4Rec | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/llm4rec/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[GenRec综述论文笔记]]></title>
+    <link href="https://ibillxia.github.io/blog/2025/06/18/gen-rec-servey-notes/"/>
+    <updated>2025-06-18T09:51:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2025/06/18/gen-rec-servey-notes</id>
+    <content type="html"><![CDATA[<p>论文链接：<a href="https://arxiv.org/abs/2409.15173">https://arxiv.org/abs/2409.15173</a></p>
+
+<h1>book structure</h1>
+
+<center><img src="/images/2025/IMAG2025061801.webp"></center>
+
+
+
+
+<!--more-->
+
+
+<p>Advantages of recommender systems with generative models</p>
+
+<center><img src="/images/2025/IMAG2025061802.webp"></center>
+
+
+<p>Outline of key techniques and publications in LLM-driven RSs</p>
+
+<center><img src="/images/2025/IMAG2025061803.webp"></center>
+
+
+<h1>Chap4-LLM Rec</h1>
+
+<h2>4.3 Encoder-only LLM Rec</h2>
+
+<p><strong>encoder-only LLMs</strong> can be used in two main architectures: as dense retrievers (c.f. Sec 4.3.1) or as cross-encoders (c.f. Sec 4.3.2).</p>
+
+<center><img src="/images/2025/IMAG2025061804.webp"></center>
+
+
+<p>Autoregressive LLM inputs are called prompts, which are sequences of tokens expressing a task such as top-k recommendation, rating prediction, or explanation generation.</p>
+
+<center><img src="/images/2025/IMAG2025061805.webp"></center>
+
+
+<h2>4.5 Retrieval Augmented Rec</h2>
+
+<center><img src="/images/2025/IMAG2025061806.webp"></center>
+
+
+<h2>4.6 LLMs Representation Generation</h2>
+
+<center><img src="/images/2025/IMAG2025061807.webp"></center>
+
+
+<h2>4.7 Conversational Rec</h2>
+
+<center><img src="/images/2025/IMAG2025061808.webp"></center>
+
+
+<h1>Chap5-Multi-modal GMs for Rec</h1>
+
+<h2>5.1 Introduction</h2>
+
+<p>Why?——item cold start problem, user request understanding, complex recsys scenes(virtual try-on, conversational shopping assistans)</p>
+
+<p>Challenges——alignment，latent space learning</p>
+
+<h2>5.2 Contrastive Multimodal Rec</h2>
+
+<p>CLIP</p>
+
+<center><img src="/images/2025/IMAG2025061809.webp"></center>
+
+
+<p>Align BEfore Fuse (ALBEF)</p>
+
+<center><img src="/images/2025/IMAG2025061810.webp"></center>
+
+
+<h2>5.3 Generative Multimodal Rec</h2>
+
+<p>GAN</p>
+
+<center><img src="/images/2025/IMAG2025061811.webp"></center>
+
+
+<p>VAE</p>
+
+<center><img src="/images/2025/IMAG2025061812.webp"></center>
+
+
+<p>Diffusion</p>
+
+<center><img src="/images/2025/IMAG2025061813.webp"></center>
+
+
+<h2>5.4 Applications of Multimodal Rec</h2>
+
+<ul>
+<li><p>E-commerce</p></li>
+<li><p>product visualization-virtual try on</p></li>
+<li><p>Marketing-create personalized ad images and videos</p></li>
+<li><p>Streaming services-Long and short-form video,music,audiobooks,podcasts,radio</p></li>
+<li><p>Travel</p></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

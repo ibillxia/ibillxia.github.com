@@ -1,0 +1,519 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>工业界推荐系统技术要点总结 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(function () {
+  addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">工业界推荐系统技术要点总结</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2024-05-26T11:25:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>原文链接：<a href="https://zhuanlan.zhihu.com/p/689894486">https://zhuanlan.zhihu.com/p/689894486</a></p>
+
+<p>工业界的推荐系统技术要点有很多，想从事推荐系统相关方向的同学都建议刷一刷。</p>
+
+<h1>多目标排序模型</h1>
+
+<p>回顾一下推荐系统的链路</p>
+
+<center><img src="/images/2024/IMAG2024052601.jpg"></center>
+
+
+
+
+<!--more-->
+
+
+<p>常见的交互指标</p>
+
+<center><img src="/images/2024/IMAG2024052602.jpg"></center>
+
+
+<p>排序模型做的事情</p>
+
+<center><img src="/images/2024/IMAG2024052603.jpg"></center>
+
+
+<p>多目标模型就是要预测多个目标</p>
+
+<center><img src="/images/2024/IMAG2024052604.jpg"></center>
+
+
+<p>预测概率和实际是否交互求交叉熵损失</p>
+
+<center><img src="/images/2024/IMAG2024052605.jpg"></center>
+
+
+<p>训练时通常会遇到类别不平衡问题，可以考虑做采样</p>
+
+<center><img src="/images/2024/IMAG2024052606.jpg"></center>
+
+
+<p>采样可能导致预估点击率偏高</p>
+
+<center><img src="/images/2024/IMAG2024052607.jpg"></center>
+
+
+<p>可以通过校准公式进行校准</p>
+
+<center><img src="/images/2024/IMAG2024052608.jpg"></center>
+
+
+<p>Multi-gate Mixture-of-Experts</p>
+
+<p>几个专家就是放几个神经网络</p>
+
+<center><img src="/images/2024/IMAG2024052609.jpg"></center>
+
+
+<p>进一步考虑对多个神经网络的输出进行加权</p>
+
+<center><img src="/images/2024/IMAG2024052610.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052611.jpg"></center>
+
+
+<p>可能会出现极化的现象</p>
+
+<center><img src="/images/2024/IMAG2024052612.jpg"></center>
+
+
+<p>可以通过dropout的方式来解决极化</p>
+
+<center><img src="/images/2024/IMAG2024052613.jpg"></center>
+
+
+<p>多目标有多个预估分数就可以有不同融合方式</p>
+
+<center><img src="/images/2024/IMAG2024052614.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052615.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052616.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052617.jpg"></center>
+
+
+<p>视频播放建模</p>
+
+<center><img src="/images/2024/IMAG2024052618.jpg"></center>
+
+
+<p>播放时长建模</p>
+
+<center><img src="/images/2024/IMAG2024052619.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052620.jpg"></center>
+
+
+<p>视频完播用回归或分类都可以</p>
+
+<center><img src="/images/2024/IMAG2024052621.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052622.jpg"></center>
+
+
+<p>完播率通常和视频时长有关，不能直接把预估的完播率⽤到融分公式</p>
+
+<center><img src="/images/2024/IMAG2024052623.jpg"></center>
+
+
+<p>通常做个调整再用到融分公式</p>
+
+<center><img src="/images/2024/IMAG2024052624.jpg"></center>
+
+
+<h1>排序模型的特征</h1>
+
+<p>用户画像</p>
+
+<center><img src="/images/2024/IMAG2024052625.jpg"></center>
+
+
+<p>物品画像</p>
+
+<center><img src="/images/2024/IMAG2024052626.jpg"></center>
+
+
+<p>用户统计特征</p>
+
+<center><img src="/images/2024/IMAG2024052627.jpg"></center>
+
+
+<p>笔记统计特征</p>
+
+<center><img src="/images/2024/IMAG2024052628.jpg"></center>
+
+
+<p>场景特征</p>
+
+<center><img src="/images/2024/IMAG2024052629.jpg"></center>
+
+
+<p>特征处理</p>
+
+<center><img src="/images/2024/IMAG2024052630.jpg"></center>
+
+
+<p>特征覆盖率的概念</p>
+
+<center><img src="/images/2024/IMAG2024052631.jpg"></center>
+
+
+<p>数据服务分三步</p>
+
+<center><img src="/images/2024/IMAG2024052632.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052633.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052634.jpg"></center>
+
+
+<h1>粗排</h1>
+
+<p>精排模型的线上推理代价大</p>
+
+<center><img src="/images/2024/IMAG2024052635.jpg"></center>
+
+
+<p>双塔模型牺牲准确性换计算量</p>
+
+<center><img src="/images/2024/IMAG2024052636.jpg"></center>
+
+
+<p>粗排的三塔模型</p>
+
+<center><img src="/images/2024/IMAG2024052637.jpg"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024052638.jpg"></center>
+
+
+<p>三塔模型的推理</p>
+
+<center><img src="/images/2024/IMAG2024052639.jpg"></center>
+
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2024-05-26T11:25:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/recsys/'>RecSys</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/gong-cheng-shi-jian/'>工程实践</a>, <a class='tag' href='/blog/tags/tui-jian-xi-tong/'>推荐系统</a>, <a class='tag' href='/blog/tags/shen-du-xue-xi/'>深度学习</a></span>
+		
+    </p>
+    
+      
+         <div class="sharing">
+  
+  
+  
+</div>
+
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2024/05/22/hdfs-compression-algorithms/" title="Previous Post:
+        HDFS常用文件类型及压缩算法对比">&laquo; HDFS常用文件类型及压缩算法对比</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2024/06/21/swiglu-activation-in-llm/"
+        title="Next Post: 为什么大型语言模型都在使用SwiGLU作为激活函数">为什么大型语言模型都在使用SwiGLU作为激活函数
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary/';
+        var disqus_url = 'https://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

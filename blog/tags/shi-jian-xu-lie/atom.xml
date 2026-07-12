@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 时间序列 | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/shi-jian-xu-lie/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[用Python预测周期性时间序列]]></title>
+    <link href="https://ibillxia.github.io/blog/2019/06/12/python-periodic-time-series/"/>
+    <updated>2019-06-12T19:45:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2019/06/12/python-periodic-time-series</id>
+    <content type="html"><![CDATA[<p>原文链接： <a href="https://juejin.cn/post/6844903585742848013">https://juejin.cn/post/6844903585742848013</a>  <br/>
+github项目： <a href="https://github.com/scarlettgin/cyclical_series_predict">https://github.com/scarlettgin/cyclical_series_predict</a></p>
+
+<h1>1、背景</h1>
+
+<p>公司平台上有不同的api，供内部或外部调用，这些api承担着不同的功能，如查询账号、发版、抢红包等等。日志会记录下每分钟某api被访问了多少次，即一个api每天会有1440条记录（1440分钟），将每天的数据连起来观察，有点类似于股票走势的意思。我想通过前N天的历史数据预测出第N+1天的流量访问情况，预测值即作为合理参考，供新一天与真实值做实时对比。当真实流量跟预测值有较大出入，则认为有异常访问，触发报警。</p>
+
+<h1>2、数据探索</h1>
+
+<p>我放了一份样例数据在data文件夹下，看一下数据大小和结构</p>
+
+<pre><code>data = pd.read_csv(filename)
+print('size: ',data.shape)
+print(data.head())
+</code></pre>
+
+
+
+<center><img src="/images/2019/IMAG2019061201.webp"></center>
+
+
+<p><br></p>
+
+<!--more-->
+
+
+<blockquote><p>数据大小：共10080条记录，即10080分钟，七天的数据。字段含义：date：时间，单位分钟count：该分钟该api被访问的次数</p></blockquote>
+
+<p>画图看一下序列的走势:（一些画图等探索类的方法放在了test_stationarity.py 文件中，包含时间序列图，移动平均图，有兴趣的可以自己尝试下）。</p>
+
+<pre><code>def draw_ts(timeseries):
+    timeseries.plot()
+    plt.show()
+
+data = pd.read_csv(path)
+data = data.set_index('date')
+data.index = pd.to_datetime(data.index)
+ts = data['count']
+draw_ts(ts)
+</code></pre>
+
+
+
+<center><img src="/images/2019/IMAG2019061202.webp"></center>
+
+
+<p><br></p>
+
+<p>看这糟心的图，那些骤降为0的点这就是我遇到的第一个坑，我当初一拿到这份数据就开始做了。后来折腾了好久才发现，那些骤降为0的点是由于数据缺失，ETL的同学自动补零造成的，沟通晚了(TДT)。</p>
+
+<p>把坑填上，用前后值的均值把缺失值补上，再看一眼：</p>
+
+<center><img src="/images/2019/IMAG2019061203.webp"></center>
+
+
+<p><br></p>
+
+<p>发现这份数据有这样几个特点，在模型设计和数据预处理的时候要考虑到：</p>
+
+<ul>
+<li><p>1)、这是一个周期性的时间序列，数值有规律的以天为周期上下波动，图中这个api，在每天下午和晚上访问较为活跃，在早上和凌晨较为稀少。在建模之前需要做分解。</p></li>
+<li><p>2)、我的第二个坑：数据本身并不平滑，骤突骤降较多，而这样是不利于预测的，毕竟模型需要学习好正常的序列才能对未知数据给出客观判断，否则会出现频繁的误报，令气氛变得十分尴尬( ´Д｀)，所以必须进行平滑处理。</p></li>
+<li><p>3)、这只是一个api的序列图，而不同的api的形态差距是很大的，毕竟承担的功能不同，如何使模型适应不同形态的api也是需要考虑的问题。</p></li>
+</ul>
+
+
+<h1>3、预处理</h1>
+
+<h2>3.1 划分训练测试集</h2>
+
+<p>前六天的数据做训练，第七天做测试集。</p>
+
+<pre><code>class ModelDecomp(object):
+    def __init__(self, file, test_size=1440):
+        self.ts = self.read_data(file)
+        self.test_size = test_size
+        self.train_size = len(self.ts) - self.test_size
+        self.train = self.ts[:len(self.ts)-test_size]
+        self.test = self.ts[-test_size:]
+</code></pre>
+
+<h2>3.2 对训练数据进行平滑处理</h2>
+
+<p>消除数据的毛刺，可以用移动平均法，我这里没有采用，因为我试过发现对于我的数据来说，移动平均处理完后并不能使数据平滑，我这里采用的方法很简单，但效果还不错：把每个点与上一点的变化值作为一个新的序列，对这里边的异常值，也就是变化比较离谱的值剃掉，用前后数据的均值填充，注意可能会连续出现变化较大的点：</p>
+
+<pre><code>def _diff_smooth(self, ts):
+    dif = ts.diff().dropna() # 差分序列
+    td = dif.describe() # 描述性统计得到：min，25%，50%，75%，max值
+    high = td['75%'] + 1.5 * (td['75%'] - td['25%']) # 定义高点阈值，1.5倍四分位距之外
+    low = td['25%'] - 1.5 * (td['75%'] - td['25%']) # 定义低点阈值，同上
+
+    # 变化幅度超过阈值的点的索引
+    forbid_index = dif[(dif &gt; high) | (dif &lt; low)].index 
+    i = 0
+    while i &lt; len(forbid_index) - 1:
+        n = 1 # 发现连续多少个点变化幅度过大，大部分只有单个点
+        start = forbid_index[i] # 异常点的起始索引
+        while forbid_index[i+n] == start + timedelta(minutes=n):
+            n += 1
+        i += n - 1
+
+        end = forbid_index[i] # 异常点的结束索引
+        # 用前后值的中间值均匀填充
+        value = np.linspace(ts[start - timedelta(minutes=1)], ts[end + timedelta(minutes=1)], n)
+        ts[start: end] = value
+        i += 1
+
+self.train = self._diff_smooth(self.train)
+draw_ts(self.train)
+</code></pre>
+
+<p>平滑后的训练数据：</p>
+
+<center><img src="/images/2019/IMAG2019061204.webp"></center>
+
+
+<p><br></p>
+
+<h2>3.3 将训练数据进行周期性分解</h2>
+
+<p>采用statsmodels工具包：</p>
+
+<pre><code>from statsmodels.tsa.seasonal import seasonal_decompose
+
+decomposition = seasonal_decompose(self.ts, freq=freq, two_sided=False)
+# self.ts:时间序列，series类型; 
+# freq:周期，这里为1440分钟，即一天; 
+# two_sided:观察下图2、4行图，左边空了一段，如果设为True，则会出现左右两边都空出来的情况，False保证序列在最后的时间也有数据，方便预测。
+
+self.trend = decomposition.trend
+self.seasonal = decomposition.seasonal
+self.residual = decomposition.resid
+decomposition.plot()
+plt.show()
+</code></pre>
+
+
+
+<center><img src="/images/2019/IMAG2019061205.webp"></center>
+
+
+<p><br></p>
+
+<p>第一行observed：原始数据；第二行trend：分解出来的趋势部分；第三行seasonal：周期部分；最后residual：残差部分。我采用的是seasonal_decompose的加法模型进行的分解，即 observed = trend + seasonal + residual，另还有乘法模型。在建模的时候，只针对trend部分学习和预测，如何将trend的预测结果加工成合理的最终结果？当然是再做加法，后面会详细写。</p>
+
+<h1>4、模型</h1>
+
+<h2>4.1 训练</h2>
+
+<p>对分解出来的趋势部分单独用arima模型做训练：</p>
+
+<pre><code>def trend_model(self, order):
+    self.trend.dropna(inplace=True)
+    train = self.trend[:len(self.trend)-self.test_size]
+    # arima的训练参数order =（p,d,q），具体意义查看官方文档，调参过程略。
+    self.trend_model = ARIMA(train, order).fit(disp=-1, method='css')
+</code></pre>
+
+<h2>4.2 预测</h2>
+
+<p>预测出趋势数据后，加上周期数据即作为最终的预测结果，但更重要的是，我们要得到的不是具体的值，而是一个合理区间，当真实数据超过了这个区间，则触发报警，误差高低区间的设定来自刚刚分解出来的残差residual数据：</p>
+
+<pre><code>d = self.residual.describe()
+delta = d['75%'] - d['25%']
+self.low_error, self.high_error = (d['25%'] - 1 * delta, d['75%'] + 1 * delta)
+</code></pre>
+
+<p>预测并完成最后的加法处理，得到第七天的预测值即高低置信区间：</p>
+
+<pre><code>def predict_new(self):
+    '''
+    预测新数据
+    '''
+    #续接train，生成长度为n的时间索引，赋给预测序列
+    n = self.test_size
+    self.pred_time_index= pd.date_range(start=self.train.index[-1], periods=n+1, freq='1min')[1:]
+    self.trend_pred= self.trend_model.forecast(n)[0]
+    self.add_season()
+
+def add_season(self):
+    '''
+    为预测出的趋势数据添加周期数据和残差数据
+    '''
+    self.train_season = self.seasonal[:self.train_size]
+    values = []
+    low_conf_values = []
+    high_conf_values = []
+
+    for i, t in enumerate(self.pred_time_index):
+        trend_part = self.trend_pred[i]
+
+        # 相同时间点的周期数据均值
+        season_part = self.train_season[
+            self.train_season.index.time == t.time()
+            ].mean()
+
+        # 趋势 + 周期 + 误差界限
+        predict = trend_part + season_part
+        low_bound = trend_part + season_part + self.low_error
+        high_bound = trend_part + season_part + self.high_error
+
+        values.append(predict)
+        low_conf_values.append(low_bound)
+        high_conf_values.append(high_bound)
+
+    # 得到预测值，误差上界和下界
+    self.final_pred = pd.Series(values, index=self.pred_time_index, name='predict')
+    self.low_conf = pd.Series(low_conf_values, index=self.pred_time_index, name='low_conf')
+    self.high_conf = pd.Series(high_conf_values, index=self.pred_time_index, name='high_conf')
+</code></pre>
+
+<h2>4.3 评估：</h2>
+
+<p>对第七天作出预测，评估的指标为均方根误差rmse，画图对比和真实值的差距：</p>
+
+<pre><code>    md = ModelDecomp(file=filename, test_size=1440)
+    md.decomp(freq=1440)
+    md.trend_model(order=(1, 1, 3)) # arima模型的参数order
+    md.predict_new() 
+    pred = md.final_pred
+    test = md.test
+
+    plt.subplot(211)
+    plt.plot(md.ts) # 平滑过的训练数据加未做处理的测试数据
+    plt.title(filename.split('.')[0])
+
+    plt.subplot(212)
+    pred.plot(color='blue', label='Predict') # 预测值
+    test.plot(color='red', label='Original') # 真实值
+    md.low_conf.plot(color='grey', label='low') # 低置信区间
+    md.high_conf.plot(color='grey', label='high') # 高置信区间
+
+    plt.legend(loc='best')
+    plt.title('RMSE: %.4f' % np.sqrt(sum((pred.values - test.values) ** 2) / test.size))
+    plt.tight_layout()
+    plt.show()
+</code></pre>
+
+
+
+<center><img src="/images/2019/IMAG2019061206.webp"></center>
+
+
+<p><br></p>
+
+<p>可以看到，均方根误差462.8，相对于原始数据几千的量级，还是可以的。测试数据中的两个突变的点，也超过了置信区间，能准确报出来。</p>
+
+<h1>5、结语</h1>
+
+<p>前文提到不同的api形态差异巨大，本文只展示了一个，我在该项目中还接触了其他形态的序列，有的有明显的上升或下降趋势；有的开始比较平缓，后面开始增长... ... ,但是都属于典型的周期性时间序列，它的核心思想很简单：做好分解，做好预测结果的还原，和置信区间的设置，具体操作可根据具体业务逻辑做调整，祝大家建模愉快:-D。</p>
+]]></content>
+  </entry>
+  
+</feed>

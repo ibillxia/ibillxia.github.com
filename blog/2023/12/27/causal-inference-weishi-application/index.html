@@ -1,0 +1,519 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>【DataFun】因果推断在微视激励和供需场景的应用 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(function () {
+  addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">【DataFun】因果推断在微视激励和供需场景的应用</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2023-12-27T16:16:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><center><img src="/images/2023/IMAG2023122701.png"></center>
+
+
+<h1>一、因果推断与激励算法</h1>
+
+<h2>1、业务背景与业务建模</h2>
+
+<p>首先简单地介绍一下腾讯微视的红包激励业务背景。与其他的产品和场景类似，在给定的预算之下，我们向腾讯微视的用户发放一些现金激励，希望通过现金激励最大化用户的次日留存和当天使用时长。现金激励的形式主要是以不定的时间间隔为用户发放不定数量和不定金额的现金红包。以上提到的 3 个“不定”最终由算法来确定。这三个“不定”也称红包激励策略的三要素。</p>
+
+<!--more-->
+
+
+<p>接下来讲一下不同的现金激励策略的抽象形式。第一种以红包序列的形式来表示策略，比如对红包序列进行编号，然后用 one-hot 的形式为每个 treatment 独立编号。它的优点是能够刻画更多细节，例如每一个红包之间的金额等细致的策略，以及相对应的效果。但是这必然会需要更多的变量来表示策略，策略的探索空间非常大，另外在进行策略的探索和择优时，也会需要更多的计算量。而第二种形式，也就是使用三要素的向量来表示策略，其形式更灵活，探索的效率也会更高，但是它确实会忽略了一些细节。第三种方式更数学一点，即红包序列直接变成一个关于时间 t 的函数，函数里的参数可以构成向量，从而表示策略。因果问题的建模和策略的表示，极大程度地决定了因果效应估计的准确性和效率。</p>
+
+<p>假设我们有了一个良好的策略抽象和向量表示之后，接下来要做的就是选择算法框架。在这里有三种框架。第一种框架在业界比较成熟，即使用因果推断结合多目标约束优化的方式来做策略的分配和优化。这种框架中，因果推断主要负责的是估计不同策略对应的用户核心指标，也就是我们所说的用户次日留存和时长的收益提升。估计之后，我们利用多目标的约束优化来做离线的预算策略分配以满足预算约束。第二种就是离线强化学习结合多目标约束优化方法。这个方法我个人认为是比较有前景的，主要原因有两个。第一个原因是在实际应用场景当中，策略非常多，强化学习本身是可以高效地进行策略空间探索的，同时，由于我们的策略是有依赖的，而强化学习可以建模策略间的依赖；第二个原因是因为离线强化学本质实际上是一个反事实估计（contrafactual estimation）的问题，其本身具有很强的因果属性。然而遗憾的是，在我们的场景当中曾经尝试离线强化学习的方法，但它在线上效果没有达到理想的效果。究其原因，一方面是我们的方法问题，另外一方面主要受限于数据。要想训练一个好的离线强化学习模型，需要数据中的策略分布足够广，或者叫策略分布的足够均匀。也就是说，我们使用的随机数据也好，或者是观测数据也好，希望能够尽可能地探索到更多的这种策略，并且分布的相对来说会均匀一些，这样才能够减少做反事实估计的方差。最后一种算法框架在广告场景当中比较成熟，我们通过在线强化学习方式做流量控制和预算控制。这种方法的优势是可以及时地、快速地响应线上的突发事件，同时对于预算的控制相对更加准确。在引入因果之后，我们做流量选择或控制的指标就不再是 ECPM 指标了，可能就是我们现在估计的次留和时长的一个提升量。经过我们一系列的实践尝试，最终选择了第一种算法框架，也就是因果推断结合多目标约束优化，原因是它更稳定且更可控，同时它对线上工程的依赖也更少。</p>
+
+<p>第一种算法框架的 Pipeline 如下图所示。首先离线计算用户特征，然后用因果模型去预估用户在不同策略下核心指标的提升量，也就是所谓的 uplift。基于预估的提升量，我们利用多目标优化来求解，从而分配最优策略。为了加速整个过程的计算，我们在结构化时，会提前对人群进行聚类，也就是说我们认为这一簇里边的人具有相同的因果，相应的，我们给同一簇人分配同样的策略。</p>
+
+<center><img src="/images/2023/IMAG2023122702.png"></center>
+
+
+<h2>2、策略假设与因果图</h2>
+
+<p>基于上述讨论，接下来重点讨论一下怎么做策略的抽象。首先来看我们如何抽象因果图。在红包激励场景中需要建模的因果，体现在多天与多个红包之间。因为前一个红包肯定会影响下一个红包是否要领取，因此它本质上就是一个 Time-Varying Treatment Effect 问题，抽象成时序因果图由如右图所示。</p>
+
+<p>以一天内多个红包为例，T 所有下标都代表的是红包的一个序号。此时的 T 代表的是当前红包的金额，以及距离上一个红包发放的时间间隔所组成的向量。Y 是用户的红包下发之后的当次使用时长，和次日留存的提升量。X 是截止到当前时刻观察到的混淆变量，例如用户的观看行为或人口属性等。当然还会有很多未观测的混淆变量，用 U 来表示，例如用户偶发的停留，或是偶发的停止领。一个重要的未观测混淆变量是用户的心智，主要包括用户对红包激励的金额的价值评估。而这些所谓的心智，是很难通过系统内的一些统计量或统计特征来表示的。</p>
+
+<p>如果以时间序列的形式去做建模红包策略会非常复杂，因此我们做了一些合理的简化。比如假设 U 只影响当前时刻的 T，X 和 Y，并且它只影响下一时刻的 U，即用户心智。也就是说它只会通过影响下一刻的价值评估或者心智来影响未来的 Y。但是即使做了一系列简化，我们也会发现整个时序因果图依然很稠密，从而很难做合理的估计。并且当使用 G-methods 的方法解决 time Varying Trend Effect 时，需要大量数据去训练，然而现实中我们得到的数据非常稀疏，所以很难在线上取得一个很好的效果。因此最终我们做了大量简化，得到右下图这样的叉状结构（Fork）。我们把所有当天的红包的策略做了一个聚合，它是由策略三要素（红包激励总金额、总时间、总个数）所构成的向量，用 T 来表示。X 是 T-1 时刻的一个混淆变量，也就截止到当天之前用户的历史行为和人口属性。Y 代表的是当天用户的使用时长，就是用户的次日留存或当次使用时长指标。虽然这种方法看起来忽略了很多细节，例如红包之间的相互影响。但从宏观的角度来说，这个策略更稳定也能更好衡量其效果。</p>
+
+<center><img src="/images/2023/IMAG2023122703.png"></center>
+
+
+<h2>3、策略表示与因果模型</h2>
+
+<p>基于上面讨论，接下来就是核心问题，也就是如何表示策略（treatment）。之前我们尝试了使用 One-Hot 对三要素向量独立编号，以及将三要素分开，用时间函数构造 multi-variable treatment。前面这两种策略表示方法比较好理解，接下来介绍最后一种方法。大家看上面这张图。我们分别构造了三要素关于 t 的正弦函数，也就是给定一个时刻 T，我们能分别得到金额、时间间隔和个数。我们用这些函数对应的参数作为新向量的元素，类似于策略三要素的表示。我们用函数的方式来表示策略的目的是期望保留更多的细节，因为前两种方法只能通过策略组合知道红包金额、发放间隔的平均值，而用函数可能表示得更细致。但是这种方式有可能引入更多的变量，使计算更加复杂。</p>
+
+<p>有了策略表示之后，就可以针对性地去选择因果模型来去估计因果效应。在用 One-Hot 表示 T 的三要素的形式下，我们采用 x-Learner 的模型对每个策略建模，并将总金额最小的策略作为基准策略，从而计算和评估所有策略的 treatment effect。在这种情况下，大家可能感觉到它的效率是非常低的，而且模型缺乏泛化性。因此我们进一步采用刚才提到的第三种策略表示，即用正弦函数要素的向量去构成一个 treatment。接下来用单个 DML 模型来估计所有策略相对于基准策略的效果。此外，我们还做了一个优化 DML，假设 y 是混淆变量和因果效应的线性加权，也就是 y 等于 treatment effect 加上混淆变量。这样就人工构造了向量要素之间的交叉项和高阶项。相当于构造了 polynomial kernel function 来引入非线性函数。在这个基础上 DML 相对于基准策略有了很大的提升。由右下图的分析可以发现，DML 模型花了更少的钱并且提高了 ROI，这意味着我们能够更高效地去利用资源。</p>
+
+<p>前面我们主要讨论了一些方法上的抽象和模型的选择，在实践过程当中，还会发现一些比较偏业务方面的问题，比如做 One-Hot 时 treatment 怎么办？这时候，我们做了一个逐批扩量的策略。首先通过策略三要素做种子策略，然后人工筛选和保留优质的种子之后，对它进行一个扩展。在扩展之后，我们会基于一段时间，比如先在上线的前两周分批地上线新的策略，并且保证每个策略的随机流量大小是一致的，或是可比的。在这个过程当中，确实会忽略时间因素的影响，并且不断替换效果较差的策略，从而把策略的集合丰富起来。另外，由于时间因素一定会影响随机流量的策略是否可比。因此我们构建了类似于时间片轮转的方法，保证其覆盖的时间片是一致的，从而消除时间因素对策略的影响，这样得到的随机流量就可以用来训练模型了。</p>
+
+<p>还有就是新的策略大概如何生成？一种简单的方法是用 grade search，或者做遗传算法，这些是比较常见的搜索的通用算法。另外我们可以结合了人工剪枝，比如剪去一些不可取的红包序列类型。还有一种方法是使用 BanditNet，也就是一种离线强化学习的方法去计算没见过的策略，即估计反事实（counterfactual）的效果的估计，然后用估计的值来做策略的选择。当然我们最终也需要用线上随机流量去验证的，原因是这种离线强化学习的方法，其方差大概率会非常的大。</p>
+
+<center><img src="/images/2023/IMAG2023122704.png"></center>
+
+
+<h2>4、策略问题与迭代</h2>
+
+<p>除了以上提到的问题，我们也还会遇到一些偏业务的问题。第一个问题是用户策略的更新周期是怎样的？是不是所有的用户策略都是频繁地更新会更好？对此，我们实践的经验是因人而异。例如高频用户的策略变化应该更缓慢一些。一方面是因为高频用户已经很熟悉我们的形态了，包括激励金额，如果红包金额剧烈的变化，一定会影响相应的指标。所以我们对高频用户其实是保持一个周更新的策略，一周更新一次；但是对于新用户来讲，更新周期是更短的。原因是我们对新用户了解很少，我们希望能够更快速地去探索合适的策略，并且根据用户交互情况快速响应做出策略变化。由于新用户的行为也很稀疏，所以在这种情况下，我们就会用天级别对新用户或者一些低频用户去做更新。另外，我们也需要对策略的稳定性做监控，从而避免特征噪声造成的影响，我们搭建的 Pipeline 如右图所示。这里我们会监控 treatment effect 是否稳定，同时也会对用户最终分配的策略进行天级别的监控，比如今天的策略和昨天策略差异有多大，包括金额和个数。我们也会对线上的策略定期的做快照，主要是为了去做 debug，同时也能够快速回放，从而保证策略的稳定。另外我们还会对小流量做实验，监控其稳定性，只有达到稳定性要求的小流量实验，才会被用于替换现成的策略。</p>
+
+<p>第二个问题是针对新用户以及一些特殊用户的策略是否为独立的？答案是确定的，比如新用户，我们会先对他进行一个较强的激励，而后激励强度随时间衰减。当用户进入正常的生命周期之后，我们才会对他进行常规的激励策略。同时，对于特殊的敏感人群，他们金额上会有限制策略，对此我们也会训练独立的模型去适应这类人群。</p>
+
+<p>第三个问题大家可能会问到，也就是因果推断在整个算法框架当中到底有多重要？从理论角度，我们认为因果推断是核心，因为它在激励算法中是带来很大的收益。相对于回归与分类模型来说，因果推断与业务目标一致，它天生就是面向 ROI 的，所以它会带来关于提升量的优化目标。但是要提醒大家的是，我们在做预算分配的时候，不能够为每一个用户都选择最优的策略，而且因果效应相对于个人来说是相对较小的。当我们做预算分配的时候，很有可能会把一些用户因果效应的差异消除了。在这种时候，我们约束优化会极大地影响策略效果。因此，在做聚类的时候，我们也尝试了更多的聚类方法，例如深度聚类 SCCL 方法获得了更好的聚类结果。我们也进行了一些深度因果模型的迭代，比如像 BNN 或 Dragonnet 等等。</p>
+
+<p>我们发现在实践的过程中，深度因果模型的离线指标确实有不错的提升，但是其在线上的效果还不够稳定，主要的原因是有缺失值的出现。同时我们也发现，特征的规划方法很影响深度学习线上模型的稳定性，所以最终我们还是会倾向于稳定的去使用 DML 方法。</p>
+
+<p>在激励场景的分享就这么多，接下来也请我们团队的另外两位同学和大家分享一下在供需调优场景的一些实践和理论的探索。</p>
+
+<center><img src="/images/2023/IMAG2023122705.png"></center>
+
+
+<h1>二、因果推断与供需调节</h1>
+
+<h2>1、业务背景与业务建模</h2>
+
+<p>接下来介绍一下腾讯微视在供需方面的一个业务背景。作为一个短视频平台，微视有许多个不同品类的视频。对于有时候不同观看兴趣的用户群体，我们需要根据不同的用户特征去合适地分配各个品类的曝光占比或者是库存占比，目标则是为了提升用户的体验和用户的观看时长，其中用户的体验可以根据 3 秒快划率指标来进行衡量，观看时长主要根据总的播放时长来去衡量。如何去调节视频品类的曝光占比或者库存占比？我们主要考虑的方式按比例去对一些品类进行增加或者减少。增减的比例是一个预设的数值。</p>
+
+<p>接下来我们需要通过算法解决如何决定哪些品类增，哪些品类减，去使得用户体验和观看时长可以最大化，同时还需要满足比如总曝光有限制的一些约束条件。这个地方总结了三个主要的建模思路。第一个是比较直接的想法，就是我们直接把增和减作为一个 0 和 1 的 treatment 变量，我们去估计它的因果效应，随后再进行一个多目标的约束优化，去得到一个最终的策略。第二种思路就对 treatment 建模得更精细一些。我们把 treatment 当作一个连续的变量，比如品类的曝光占比，就是一个 0 到 1 之间连续变化的变量。然后去拟合一个相应的因果效应的曲线或者因果效应函数，接下来再进行多目标的约束优化，最后得到最终的策略。可以注意到，刚刚提到的两种方法都是两阶段的方法。第三种思路，我们将约束条件带入到因果效应的估计当中，从而得到一个满足约束条件的最优策略。这也是稍后希望和大家分享的研究内容。</p>
+
+<p>首先还是先关注前两种建模的思路，有几个建模的要点需要注意一下。第一个点是，为了保证因果效应估计的准确性，我们需要划分人群，在每个人群上做二值 Treatment 或是连续 Treatment 的因果效应估计。刚刚郑老师也有提过分人群的方法，比如用  Kmeans 聚类，或者是一些深度聚类。第二点则是如何在非随机实验数据上评估模型效果。比如我们需要在不做 AB test 的情况下，离线评估一下模型的效果。关于这个问题，可以参考 PPT 上面索引的这篇论文中提到的一些指标，用来做离线的评估。第三点需要注意的是，我们应该尽可能考虑品类之间的关联和相互影响，比如相似品类之间的一些挤占的问题等等。如果能把这些因素纳入到因果效应的估计当中，应该可以取得更好的效果。</p>
+
+<center><img src="/images/2023/IMAG2023122706.png"></center>
+
+
+<h2>2、单人群 × 品类曝光占比调节策略</h2>
+
+<p>接下来我们就具体展开这几种建模思路。首先第一种建模方式就是定义一个 0 和 1 的 treatment，用来代表增加或者减少这两种干预的手段，可以参考左侧的简要因果图，这里 x 代表用户的一些特征，比如历史操作行为相关的统计特征，以及其他的用户属性等等。y 就是我们所关心的目标，也就是 3 秒快化率或者播放总时长。除此之外，还需要注意的是一些未观测的混淆变量，比如用户的偶发、快滑和退出，以及同一个用户可能实际上会有多个人在使用，这也是用户多重身份的一个问题。另外就是推荐策略的不断迭代和更新也会对观测数据构成影响，还有另外用户兴趣的迁移也是观测之外的。这些未观测的混淆变量，可能会对因果效应的估计造成一定程度上的影响。</p>
+
+<p>对于这样的建模方式，常见的因果效应估计方法都可以解决。比如可以考虑 T-Learner 或者是 X-Learner，或者是 DML，这些都可以进行因果效应估计。当然，这种简单的建模方式也存在一些问题，比如我们用二值 treatment 进行建模会太过于简化。另外，在这种方式之下，每一个品类是单独进行考虑的，没有考虑品类之间的相关性。最后一个问题就是我们整个问题里边没有考虑到曝光的顺序，以及内容的质量这些具体的因素。</p>
+
+<p>接下来再介绍一下第二种建模的思路。我们把所有品类放在一起考虑，比如我们有 k 个视频品类，令 treatment 是一个 k 维的原因向量。向量的每一个位置就代表一个品类，比如影视综艺或者 MOBA 赛事等，0 和 1 仍然是代表增加或者减少。这时候多维向量的 treatment 的因果效应估计可以通过 DML 算法来解决。我们通常是把全为 0 的 treatment 向量作为 control。这种方式虽然解决了各品类没有被单独考虑的问题，但是它依然存在一些潜在的问题。首先是品类过多时所带来的维度爆炸的问题，并且随着维度的增加，由于每个位置上都有 0 和 1 两种情况，所以潜在的排列组合数量会指数级增加，这些都会对因果效应估计的准确性造成干扰。另外，前面所提到的曝光顺序和内容等等这些因素也没有考虑到。</p>
+
+<center><img src="/images/2023/IMAG2023122707.png"></center>
+
+
+<p>分享完二值变量 treatment 的建模思路之后，接下来可以对 treatment 进行更精细，也更符合其本身特点的建模。我们注意到，曝光占比本身是一个连续的变量，因此我们用连续的 treatment 去进行建模会更加的合理。在这种建模思路之下，我们首先还是需要划分人群。对每个人群，我们对每个品类进行单独地建模，得到一个单人群*单品类的因果效应曲线。就像左图显示的这样，因果效应曲线代表的是不同品类占比对我们所关心的目标产生的影响。为了估计这样的因果效应曲线，我主要分享两种可行的算法，一个是 DR-Net，一个是 VC-Net，这两种算法都属于深度学习的范畴。模型的结构就像右图展示的这样。</p>
+
+<p>首先介绍一下 DR-Net。模型的输入 x 首先会经过几个全连接层，从而得到一个隐含的表示，叫做 z。DR-Net 采取了一种离散化的策略，它将连续的 treatment 离散成多个 block，然后每个 block 分别训练一个子网络来进行目标变量的预测。由于 DR-Net 采用了离散化的策略，所以它最终得到的因果效应曲线并不是严格连续的，但随着离散化的分段越细，最终的估计会越接近于连续的曲线。当然，随着理想化的分段越细，由此带来的就是更多的参数量以及更高的过拟合的风险。</p>
+
+<p>接下来再分享一下 VC-Net。VC-Net 一定程度上改进了 DR-Net 的缺点。首先 VC-Net 模型的输入还是 X，也是用户的特征。它首先也是经过几个全连接层之后得到一个隐含的表示 Z。但是在 Z 这个地方，首先会接一个预测 Propensity Score 的一个模块。在连续的 Treatment 条件下， Propensity 就是给定 X 条件下 Treatment t 的一个概率密度，也是图上所表示的 π。接下来我们看一下 Z 之后的网络结构，不同于 DR-Net 进行离散化的操作，VC-Net 采用的是一个变系数的网络结构，也就是 Z 之后的每一个模型参数，都是一个关于 t 的函数。我们这里提到的文献作者采用了基函数的手段，把每个函数表示成一个基函数的线性组合，也就这写的 θ（t）。这样一来，函数的估计也就变为了对基函数线性组合的参数估计。所以这样一来，模型的参数优化就不成问题了，同时VC-Net 所得到的因果效应曲线也是一条连续的曲线。关于 VC-Net 要求解的目标函数由几部分组成。一方面，它是由最后对目标的预测的平方损失构成，也就是图中的 μ。另一方面，它也由 propensity 的概率密度的对数损失来构成。除了这两部分之外，作者在目标函数里边还加入了一个叫做 targeted regularization 的惩罚项，由此可以得到双重稳健的估计性质。具体细节，感兴趣的朋友可以参见一下上面索引的 2 篇原论文，去获得更多的细节。</p>
+
+<center><img src="/images/2023/IMAG2023122708.png"></center>
+
+
+<p>最后，再为即将与大家分享的一篇我们的研究做个铺垫。我们注意到，各个视频品类的曝光占比是一个多维连续的向量。它之所以多维，是在于我们有多个视频品类，每个维度就代表一个视频品类。它之所以是连续的，主要就在于每个视频品类的曝光占比都是连续的，其取值都在 0 和 1 之间。同时还有一个很自然的约束条件，就是我们所有的视频品类的曝光占比加起来一定是等于 1。所以我们可以考虑这样一个多维连续的向量去作为 treatment。</p>
+
+<p>右图展示的向量就是这样的例子。我们的目标是找到最优的曝光占比，使得我们总播放时长最大化。在传统的因果框架上，算法很难解决这样一个多维连续并且待约束的问题。接下来分享一下我们对这样的问题做的研究。</p>
+
+<center><img src="/images/2023/IMAG2023122709.png"></center>
+
+
+<h1>三、带约束的连续多变量因果模型分享</h1>
+
+<p>MDPP Forest 这项工作是团队在研究供需问题的时候做的一个方法探索和问题的创新解决。我们团队当时发现，在面对如何解决为每个用户去分配最佳的视频类目曝光比的问题上，其他现有的常用方法都没有办法得到一个比较符合预期的结果。因此经过一段时间的尝试与改进，我们团队设计的方法能在离线上取得了不错的效果，然后与推荐进行合作，最后也取得了一定的策略收益。随后我们把这项工作整理成了论文，也有幸发表在了 KDD 2022 上。</p>
+
+<center><img src="/images/2023/IMAG2023122710.png"></center>
+
+
+<p> ## 1、背景与挑战</p>
+
+<p>首先介绍问题背景。在供需问题中，我们将短视频根据内容划分为不同类目，比如科普、影视、户外美食等。视频类目曝光比即指这些不同类目的视频各自所占一位用户观看的所有视频的比例。用户对不同类目的偏好有很大的差别，平台也往往需要因人而异地去确定每个类目的最优曝光比例。在重排序阶段，对各类视频的推荐加以控制。公司面临的一大挑战是如何分配最佳的视频曝光比，从而最大限度地延长每个用户在平台上的使用时长。</p>
+
+<center><img src="/images/2023/IMAG2023122711.png"></center>
+
+
+<p>这样一个问题的主要难点在于以下的三点。第一个就是短视频的推荐系统中，每个用户看到的视频和他自身的特征会有非常强的相关关系，这就是一个存在的选择性偏差。因此我们需要用因果推断相关的算法来消除偏差。第二个是视频类目曝光比是一种连续、多维并且带约束的 treatment。这样的复杂问题在因果推断和策略优化领域目前是没有非常成熟的方法的。第三是在离线数据上，我们并不能先验地知道每个人的真实最优曝光比，因此很难去评估这个方法。在真实环境下，它只是推荐中的一个子环节。最终实验结果也不能判断这个方法对它本身的计算目标的准确度。因此，这个场景的问题我们很难去准确地评估它。我们会在后续介绍我们是如何进行效果评估的。</p>
+
+<center><img src="/images/2023/IMAG2023122712.png"></center>
+
+
+<h2>2、问题定义</h2>
+
+<p>我们先把数据抽象成一个统计学中的因果图。其中 X 是用户特征，包含了许多同时影响当前视频曝光以及用户时长的混淆变量；T 是视频类目曝光比，它也是 treatment，在这个问题中具有比较高的维度，例如它是一个 20 维的向量。Y 是用户的观看时长，也就是任务目标的响应。我们建模的目标就是在特定的用户特征 X 下，给一个高维的最优视频类目曝光比，从而使用户的观看时长期望达到最大。这个问题看似可以简单地用一个因果三元图来表示它，但有一个很大的问题，也就是前面提到的，我们的 treatment 是多个类目的曝光比，它是由品类曝光占比构建的多维连续取值且向量和为 1 的向量。这样的问题就比较复杂了。</p>
+
+<center><img src="/images/2023/IMAG2023122713.png"></center>
+
+
+<h2>3、方法简介 —— Maximum Difference Point of Preference (MDP2) Forest</h2>
+
+<p>对此，我们的方法也是基于因果决策森林（causal forest）的。一般的因果决策树只能解决具有一维离散值的 treatment 问题。而我们通过改进中间分裂准则函数的计算，在分裂的时候增加一些高维连续的信息，使它可以解决高维连续值并且带约束 treatment 的问题。</p>
+
+<center><img src="/images/2023/IMAG2023122714.png"></center>
+
+
+<h3>① 方法简介——连续问题</h3>
+
+<p>首先，我们解决的是连续 treatment 问题。如图中所示，T 对 Y 的影响是一条连续的曲线。我们先假设这是一条单调递增的曲线。对于数据中所有的 Treatment 取值，我们去遍历它，计算左右样本的 Y 均值，从而找到左边 Y 均值和右边 Y 均值差异最大的点，也就是平均因果效益最大的点。我们把这个点称为 Maximum Difference Point，也就是连续 Treatment 空间上效率最高的点，代表了 Treatment 能够显著地让 Y 发生改变。Maximum Difference Point 就是我们在单维度上想去得到的点。</p>
+
+<center><img src="/images/2023/IMAG2023122715.png"></center>
+
+
+<p>然而，我们刚才提到的方法只适用于单调递增的曲线。但事实上，大部分问题都没有那么美好，特别是曝光比的问题。在这个问题上，效应曲线一般来说是山形的，即先增后减。因为多推荐用户喜爱的视频，可以使得用户增加观看时长，但是这个类型推得过多了，整个视频的推荐就会变得非常单调乏味，并且还会挤占其他用户喜欢的视频类型的曝光空间。所以曲线一般来说是山形的，也有可能是其他形状的。为了适应任意形状的T 曲线，我们需要进行积分的操作，也就是找值域区间进行累加。在累加后的曲线上，我们同样计算左右两边均值，以及两边均值之差最大的点，比如图里的五角星。这个点就可以称我们称为 maximum difference point of preference，也就是我们的 MDPP。</p>
+
+<center><img src="/images/2023/IMAG2023122716.png"></center>
+
+
+<h3>② 方法简介——高维问题</h3>
+
+<p>上面我们介绍了如何解决连续问题，而刚才所说的曲线只是一维的，对应单一的视频类目。接下来我们采用启发式维度遍历的思想去解决多维的问题。在计算分类得分的时候，我们采用启发式的思想，将 K 个维度随机排序，在每个维度上去计算一个 D 指标的聚合，也就是进行求和的操作。得到 D* 作为一个高维信息熵，再来考虑约束，约束是所有的 MDPP 之和为1。这里我们要考虑下面两种情况，一种是如果 K 维度遍历完以后，它 MDPP 之和也没有达到 1。针对这个情况，我们会把所有的 MDPP 之和加起来对它们去做归一化，拉到 1。第二个情况是，如果我们只遍历了 K’ 维小于 K 维，但MDPP 之和就已经达到 1。对此，我们将停止遍历，并且把 MDPP 设置为剩余的“资源量”，即 1 减之前已经算出来 MDPP 值之和，这样就可以去考虑到约束。</p>
+
+<center><img src="/images/2023/IMAG2023122717.png"></center>
+
+
+<p>另外，我们也会在上述的树结构上引入 forest，因为它主要有两大意义。第一个是我们传统的 bagging 集成思想，它可以用多个学习器增强模型的鲁棒性。第二个是在维度遍历中，每次节点分裂只会计算到 K’ 个维度，有些维度没有被算进去。为了使每个维度都能以平等的机会参与到分裂中，我们需要建立多棵树。</p>
+
+<center><img src="/images/2023/IMAG2023122718.png"></center>
+
+
+<h3>③ 方法简介——算法加速</h3>
+
+<p>另外还有一个问题，由于算法包含了三层的遍历，所有树模型都需要特征值的遍历，还有额外引入的维度遍历以及搜寻 MDPP 的遍历。这样的三层遍历使得效率非常低下。因此我们对特征值的遍历和 MDPP 遍历用了加权分位数图的方法，只在分位数点去计算相应的结果，这样就可以大大地降低算法复杂度。同时，我们也找到了这些分位点作为“累加值域”的边界点，这样可以大大减小计算量和储存量。假设有 q 个分位点，我们只需要计算 q 次得出每段分位区间内的样本数量和 y 的均值，这样每次计算两边均值之差 d 的时候，只需要把 q 值分为左边和右边两部分，分别把每一个区间里的均值做一个加权求和就可以了。我们不需要再重新计算分位点左右两边所有样本的均值。我们下面进入实验部分。</p>
+
+<center><img src="/images/2023/IMAG2023122719.png"></center>
+
+
+<h2>4、实验设计</h2>
+
+<h3>① 实验设计-Metric</h3>
+
+<p>我们实验评估本质上就是一个策略评估问题，因此我们引入了策略评估相关的指标。第一个是 Main Regret，它用于衡量整体策略的收益和理论最优收益之间的差距。另一个是 Main Treatment Square Error，用于衡量多维 Treatment 下每一个 Treatment 维度的预估值和最优值之间的差距。这两个指标都是越小越好的。然而，定下这两个评估指标带来的最大问题就是我们怎么去确定最优值。</p>
+
+<center><img src="/images/2023/IMAG2023122720.png"></center>
+
+
+<h3>② 实验设计-对比方法</h3>
+
+<p>介绍一下我们的对比方法。首先是因果推断中的两种常用方法，一个是具有完备统计学理论的 DML，还有另外是网络模型 DR-Net 和 VC-Net。这些方法只能处理一维的问题，但在本文的问题上，我们进行了一些调整去应对多维问题，也就是先计算每一维的绝对值，再去做归一化。还有下面两篇论文中策略优化的方法，我们称之为 OPE 和OCMD。这两篇文章中有陈述其方法适用于多维问题，但是同时也指出，当维度过多时，这些方法就很难生效了。</p>
+
+<center><img src="/images/2023/IMAG2023122721.png"></center>
+
+
+<h3>③ 实验设计-模拟数据集</h3>
+
+<p>为了简单直接地去比较模型效果，我们模拟了真实世界的问题，生成了一个简化版的模拟数据集。特征空间 x 表示 6 个维度的用户特征和 2 个行为特征。还有对于不同特征的样本，我们先假定它的最优策略。如图所示，比如一个年龄小于 45 岁，教育程度大于 2，有一个行为特征大于 0.5 的用户，他在 6 个视频类目上最优。借助左边公式，先随机生成一个对用户的曝光策略，接下来算出曝光策略和真实最优策略之间的一个差距，以及模拟用户时长是多少。如果策略越贴近用户的最优策略，用户的时长 y 就会越长。这样我们就生成了这么一个数据集。这个模拟数据集的好处就是我们直接假设了最优值，非常方便评估，另外一个是数据比较简单，可以方便我们分析算法的结果。</p>
+
+<center><img src="/images/2023/IMAG2023122722.png"></center>
+
+
+<p>来看看模拟数据集上的实验结果，对于刚才我们提到的那类人群，提供了各种方法计算出对应的 treatment 的均值。第一行是理论最优，第二行是我们 MDPP forest，第三行基于 MDPP forest 在分裂准则里面又加了一些惩罚项的方法。可以看到我们方法和理论最优的差距都会非常小。另外的其他几种方法就不是特别极端，而是比较均匀。另外，从右图 MR 和 MTSE 来看，我们的两种方法也具有非常明显的优势。</p>
+
+<center><img src="/images/2023/IMAG2023122723.png"></center>
+
+
+<h3>④ 实验设计-半合成数据集</h3>
+
+<p>除了模拟数据集之外，我们也根据真实的业务数据构造了一个半合成数据。数据来自腾讯微视平台。Xi 表示用户的 20 维特征，treatment ti 表示多维的视频类目曝光比构成了10 维向量， yi（ti）表示第 i 个用户的使用时长。实际场景的一个特点是，我们并不能知道用户真实的最优视频曝光比。所以我们根据聚类中心规则去构造函数，生成虚拟的 y 来代替真实的 y，从而使得样本的 y 具有更好的规律性。这里具体公式我就不再赘述了，有兴趣的同学可以看一下原文。为什么可以这样做呢？因为我们算法的关键是它要能够解决 x 和 t 之间的一些混杂的影响，也就是线上用户受到有偏策略的影响。为了去评估策略的效果，我们只保留了 x 和 t 而改变了 y，从而更好地对问题进行评估。</p>
+
+<center><img src="/images/2023/IMAG2023122724.png"></center>
+
+
+<p>在半合成数据上，我们的算法效果也明显更好，并且比模拟数据集上的优势会更加的大。由此说明了在数据复杂的情况下，我们 MDPP forests 算法是更加的稳定的。另外，我们在合成数据上看一下超参数，也就是森林的规模。在右下图我们可以看到，随着森林规模的增加，两种分裂准则处理下指标收敛的都比较好，带惩罚项的一个始终会更好一些，它在 100 棵树的时候达到比较好的效果，250 棵树的时候达到最优效果，再之后会有一些过拟合。</p>
+
+<center><img src="/images/2023/IMAG2023122725.png"></center>
+
+
+<h1>四、问答环节</h1>
+
+<h2>Q：为什么遍历曝光度超过 1 的时候，归一化是可以 work 的？</h2>
+
+<p>A：我的理解是这样，因为我们做的是一个曝光占比约束的优化，在这个过程当中，我们是一个相对值。我们在遍历的过程当中，是寻找最优的一个分裂点，找到应该优先给哪个品类曝光更多的比例。在这个过程当中，我们只要能够保证它是等比缩放的，就是可以的。</p>
+
+<p>我也是同样观点，是等比缩放就可以。因为 1 是一个强的约束限制，我们一开始算出来的肯定不完全为 1，会低一些或者高一些。如果多了很多，没有办法去让它达到强约束唯一的条件，也是比较自然地用到一个归一化的思考。因为我们考虑到各个类目之间相对大小关系。我觉得相对大小关系是比较重要的，而不是一个绝对值的问题。</p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2023-12-27T16:16:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/datascience/'>DataScience</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/abce-shi/'>AB测试</a>, <a class='tag' href='/blog/tags/yin-guo-tui-duan/'>因果推断</a>, <a class='tag' href='/blog/tags/tui-jian-xi-tong/'>推荐系统</a></span>
+		
+    </p>
+    
+      
+         <div class="sharing">
+  
+  
+  
+</div>
+
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2023/05/04/ten-open-source-llms/" title="Previous Post:
+        10个开源的ChatGPT类模型简介及部分代码实践">&laquo; 10个开源的ChatGPT类模型简介及部分代码实践</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2024/05/14/feature-platform-hierarchy/"
+        title="Next Post: 特征平台需求层次理论">特征平台需求层次理论
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application/';
+        var disqus_url = 'https://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

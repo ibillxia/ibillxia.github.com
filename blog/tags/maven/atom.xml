@@ -1,0 +1,708 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: Maven | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/maven/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-07-12T20:22:44+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Maven中settings配置文件详解]]></title>
+    <link href="https://ibillxia.github.io/blog/2022/10/06/maven-settings-configuration/"/>
+    <updated>2022-10-06T19:07:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2022/10/06/maven-settings-configuration</id>
+    <content type="html"><![CDATA[<p>一、简介</p>
+
+<p>Maven 翻译为"专家"、"内行"，是 Apache 下的一个纯 Java 开发的开源项目。基于项目对象模型（缩写：POM）概念，Maven利用一个中央信息片断能管理一个项目的构建、报告和文档等步骤。</p>
+
+<p>Maven 是一个项目管理工具，可以对 Java 项目进行构建、依赖管理。</p>
+
+<p>Maven 也可被用于构建和管理各种项目，例如 C#，Ruby，Scala 和其他语言编写的项目。Maven 曾是 Jakarta 项目的子项目，现为由 Apache 软件基金会主持的独立 Apache 项目。</p>
+
+<p>基本介绍可见<a href="%E2%80%8Bwww.runoob.com/maven/maven-tutorial.html">菜鸟教程Maven 教程 | 菜鸟教程</a></p>
+
+<!--more-->
+
+
+<h2>二、setting文件配置</h2>
+
+<ul>
+<li>标签</li>
+</ul>
+
+
+<pre><code class="text">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!--
+ | 官方文档: https://maven.apache.org/settings.html
+ |
+ | Maven 提供以下两种 level 的配置:
+ |
+ |  1. User Level.      当前用户独享的配置, 通常在 ${user.home}/.m2/settings.xml 目录下。 
+ |                      可在 CLI 命令行中通过以下参数设置:  -s /path/to/user/settings.xml
+ |
+ |  2. Global Level.    同一台计算机上的所有 Maven 用户共享的全局配置。 通常在${maven.home}/conf/settings.xml目录下。
+ |                      可在 CLI 命令行中通过以下参数设置:  -gs /path/to/global/settings.xml
+ |
+ |  备注:  User Level 优先级 &gt; Global Level
+ |--&gt;
+
+&lt;settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd"&gt;
+    &lt;!--
+     | Maven 依赖搜索顺序, 当我们执行 Maven 命令时, Maven 开始按照以下顺序查找依赖的库: 
+     |
+     | 步骤 1 － 在本地仓库中搜索, 如果找不到, 执行步骤 2, 如果找到了则执行其他操作。
+     | 步骤 2 － 在中央仓库中搜索, 如果找不到, 并且有一个或多个远程仓库已经设置, 则执行步骤 4, 如果找到了则下载到本地仓库中已被将来引用。
+     | 步骤 3 － 如果远程仓库没有被设置, Maven 将简单的停滞处理并抛出错误（无法找到依赖的文件）。
+     | 步骤 4 － 在一个或多个远程仓库中搜索依赖的文件, 如果找到则下载到本地仓库已被将来引用, 否则 Maven 将停止处理并抛出错误（无法找到依赖的文件）。
+     |--&gt;
+
+    &lt;!-- 地仓库路径, 默认值: ${user.home}/.m2/repository --&gt;
+    &lt;localRepository&gt;${user.home}/workspace/env/maven/repository&lt;/localRepository&gt;
+
+    &lt;!-- 当 maven 需要输入值的时候, 是否交由用户输入, 默认为true；false 情况下 maven 将根据使用配置信息进行填充 --&gt;
+    &lt;interactiveMode&gt;true&lt;/interactiveMode&gt;
+
+    &lt;!-- 是否支持联网进行 artifact 下载、 部署等操作, 默认: false --&gt;
+    &lt;offline&gt;false&lt;/offline&gt;
+
+    &lt;!-- 
+     | 搜索插件时, 如果 groupId 没有显式提供时, 则以此处配置的 groupId 为默认值, 可以简单理解为默认导入这些 groupId 下的所有 artifact（需要时才下载）
+     | 默认情况下该列表包含了 org.apache.maven.plugins和org.codehaus.mojo
+     |
+     | 查看插件信息: 
+     |    mvn help:describe -Dplugin=org.apache.maven.plugins:maven-compiler-plugin:3.5.1 -Ddetail
+     |--&gt;
+    &lt;pluginGroups&gt;
+
+        &lt;!-- plugin 的 groupId --&gt;
+        &lt;!--
+        &lt;pluginGroup&gt;com.your.plugins&lt;/pluginGroup&gt;
+        --&gt;
+
+    &lt;/pluginGroups&gt;
+
+    &lt;!-- 进行远程服务器访问时所需的授权配置信息。通过系统唯一的 server-id 进行唯一关联 --&gt;
+    &lt;servers&gt;
+        &lt;server&gt;
+            &lt;!-- 这是 server 的 id, 该 id 与 distributionManagement 中 repository 元素的id 相匹配 --&gt;
+            &lt;id&gt;server_id&lt;/id&gt;
+
+            &lt;!-- 鉴权用户名 --&gt;
+            &lt;username&gt;auth_username&lt;/username&gt;
+
+            &lt;!-- 鉴权密码 --&gt;
+            &lt;password&gt;auth_pwd&lt;/password&gt;
+
+            &lt;!-- 鉴权时使用的私钥位置。和前两个元素类似, 私钥位置和私钥密码指定了一个私钥的路径（默认是/home/hudson/.ssh/id_dsa）以及如果需要的话, 一个密钥 --&gt;
+            &lt;privateKey&gt;path/to/private_key&lt;/privateKey&gt;
+
+            &lt;!-- 鉴权时使用的私钥密码, 非必要, 非必要时留空 --&gt;
+            &lt;passphrase&gt;some_passphrase&lt;/passphrase&gt;
+
+            &lt;!-- 
+             | 文件被创建时的权限。如果在部署的时候会创建一个仓库文件或者目录, 这时候就可以使用权限（permission）
+             | 这两个元素合法的值是一个三位数字, 其对应了unix文件系统的权限, 如664, 或者775 
+             |--&gt;
+            &lt;filePermissions&gt;664&lt;/filePermissions&gt;
+
+            &lt;!-- 目录被创建时的权限 --&gt;
+            &lt;directoryPermissions&gt;775&lt;/directoryPermissions&gt;
+
+            &lt;!-- 传输层额外的配置项 --&gt;
+            &lt;configuration&gt;&lt;/configuration&gt;
+
+        &lt;/server&gt;
+    &lt;/servers&gt;
+
+    &lt;!-- 
+   | 从远程仓库才下载 artifacts 时, 用于替代指定远程仓库的镜像服务器配置；
+   | 
+   | 例如当您无法连接上国外的仓库是, 可以指定连接到国内的镜像服务器；
+   |
+   | pom.xml 和 setting.xml 中配置的仓库和镜像优先级关系（mirror 优先级高于 repository）: 
+   |
+   |    repository（setting.xml） &lt; repository（pom.xml） &lt; mirror（setting.xml）
+   |
+   |    例如, 如果配置了 mirrorOf = *,  则 不管项目的 pom.xml 配置了什么仓库, 最终都会被镜像到 镜像仓库
+   |
+   |  私服的配置推荐用profile配置而不是mirror
+   |--&gt;
+    &lt;mirrors&gt;
+
+        &lt;!-- 
+         | 【mirro 匹配顺序】: 
+         | 多个 mirror 优先级 按照 id字母顺序进行排列（即与编写的顺序无关）
+         | 在第一个 mirror 找不到 artifact, 不会继续超找下一个镜像。
+         | 只有当 mirror 无法链接的时候, 才会尝试链接下一个镜像, 类似容灾备份。
+         |--&gt;
+
+        &lt;mirror&gt;
+
+            &lt;!-- 该镜像的唯一标识符, id用来区分不同的 mirror 元素, 同时会套用使用 server 中 id 相同授权配置链接到镜像 --&gt;
+            &lt;id&gt;aliyun&lt;/id&gt;
+
+            &lt;!-- 镜像名称, 无特殊作用, 可视为简述 --&gt;
+            &lt;name&gt;sjtug maven proxy&lt;/name&gt;
+
+            &lt;!-- 镜像地址 --&gt;
+            &lt;url&gt;https://mirrors.sjtug.sjtu.edu.cn/maven-central/&lt;/url&gt;
+            &lt;!-- 被镜像的服务器的id, 必须与 repository 节点设置的 ID 一致。但是 This must not match the mirror id
+             | mirrorOf 的配置语法: 
+             | *           = 匹配所有远程仓库。 这样所有 pom 中定义的仓库都不生效
+             | external:*  = 匹配除 localhost、使用 file:// 协议外的所有远程仓库
+             | repo1,repo2 = 匹配仓库 repo1 和 repo2
+             | *,!repo1    = 匹配所有远程仓库, repo1 除外
+             |--&gt;
+            &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
+        &lt;/mirror&gt;
+
+    &lt;/mirrors&gt;
+
+    &lt;!-- 用来配置不同的代理, 多代理 profiles 可以应对笔记本或移动设备的工作环境: 通过简单的设置 profile id 就可以很容易的更换整个代理配置 --&gt;
+    &lt;proxies&gt;
+
+        &lt;!-- 代理元素包含配置代理时需要的信息 --&gt;
+        &lt;proxy&gt;
+
+            &lt;!-- 代理的唯一定义符, 用来区分不同的代理元素 --&gt;
+            &lt;id&gt;example_proxy&lt;/id&gt;
+
+            &lt;!-- 该代理是否是激活的那个。true则激活代理。当我们声明了一组代理, 而某个时候只需要激活一个代理的时候, 该元素就可以派上用处 --&gt;
+            &lt;active&gt;false&lt;/active&gt;
+
+            &lt;!-- 代理的协议 --&gt;
+            &lt;protocol&gt;https&lt;/protocol&gt;
+
+            &lt;!-- 代理的主机名 --&gt;
+            &lt;host&gt;proxy.molo.com&lt;/host&gt;
+
+            &lt;!-- 代理的端口 --&gt;
+            &lt;port&gt;443&lt;/port&gt;
+
+            &lt;!-- 代理服务器认证的登录名 --&gt;
+            &lt;username&gt;proxy_user&lt;/username&gt;
+
+            &lt;!-- 代理服务器认证登录密码 --&gt;
+            &lt;password&gt;proxy_pwd&lt;/password&gt;
+
+            &lt;!-- 不该被代理的主机名列表。该列表的分隔符由代理服务器指定；例子中使用了竖线分隔符, 使用逗号分隔也很常见 --&gt;
+            &lt;nonProxyHosts&gt;*.google.com|ibiblio.org&lt;/nonProxyHosts&gt;
+
+        &lt;/proxy&gt;
+
+    &lt;/proxies&gt;
+
+    &lt;!--
+     | 构建方法的配置清单, maven 将根据不同环境参数来使用这些构建配置。
+     | settings.xml 中的 profile 元素是 pom.xml 中 profile 元素的裁剪版本。
+     | settings.xml 负责的是整体的构建过程, pom.xml 负责单独的项目对象构建过程。
+     | settings.xml 只包含了id, activation, repositories, pluginRepositories 和 properties 元素。
+     | 
+     | 如果 settings 中的 profile 被激活, 它的值会覆盖任何其它定义在 pom.xml 中或 profile.xml 中的相同 id 的 profile。
+     |
+     | 查看当前激活的 profile:
+     |   mvn help:active-profiles
+     |--&gt;
+    &lt;profiles&gt;
+
+        &lt;profile&gt;
+
+            &lt;!-- 该配置的唯一标识符 --&gt;
+            &lt;id&gt;profile_id&lt;/id&gt;
+
+            &lt;!--
+             | profile 的激活条件配置；
+             | 其他激活方式: 
+             | 1. 通过 settings.xml 文件中的 activeProfile 元素进行指定激活。
+             | 2. 在命令行, 使用-P标记和逗号分隔的列表来显式的激活, 如: mvn clean package -P myProfile）。 
+             |--&gt;
+            &lt;activation&gt;
+
+                &lt;!-- 是否默认激活 --&gt;
+                &lt;activeByDefault&gt;false&lt;/activeByDefault&gt;
+
+                &lt;!--  内建的 java 版本检测, 匹配规则: https://maven.apache.org/enforcer/enforcer-rules/versionRanges.html --&gt;
+                &lt;jdk&gt;9.9&lt;/jdk&gt;
+
+                &lt;!-- 内建操作系统属性检测, 配置规则: https://maven.apache.org/enforcer/enforcer-rules/requireOS.html --&gt;
+                &lt;os&gt;
+
+                    &lt;!-- 操作系统 --&gt;
+                    &lt;name&gt;Windows XP&lt;/name&gt;
+
+                    &lt;!-- 操作系统家族 --&gt;
+                    &lt;family&gt;Windows&lt;/family&gt;
+
+                    &lt;!-- 操作系统 --&gt;
+                    &lt;arch&gt;x86&lt;/arch&gt;
+
+                    &lt;!-- 操作系统版本 --&gt;
+                    &lt;version&gt;5.1.2600&lt;/version&gt;
+
+                &lt;/os&gt;
+
+                &lt;!--
+                 | 如果Maven检测到某一个属性（其值可以在POM中通过${名称}引用）, 并且其拥有对应的名称和值, Profile就会被激活。
+                 | 如果值字段是空的, 那么存在属性名称字段就会激活profile, 否则按区分大小写方式匹配属性值字段
+                 |--&gt;
+                &lt;property&gt;
+
+                    &lt;!-- 属性名 --&gt;
+                    &lt;name&gt;mavenVersion&lt;/name&gt;
+
+                    &lt;!-- 属性值 --&gt;
+                    &lt;value&gt;2.0.3&lt;/value&gt;
+
+                &lt;/property&gt;
+
+                &lt;!-- 根据文件存在/不存在激活profile --&gt;
+                &lt;file&gt;
+
+                    &lt;!-- 如果指定的文件存在, 则激活profile --&gt;
+                    &lt;exists&gt;/path/to/active_on_exists&lt;/exists&gt;
+
+                    &lt;!-- 如果指定的文件不存在, 则激活profile --&gt;
+                    &lt;missing&gt;/path/to/active_on_missing&lt;/missing&gt;
+
+                &lt;/file&gt;
+
+            &lt;/activation&gt;
+            &lt;!-- 扩展属性设置。扩展属性可以在 POM 中的任何地方通过 ${扩展属性名} 进行引用
+             |
+             | 属性引用方式（包括扩展属性, 共 5 种属性可以引用）: 
+             |
+             | env.x                  : 引用 shell 环境变量, 例如, "env.PATH"指代了 $path 环境变量（在 Linux / Windows 上是 %PATH% ）.
+             | project.x              : 引用 pom.xml（根元素就是 project） 中 xml 元素内容.例如 ${project.artifactId} 可以获取 pom.xml 中设置的 &lt;artifactId /&gt; 元素的内容
+             | settings.x             : 引用 setting.xml（根元素就是 setting） 中 xml 元素内容, 例如 ${settings.offline}
+             | Java System Properties : 所有可通过 java.lang.System.getProperties() 访问的属性都能在通过 ${property_name} 访问, 例如 ${java.home}
+             | x                      : 在 &lt;properties/&gt; 或者 外部文件 中设置的属性, 都可以 ${someVar} 的形式使用
+             | 
+             |--&gt;
+            &lt;properties&gt;
+
+                &lt;!-- 在当前 profile 被激活时,  ${profile.property} 就可以被访问到了 --&gt;
+                &lt;profile.property&gt;this.property.is.accessible.when.current.profile.actived&lt;/profile.property&gt;
+
+            &lt;/properties&gt;
+
+            &lt;!-- 远程仓库列表 --&gt;
+            &lt;repositories&gt;
+                &lt;!-- 
+                 | releases vs snapshots
+                 | maven 针对 releases、snapshots 有不同的处理策略, POM 就可以在每个单独的仓库中, 为每种类型的 artifact 采取不同的策略
+                 | 例如: 
+                 |     开发环境 使用 snapshots 模式实时获取最新的快照版本进行构建
+                 |     生成环境 使用 releases 模式获取稳定版本进行构建
+                 | 参见repositories/repository/releases元素 
+                 |--&gt;
+
+                &lt;!--
+                 | 依赖包不更新问题:                
+                 | 1. Maven 在下载依赖失败后会生成一个.lastUpdated 为后缀的文件。如果这个文件存在, 那么即使换一个有资源的仓库后, Maven依然不会去下载新资源。
+                 |    可以通过 -U 参数进行强制更新、手动删除 .lastUpdated 文件：
+                 |      find . -type f -name "*.lastUpdated" -exec echo {}" found and deleted" \; -exec rm -f {} \;
+                 |
+                 | 2. updatePolicy 设置更新频率不对, 导致没有触发 maven 检查本地 artifact 与远程 artifact 是否一致
+                 |--&gt;
+                &lt;repository&gt;
+
+                    &lt;!-- 远程仓库唯一标识 --&gt;
+                    &lt;id&gt;maven_repository_id&lt;/id&gt;
+
+                    &lt;!-- 远程仓库名称 --&gt;
+                    &lt;name&gt;maven_repository_name&lt;/name&gt;
+
+                    &lt;!-- 远程仓库URL, 按protocol://hostname/path形式 --&gt;
+                    &lt;url&gt;http://host/maven&lt;/url&gt;
+
+                    &lt;!-- 
+                    | 用于定位和排序 artifact 的仓库布局类型-可以是 default（默认）或者 legacy（遗留）
+                    | Maven 2为其仓库提供了一个默认的布局；然而, Maven 1.x有一种不同的布局。我们可以使用该元素指定布局是default（默认）还是legacy（遗留）
+                    | --&gt;
+                    &lt;layout&gt;default&lt;/layout&gt;
+
+                    &lt;!-- 如何处理远程仓库里发布版本的下载 --&gt;
+                    &lt;releases&gt;
+
+                        &lt;!-- 是否允许该仓库为 artifact 提供 发布版 / 快照版 下载功能 --&gt;
+                        &lt;enabled&gt;false&lt;/enabled&gt;
+
+                        &lt;!-- 
+                         | 每次执行构建命令时, Maven 会比较本地 POM 和远程 POM 的时间戳, 该元素指定比较的频率。
+                         | 有效选项是: 
+                         |     always（每次构建都检查）, daily（默认, 距上次构建检查时间超过一天）, interval: x（距上次构建检查超过 x 分钟）、 never（从不）
+                         |
+                         | 重要: 
+                         |     设置为 daily, 如果 artifact 一天更新了几次, 在一天之内进行构建, 也不会从仓库中重新获取最新版本
+                         |--&gt;
+                        &lt;updatePolicy&gt;always&lt;/updatePolicy&gt;
+
+                        &lt;!-- 当 Maven 验证 artifact 校验文件失败时该怎么做: ignore（忽略）, fail（失败）, 或者warn（警告） --&gt;
+                        &lt;checksumPolicy&gt;warn&lt;/checksumPolicy&gt;
+
+                    &lt;/releases&gt;
+
+                    &lt;!-- 如何处理远程仓库里快照版本的下载 --&gt;
+                    &lt;snapshots&gt;
+                        &lt;enabled /&gt;
+                        &lt;updatePolicy /&gt;
+                        &lt;checksumPolicy /&gt;
+                    &lt;/snapshots&gt;
+
+                &lt;/repository&gt;
+
+                &lt;!-- 
+                    国内可用的 maven 仓库地址（updated @ 2019-02-08）：
+
+                    http://maven.aliyun.com/nexus/content/groups/public
+                    http://maven.wso2.org/nexus/content/groups/public/
+                    http://jcenter.bintray.com/
+                    http://maven.springframework.org/release/
+                    http://repository.jboss.com/maven2/
+                    http://uk.maven.org/maven2/
+                    http://repo1.maven.org/maven2/
+                    http://maven.springframework.org/milestone
+                    http://maven.jeecg.org/nexus/content/repositories/
+                    http://repo.maven.apache.org/maven2
+                    http://repo.spring.io/release/
+                    http://repo.spring.io/snapshot/
+                    http://mavensync.zkoss.org/maven2/
+                    https://repository.apache.org/content/groups/public/
+                    https://repository.jboss.org/nexus/content/repositories/releases/   
+                --&gt;
+
+            &lt;/repositories&gt;
+
+            &lt;!-- 
+             | maven 插件的远程仓库配置。maven 插件实际上是一种特殊类型的 artifact。
+             | 插件仓库独立于 artifact 仓库。pluginRepositories 元素的结构和 repositories 元素的结构类似。
+             |--&gt;
+            &lt;!--
+            &lt;pluginRepositories&gt;
+                &lt;pluginRepository&gt;
+                    &lt;releases&gt;
+                        &lt;enabled /&gt;
+                        &lt;updatePolicy /&gt;
+                        &lt;checksumPolicy /&gt;
+                    &lt;/releases&gt;
+                    &lt;snapshots&gt;
+                        &lt;enabled /&gt;
+                        &lt;updatePolicy /&gt;
+                        &lt;checksumPolicy /&gt;
+                    &lt;/snapshots&gt;
+                    &lt;id /&gt;
+                    &lt;name /&gt;
+                    &lt;url /&gt;
+                    &lt;layout /&gt;
+                &lt;/pluginRepository&gt;
+            &lt;/pluginRepositories&gt;
+            --&gt;
+
+        &lt;/profile&gt;
+
+    &lt;/profiles&gt;
+
+    &lt;!--
+     | 手动激活 profiles 的列表, 按照 profile 被应用的顺序定义 activeProfile
+     | 任何 activeProfile, 不论环境设置如何, 其对应的 profile 都会被激活, maven 会忽略无效（找不到）的 profile
+     |--&gt;
+    &lt;!--
+    &lt;activeProfiles&gt;
+        &lt;activeProfile&gt;not-exits-profile&lt;/activeProfile&gt;
+    &lt;/activeProfiles&gt;
+    --&gt;
+
+&lt;/settings&gt;
+</code></pre>
+
+<hr />
+
+<h2>三、镜像仓库（mirror）</h2>
+
+<ul>
+<li>为什么需要配置镜像仓库</li>
+</ul>
+
+
+<p>1、在不配置镜像的情况下,maven默认会使用中央库.</p>
+
+<p>2、maven中央库在国外,有时候访问会很慢,尤其是下载较大的依赖的时候,有时候速度会很慢,甚至会出现无法下载的情况.</p>
+
+<p>3、为了解决依赖下载速度的问题,需要配置maven国内镜像</p>
+
+<ul>
+<li><p>配置多个镜像仓库</p></li>
+<li><p>配置多个镜像仓库，他不是我们想的一个找不到就在下一个镜像中寻找，只有在第一个镜像仓库链接不上的情况下，才会去下一个镜像仓库中寻找。而我们想要的效果是：当a.jar在第一个mirror中不存在的时候，maven会去第二个mirror中查询下载，但是maven不会这样做！</p></li>
+<li><p>多个 mirror 优先级 按照 id字母顺序进行排列（即与编写的顺序无关）</p></li>
+<li><p>常见镜像仓库</p></li>
+</ul>
+
+
+<pre><code class="text">&lt;mirror&gt;
+    &lt;id&gt;alimaven&lt;/id&gt;
+    &lt;name&gt;aliyun maven&lt;/name&gt;
+    &lt;url&gt;http://maven.aliyun.com/nexus/content/groups/public/&lt;/url&gt;
+    &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
+&lt;/mirror&gt;
+&lt;mirror&gt;
+    &lt;id&gt;alimaven&lt;/id&gt;
+    &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
+    &lt;name&gt;aliyun maven&lt;/name&gt;
+    &lt;url&gt;http://maven.aliyun.com/nexus/content/repositories/central/&lt;/url&gt;
+&lt;/mirror&gt;
+
+&lt;mirror&gt;
+    &lt;id&gt;ibiblio&lt;/id&gt;
+    &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
+    &lt;name&gt;Human Readable Name for this Mirror.&lt;/name&gt;
+    &lt;url&gt;http://mirrors.ibiblio.org/pub/mirrors/maven2/&lt;/url&gt;
+&lt;/mirror&gt;
+&lt;mirror&gt;
+    &lt;id&gt;jboss-public-repository-group&lt;/id&gt;
+    &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
+    &lt;name&gt;JBoss Public Repository Group&lt;/name&gt;
+    &lt;url&gt;http://repository.jboss.org/nexus/content/groups/public&lt;/url&gt;
+&lt;/mirror&gt;
+
+&lt;mirror&gt;
+    &lt;id&gt;central&lt;/id&gt;
+    &lt;name&gt;Maven Repository Switchboard&lt;/name&gt;
+    &lt;url&gt;http://repo1.maven.org/maven2/&lt;/url&gt;
+    &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
+&lt;/mirror&gt;
+&lt;mirror&gt;
+    &lt;id&gt;repo2&lt;/id&gt;
+    &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
+    &lt;name&gt;Human Readable Name for this Mirror.&lt;/name&gt;
+    &lt;url&gt;http://repo2.maven.org/maven2/&lt;/url&gt;
+&lt;/mirror&gt;
+</code></pre>
+
+<ul>
+<li>注意</li>
+</ul>
+
+
+<p><mirror>标签中<mirrorof>*</mirrorof></p>
+
+<p>*：表示匹配所有远程仓库，这样pom中定义的仓库和<profile>中定义的仓库将失效</p>
+
+<ul>
+<li>jar包搜索顺序</li>
+</ul>
+
+
+<pre><code class="text">1、本地仓库 
+2、maven settings profile中的repository；
+3、pom.xml中profile中定义的repository；
+4、pom.xml中的repositorys(定义多个repository，按定义顺序找)；
+5、mirror
+</code></pre>
+
+<p>但若如上所说，<mirrorof><em></mirrorof>配置为</em>号，则其他地址失效。</p>
+
+<hr />
+
+<h2>四、参考</h2>
+
+<p><a href="%E2%80%8Bwww.jb51.net/article/189795.htm">Maven镜像地址配置示例大全<em>java</em>脚本之家</a></p>
+
+<p><a href="%E2%80%8Bwww.jb51.net/article/189796.htm">Maven中央仓库地址配置大全<em>java</em>脚本之家</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[利用IntelliJ IDEA与Maven开始Scala之旅]]></title>
+    <link href="https://ibillxia.github.io/blog/2018/07/23/scala-intellij-maven-setup/"/>
+    <updated>2018-07-23T10:18:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2018/07/23/scala-intellij-maven-setup</id>
+    <content type="html"><![CDATA[<h1>一. IntelliJ IDEA安装及配置</h1>
+
+<h2>1.1 IntelliJ IDEA下载及安装</h2>
+
+<p>　　首先在 CHOOSE YOUR EDITION 这里选择Community版本，这个版本是免费提供的，对我们的Spark使用来说，用这个版本已经足够了。如下图所示：</p>
+
+<center><img src="/images/2018/IMAG2018072301.png"></center>
+
+
+<p><br></p>
+
+<p>　　直接点击黑色的 DOWNLOAD 按钮会默认开始下载Windows版本的IntelliJ IDEA，如果需要其他平台的版本，可以点击旁边的 .EXE ，然后在打开的下拉菜单中，选择相应平台即可。</p>
+
+<!--more-->
+
+
+<p>　　下载完成后，双击得到的.exe文件（我这里主要以Windows平台为例，下载得到的文件为ideaIC-2016.2.1.exe），开始进行安装，其中所有选项按照默认的即可（其中有一个安装路径的配置，按照普通软件安装的方法自行设置即可，当然使用默认的路径也可以，记住这里的安装路径，后面要用到），一路点击Next，最后点击Finish按钮结束安装过程。</p>
+
+<p>默认情况下，IntelliJ IDEA并不会在桌面上创建快捷键，我们可以去它的安装目录下的bin文件夹中，找到它的可执行.exe文件，我这里的bin文件夹路径是 <code>C:\Program Files (x86)\JetBrains\IntelliJ IDEA Community Edition 2016.2.1\bin</code>，在该目录下，你可以找到两个如下的文件：</p>
+
+<blockquote><p>idea.exe//对应32位机器 <br/>
+idea64.exe//对应64位机器</p></blockquote>
+
+<p>根据自己电脑是32位还是64位的，进行相应版本的选择，如果怕麻烦，建议在该文件上点击右键，然后选择发送到 –> 桌面快捷方式选项，这样以后在启动的时候，直接在桌面上双击快捷方式即可（如果是细心的读者，其实可以发现，在IDEA安装过程中，其中有一个步骤就是问：需不需要在桌面上创建快捷方式，默认下是不会创建的）。</p>
+
+<p>选择好32位还是64位的文件后，然后双击运行IntelliJ IDEA，一般来说首次运行，都会碰到如下页面：</p>
+
+<center><img src="/images/2018/IMAG2018072302.png"></center>
+
+
+<p><br></p>
+
+<p>因为IntelliJ IDEA本身都会有一些配置文件，所以这里在询问是否需要导入一个配置文件，这里选择图中标示的选项即可，并点击OK。然后来到如下所示的UI主题选择界面，大多数使用IntelliJ IDEA的开发人员，一般都会毫无例外的选用第二个UI，这种灰黑色的主题简洁大方，给人一种深邃的质感，也确实是很多人选择IntelliJ IDEA的一个重要原因之一，用很多人的话说，写代码都能写出“高潮”来，是否属实，你们试试就知道了。</p>
+
+<center><img src="/images/2018/IMAG2018072303.png"></center>
+
+
+<p><br></p>
+
+<h2>1.2 Scala插件的安装</h2>
+
+<p>后续的几个页面按照默认的配置即可，一直Next来到下面的界面。因为我们主要用Scala来写Spark程序，而IntelliJ IDEA需要使用Scala插件来支持Scala，安装方法如下图所示，首先点击Configure，然后点击下拉菜单中的Plugins。</p>
+
+<center><img src="/images/2018/IMAG2018072304.png"></center>
+
+
+<p><br></p>
+
+<p>随后打开的页面会显示出IntelliJ IDEA当前已安装的插件列表，现在我们要安装Scala插件，所以点击页面左下方的Install JetBrains plugin...按钮，然后来到安装插件的页面，如果网络正常的话，在页面左上方的搜索框内搜索”scala”，即可出现Scala插件的安装界面，点击右侧页面中的Install进行安装后，可以看到安装的进度条，如下图所示：</p>
+
+<center><img src="/images/2018/IMAG2018072305.png"></center>
+
+
+<p><br></p>
+
+<p>但是如果你在公司内网，这个时候你可能需要配置代理，步骤如下图所示，在图中的Host name和Port number中填写公司自己的代理即可，如果需要，在下方的账号和密码框中按情况填写上相应信息。填写完毕，记得先检查一下是否能够正确连上外部网络，可以点击图中的Check connection，输入一个外网的地址，比如 <a href="http://www.baidu.com/">http://www.baidu.com/</a>，测试一下代理是否正确配置了。一切正常后，点击OK退出即可。然后按照上一步中不需要配置代理的情况下，进行Scala插件的安装。</p>
+
+<center><img src="/images/2018/IMAG2018072306.png"></center>
+
+
+<p><br></p>
+
+<p>注意：插件安装完了之后，记得重启一下IntelliJ IDEA使得插件能够生效。</p>
+
+<h2>1.3 全局JDK和Library的设置</h2>
+
+<p>因为Scala代码的编写需要依赖JDK，并且以后编写Spark的程序，肯定会用到各种外部Jar包，如果自己手动去下载这些Jar包然后再引入项目，不仅费时费力，而且尤其在多人协作开发一个项目的时候，各种Jar包版本的管理将会变得非常混乱，因此，在这里建议：从一开始就习惯来用Maven对项目依赖到的Jar包进行理（后面会讲到Maven），然而在创建Maven工程的时候，首先便需要指定JDK。</p>
+
+<p>因此为了后续创建Spark项目（正如上面所说，一方面是Scala本身需要依赖JDK，另一方面用来管理项目构建的Maven，其创建也需要依赖JDK）的时候不用每次都去配置JDK，这里先进行一次全局配置。首先在欢迎界面点击Configure，然后在Project Defaults的下拉菜单中选择Project Structure，如下图所示：</p>
+
+<center><img src="/images/2018/IMAG2018072307.png"></center>
+
+
+<p><br></p>
+
+<p>然后在打开的Default Project Structure界面的左侧边栏选择Project，在右侧打开的页面中创建一个新的JDK选项（一定要本机已经安装过JDK了），如下图所示步骤在下拉菜单中点击JDK后，在打开的对话框中选择你所安装JDK的位置，注意是JDK安装的根目录，不是bin文件夹的目录，如果你对上一篇文章中讲到的JAVA_HOME还很有印象的话，这里的目录就是JAVA_HOME中设置的目录。</p>
+
+<center><img src="/images/2018/IMAG2018072308.png"></center>
+
+
+<p><br></p>
+
+<p>这一步的全局Project JDK设置完毕后，回到欢迎页面。</p>
+
+<p>除了要依赖JDK之外，Scala的编写肯定也离开不了自身的SDK（全称为Software Development Kit，即软件开发工具包。实际上，JDK就是Java的SDK），我们在IntelliJ IDEA编写Scala的程序的时候，比如要用到Scala自身提供的某个类，比如Seq（暂时不知道不要紧，后续文章会讲到），那IntelliJ IDEA到哪里去找这个Seq呢？只能去Scala自身提供的SDK里面去找，因此各种程序语言的软件开发者，是离不开这些语言的SDK的，Scala也自然不例外。而为了避免每次创建一个Scala工程的时候，都要去设置一遍Scala的SDK，这里做一些全局配置，主要是将Scala SDK引入到项目的Library中，并将其当做默认配置。</p>
+
+<p>首先，在欢迎页面的右下角点击Configure，然后在Project Defaults的下拉菜单中选择Project Structure，在打开的页面左侧选择Global Libraries，然后在中间一栏中有一个绿色的加号标志 +，点击后在下拉菜单中选择 Scala SDK（如果没有的话，回顾上面的步骤，仔细观察一下是不是有哪些步骤错了，比如Scala的插件没安装成功，本机还未安装Scala，亦或者Scala的bin文件夹路径未能添加到系统的 PATH 环境变量中去等等），然后在打开的对话框中选择系统本身所安装的Scala（即System对应的版本），点击OK确定，这时候会在中间一栏位置处出现Scala的SDK，在其上右键点击后选择Copy to Project Libraries...，这个操作是为了将Scala SDK添加到项目的默认Library中去。整个流程如下面的动图所示。</p>
+
+<center><img src="/images/2018/IMAG2018072309.gif"></center>
+
+
+<p><br></p>
+
+<h1>二. 创建一个Maven工程</h1>
+
+<h2>2.1 创建Maven工程</h2>
+
+<p>上面的安装和配置都完成后，现在可以开始创建一个Maven工程了。</p>
+
+<p>在欢迎界面点击Create New Project，在打开的页面左侧边栏中，选择Maven，然后在右侧的Project SDK一项中，查看是否是正确的JDK配置项（如果每一步严格按照上文中的步骤操作的话，正常来说这一栏会自动填充的，因为我们之前在1.3中已经配置过了全局的Project JDK了，如果这里没有正常显示JDK的话，可以点击右侧的New...按钮，然后指定JDK安装路径的根目录即可），然后点击Next，来到Maven项目最重要三个参数的设置页面，这三个参数分别为：GroupId, ArtifactId和Version.</p>
+
+<p>为了更好的解释这三个字段，用Spark 1.6.2的核心组件的Maven标识符为例来进行讲解。</p>
+
+<pre><code class="xml">&lt;groupId&gt;org.apache.spark&lt;groupId&gt;
+&lt;artifactId&gt;spark-core_2.11&lt;artifactId&gt;
+&lt;version&gt;1.6.2&lt;version&gt;
+</code></pre>
+
+<ul>
+<li><p>GroupId，可以理解为用来标志你整个项目组的，或者你这些代码属于某一个完整的项目，比如上面的org.apache.spark就可以非常好的来标志Apache的Spark这个项目了。一般来说可以使用倒序的公司网址来作为GroupId，这可以类比为，沿袭了Java项目中使用倒序公司网址来作为Package名称的一个惯例。</p></li>
+<li><p>ArtifactId，一般是用来在整个项目组来标志本项目的，相比GroupId的范围，其概念要稍微小一些，比如spark-core_2.11就非常好的表示出了本项目主要是关于Spark的核心基础组件的，从而能够与Spark其他各种组件或架构很好的区分开来。</p></li>
+<li><p>Version，正如字面意思，就是本项目的迭代版本的信息，如上面的1.6.2.</p></li>
+</ul>
+
+
+<p>现在，比如你的公司名称叫做abc，然后你的项目组叫做test，那就可以使用com.abc.test来作为GroupId，然后将ArtifactId取做myFirstProject，版本号就使用它默认的就好了（当然，如果你的项目以后有迭代更新版本的话，这个是需要按照实际情况进行改动的）。这三个字段设置完毕后，点击Next，来到项目名称设置页面，一般可以和ArtifactId字段保持一致，当然也可以不一致，这个只是为了给本项目取个名字而已。</p>
+
+<p>整个流程如下面的Gif动图所示。</p>
+
+<center><img src="/images/2018/IMAG2018072310.gif"></center>
+
+
+<p><br></p>
+
+<h2>2.2 属于你的”Hello World!”</h2>
+
+<p>在上一步中，我们已经创建了一个Maven工程，不出意外的话，这个时候会打开这个项目，并且首先映入眼帘的将是项目的 pom.xml 文件（暂时不清楚的不要紧，后面会讲到），细心如你，一定可以惊奇的发现 pom 文件中居然有我们刚才设置的 GroupId, ArtifactId 和 Version 这些信息（如下），这些信息相当于就给了本项目一个唯一的标识符，有了这个标识符，别人将会在浩如烟海的Maven仓库中，一眼识别到你（本段话有装B嫌疑，不懂的话请暂时忽略）。</p>
+
+<pre><code class="xml">&lt;groupId&gt;com.abc.test&lt;groupId&gt;
+&lt;artifactId&gt;myFirstProject&lt;artifactId&gt;
+&lt;version&gt;1.0-SNAPSHOT&lt;version&gt;
+</code></pre>
+
+<p>好，现在开始要真正在这个Maven项目中创建一个属于自己的Scala程序了，在开干之前，为了给Scala营造一个顺利的环境，有几件事需要先做。下面我将分点罗列如下：</p>
+
+<ul>
+<li><p>首先，为了让你的首次体验Scala更清爽一些，将一些暂时无关的文件和文件夹都勇敢的删除掉吧，主要有 main\java, main\resources 和 test 这三个；</p></li>
+<li><p>将Scala的框架添加到这个项目中，方法是在左侧栏中的项目名称上右键菜单中点击Add Framework Support...，然后在打开的对话框左侧边栏中，勾选Scala前面的复选框，然后点击确定即可（前提是上文中所述步骤都已正确走通，否则你很有可能看不到Scala这个选项的）；</p></li>
+<li><p>在main文件夹中建立一个名为 scala 的文件夹，并右键点击 scala 文件夹，选择 Make Directory as，然后选择Sources Root ，这里主要意思是将 scala 文件夹标记为一个源文件的根目录，然后在其内的所有代码中的 package ，其路径就从这个根目录下开始算起。举个例子，假如你在 scala 文件夹中建立了一个程序，这个程序的 package 属性为 com.abc.test，那么这个程序就一定要保存在 scala\com\abc\test 目录下，否则项目就找不到这个程序了；</p></li>
+<li><p>在已经标记好为源文件根目录的 scala 文件夹 上，右键选择 New，然后选择 Scala Class，随后设置好程序的名称，并且记得将其设置为一个 Object(类似于Java中含有静态成员的静态类)，正常的话，将会打开这个 Object 代码界面，并且可以看到IntelliJ IDEA自动添加了一些最基本的信息；</p></li>
+<li><p>在创建的 Object 中输入如下语句：</p></li>
+</ul>
+
+
+<pre><code>def main(args: Array[String]):Unit = {
+    println("Hello World!")
+}
+</code></pre>
+
+<ul>
+<li>在程序界面的任意位置，右键单击后选择 Run '你的程序名称'，静待程序的编译和运行，然后在下方自动打开的窗口中，你就可以看到振奋人心的 Hello World!了。</li>
+</ul>
+
+
+<p>整个流程的Gif动图已经做好，双手奉上。</p>
+
+<center><img src="/images/2018/IMAG2018072311.gif"></center>
+
+
+<p><br></p>
+
+<h1>三. 小结</h1>
+
+<p>至此，整个的IntelliJ IDEA安装与配置，以及基本的Maven工程创建流程，就全然结束了，写的比较啰嗦，一个很简单的IDE使用问题，嚼了这么多口舌，不过啰嗦之外，若果真对各位好学的你们，有稍稍的竟然之外的益处，那也就不枉我这么苦逼的制作这些Gif动图了。</p>
+
+<p>此外，本文只介绍了一些最基本的内容，关于IntelliJ IDEA和Maven的更为细致的内容，以及关于如何在本地写一个Spark程序都还没有提到，不着急，后续我会慢慢更新。</p>
+
+<p>Tips:</p>
+
+<p>若上文中有些Gif图看不太清，可以在这些图上点击右键，并选择”在新标签页中打开图片”（在Chrome中，是这个选项，可能不同浏览器中的说法不一样，不过相信一定难不到你），然后将这个图片在新的浏览器窗口打开后，就会变大一些，从而看的也更清楚一些了。</p>
+
+<h1>参考</h1>
+
+<ol>
+<li><a href="https://github.com/judasn/IntelliJ-IDEA-Tutorial">https://github.com/judasn/IntelliJ-IDEA-Tutorial</a></li>
+</ol>
+
+]]></content>
+  </entry>
+  
+</feed>

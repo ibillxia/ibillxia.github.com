@@ -1,0 +1,468 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>多模态大语言模型调研 - Bill's Blog</title>
+  <meta name="author" content="Bill Xia">
+
+  
+  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2024/06/27/multimodal-llm-survey">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+      padding-bottom: 0px;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    img {
+      max-width: 100%;
+    }
+    .sharing, .meta, .pager {
+      margin: 20px 0px 20px 0px;
+    }
+    .page-footer p {
+      text-align: center;
+    }
+  </style>
+  <script src="/javascripts/libs/jquery.js"></script>
+  <script src="/javascripts/libs/modernizr-2.0.js"></script>
+  <script src="/javascripts/libs/bootstrap.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-34DJ0T23LB');
+  </script>
+  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
+  <script type="text/javascript">
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+
+$(function () {
+  addBlankTargetForLinks();
+  if (typeof MutationObserver !== 'undefined') {
+    new MutationObserver(function () {
+      addBlankTargetForLinks();
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+});
+</script>
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = 'https://ssl.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+      <a class="brand" href="/">Bill's Blog</a>
+
+      <div class="nav-collapse">
+        <ul class="nav">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories">Categories</a></li>
+  <li><a href="/blog/tags">Tags</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+
+        <ul class="nav pull-right" data-subscription="rss">
+          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+          
+        </ul>
+
+        
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:ibillxia.github.io" />
+              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
+            </fieldset>
+          </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</nav>
+  <div class="container">
+    <div class="row-fluid">
+      
+<article class="hentry span9" role="article">
+
+  
+  <header class="page-header">
+    
+      <h1 class="entry-title">多模态大语言模型调研</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2024-06-27T10:53:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>原文链接：<a href="https://zhuanlan.zhihu.com/p/689385182">https://zhuanlan.zhihu.com/p/689385182</a></p>
+
+<p>本文是关于论文《MM-LLMs: Recent Advances in MultiModal Large Language Models》的简要介绍。大型语言模型沿着多模态方向发展成为目前越来越受关注的研究领域，这篇论文从方法角度整理了2022年到2024年2月的经典多模态大语言模型，并从技术角度给出了一些前瞻思路。本文主要按照作者提供的框架和案例进行介绍。</p>
+
+<p>有关本专栏的更多内容，请参考大语言模型文献调研专栏目录</p>
+
+<h1>1. 文章简介</h1>
+
+<h2>1.1 基本信息</h2>
+
+<p>题目：MM-LLMs: Recent Advances in MultiModal Large Language Models</p>
+
+<p>论文：https://arxiv.org/pdf/2401.13601.pdf?trk=public_post_comment-text</p>
+
+<p>项目主页：https://mm-llms.github.io/</p>
+
+<p>论文引用：</p>
+
+<pre><code>@article{zhang2024mm,
+  title={Mm-llms: Recent advances in multimodal large language models},
+  author={Zhang, Duzhen and Yu, Yahan and Li, Chenxing and Dong, Jiahua and Su, Dan and Chu, Chenhui and Yu, Dong},
+  journal={arXiv preprint arXiv:2401.13601},
+  year={2024}
+}
+</code></pre>
+
+
+
+<!--more-->
+
+
+<h2>1.2 多模态大语言模型简介</h2>
+
+<p>GPT诞生以来，一向以强大的自然语言处理能力而著称，人们试着将大型语言模型（Large Language Models，LLM）的强大推理和生成能力在除文本以外的模态数据上应用起来。例如图像、视频、音频、3D点云等。得益于各个模态的数据都已经有各自的高质量的编码器和生成器，再加上LLM的加持，可以实现很多有趣的任务，多模态的大语言模型（Multi-modal Large Language Models， MM-LLMs）由此而来。</p>
+
+<p>多模态大语言模型的关键是如何将各个模态的模型（例如图像编码器，视频生成器等）与大语言模型结合起来，因为不同的模态是原生的不兼容的。这就涉及到多模态领域中的一个概念：对齐（Alignment）。这就对MM-LLMs框架提出了要求，一方面，各个模态的编码器、生成器所使用的编码，要和大语言模型中所使用的编码（也就是token）进行对齐，另一方面，在人机交互时，需要模型的功能能够对齐用户的意图，而非答非所问。</p>
+
+<h2>1.3 多模态大语言模型的简要历史</h2>
+
+<p>自从GPT-4和Gemini诞生后，多模态大语言模型吸引众多研究者加入；早期框架还是致力于用LLM辅助特定模态的理解，例如LLaVA、BLIP-2、Video-ChatGPT等；后续陆陆续续有研究关注多模态生成任务，例如MiniGPT-5、SpeechGPT、AudioPaLM等；近期最新成果关注和人类类似的从任意到任意（Any-to-Any）模态的交互，例如AudioGPT、NExt-GPT等。很多公司和机构高也在布局大语言模型以服务于特定的业务需要。</p>
+
+<center><img src="/images/2024/IMAG2024062701.png"></center>
+
+
+<h1>2. 多模态大语言模型的整体架构</h1>
+
+<p>目前的多模态大语言模型采取并联式的框架，以NExtGPT为例，多模态数据送到各自模态的编码器后得到各自模态的编码，这些编码通过各自模态的输入转换器（Input Projection）后得到对齐到大语言模型的文本编码，经过大语言模型处理后的输出，经过限定模态的输出转换器（Output Projection）以及生成器得到多模态的数据。通常的，Input Projection和Output Projection是需要训练的，这些模块占整个框架的参数量的比例很小，通常在2%左右。其他模块多是现成的经过大量数据训练过的，可以固定参数，也可以跟随Projection模块一起微调。</p>
+
+<center><img src="/images/2024/IMAG2024062702.png"></center>
+
+
+<h2>2.1 各个模态的编码器</h2>
+
+<p>各个模态的编码器用于将特定模态的数据转换成编码，现在已经有很多成熟的编码器可以解决这些问题，除了文本模态之外：</p>
+
+<ul>
+<li><p>视觉编码器：例如CLIP ViT、SAM HQ、DiNoV2等；</p></li>
+<li><p>语音编码器：例如CFormer、Whisper、CLAP等；</p></li>
+<li><p>3D编码器：例如ULIP2；</p></li>
+<li><p>联合编码器：各种模态均可处理，例如ImageBind；</p></li>
+</ul>
+
+
+<h2>2.2 输入转换器</h2>
+
+<p>用于模态对齐，将多模态数据编码对齐到文本空间，也是多模态融合的关键，这一模块是需要训练的。通常的转换器可以采取的形式有：</p>
+
+<ul>
+<li><p>一个简单的线性层；</p></li>
+<li><p>多层感知机</p></li>
+<li><p>其他类型，例如Cross-Attention、Q-former等</p></li>
+</ul>
+
+
+<h2>2.3 大型语言模型底座</h2>
+
+<p>这一部分可以独自的进行文本到文本的转换，当有其他模态的数据加入时，大型语言模型会将这些模态的数据也认定为一种文本，输出的模态也是以文本的形式，交给后续解码器处理。常见的用于多模态的大语言模型有ChatGLM、PaLM、Vicuna等。</p>
+
+<h2>2.4 输出转换器</h2>
+
+<p>用于将大语言模型的输出转换成多模态生成器空间中所使用的输入编码。与输入转换器形态类似。</p>
+
+<h2>2.5 多模态生成器</h2>
+
+<p>针对不同模态，目前已经有比较成熟的生成解决方案，可以直接拿来使用。例如</p>
+
+<ul>
+<li><p>图像生成：Stable Diffusion</p></li>
+<li><p>视频生成：ZeroScope</p></li>
+<li><p>语音生成：AudioLDM-2</p></li>
+</ul>
+
+
+<h2>2.6 多模态大语言模型的训练框架</h2>
+
+<p>根据训练数据类型的不同，目前的多模态大语言模型通常采用两种训练框架，MMPT和MMIT。前者使用X-文本对形式的输入数据，这里X就是各种模态的输入。例如图像-文本、视频-文本、语音-文本；MMIT使用指令形式的数据，将有监督微调（SFT）和强化学习结合起来。</p>
+
+<h1>3. 目前经典的多模态大语言模型的及其评测</h1>
+
+<h2>3.1 当前经典的大语言模型</h2>
+
+<p>分类。作者根据设计思路将多模态大语言模型按照功能和设计进行分类。</p>
+
+<center><img src="/images/2024/IMAG2024062703.png"></center>
+
+
+
+
+<center><img src="/images/2024/IMAG2024062704.png"></center>
+
+
+<p>目前的大语言模型表现出以下趋势：</p>
+
+<ol>
+<li><p>从多模态理解到多模态生成，如MiniGPT-4=>MiniGPT-5=>NExtGPT；</p></li>
+<li><p>更好的对齐人的意图以及更好的交互，如BLIP-2=>InstructBLIP=>DRESS；</p></li>
+<li><p>扩展更多的模态类型；</p></li>
+<li><p>使用更高质量的多模态数据；</p></li>
+<li><p>更高效的网络结构；</p></li>
+</ol>
+
+
+<h2>3.2 目前SOTA多模态大语言模型及其在特定领域的性能</h2>
+
+<p>作者以视觉-语言任务为例，提供了多模态大语言模型在18个benchmark上的性能：</p>
+
+<center><img src="/images/2024/IMAG2024062705.png"></center>
+
+
+<p>并且有一些发现：</p>
+
+<ol>
+<li><p>更高的视觉分辨率可以获得更好的更细节的多模态性能；</p></li>
+<li><p>高质量的有监督微调数据集可以促进特定任务中的多模态性能；</p></li>
+<li><p>在LLM上使用PEFT可以促进编码对齐</p></li>
+<li><p>交叉使用图像和文本比使用图像-文本对效果更好</p></li>
+<li><p>使用多模态的有监督微调可以改善特定多模态任务中的性能，但是文本-文本单模态任务中性能下降</p></li>
+</ol>
+
+
+<h1>4. 后续方向</h1>
+
+<p>作者提供了后续多模态大模型发展的一些方向：</p>
+
+<ol>
+<li><p>更加强大的模型结构，可以引入网页、热力图或图表之类的更多模态来增加模型对更多模态的处理能力，也可以使用更高质量的多模态数据来改善模型性能，或者得到更强大的各个模态的生成模型；</p></li>
+<li><p>更多有挑战的Benchmark，例如像MathVista一样衡量视觉任务中的推理能力，或者像MMMU这样的通用智能多学科专家系统；</p></li>
+<li><p>轻量化部署，目前已经有一些工作在做，例如Mobile VLM、TinyGPT-V或Mobile-Agent，提高推理效率；</p></li>
+<li><p>嵌入式智能：使得MM-LLMs可以应对真实世界并与之交互，例如PaLM-E或者EmbodiedGPT；</p></li>
+<li><p>持续学习：根据当前使用环境进行持续参数更新；</p></li>
+<li><p>缓解幻觉现象：改善GPT一本正经的胡说八道的问题；</p></li>
+</ol>
+
+
+<h1>附录：论文的思维导图（大图，请在新标签页打开查阅）</h1>
+
+<center><img src="/images/2024/IMAG2024062706.png"></center>
+
+
+<p>有关本专栏的更多内容，请参考<a href="https://zhuanlan.zhihu.com/p/690590730">大语言模型文献调研专栏</a></p>
+</div>
+<div id="copyleft" class="well" >
+	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2024/06/27/multimodal-llm-survey/</a></br>
+	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+
+<time datetime="2024-06-27T10:53:00+08:00" pubdate data-updated="true"></time>
+		
+		
+		
+		  <span class="categories">Posted in <a class='category' href='/blog/categories/大模型/'>大模型</a></span>
+		
+		
+		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/llm/'>LLM</a>, <a class='tag' href='/blog/tags/vlm/'>VLM</a>, <a class='tag' href='/blog/tags/duo-mo-tai/'>多模态</a></span>
+		
+    </p>
+    
+      
+         <div class="sharing">
+  
+  
+  
+</div>
+
+      
+    
+	</br>
+	 <ul class="pager">
+      
+      <li class="previous"><a class="basic-alignment left"
+        href="/blog/2024/06/21/swiglu-activation-in-llm/" title="Previous Post:
+        为什么大型语言模型都在使用SwiGLU作为激活函数">&laquo; 为什么大型语言模型都在使用SwiGLU作为激活函数</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+      <li class="next"><a class="basic-alignment right" href="/blog/2024/07/02/ai-painting-clip-dalle-stable-diffusion/"
+        title="Next Post: AI绘画原理解析：从CLIP、DALLE到Stable Diffusion">AI绘画原理解析：从CLIP、DALLE到Stable Diffusion
+        &raquo;</a></li>
+      
+    </ul>
+    
+    <section>
+      <h1>Comments</h1>
+      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </section>
+    
+   
+  </footer>
+</article>
+
+<aside class="sidebar-nav span3">
+  
+    
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo" class="page-footer">
+<hr>
+<p>
+  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ibillxia';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://ibillxia.github.io/blog/2024/06/27/multimodal-llm-survey/';
+        var disqus_url = 'https://ibillxia.github.io/blog/2024/06/27/multimodal-llm-survey/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
