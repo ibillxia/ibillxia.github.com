@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: Android | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/android/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/android/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Ubuntu 下 Android NDK 开发入门]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/05/04/android-ndk-development/"/>
+    <link href="https://ibillxia.github.io/blog/2014/05/04/android-ndk-development/"/>
     <updated>2014-05-04T23:53:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/05/04/android-ndk-development</id>
+    <id>https://ibillxia.github.io/blog/2014/05/04/android-ndk-development</id>
     <content type="html"><![CDATA[<p>本文首先介绍一下在 Ubuntu 下如何配置 Android NDK 开发环境，然后用一个简单的 hello-jni 项目来介绍 NDK 开发流程，本文的全部代码下载链接：<a href="https://ibillxia.github.io/upload/code/20140504-HelloJni.tar.gz">HelloJni.tar.gz</a>，也可以在我的 <a href="https://github.com/ibillxia/Demo/tree/master/HelloJni">GitHub</a> 上下载。</p>
 
 <h2>1. 简介</h2>

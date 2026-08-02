@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: Audio | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/audio/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/audio/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Linux的OSS和ALSA声音系统简介及其比较]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/09/08/brief-introduction-of-alsa-and-oss-and-its-comparision/"/>
+    <link href="https://ibillxia.github.io/blog/2013/09/08/brief-introduction-of-alsa-and-oss-and-its-comparision/"/>
     <updated>2013-09-08T19:46:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/09/08/brief-introduction-of-alsa-and-oss-and-its-comparision</id>
+    <id>https://ibillxia.github.io/blog/2013/09/08/brief-introduction-of-alsa-and-oss-and-its-comparision</id>
     <content type="html"><![CDATA[<h2>概述</h2>
 
 
@@ -186,9 +186,9 @@ OSS的jack检测目前在某些HDAudio-powered主板上不能正常工作。也�
   
   <entry>
     <title type="html"><![CDATA[深度学习及其在语音方面的应用]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/04/17/Deep-Learning-and-its-application-in-audio-and-speech-processing/"/>
+    <link href="https://ibillxia.github.io/blog/2013/04/17/Deep-Learning-and-its-application-in-audio-and-speech-processing/"/>
     <updated>2013-04-17T22:43:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/04/17/Deep-Learning-and-its-application-in-audio-and-speech-processing</id>
+    <id>https://ibillxia.github.io/blog/2013/04/17/Deep-Learning-and-its-application-in-audio-and-speech-processing</id>
     <content type="html"><![CDATA[<p>以下是今天在组会上讲的内容，与大家分享一下。有些地方我也没有完全理解，欢迎大家一起来讨论。</p>
 
 
@@ -196,7 +196,7 @@ OSS的jack检测目前在某些HDAudio-powered主板上不能正常工作。也�
 <embed width="780"
     height="574"
     name="plugin"
-    src="http://ibillxia.github.io/upload/Deep Learning - Bill Xia.pdf"
+    src="https://ibillxia.github.io/upload/Deep Learning - Bill Xia.pdf"
     type="application/pdf"
 />
 </center></p>
@@ -206,9 +206,9 @@ OSS的jack检测目前在某些HDAudio-powered主板上不能正常工作。也�
   
   <entry>
     <title type="html"><![CDATA[人的听觉系统生理结构（2）——中枢部分]]></title>
-    <link href="http://ibillxia.github.io/blog/2012/12/21/human-audio-system-neural-parts/"/>
+    <link href="https://ibillxia.github.io/blog/2012/12/21/human-audio-system-neural-parts/"/>
     <updated>2012-12-21T21:55:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2012/12/21/human-audio-system-neural-parts</id>
+    <id>https://ibillxia.github.io/blog/2012/12/21/human-audio-system-neural-parts</id>
     <content type="html"><![CDATA[<h2>0.概述</h2>
 
 
@@ -319,9 +319,9 @@ OSS的jack检测目前在某些HDAudio-powered主板上不能正常工作。也�
   
   <entry>
     <title type="html"><![CDATA[人的听觉系统生理结构（1）——外周部分]]></title>
-    <link href="http://ibillxia.github.io/blog/2012/12/21/human-audio-system-out-part/"/>
+    <link href="https://ibillxia.github.io/blog/2012/12/21/human-audio-system-out-part/"/>
     <updated>2012-12-21T21:43:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2012/12/21/human-audio-system-out-part</id>
+    <id>https://ibillxia.github.io/blog/2012/12/21/human-audio-system-out-part</id>
     <content type="html"><![CDATA[<h2>概述</h2>
 
 
@@ -560,9 +560,9 @@ OSS的jack检测目前在某些HDAudio-powered主板上不能正常工作。也�
   
   <entry>
     <title type="html"><![CDATA[MFCC参数提取及Matalab实现]]></title>
-    <link href="http://ibillxia.github.io/blog/2012/07/18/MFCC-feature-extraction/"/>
+    <link href="https://ibillxia.github.io/blog/2012/07/18/MFCC-feature-extraction/"/>
     <updated>2012-07-18T20:10:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2012/07/18/MFCC-feature-extraction</id>
+    <id>https://ibillxia.github.io/blog/2012/07/18/MFCC-feature-extraction</id>
     <content type="html"><![CDATA[<h2>1.概述</h2>
 
 

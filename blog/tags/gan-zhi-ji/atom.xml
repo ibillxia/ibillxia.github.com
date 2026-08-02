@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 感知机 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/gan-zhi-ji/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/gan-zhi-ji/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[神经网络模型分类]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/03/24/classes-of-neural-networks/"/>
+    <link href="https://ibillxia.github.io/blog/2013/03/24/classes-of-neural-networks/"/>
     <updated>2013-03-24T23:07:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/03/24/classes-of-neural-networks</id>
+    <id>https://ibillxia.github.io/blog/2013/03/24/classes-of-neural-networks</id>
     <content type="html"><![CDATA[<p>本文主要介绍一下几种不同类型的神经网络模型，主要有前馈神经网络，反馈神经网络，自组织神经网络，随机神经网络</p>
 
 
@@ -190,9 +190,9 @@ Lecture homepage in Standford: http://cs229.stanford.edu/</p>
   
   <entry>
     <title type="html"><![CDATA[神经网络简介]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/03/20/basics-of-neural-networks/"/>
+    <link href="https://ibillxia.github.io/blog/2013/03/20/basics-of-neural-networks/"/>
     <updated>2013-03-20T23:21:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/03/20/basics-of-neural-networks</id>
+    <id>https://ibillxia.github.io/blog/2013/03/20/basics-of-neural-networks</id>
     <content type="html"><![CDATA[<p>Deep Learning的本质是多层的神经网络，因此在深入学习Deep Learning之前，有必要了解一些神经网络的基本知识。
 本文首先对神经网络的发展历史进行简要的介绍，然后给出神经元模型的形式化描述，接着是神经网络模型的定义、特性，
 最后是一些最新的进展等。关于神经网络的分类、学习方法、应用场景等将在后续文章中介绍。</p>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 深度学习 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/shen-du-xue-xi/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/shen-du-xue-xi/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[大模型入门指南：Transformer与Attention机制]]></title>
-    <link href="http://ibillxia.github.io/blog/2025/01/22/transformer-attention-guide/"/>
+    <link href="https://ibillxia.github.io/blog/2025/01/22/transformer-attention-guide/"/>
     <updated>2025-01-22T16:51:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2025/01/22/transformer-attention-guide</id>
+    <id>https://ibillxia.github.io/blog/2025/01/22/transformer-attention-guide</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://developer.aliyun.com/article/1655110">https://developer.aliyun.com/article/1655110</a></p>
 
 <center><img src="/images/2025/IMAG2025012201.octet-stream"></center>
@@ -446,9 +446,9 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
   
   <entry>
     <title type="html"><![CDATA[【凉夏】推荐模型中的门控机制与动态权重]]></title>
-    <link href="http://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation/"/>
+    <link href="https://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation/"/>
     <updated>2025-01-03T10:33:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation</id>
+    <id>https://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/701181424">https://zhuanlan.zhihu.com/p/701181424</a></p>
 
 <p>大家好，我是凉夏同学。今天是我第一次在知乎分享我对算法模型的理解，有些生疏，还请大家多多指教。感兴趣的话，敬请关注公众号：凉夏的机器学习笔记。感恩~</p>
@@ -580,9 +580,9 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
   
   <entry>
     <title type="html"><![CDATA[使用TensorFlow、ONNX和TensorRT加速深度学习推理]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference/"/>
+    <link href="https://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference/"/>
     <updated>2024-07-15T15:17:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference</id>
+    <id>https://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://developer.nvidia.cn/blog/speeding-up-deep-learning-inference-using-tensorflow-onnx-and-tensorrt/">https://developer.nvidia.cn/blog/speeding-up-deep-learning-inference-using-tensorflow-onnx-and-tensorrt/</a></p>
 
 <p>从 TensorRT 7 . 0 开始， Universal Framework Format（ UFF ）被弃用。在本文中，您将学习如何使用新的 TensorFlow -ONNX- TensorRT 工作流部署经过 TensorFlow 培训的深度学习模型。图 1 显示了 TensorRT 的高级工作流。</p>
@@ -1082,9 +1082,9 @@ save_engine(engine, engine_name)
   
   <entry>
     <title type="html"><![CDATA[PyTorch+CUDA+显卡算力对应关系]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility/"/>
+    <link href="https://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility/"/>
     <updated>2024-07-04T17:06:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility</id>
+    <id>https://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility</id>
     <content type="html"><![CDATA[<h1>Pytorch 各个GPU版本CUDA和cuDNN对应版本</h1>
 
 <p><a href="https://blog.csdn.net/weixin_45508265/article/details/122006134">https://blog.csdn.net/weixin_45508265/article/details/122006134</a></p>
@@ -1142,9 +1142,9 @@ save_engine(engine, engine_name)
   
   <entry>
     <title type="html"><![CDATA[工业界推荐系统技术要点总结]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary/"/>
+    <link href="https://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary/"/>
     <updated>2024-05-26T11:25:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary</id>
+    <id>https://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/689894486">https://zhuanlan.zhihu.com/p/689894486</a></p>
 
 <p>工业界的推荐系统技术要点有很多，想从事推荐系统相关方向的同学都建议刷一刷。</p>

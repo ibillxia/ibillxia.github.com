@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 产品运营 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/chan-pin-yun-ying/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/chan-pin-yun-ying/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[产品与运营的数据分析能力指南]]></title>
-    <link href="http://ibillxia.github.io/blog/2019/07/27/data-analysis-for-product-ops/"/>
+    <link href="https://ibillxia.github.io/blog/2019/07/27/data-analysis-for-product-ops/"/>
     <updated>2019-07-27T12:03:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2019/07/27/data-analysis-for-product-ops</id>
+    <id>https://ibillxia.github.io/blog/2019/07/27/data-analysis-for-product-ops</id>
     <content type="html"><![CDATA[<center><img src="/images/2019/IMAG2019072701.png"></center>
 
 
@@ -398,9 +398,9 @@
   
   <entry>
     <title type="html"><![CDATA[内容类产品用户生命周期的数据指标体系]]></title>
-    <link href="http://ibillxia.github.io/blog/2017/10/23/content-product-user-lifecycle/"/>
+    <link href="https://ibillxia.github.io/blog/2017/10/23/content-product-user-lifecycle/"/>
     <updated>2017-10-23T11:06:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2017/10/23/content-product-user-lifecycle</id>
+    <id>https://ibillxia.github.io/blog/2017/10/23/content-product-user-lifecycle</id>
     <content type="html"><![CDATA[<p>文章从用户生命周期的四个阶段并贴合活跃这一维度，罗列了Pinterest内部关注的20多项指标。从Pinterest我们可以延伸至内容类产品来看待这些指标，因为和电商、互金等产品相比，活跃的波动对内容类产品有着更直接的影响。为了便于理解，文章最终提炼出了19项指标并部分添加了描述和解读，供参考。</p>
 
 <center><img src="/images/2017/IMAG2017102301.png"></center>

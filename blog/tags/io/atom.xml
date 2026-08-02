@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: IO | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/io/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/io/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[C语言输入输出缓冲区]]></title>
-    <link href="http://ibillxia.github.io/blog/2009/06/05/io-buffer-in-c-language/"/>
+    <link href="https://ibillxia.github.io/blog/2009/06/05/io-buffer-in-c-language/"/>
     <updated>2009-06-05T23:02:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2009/06/05/io-buffer-in-c-language</id>
+    <id>https://ibillxia.github.io/blog/2009/06/05/io-buffer-in-c-language</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="http://blog.csdn.net/cxyol/archive/2006/03/18/628324.aspx">http://blog.csdn.net/cxyol/archive/2006/03/18/628324.aspx</a></p>
 
 <h2>1.输入输出缓冲区的概念（C++用的多一些）</h2>

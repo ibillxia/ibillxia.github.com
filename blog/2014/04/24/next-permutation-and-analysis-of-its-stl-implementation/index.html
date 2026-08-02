@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://ibillxia.github.io/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation">
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -149,7 +149,7 @@ $(function () {
         </ul>
 
         
-          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
             <fieldset role="search">
               <input type="hidden" name="q" value="site:ibillxia.github.io" />
               <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
@@ -390,7 +390,7 @@ next_permutation(_BidirectionalIterator __first,
 <p>可以看到，其实 STL 的 next permute 的实现跟我们的非递归算法是一致的。但这里有两个问题：一是，这里看似有二重循环（在 for 中套 while ），但实际上复杂度是 n+n =》 O(n) 的（可以为什么要写成这种二重循环的形式捏？不解）；二是，我们可以看到在 for 循环中，对 __ii 这个变量进行了多次声明，为什么不将其声明放在 for 外面捏？（虽然待排列的元素数 n 不会很大，但这样多次声明一个迭代器变量，虽不会占用过多内存，但在声明时调用构造函数和析构函数也是有一定的时间开销的吧，虽然相对于求全排列的复杂度 O(n*n!) 几乎可以忽略不计）</p>
 </div>
 <div id="copyleft" class="well" >
-	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/</a></br>
+	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/</a></br>
 	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
 </div>
 
@@ -479,8 +479,8 @@ next_permutation(_BidirectionalIterator __first,
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://ibillxia.github.io/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/';
-        var disqus_url = 'http://ibillxia.github.io/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/';
+        var disqus_identifier = 'https://ibillxia.github.io/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/';
+        var disqus_url = 'https://ibillxia.github.io/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/';
         var disqus_script = 'embed.js';
       
     (function () {

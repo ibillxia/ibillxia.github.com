@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 特征选择 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/te-zheng-xuan-ze/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/te-zheng-xuan-ze/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[【Python机器学习】结合sklearn介绍常用特征选择方法]]></title>
-    <link href="http://ibillxia.github.io/blog/2018/05/23/sklearn-feature-selection-methods/"/>
+    <link href="https://ibillxia.github.io/blog/2018/05/23/sklearn-feature-selection-methods/"/>
     <updated>2018-05-23T11:29:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2018/05/23/sklearn-feature-selection-methods</id>
+    <id>https://ibillxia.github.io/blog/2018/05/23/sklearn-feature-selection-methods</id>
     <content type="html"><![CDATA[<p>特征选择(排序)对于数据科学家、机器学习从业者来说非常重要。好的特征选择能够提升模型的性能，更能帮助我们理解数据的特点、底层结构，这对进一步改善模型、算法都有着重要作用。</p>
 
 <p>特征选择主要有两个功能：</p>

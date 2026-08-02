@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: HTK | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/htk/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/htk/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Linux的OSS和ALSA声音系统简介及其比较]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/09/08/brief-introduction-of-alsa-and-oss-and-its-comparision/"/>
+    <link href="https://ibillxia.github.io/blog/2013/09/08/brief-introduction-of-alsa-and-oss-and-its-comparision/"/>
     <updated>2013-09-08T19:46:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/09/08/brief-introduction-of-alsa-and-oss-and-its-comparision</id>
+    <id>https://ibillxia.github.io/blog/2013/09/08/brief-introduction-of-alsa-and-oss-and-its-comparision</id>
     <content type="html"><![CDATA[<h2>概述</h2>
 
 
@@ -186,9 +186,9 @@ OSS的jack检测目前在某些HDAudio-powered主板上不能正常工作。也�
   
   <entry>
     <title type="html"><![CDATA[几个常见的语音交互平台的简介和比较]]></title>
-    <link href="http://ibillxia.github.io/blog/2012/11/24/several-plantforms-on-audio-and-speech-signal-processing/"/>
+    <link href="https://ibillxia.github.io/blog/2012/11/24/several-plantforms-on-audio-and-speech-signal-processing/"/>
     <updated>2012-11-24T18:54:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2012/11/24/several-plantforms-on-audio-and-speech-signal-processing</id>
+    <id>https://ibillxia.github.io/blog/2012/11/24/several-plantforms-on-audio-and-speech-signal-processing</id>
     <content type="html"><![CDATA[<h2>1.概述</h2>
 
 

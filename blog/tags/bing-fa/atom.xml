@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 并发 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/bing-fa/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/bing-fa/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Go并发编程初探]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/03/16/go-concurrent-programming-first-try/"/>
+    <link href="https://ibillxia.github.io/blog/2014/03/16/go-concurrent-programming-first-try/"/>
     <updated>2014-03-16T23:35:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/03/16/go-concurrent-programming-first-try</id>
+    <id>https://ibillxia.github.io/blog/2014/03/16/go-concurrent-programming-first-try</id>
     <content type="html"><![CDATA[<h2>概述</h2>
 
 <p>最近在做的一个项目，需要对大量数据进行一些基本的统计和处理，整个程序的思路很简单，但处理起来却很慢，特别是有二重循环的地方，龟速前进，眼看着16核32线程

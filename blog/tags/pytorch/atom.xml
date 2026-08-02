@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: PyTorch | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/pytorch/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/pytorch/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[PyTorch+CUDA+显卡算力对应关系]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility/"/>
+    <link href="https://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility/"/>
     <updated>2024-07-04T17:06:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility</id>
+    <id>https://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility</id>
     <content type="html"><![CDATA[<h1>Pytorch 各个GPU版本CUDA和cuDNN对应版本</h1>
 
 <p><a href="https://blog.csdn.net/weixin_45508265/article/details/122006134">https://blog.csdn.net/weixin_45508265/article/details/122006134</a></p>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 推理优化 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/tui-li-you-hua/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/tui-li-you-hua/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[使用TensorFlow、ONNX和TensorRT加速深度学习推理]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference/"/>
+    <link href="https://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference/"/>
     <updated>2024-07-15T15:17:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference</id>
+    <id>https://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://developer.nvidia.cn/blog/speeding-up-deep-learning-inference-using-tensorflow-onnx-and-tensorrt/">https://developer.nvidia.cn/blog/speeding-up-deep-learning-inference-using-tensorflow-onnx-and-tensorrt/</a></p>
 
 <p>从 TensorRT 7 . 0 开始， Universal Framework Format（ UFF ）被弃用。在本文中，您将学习如何使用新的 TensorFlow -ONNX- TensorRT 工作流部署经过 TensorFlow 培训的深度学习模型。图 1 显示了 TensorRT 的高级工作流。</p>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 多模态 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/duo-mo-tai/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/duo-mo-tai/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[GenRec综述论文笔记]]></title>
-    <link href="http://ibillxia.github.io/blog/2025/06/18/gen-rec-servey-notes/"/>
+    <link href="https://ibillxia.github.io/blog/2025/06/18/gen-rec-servey-notes/"/>
     <updated>2025-06-18T09:51:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2025/06/18/gen-rec-servey-notes</id>
+    <id>https://ibillxia.github.io/blog/2025/06/18/gen-rec-servey-notes</id>
     <content type="html"><![CDATA[<p>论文链接：<a href="https://arxiv.org/abs/2409.15173">https://arxiv.org/abs/2409.15173</a></p>
 
 <h1>book structure</h1>
@@ -121,9 +121,9 @@
   
   <entry>
     <title type="html"><![CDATA[多模态大语言模型调研]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/06/27/multimodal-llm-survey/"/>
+    <link href="https://ibillxia.github.io/blog/2024/06/27/multimodal-llm-survey/"/>
     <updated>2024-06-27T10:53:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/06/27/multimodal-llm-survey</id>
+    <id>https://ibillxia.github.io/blog/2024/06/27/multimodal-llm-survey</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/689385182">https://zhuanlan.zhihu.com/p/689385182</a></p>
 
 <p>本文是关于论文《MM-LLMs: Recent Advances in MultiModal Large Language Models》的简要介绍。大型语言模型沿着多模态方向发展成为目前越来越受关注的研究领域，这篇论文从方法角度整理了2022年到2024年2月的经典多模态大语言模型，并从技术角度给出了一些前瞻思路。本文主要按照作者提供的框架和案例进行介绍。</p>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 推荐系统 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/tui-jian-xi-tong/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/tui-jian-xi-tong/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[【凉夏】推荐模型中的门控机制与动态权重]]></title>
-    <link href="http://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation/"/>
+    <link href="https://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation/"/>
     <updated>2025-01-03T10:33:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation</id>
+    <id>https://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/701181424">https://zhuanlan.zhihu.com/p/701181424</a></p>
 
 <p>大家好，我是凉夏同学。今天是我第一次在知乎分享我对算法模型的理解，有些生疏，还请大家多多指教。感兴趣的话，敬请关注公众号：凉夏的机器学习笔记。感恩~</p>
@@ -149,9 +149,9 @@
   
   <entry>
     <title type="html"><![CDATA[【蘑菇先生】工业界大模型推荐实战经验梳理]]></title>
-    <link href="http://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice/"/>
+    <link href="https://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice/"/>
     <updated>2025-01-03T10:31:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice</id>
+    <id>https://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/7387477310">https://zhuanlan.zhihu.com/p/7387477310</a></p>
 
 <p>大家好，我是蘑菇先生。好久不见，今天盘点下2024年工业界大模型在搜广推上的实战落地型工作。业界工作大体分为两类：</p>
@@ -547,9 +547,9 @@
   
   <entry>
     <title type="html"><![CDATA[Hulu视频广告系统中的算法实践]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms/"/>
+    <link href="https://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms/"/>
     <updated>2024-07-19T14:40:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms</id>
+    <id>https://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://www.infoq.cn/article/ko9yxouspj4kuoh9jut4">https://www.infoq.cn/article/ko9yxouspj4kuoh9jut4</a></p>
 
 <h1>概述</h1>
@@ -885,9 +885,9 @@
   
   <entry>
     <title type="html"><![CDATA[工业界推荐系统技术要点总结]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary/"/>
+    <link href="https://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary/"/>
     <updated>2024-05-26T11:25:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary</id>
+    <id>https://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/689894486">https://zhuanlan.zhihu.com/p/689894486</a></p>
 
 <p>工业界的推荐系统技术要点有很多，想从事推荐系统相关方向的同学都建议刷一刷。</p>
@@ -1104,9 +1104,9 @@
   
   <entry>
     <title type="html"><![CDATA[【DataFun】因果推断在微视激励和供需场景的应用]]></title>
-    <link href="http://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application/"/>
+    <link href="https://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application/"/>
     <updated>2023-12-27T16:16:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application</id>
+    <id>https://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application</id>
     <content type="html"><![CDATA[<center><img src="/images/2023/IMAG2023122701.png"></center>
 
 

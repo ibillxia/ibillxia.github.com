@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: LLaMA | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/llama/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/llama/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[10个开源的ChatGPT类模型简介及部分代码实践]]></title>
-    <link href="http://ibillxia.github.io/blog/2023/05/04/ten-open-source-llms/"/>
+    <link href="https://ibillxia.github.io/blog/2023/05/04/ten-open-source-llms/"/>
     <updated>2023-05-04T23:51:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2023/05/04/ten-open-source-llms</id>
+    <id>https://ibillxia.github.io/blog/2023/05/04/ten-open-source-llms</id>
     <content type="html"><![CDATA[<center><img src="/images/2023/IMAG2023050401.png"></center>
 
 

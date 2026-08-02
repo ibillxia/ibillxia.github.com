@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 集合 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/ji-he/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/ji-he/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[深入理解STL源码(5.4) 算法之复杂算法algorithm]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms/"/>
+    <link href="https://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms/"/>
     <updated>2014-11-01T10:33:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms</id>
+    <id>https://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms</id>
     <content type="html"><![CDATA[<p>本文主要介绍STL中的稍微复杂的算法，主要涉及到的源码文件有 <code>stl_algo.h</code> 等。</p>
 
 <p>在文件 <code>stl_algo.h</code> 中有很多常用的算法，包括查找、计数、旋转、删除、排序、合并、集合的交并等运算、求极值、排列组合等等，本文将按源码中各算法的实现顺序来介绍其具体实现细节。由于本文涉及到的算法和相关代码太多，在文中就尽量不贴出代码了，详细的代码及相关注释请参见 <a href="http://ibillxia.github.io/upload/code/stl_algo.h">stl_algo.h</a>。</p>
@@ -210,9 +210,9 @@ return __first == __last ? __first
   
   <entry>
     <title type="html"><![CDATA[深入理解STL源码(4.2) 关联式容器之set和multiset]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/08/17/insight-into-stl-4-associative-containers-2-set-and-multiset/"/>
+    <link href="https://ibillxia.github.io/blog/2014/08/17/insight-into-stl-4-associative-containers-2-set-and-multiset/"/>
     <updated>2014-08-17T21:30:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/08/17/insight-into-stl-4-associative-containers-2-set-and-multiset</id>
+    <id>https://ibillxia.github.io/blog/2014/08/17/insight-into-stl-4-associative-containers-2-set-and-multiset</id>
     <content type="html"><![CDATA[<p>本文涉及到 SGI STL 源码的文件主要有 <code>stl_set.h</code>、 <code>stl_multiset.h</code>、 <code>set.h</code>、 <code>multiset.h</code>、 <code>set</code> 等文件。</p>
 
 <h2>1. set 简介</h2>

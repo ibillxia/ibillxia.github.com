@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://ibillxia.github.io/page7">
+  <link rel="canonical" href="https://ibillxia.github.io/page7">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -149,7 +149,7 @@ $(function () {
         </ul>
 
         
-          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
             <fieldset role="search">
               <input type="hidden" name="q" value="site:ibillxia.github.io" />
               <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
@@ -165,6 +165,51 @@ $(function () {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2017/07/06/ctr-prediction-fm-ffm/">【美团】深入FFM原理与实践</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2017-07-06T12:54:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2017/07/06/ctr-prediction-fm-ffm/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>FM和FFM模型是最近几年提出的模型，凭借其在数据量比较大并且特征稀疏的情况下，仍然能够得到优秀的性能和效果的特性，屡次在各大公司举办的CTR预估比赛中获得不错的战绩。美团点评技术团队在搭建DSP的过程中，探索并使用了FM和FFM模型进行CTR和CVR预估，并且取得了不错的效果。本文旨在把我们对FM和FFM原理的探索和应用的经验介绍给有兴趣的读者。</p>
+
+<h1>前言</h1>
+
+<p>在计算广告领域，点击率CTR（click-through rate）和转化率CVR（conversion rate）是衡量广告流量的两个关键指标。准确的估计CTR、CVR对于提高流量的价值，增加广告收入有重要的指导作用。预估CTR/CVR，业界常用的方法有人工特征工程 + LR(Logistic Regression)、GBDT(Gradient Boosting Decision Tree) + LR[1][2][3]、FM（Factorization Machine）[2][7]和FFM（Field-aware Factorization Machine）[9]模型。在这些模型中，FM和FFM近年来表现突出，分别在由Criteo和Avazu举办的CTR预测竞赛中夺得冠军[4][5]。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2017/07/06/ctr-prediction-fm-ffm/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -604,56 +649,6 @@ $(function () {
   
     <footer>
       <a rel="full-article" href="/blog/2015/11/05/inside-spotify-and-the-future-of-music-streaming/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2015/11/03/tencent-analytics-architecture/">【标点符】腾讯分析系统架构解析</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2015-11-03T15:54:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2015/11/03/tencent-analytics-architecture/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><center><img src="/images/2015/IMAG2015110300.jpg"></center>
-
-
-<p>TA（Tencent Analytics，腾讯分析）是一款面向第三方站长的免费网站分析系统，在数据稳定性、及时性方面广受站长好评，其秒级的实时数据更新频率也获得业界的认可。本文将从实时数据处理、数据存储等多个方面带你深入探寻TA的系统架构及实现原理。</p>
-
-<p>网站分析（Web Analytics）主要指的是基于网站的用户浏览行为，对网站的点击流数据和运营数据进行分析，以监控网站的运营状况，为网站的优化提供决策依据。网站分析系统已成为站长日常运营必不可少的工具，业界比较流行的网站分析系统主要有Google Analytics、CNZZ和百度统计等产品。</p>
-
-<p>TA作为网站分析产品的后起之秀在社区分析、用户画像、网站工具等多方面形成了自己的特色，其秒级的实时数据更新频率更是业界翘楚。在数据稳定性、准确性和及时性方面，TA在站长圈也是享有良好的口碑。随着接入业务量的不断发展，TA日均需要处理和计算的数据量达到TB级。如此庞大的数据量想要达到秒级实时且保证系统的高可用并非件易事。</p>
-
-<p>TA的实时计算框架借鉴了一些业界流行的流式计算系统的思路。虽然在构建系统中遇到了一些问题，但由于海量数据的实时处理、实时存储具备一定的典型性与通用性，所以将TA的解决方案分享出来，希望能给大家一些启示。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2015/11/03/tencent-analytics-architecture/">Read on &rarr;</a>
     </footer>
   
 

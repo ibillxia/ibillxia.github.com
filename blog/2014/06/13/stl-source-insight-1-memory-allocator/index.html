@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator">
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -149,7 +149,7 @@ $(function () {
         </ul>
 
         
-          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
             <fieldset role="search">
               <input type="hidden" name="q" value="site:ibillxia.github.io" />
               <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
@@ -437,7 +437,7 @@ __PRIVATE:
 <p>由于在 <code>__default_alloc_template</code> 的对外接口中，只有 <code>allocate</code> 和 <code>deallocate</code> 中直接涉及到对free list进行修改的操作，所以在这两个函数中，在对free list进行修改之前，都要实例化一个 <code>_Lock</code> 的对象 <code>__lock_instance</code> ，此时调用构造函数进行加锁，当函数结束时，的对象 <code>__lock_instance</code> 自动析构，释放锁。这样，在多线程下，可以保证free list的一致性。</p>
 </div>
 <div id="copyleft" class="well" >
-	<span>Original Link: <a rel="full-article" href="">http://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/</a></br>
+	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/</a></br>
 	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
 </div>
 
@@ -526,8 +526,8 @@ __PRIVATE:
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/';
-        var disqus_url = 'http://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/';
+        var disqus_identifier = 'https://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/';
+        var disqus_url = 'https://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/';
         var disqus_script = 'embed.js';
       
     (function () {

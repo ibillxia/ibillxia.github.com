@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 趋势 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/qu-shi/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/qu-shi/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[数据科学与机器学习2026年趋势展望]]></title>
-    <link href="http://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026/"/>
+    <link href="https://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026/"/>
     <updated>2025-12-12T10:27:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026</id>
+    <id>https://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026</id>
     <content type="html"><![CDATA[<p>分享两篇关于数据科学与机器学习趋势的文章，供大家参考。总结下来，最最重要的两大趋势：</p>
 
 <ul>
@@ -423,9 +423,9 @@
   
   <entry>
     <title type="html"><![CDATA[【译】大数据分析八大趋势及企业启示]]></title>
-    <link href="http://ibillxia.github.io/blog/2015/11/29/big-data-analytics-trends/"/>
+    <link href="https://ibillxia.github.io/blog/2015/11/29/big-data-analytics-trends/"/>
     <updated>2015-11-29T23:15:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2015/11/29/big-data-analytics-trends</id>
+    <id>https://ibillxia.github.io/blog/2015/11/29/big-data-analytics-trends</id>
     <content type="html"><![CDATA[<p>本文翻译自英文文章，原文作者 <a href="https://x.com/ReddyNHema">ReddyNHema</a>，以下是译文。</p>
 
 <p>我在IT行业工作超过14年，但技术为满足业务需求而快速演进的步伐仍然令我惊叹不已。技术计算的发展历程从最早占据整个房间的计算机，到大型机，再到个人电脑，然后是Web和SaaS应用，接着是移动设备，如今又到了云计算和物联网时代。</p>

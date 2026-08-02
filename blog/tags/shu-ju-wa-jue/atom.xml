@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 数据挖掘 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/shu-ju-wa-jue/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/shu-ju-wa-jue/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[探秘Spotify的Echo Nest]]></title>
-    <link href="http://ibillxia.github.io/blog/2018/08/14/spotify-echo-nest/"/>
+    <link href="https://ibillxia.github.io/blog/2018/08/14/spotify-echo-nest/"/>
     <updated>2018-08-14T12:00:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2018/08/14/spotify-echo-nest</id>
+    <id>https://ibillxia.github.io/blog/2018/08/14/spotify-echo-nest</id>
     <content type="html"><![CDATA[<center><img src="/images/2018/IMAG201808101.jpeg"></center>
 
 
@@ -195,9 +195,9 @@
   
   <entry>
     <title type="html"><![CDATA[【美团】数据驱动精准化营销在大众点评的实践]]></title>
-    <link href="http://ibillxia.github.io/blog/2016/09/11/data-driven-precision-marketing/"/>
+    <link href="https://ibillxia.github.io/blog/2016/09/11/data-driven-precision-marketing/"/>
     <updated>2016-09-11T23:25:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2016/09/11/data-driven-precision-marketing</id>
+    <id>https://ibillxia.github.io/blog/2016/09/11/data-driven-precision-marketing</id>
     <content type="html"><![CDATA[<p>精准化营销一直以来都是互联网营销业务在细分市场下快速获取用户和提高转化的利器。在移动互联网爆发的今天，数据量呈指数增长，如何在移动和大数据场景下用数据驱动进行精准营销，从而提高营销效能，成为营销业务部门的主要挑战之一，同时也是大数据应用的一个重要研究方向。本文通过数据体系架构和技术实现案例，分享美团大众点评数据应用团队在这个方向上的一些尝试和实践经验。</p>
 
 <h2>总体框架</h2>
@@ -290,9 +290,9 @@
   
   <entry>
     <title type="html"><![CDATA[TOP 10开源的推荐系统简介]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/03/10/top-10-open-source-recommendation-systems/"/>
+    <link href="https://ibillxia.github.io/blog/2014/03/10/top-10-open-source-recommendation-systems/"/>
     <updated>2014-03-10T22:29:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/03/10/top-10-open-source-recommendation-systems</id>
+    <id>https://ibillxia.github.io/blog/2014/03/10/top-10-open-source-recommendation-systems</id>
     <content type="html"><![CDATA[<p>最近这两年推荐系统特别火，本文搜集整理了一些比较好的开源推荐系统，即有轻量级的适用于做研究的SVDFeature、LibMF、LibFM等，也有重量级的适用于工业系统的
 Mahout、Oryx、EasyRecd等，供大家参考。PS：这里的top 10仅代表个人观点。</p>
 

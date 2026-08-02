@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: Druid | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/druid/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/druid/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[【美团】基于Druid的Kylin存储引擎实践]]></title>
-    <link href="http://ibillxia.github.io/blog/2019/06/05/druid-based-kylin-storage/"/>
+    <link href="https://ibillxia.github.io/blog/2019/06/05/druid-based-kylin-storage/"/>
     <updated>2019-06-05T20:54:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2019/06/05/druid-based-kylin-storage</id>
+    <id>https://ibillxia.github.io/blog/2019/06/05/druid-based-kylin-storage</id>
     <content type="html"><![CDATA[<p>作者: 康凯森</p>
 
 <p>8月11日，由 Kyligence 主办、美团点评协办的 Apache Kylin Meetup@北京，在美团公司总部圆满落幕。本文整理自当天美团大数据工程师、Apache Kylin Committer康凯森的演讲实录，全文共6600字，阅读时间大约15分钟。或点击<a href="https://v.qq.com/x/page/f0763nt7h4o.html">视频</a>，观看Meetup现场实录。</p>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: PHP | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/php/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/php/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[PHP字符串安全过滤全攻略]]></title>
-    <link href="http://ibillxia.github.io/blog/2010/09/24/PHP-string-filter-methods-for-safety/"/>
+    <link href="https://ibillxia.github.io/blog/2010/09/24/PHP-string-filter-methods-for-safety/"/>
     <updated>2010-09-24T13:28:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2010/09/24/PHP-string-filter-methods-for-safety</id>
+    <id>https://ibillxia.github.io/blog/2010/09/24/PHP-string-filter-methods-for-safety</id>
     <content type="html"><![CDATA[<p>php安全过滤是防止注入的第一道防线，不得大意。提到PHP的安全过滤，不得不提的两个东西是`set_magic_quotes_runtime` 和 `magic_quotes_gpc`。</p>
 
 
@@ -208,9 +208,9 @@
   
   <entry>
     <title type="html"><![CDATA[超好的HTML解析工具PHP Simple HTML DOM Parser]]></title>
-    <link href="http://ibillxia.github.io/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/"/>
+    <link href="https://ibillxia.github.io/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/"/>
     <updated>2010-08-28T20:49:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser</id>
+    <id>https://ibillxia.github.io/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser</id>
     <content type="html"><![CDATA[<p>采用PHP5+ 开发的一个简单的 PHP HTML DOM 分析，支持 invalid HTML 并提供非常简单的方式来操作 HTML 元素。在 HMTL 页面
 上查找标签所使用的语法与 jQuery （一个轻量级，实用的 javascript 框架） 相似，从页面中抽取内容只需要一行代码。开源代码：
 <a href="http://sourceforge.net/projects/simplehtmldom/">http://sourceforge.net/projects/simplehtmldom/</a> </p>
@@ -330,9 +330,9 @@
   
   <entry>
     <title type="html"><![CDATA[PHP格式化打印数组，调试有用]]></title>
-    <link href="http://ibillxia.github.io/blog/2010/08/25/php-print-in-format-very-useful-in-debuging/"/>
+    <link href="https://ibillxia.github.io/blog/2010/08/25/php-print-in-format-very-useful-in-debuging/"/>
     <updated>2010-08-25T10:08:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2010/08/25/php-print-in-format-very-useful-in-debuging</id>
+    <id>https://ibillxia.github.io/blog/2010/08/25/php-print-in-format-very-useful-in-debuging</id>
     <content type="html"><![CDATA[<p>以下是从FleaPHP上挖来的，感谢FleaPHP的开发者们。</p>
 
 
@@ -398,9 +398,9 @@
   
   <entry>
     <title type="html"><![CDATA[PHP采集利器snoopy应用详解]]></title>
-    <link href="http://ibillxia.github.io/blog/2010/08/10/php-connecting-tool-snoopy-introduction-and-application/"/>
+    <link href="https://ibillxia.github.io/blog/2010/08/10/php-connecting-tool-snoopy-introduction-and-application/"/>
     <updated>2010-08-10T19:34:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2010/08/10/php-connecting-tool-snoopy-introduction-and-application</id>
+    <id>https://ibillxia.github.io/blog/2010/08/10/php-connecting-tool-snoopy-introduction-and-application</id>
     <content type="html"><![CDATA[<p>Snoopy是一个php类，用来模拟浏览器的功能，可以获取网页内容，发送表单。Snoopy正确运行需要你的服务器的PHP版本在4以上，
 并且支持PCRE（Perl Compatible Regular Expressions），基本的LAMP服务都支持。</p>
 
@@ -910,9 +910,9 @@ submitlinks(\$URI) </br>
   
   <entry>
     <title type="html"><![CDATA[PHP函数`call_user_func`和`call_user_func_array`详解]]></title>
-    <link href="http://ibillxia.github.io/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/"/>
+    <link href="https://ibillxia.github.io/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/"/>
     <updated>2010-08-04T21:38:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail</id>
+    <id>https://ibillxia.github.io/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail</id>
     <content type="html"><![CDATA[<p>`call_user_func`函数类似于一种特别的调用函数的方法，使用方法如下：</p>
 
 

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: Trigger | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/trigger/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/trigger/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[OpenClaw中的Agent Trigger解读]]></title>
-    <link href="http://ibillxia.github.io/blog/2026/03/05/openclaw-trigger-interpretation/"/>
+    <link href="https://ibillxia.github.io/blog/2026/03/05/openclaw-trigger-interpretation/"/>
     <updated>2026-03-05T10:08:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2026/03/05/openclaw-trigger-interpretation</id>
+    <id>https://ibillxia.github.io/blog/2026/03/05/openclaw-trigger-interpretation</id>
     <content type="html"><![CDATA[<h1>1 引言</h1>
 
 <p>自动化非常强大，但如果没有触发器，自动化系统将不会发生任何事情。</p>

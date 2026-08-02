@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 安全 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/an-quan/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/an-quan/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[【高可用架构】腾讯基于用户画像大数据的电商防刷架构]]></title>
-    <link href="http://ibillxia.github.io/blog/2015/11/24/tencent-anti-fraud-architecture/"/>
+    <link href="https://ibillxia.github.io/blog/2015/11/24/tencent-anti-fraud-architecture/"/>
     <updated>2015-11-24T13:53:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2015/11/24/tencent-anti-fraud-architecture</id>
+    <id>https://ibillxia.github.io/blog/2015/11/24/tencent-anti-fraud-architecture</id>
     <content type="html"><![CDATA[<h2>一、背景介绍</h2>
 
 <p>最近1~2年电商行业飞速发展，各种创业公司犹如雨后春笋大量涌现，商家通过各种活动形式的补贴来获取用户、培养用户的消费习惯。</p>
@@ -270,9 +270,9 @@
   
   <entry>
     <title type="html"><![CDATA[PHP字符串安全过滤全攻略]]></title>
-    <link href="http://ibillxia.github.io/blog/2010/09/24/PHP-string-filter-methods-for-safety/"/>
+    <link href="https://ibillxia.github.io/blog/2010/09/24/PHP-string-filter-methods-for-safety/"/>
     <updated>2010-09-24T13:28:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2010/09/24/PHP-string-filter-methods-for-safety</id>
+    <id>https://ibillxia.github.io/blog/2010/09/24/PHP-string-filter-methods-for-safety</id>
     <content type="html"><![CDATA[<p>php安全过滤是防止注入的第一道防线，不得大意。提到PHP的安全过滤，不得不提的两个东西是`set_magic_quotes_runtime` 和 `magic_quotes_gpc`。</p>
 
 
@@ -463,9 +463,9 @@
   
   <entry>
     <title type="html"><![CDATA[伪造IP地址的原理]]></title>
-    <link href="http://ibillxia.github.io/blog/2010/08/31/the-elements-of-ip-faking/"/>
+    <link href="https://ibillxia.github.io/blog/2010/08/31/the-elements-of-ip-faking/"/>
     <updated>2010-08-31T09:41:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2010/08/31/the-elements-of-ip-faking</id>
+    <id>https://ibillxia.github.io/blog/2010/08/31/the-elements-of-ip-faking</id>
     <content type="html"><![CDATA[<p>入侵者使用假IP地址发送包，利用基于IP地址证实的应用程序。其结果是未授权的远端用户进入带有防火墙的主机系统。</p>
 
 

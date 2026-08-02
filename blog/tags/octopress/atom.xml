@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: Octopress | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/octopress/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/octopress/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[给Octopress博客配置Twitter Bootstrap主题]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/04/28/configure-twitter-bootstrap-theme-in-octopress/"/>
+    <link href="https://ibillxia.github.io/blog/2014/04/28/configure-twitter-bootstrap-theme-in-octopress/"/>
     <updated>2014-04-28T22:37:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/04/28/configure-twitter-bootstrap-theme-in-octopress</id>
+    <id>https://ibillxia.github.io/blog/2014/04/28/configure-twitter-bootstrap-theme-in-octopress</id>
     <content type="html"><![CDATA[<p>很长一段时间以来就看到各种基于 Twitter Bootstrap 主题的博客很清爽，而且对 Tag 的归档也做得很赞，于是很想将自己的博客也换成 Bootstrap 的主题，随着看到的博客越来越多，自己的 Octopress 主题先得越来越臃肿，而 Tags 归档功能也相形见绌，更换主题的欲望越来越强烈了。于是乎，趁这个周末捣鼓了一番，最终大功告成，在这里分享一下具体过程。</p>
 
 <h2>Bootstrap 主题的安装</h2>
@@ -102,9 +102,9 @@
   
   <entry>
     <title type="html"><![CDATA[给Octpress博客添加返回顶部按钮]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/06/30/add-a-back-to-top-button-on-ur-octpress-blog/"/>
+    <link href="https://ibillxia.github.io/blog/2013/06/30/add-a-back-to-top-button-on-ur-octpress-blog/"/>
     <updated>2013-06-30T10:47:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/06/30/add-a-back-to-top-button-on-ur-octpress-blog</id>
+    <id>https://ibillxia.github.io/blog/2013/06/30/add-a-back-to-top-button-on-ur-octpress-blog</id>
     <content type="html"><![CDATA[<p>有时候，博客文章太长，需要返回顶部时，需要用鼠标拖着滚动条向上好半天，这里提供一个用 jQuery 来实现的动态上滚的示例。这个示例完全参考和翻译自 webdesignerwall 的 blog：<a href="http://webdesignerwall.com/tutorials/animated-scroll-to-top">http://webdesignerwall.com/tutorials/animated-scroll-to-top</a>，其中有部分删改，并在本人的 blog 上实现。</p>
 
 <p>主要包含HTML和CSS的设计，基于jQuery的JS的设计。另外还有一点小trick</p>

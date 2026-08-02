@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 机器人 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/ji-qi-ren/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/ji-qi-ren/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[大白鼠听人话]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/05/24/cctv-news-rat-understand-what-human-says/"/>
+    <link href="https://ibillxia.github.io/blog/2013/05/24/cctv-news-rat-understand-what-human-says/"/>
     <updated>2013-05-24T22:59:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/05/24/cctv-news-rat-understand-what-human-says</id>
+    <id>https://ibillxia.github.io/blog/2013/05/24/cctv-news-rat-understand-what-human-says</id>
     <content type="html"><![CDATA[<p>最近一直忙着准备给媒体展示的音控大鼠机器人一不小心上了CCTV了，虽然自己感觉没什么了不起的，也不知道网络上是什么评论。
 但既然上了CCTV，还是发博纪念一下吧</p>
 
@@ -42,9 +42,9 @@
   
   <entry>
     <title type="html"><![CDATA[基于BCI的动物机器人研究分析与展望]]></title>
-    <link href="http://ibillxia.github.io/blog/2012/10/22/BCI-based-animal-robot-summarize/"/>
+    <link href="https://ibillxia.github.io/blog/2012/10/22/BCI-based-animal-robot-summarize/"/>
     <updated>2012-10-22T23:09:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2012/10/22/BCI-based-animal-robot-summarize</id>
+    <id>https://ibillxia.github.io/blog/2012/10/22/BCI-based-animal-robot-summarize</id>
     <content type="html"><![CDATA[<h3>摘  要</h3>
 
 

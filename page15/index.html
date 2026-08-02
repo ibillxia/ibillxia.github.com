@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://ibillxia.github.io/page15">
+  <link rel="canonical" href="https://ibillxia.github.io/page15">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -149,7 +149,7 @@ $(function () {
         </ul>
 
         
-          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
             <fieldset role="search">
               <input type="hidden" name="q" value="site:ibillxia.github.io" />
               <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
@@ -165,6 +165,81 @@ $(function () {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2012/11/24/several-plantforms-on-audio-and-speech-signal-processing/">几个常见的语音交互平台的简介和比较</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-11-24T18:54:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2012/11/24/several-plantforms-on-audio-and-speech-signal-processing/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>1.概述</h2>
+
+
+<p>最近做了两个与语音识别相关的项目，两个项目的主要任务虽然都是语音识别，或者更确切的说是关键字识别，但开发的平台不同，
+一个是windows下的，另一个是android平台的，于是也就选用了不同的语音识别平台，前者选的是微软的Speech API开发的，后者则选用
+的是CMU的pocketsphinx，本文主要将一些常见的语音交互平台进行简单的介绍和对比。</p>
+
+
+
+
+<p>这里所说的语音交互包含语音识别（Speech Recognition，SR，也称为自动语音识别，Automatic Speech Recognition，ASR）和语音
+合成（Speech Synthesis，SS，也称为Text-To-Speech，简记为TTS）两种技术，另外还会提到声纹识别（Voice Print Recognition，
+简记为VPR）技术。</p>
+
+
+
+
+<p>语音识别技术是将计算机接收、识别和理解语音信号转变为相应的文本文件或者命令的技术。它是一门涉及到语音语言学、信号处理、
+模式识别、概率论和信息论、发声机理和听觉机理、人工智能的交叉学科。在语音识别系统的帮助下，即使用户不懂电脑或者无法使用
+电脑，都可以通过语音识别系统对电脑进行操作。</p>
+
+
+
+
+<p>语音合成，又称文语转换（Text to Speech）技术，能将任意文字信息实时转化为标准流畅的语音朗读出来，相当于给机器装上了人工
+嘴巴。它涉及声学、语言学、数字信号处理、计算机科学等多个学科技术，是中文信息处理领域的一项前沿技术，解决的主要问题就是如何
+将文字信息转化为可听的声音信息，也即让机器像人一样开口说话。</p>
+
+
+
+
+<p>下面按平台是否开源来介绍几种常见的语音交互平台，关于语音识别和语音合成技术的相关原理请参见我接下来的其他文章。</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/11/24/several-plantforms-on-audio-and-speech-signal-processing/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -776,65 +851,6 @@ Kernel function examples: <a href="http://www.shamoxia.com/html/y2010/2292.html"
   
     <footer>
       <a rel="full-article" href="/blog/2012/07/17/covariance-matrix-and-correlation-matrix/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2012/07/08/Google-PageRank-Algorithm/">Google PageRank 算法</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2012-07-08T00:00:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2012/07/08/Google-PageRank-Algorithm/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>1.概述</h2>
-
-
-<p>互联网发展早期的搜索引擎，对web页面的排序，是根据搜索的词组（短语）在页面中的出现次数（occurence ），
-并用页面长度和html标签的重要性提示等进行权重修订。链接名气(link popularity)技术通过其它文档链接到当前
-页面（inbound links）的链接数量来决定当前页的重要性，这样可以有效地抵制被人为加工的页面欺骗搜索引擎的手法。</p>
-
-
-
-
-<p>PageRank(网页级别)，2001年9月被授予美国专利，专利人是Google创始人之一拉里•佩奇（Larry Page）。因此，PageRank里
-的page不是指网页，而是指佩奇，即这个等级方法是以佩奇来命名的。它是Google排名运算法则（排名公式）的一部分，是Google用于
-用来标识网页的等级/重要性的一种方法，是Google用来衡量一个网站的好坏的重要标准之一。PageRank计算页面的重要性，对每个
-链入(inbound)赋以不同的权值，链接提供页面的越重要则此链接入越高。当前页的重要性，是由其它页面的重要性决定的。
-在揉合了诸如Title标识和Keywords标识等所有其它因素之后，Google通过PageRank来调整结果，使那些更具“等级/重要性”的网页
-在搜索结果中令网站排名获得提升，从而提高搜索结果的相关性和质量。</p>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/07/08/Google-PageRank-Algorithm/">Read on &rarr;</a>
     </footer>
   
 

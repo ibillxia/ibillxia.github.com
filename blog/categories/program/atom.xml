@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Program | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/categories/program/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/categories/program/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Maven中settings配置文件详解]]></title>
-    <link href="http://ibillxia.github.io/blog/2022/10/06/maven-settings-configuration/"/>
+    <link href="https://ibillxia.github.io/blog/2022/10/06/maven-settings-configuration/"/>
     <updated>2022-10-06T19:07:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2022/10/06/maven-settings-configuration</id>
+    <id>https://ibillxia.github.io/blog/2022/10/06/maven-settings-configuration</id>
     <content type="html"><![CDATA[<p>一、简介</p>
 
 <p>Maven 翻译为"专家"、"内行"，是 Apache 下的一个纯 Java 开发的开源项目。基于项目对象模型（缩写：POM）概念，Maven利用一个中央信息片断能管理一个项目的构建、报告和文档等步骤。</p>
@@ -522,9 +522,9 @@
   
   <entry>
     <title type="html"><![CDATA[SVN迁移到Git的过程与技巧]]></title>
-    <link href="http://ibillxia.github.io/blog/2019/05/07/svn-to-git-migration/"/>
+    <link href="https://ibillxia.github.io/blog/2019/05/07/svn-to-git-migration/"/>
     <updated>2019-05-07T09:49:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2019/05/07/svn-to-git-migration</id>
+    <id>https://ibillxia.github.io/blog/2019/05/07/svn-to-git-migration</id>
     <content type="html"><![CDATA[<p>关于在VCS中SVN和Git之间的迁移（Clone）这个部分网上已经有大批的文章介绍，而且都非常不错，能够满足我们的常见的需求，这里介绍的是我自己整理的一些技巧和使用中出现的一些问题和疑问。</p>
 
 <p>阅读本篇文章，请先有一些Git和SVN的使用经验（又是经验，经验到底是什么？我都不知道）。</p>
@@ -783,9 +783,9 @@ $ git push
   
   <entry>
     <title type="html"><![CDATA[MySQL常用系统命令]]></title>
-    <link href="http://ibillxia.github.io/blog/2019/05/06/mysql-system-commands/"/>
+    <link href="https://ibillxia.github.io/blog/2019/05/06/mysql-system-commands/"/>
     <updated>2019-05-06T22:30:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2019/05/06/mysql-system-commands</id>
+    <id>https://ibillxia.github.io/blog/2019/05/06/mysql-system-commands</id>
     <content type="html"><![CDATA[<h1>1 show processlist</h1>
 
 <p>SHOW PROCESSLIST显示哪些线程正在运行。您也可以使用mysqladmin processlist语句得到此信息。如果您有SUPER权限，您可以看到所有线程。否则，您只能看到您自己的线程（也就是，与您正在使用的MySQL账户相关的线程）。如果有线程在update或者insert 某个表，此时进程的status为updating 或者 sending data。</p>
@@ -947,9 +947,9 @@ $ git push
   
   <entry>
     <title type="html"><![CDATA[MySQL乱码问题详解与解决方案]]></title>
-    <link href="http://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion/"/>
+    <link href="https://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion/"/>
     <updated>2015-10-28T17:12:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion</id>
+    <id>https://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion</id>
     <content type="html"><![CDATA[<p>本文节选自<a href="http://cenalulu.github.io/mysql/mysql-mojibake/">10分钟学会理解和解决MySQL乱码问题</a>   <br/>
 PS: 原文博主通过MySQL垂直深耕，成功进入Facebook了，祝福。</p>
 
@@ -1069,9 +1069,9 @@ mysql&gt; ALTER TABLE charset_test_latin1 MODIFY COLUMN char_col varchar(50) cha
   
   <entry>
     <title type="html"><![CDATA[Google C++ 编程规范要点总结]]></title>
-    <link href="http://ibillxia.github.io/blog/2015/03/26/google-cpp-style-guide/"/>
+    <link href="https://ibillxia.github.io/blog/2015/03/26/google-cpp-style-guide/"/>
     <updated>2015-03-26T18:45:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2015/03/26/google-cpp-style-guide</id>
+    <id>https://ibillxia.github.io/blog/2015/03/26/google-cpp-style-guide</id>
     <content type="html"><![CDATA[<center><img src="/images/2015/IMAG2015032601.png"></center>
 
 

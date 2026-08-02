@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 音色 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/yin-se/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/yin-se/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[语音信号处理之时域分析-音色及其Python实现]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/05/18/audio-signal-processing-time-domain-timbre-python-realization/"/>
+    <link href="https://ibillxia.github.io/blog/2013/05/18/audio-signal-processing-time-domain-timbre-python-realization/"/>
     <updated>2013-05-18T21:57:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/05/18/audio-signal-processing-time-domain-timbre-python-realization</id>
+    <id>https://ibillxia.github.io/blog/2013/05/18/audio-signal-processing-time-domain-timbre-python-realization</id>
     <content type="html"><![CDATA[<h2>音色（Timbre）</h2>
 
 

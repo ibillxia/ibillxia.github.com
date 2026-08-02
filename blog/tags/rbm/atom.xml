@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: RBM | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/rbm/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/rbm/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[基于能量的模型和波尔兹曼机]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines/"/>
+    <link href="https://ibillxia.github.io/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines/"/>
     <updated>2013-04-12T22:12:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines</id>
+    <id>https://ibillxia.github.io/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines</id>
     <content type="html"><![CDATA[<p>由于深度置信网络（Deep Belief Networks，DBN）是基于限制性玻尔兹曼机（Restricted Boltzmann Machines，RBM）的深层网络结构，
 所以本文重点讨论一下玻尔兹曼机（BM），以及它的学习算法——对比散度（Contrastive Divergence，CD）算法。在介绍BM前，我们首先介绍一下
 基于能量的模型（Energy Based Model，EBM），因为BM是一种特殊的EBM。</p>
@@ -238,9 +238,9 @@ $\theta = \{c, b, W\}$的值。</p>
   
   <entry>
     <title type="html"><![CDATA[深度学习简介]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/03/16/introduction-to-deep-learning/"/>
+    <link href="https://ibillxia.github.io/blog/2013/03/16/introduction-to-deep-learning/"/>
     <updated>2013-03-16T21:36:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/03/16/introduction-to-deep-learning</id>
+    <id>https://ibillxia.github.io/blog/2013/03/16/introduction-to-deep-learning</id>
     <content type="html"><![CDATA[<h2>0.概述</h2>
 
 <p>

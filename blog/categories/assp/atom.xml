@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: ASSP | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/categories/assp/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/categories/assp/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[可视化语音分析：深度对比Wavenet、t-SNE和PCA等算法]]></title>
-    <link href="http://ibillxia.github.io/blog/2017/12/07/visual-speech-analysis-wavenet-tsne/"/>
+    <link href="https://ibillxia.github.io/blog/2017/12/07/visual-speech-analysis-wavenet-tsne/"/>
     <updated>2017-12-07T13:48:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2017/12/07/visual-speech-analysis-wavenet-tsne</id>
+    <id>https://ibillxia.github.io/blog/2017/12/07/visual-speech-analysis-wavenet-tsne</id>
     <content type="html"><![CDATA[<p>选自Medium，作者：Leon Fedden</p>
 
 <p>原文链接：<a href="https://medium.com/@LeonFedden/comparative-audio-analysis-with-wavenet-mfccs-umap-t-sne-and-pca-cb8237bfce2f">https://medium.com/@LeonFedden/comparative-audio-analysis-with-wavenet-mfccs-umap-t-sne-and-pca-cb8237bfce2f</a></p>
@@ -431,9 +431,9 @@ MFCC 特征对应的图也是一样的好看。</p>
   
   <entry>
     <title type="html"><![CDATA[PCM WAVE格式详解及用C语言实现wave文件的读取]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/07/20/details-of-wave-format-and-reading-wave-files-in-C-language/"/>
+    <link href="https://ibillxia.github.io/blog/2013/07/20/details-of-wave-format-and-reading-wave-files-in-C-language/"/>
     <updated>2013-07-20T20:07:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/07/20/details-of-wave-format-and-reading-wave-files-in-C-language</id>
+    <id>https://ibillxia.github.io/blog/2013/07/20/details-of-wave-format-and-reading-wave-files-in-C-language</id>
     <content type="html"><![CDATA[<h2>1.PCM Wave格式详解</h2>
 
 
@@ -674,9 +674,9 @@ char* wavread(char *fname, WAVEFORMATEX *wf){
   
   <entry>
     <title type="html"><![CDATA[用Windows API实现一个简单的录音程序]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api/"/>
+    <link href="https://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api/"/>
     <updated>2013-06-04T23:59:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api</id>
+    <id>https://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api</id>
     <content type="html"><![CDATA[<p>本文介绍如何使用Windows API来录制语音信号兵保存到wave文件中，主要用到三个结构体和几个wave开头的API函数（在Winmm.lib文件中）。其中三个结构体是WAVEFORMATEX、WAVEHDR、MMTIME，其详细定义都在MMSystem.h中定义，
 可以转到定义看其详细内容及每一项的英文注释。用到的API函数的详细用法可以参见MSDN： http://msdn.microsoft.com/en-us/library/windows/desktop/dd743847(v=vs.85).aspx
 详细的使用过程请看下文的源代码，这是一个Win32 Application，需要手动添加Winmm.lib的依赖。</p>
@@ -902,9 +902,9 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
   
   <entry>
     <title type="html"><![CDATA[语音信号处理之时域分析-音高追踪及其Python实现]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/05/29/audio-signal-processing-time-domain-pitch-tracking-and-python-realization/"/>
+    <link href="https://ibillxia.github.io/blog/2013/05/29/audio-signal-processing-time-domain-pitch-tracking-and-python-realization/"/>
     <updated>2013-05-29T21:37:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/05/29/audio-signal-processing-time-domain-pitch-tracking-and-python-realization</id>
+    <id>https://ibillxia.github.io/blog/2013/05/29/audio-signal-processing-time-domain-pitch-tracking-and-python-realization</id>
     <content type="html"><![CDATA[<h2>1.概述</h2>
 
 
@@ -1172,9 +1172,9 @@ $40 < \frac{fs}{pp} < 1000$，从而得到pp的范围：$\frac{fs}{1000} < pp < 
   
   <entry>
     <title type="html"><![CDATA[语音信号处理之时域分析-端点检测及Python实现]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/05/22/audio-signal-processing-time-domain-Voice-Activity-Detection/"/>
+    <link href="https://ibillxia.github.io/blog/2013/05/22/audio-signal-processing-time-domain-Voice-Activity-Detection/"/>
     <updated>2013-05-22T22:22:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/05/22/audio-signal-processing-time-domain-Voice-Activity-Detection</id>
+    <id>https://ibillxia.github.io/blog/2013/05/22/audio-signal-processing-time-domain-Voice-Activity-Detection</id>
     <content type="html"><![CDATA[<h2>端点检测</h2>
 
 

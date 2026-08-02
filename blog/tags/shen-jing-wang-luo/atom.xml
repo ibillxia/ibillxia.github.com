@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 神经网络 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/shen-jing-wang-luo/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/shen-jing-wang-luo/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[《Neural Networks: A Comprehensive Foundation》读书笔记]]></title>
-    <link href="http://ibillxia.github.io/blog/2018/07/07/reading-neural-networks-a-comprehensive-approach/"/>
+    <link href="https://ibillxia.github.io/blog/2018/07/07/reading-neural-networks-a-comprehensive-approach/"/>
     <updated>2018-07-07T23:38:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2018/07/07/reading-neural-networks-a-comprehensive-approach</id>
+    <id>https://ibillxia.github.io/blog/2018/07/07/reading-neural-networks-a-comprehensive-approach</id>
     <content type="html"><![CDATA[<center><img src="/images/2018/IMAG2018070701.png"></center>
 
 
@@ -124,9 +124,9 @@
   
   <entry>
     <title type="html"><![CDATA[神经网络模型中参数设置的一些经验]]></title>
-    <link href="http://ibillxia.github.io/blog/2016/06/08/neural-network-parameter-settings/"/>
+    <link href="https://ibillxia.github.io/blog/2016/06/08/neural-network-parameter-settings/"/>
     <updated>2016-06-08T09:36:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2016/06/08/neural-network-parameter-settings</id>
+    <id>https://ibillxia.github.io/blog/2016/06/08/neural-network-parameter-settings</id>
     <content type="html"><![CDATA[<center><img src="/images/2016/IMAG2016060801.png"></center>
 
 
@@ -220,9 +220,9 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.005)
   
   <entry>
     <title type="html"><![CDATA[深度学习及其在语音方面的应用]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/04/17/Deep-Learning-and-its-application-in-audio-and-speech-processing/"/>
+    <link href="https://ibillxia.github.io/blog/2013/04/17/Deep-Learning-and-its-application-in-audio-and-speech-processing/"/>
     <updated>2013-04-17T22:43:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/04/17/Deep-Learning-and-its-application-in-audio-and-speech-processing</id>
+    <id>https://ibillxia.github.io/blog/2013/04/17/Deep-Learning-and-its-application-in-audio-and-speech-processing</id>
     <content type="html"><![CDATA[<p>以下是今天在组会上讲的内容，与大家分享一下。有些地方我也没有完全理解，欢迎大家一起来讨论。</p>
 
 
@@ -230,7 +230,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.005)
 <embed width="780"
     height="574"
     name="plugin"
-    src="http://ibillxia.github.io/upload/Deep Learning - Bill Xia.pdf"
+    src="https://ibillxia.github.io/upload/Deep Learning - Bill Xia.pdf"
     type="application/pdf"
 />
 </center></p>
@@ -240,9 +240,9 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.005)
   
   <entry>
     <title type="html"><![CDATA[基于能量的模型和波尔兹曼机]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines/"/>
+    <link href="https://ibillxia.github.io/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines/"/>
     <updated>2013-04-12T22:12:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines</id>
+    <id>https://ibillxia.github.io/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines</id>
     <content type="html"><![CDATA[<p>由于深度置信网络（Deep Belief Networks，DBN）是基于限制性玻尔兹曼机（Restricted Boltzmann Machines，RBM）的深层网络结构，
 所以本文重点讨论一下玻尔兹曼机（BM），以及它的学习算法——对比散度（Contrastive Divergence，CD）算法。在介绍BM前，我们首先介绍一下
 基于能量的模型（Energy Based Model，EBM），因为BM是一种特殊的EBM。</p>
@@ -463,9 +463,9 @@ $\theta = \{c, b, W\}$的值。</p>
   
   <entry>
     <title type="html"><![CDATA[卷积神经网络（CNN）]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/04/06/Convolutional-Neural-Networks/"/>
+    <link href="https://ibillxia.github.io/blog/2013/04/06/Convolutional-Neural-Networks/"/>
     <updated>2013-04-06T23:34:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/04/06/Convolutional-Neural-Networks</id>
+    <id>https://ibillxia.github.io/blog/2013/04/06/Convolutional-Neural-Networks</id>
     <content type="html"><![CDATA[<h2>1. 概述</h2>
 
 

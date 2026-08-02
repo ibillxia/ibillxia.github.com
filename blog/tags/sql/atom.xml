@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: SQL | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/sql/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/sql/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[【简单之美】Hive JOIN使用详解]]></title>
-    <link href="http://ibillxia.github.io/blog/2016/09/22/hive-join-usage-guide/"/>
+    <link href="https://ibillxia.github.io/blog/2016/09/22/hive-join-usage-guide/"/>
     <updated>2016-09-22T15:55:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2016/09/22/hive-join-usage-guide</id>
+    <id>https://ibillxia.github.io/blog/2016/09/22/hive-join-usage-guide</id>
     <content type="html"><![CDATA[<p>Hive是基于Hadoop平台的，它提供了类似SQL一样的查询语言HQL。有了Hive，如果使用过SQL语言，并且不理解Hadoop MapReduce运行原理，也就无法通过编程来实现MR，但是你仍然可以很容易地编写出特定查询分析的HQL语句，通过使用类似SQL的语法，将HQL查询语句提交Hive系统执行查询分析，最终Hive会帮你转换成底层Hadoop能够理解的MR Job。</p>
 
 <p>对于最基本的HQL查询我们不再累述，这里主要说明Hive中进行统计分析时使用到的JOIN操作。在说明Hive JOIN之前，我们先简单说明一下，Hadoop执行MR Job的基本过程（运行机制），能更好的帮助我们理解HQL转换到底层的MR Job后是如何执行的。我们重点说明MapReduce执行过程中，从Map端到Reduce端这个过程（Shuffle）的执行情况，如图所示（来自《Hadoop: The Definitive Guide》）：</p>
@@ -222,9 +222,9 @@ set hive.optimize.bucketmapjoin.sortedmerge = true;
   
   <entry>
     <title type="html"><![CDATA[【美团】Hive SQL的编译过程详解]]></title>
-    <link href="http://ibillxia.github.io/blog/2015/12/07/hive-sql-compilation-to-mapreduce/"/>
+    <link href="https://ibillxia.github.io/blog/2015/12/07/hive-sql-compilation-to-mapreduce/"/>
     <updated>2015-12-07T18:16:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2015/12/07/hive-sql-compilation-to-mapreduce</id>
+    <id>https://ibillxia.github.io/blog/2015/12/07/hive-sql-compilation-to-mapreduce</id>
     <content type="html"><![CDATA[<center><img src="/images/2015/IMAG2015120700.jpeg"></center>
 
 
@@ -929,9 +929,9 @@ Move Operator
   
   <entry>
     <title type="html"><![CDATA[Sql Server数据库常用的查询语句]]></title>
-    <link href="http://ibillxia.github.io/blog/2009/07/23/useful-queries-methods-in-MS-SQL-Server/"/>
+    <link href="https://ibillxia.github.io/blog/2009/07/23/useful-queries-methods-in-MS-SQL-Server/"/>
     <updated>2009-07-23T22:31:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2009/07/23/useful-queries-methods-in-MS-SQL-Server</id>
+    <id>https://ibillxia.github.io/blog/2009/07/23/useful-queries-methods-in-MS-SQL-Server</id>
     <content type="html"><![CDATA[<h2>一、表操作</h2>
 
 <p>例 1 对于表的教学管理数据库中的表 STUDENTS ，可以定义如下：
@@ -1295,9 +1295,9 @@ REVOKE ALL ON STUDENTS FROM LILI CASCADE
   
   <entry>
     <title type="html"><![CDATA[Sql Server数据库常用的命令语句]]></title>
-    <link href="http://ibillxia.github.io/blog/2009/07/20/useful-commands-in-MS-SQL-Server/"/>
+    <link href="https://ibillxia.github.io/blog/2009/07/20/useful-commands-in-MS-SQL-Server/"/>
     <updated>2009-07-20T14:44:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2009/07/20/useful-commands-in-MS-SQL-Server</id>
+    <id>https://ibillxia.github.io/blog/2009/07/20/useful-commands-in-MS-SQL-Server</id>
     <content type="html"><![CDATA[<p><strong>1. 查看数据库的版本</strong> <br/>
 <code>
 select @@version

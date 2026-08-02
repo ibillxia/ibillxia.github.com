@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: Impala | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/impala/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/impala/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[神策分析的技术选型与架构实现]]></title>
-    <link href="http://ibillxia.github.io/blog/2016/11/15/sensors-analytics-architecture/"/>
+    <link href="https://ibillxia.github.io/blog/2016/11/15/sensors-analytics-architecture/"/>
     <updated>2016-11-15T21:17:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2016/11/15/sensors-analytics-architecture</id>
+    <id>https://ibillxia.github.io/blog/2016/11/15/sensors-analytics-architecture</id>
     <content type="html"><![CDATA[<center><img src="/images/2016/IMAG2016111500.png"></center>
 
 

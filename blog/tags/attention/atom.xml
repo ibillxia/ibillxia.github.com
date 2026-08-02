@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: Attention | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/attention/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/attention/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[大模型入门指南：Transformer与Attention机制]]></title>
-    <link href="http://ibillxia.github.io/blog/2025/01/22/transformer-attention-guide/"/>
+    <link href="https://ibillxia.github.io/blog/2025/01/22/transformer-attention-guide/"/>
     <updated>2025-01-22T16:51:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2025/01/22/transformer-attention-guide</id>
+    <id>https://ibillxia.github.io/blog/2025/01/22/transformer-attention-guide</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://developer.aliyun.com/article/1655110">https://developer.aliyun.com/article/1655110</a></p>
 
 <center><img src="/images/2025/IMAG2025012201.octet-stream"></center>

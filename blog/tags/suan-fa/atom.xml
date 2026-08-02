@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 算法 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/suan-fa/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/suan-fa/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[深入理解STL源码(5.4) 算法之复杂算法algorithm]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms/"/>
+    <link href="https://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms/"/>
     <updated>2014-11-01T10:33:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms</id>
+    <id>https://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms</id>
     <content type="html"><![CDATA[<p>本文主要介绍STL中的稍微复杂的算法，主要涉及到的源码文件有 <code>stl_algo.h</code> 等。</p>
 
 <p>在文件 <code>stl_algo.h</code> 中有很多常用的算法，包括查找、计数、旋转、删除、排序、合并、集合的交并等运算、求极值、排列组合等等，本文将按源码中各算法的实现顺序来介绍其具体实现细节。由于本文涉及到的算法和相关代码太多，在文中就尽量不贴出代码了，详细的代码及相关注释请参见 <a href="http://ibillxia.github.io/upload/code/stl_algo.h">stl_algo.h</a>。</p>
@@ -210,9 +210,9 @@ return __first == __last ? __first
   
   <entry>
     <title type="html"><![CDATA[深入理解STL源码(5.3) 算法之基本算法algobase]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/10/25/insight-into-stl-5-algorithm-3-base-algorithms-algobase/"/>
+    <link href="https://ibillxia.github.io/blog/2014/10/25/insight-into-stl-5-algorithm-3-base-algorithms-algobase/"/>
     <updated>2014-10-25T21:13:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/10/25/insight-into-stl-5-algorithm-3-base-algorithms-algobase</id>
+    <id>https://ibillxia.github.io/blog/2014/10/25/insight-into-stl-5-algorithm-3-base-algorithms-algobase</id>
     <content type="html"><![CDATA[<p>本文主要介绍STL中的基本算法，主要涉及到的源码文件有 <code>stl_algobase.h</code> 等。</p>
 
 <p>在 <code>stl_algobase.h</code> 中定义的算法都比较简单基础，主要涉及区间相等判断、区间填充、求极值、交换、拷贝、字典序比较等算法，而其他诸如查找、计数、排序、旋转等算法则在文件 <code>stl_algo.h</code> 中实现。在algobase基本算法中，除了字典序比较、复制/拷贝算法外，其他都比较简单，这里先依次介绍这些简单的算法，然后再介绍字典序比较和拷贝算法。</p>
@@ -418,9 +418,9 @@ __SGI_STL_DECLARE_COPY_TRIVIAL(long double)
   
   <entry>
     <title type="html"><![CDATA[深入理解STL源码(5.2) 算法之数值算法]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/10/19/insight-into-stl-5-algorithm-2-numeric-algorithms/"/>
+    <link href="https://ibillxia.github.io/blog/2014/10/19/insight-into-stl-5-algorithm-2-numeric-algorithms/"/>
     <updated>2014-10-19T20:28:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/10/19/insight-into-stl-5-algorithm-2-numeric-algorithms</id>
+    <id>https://ibillxia.github.io/blog/2014/10/19/insight-into-stl-5-algorithm-2-numeric-algorithms</id>
     <content type="html"><![CDATA[<p>本文主要介绍STL中的数值算法，主要涉及到的源码文件有 <code>stl_numberic.h</code>、<code>numeric</code>、<code>stl_relops.h</code> 等。</p>
 
 <p>STL 数值算法主要包含以下几个算法（来自<a href="http://www.cplusplus.com/reference/numeric/">C++文档</a>）：</p>
@@ -581,9 +581,9 @@ inline _Tp power(_Tp __x, _Integer __n){
   
   <entry>
     <title type="html"><![CDATA[深入理解STL源码(5.1) 算法]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/10/12/insight-into-stl-5-algorithm-1-overview/"/>
+    <link href="https://ibillxia.github.io/blog/2014/10/12/insight-into-stl-5-algorithm-1-overview/"/>
     <updated>2014-10-12T21:30:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/10/12/insight-into-stl-5-algorithm-1-overview</id>
+    <id>https://ibillxia.github.io/blog/2014/10/12/insight-into-stl-5-algorithm-1-overview</id>
     <content type="html"><![CDATA[<h2>1. 算法概述</h2>
 
 <p>算法（Algorithm）是一个计算的具体步骤，常用于计算、数据处理和自动推理。Donald Knuth 在他的著作 The Art of Computer Programming 里对算法的特征归纳（来自wiki）：</p>

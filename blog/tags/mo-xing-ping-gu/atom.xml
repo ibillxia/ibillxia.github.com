@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 模型评估 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/mo-xing-ping-gu/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/mo-xing-ping-gu/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[【Python机器学习】回归模型评估方法总结]]></title>
-    <link href="http://ibillxia.github.io/blog/2018/04/18/regression-model-evaluation/"/>
+    <link href="https://ibillxia.github.io/blog/2018/04/18/regression-model-evaluation/"/>
     <updated>2018-04-18T15:42:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2018/04/18/regression-model-evaluation</id>
+    <id>https://ibillxia.github.io/blog/2018/04/18/regression-model-evaluation</id>
     <content type="html"><![CDATA[<p>回归模型评估常用的有四种方法，分别是：平均绝对值误差、均方误差、均方根误差和R平方值，如下表所示：</p>
 
 <table>
@@ -109,7 +109,7 @@
 
 <p>它是表征回归方程在多大程度上解释了因变量的变化，或者说方程对观测值的拟合程度如何。其取值在0与1之间，其值越接近1，则变量的解释程度就越高，其值越接近0，其解释程度就越弱。其公式如图4所示：</p>
 
-<center><img style="max-width:500px" src="http://ibillxia.github.io/images/2018/IMAG2018041804.png"></center>
+<center><img style="max-width:500px" src="https://ibillxia.github.io/images/2018/IMAG2018041804.png"></center>
 
 
 <center>图4 R平均值</center>

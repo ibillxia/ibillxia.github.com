@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 机器学习 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/ji-qi-xue-xi/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/ji-qi-xue-xi/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[数据科学与机器学习2026年趋势展望]]></title>
-    <link href="http://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026/"/>
+    <link href="https://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026/"/>
     <updated>2025-12-12T10:27:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026</id>
+    <id>https://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026</id>
     <content type="html"><![CDATA[<p>分享两篇关于数据科学与机器学习趋势的文章，供大家参考。总结下来，最最重要的两大趋势：</p>
 
 <ul>
@@ -423,9 +423,9 @@
   
   <entry>
     <title type="html"><![CDATA[集成树模型详解：RandomForest、GBDT、XGBoost与LightGBM]]></title>
-    <link href="http://ibillxia.github.io/blog/2020/02/21/tree-ensemble-models-comparison/"/>
+    <link href="https://ibillxia.github.io/blog/2020/02/21/tree-ensemble-models-comparison/"/>
     <updated>2020-02-21T20:00:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2020/02/21/tree-ensemble-models-comparison</id>
+    <id>https://ibillxia.github.io/blog/2020/02/21/tree-ensemble-models-comparison</id>
     <content type="html"><![CDATA[<p>本文主要介绍基于集成学习的决策树，然后对其中重要的、使用广泛的方法进行对比：RF（随机森林））, GBDT（梯度提升决策树）, XGBoost, lightGBM。</p>
 
 <h1>一、集成学习</h1>
@@ -725,9 +725,9 @@
   
   <entry>
     <title type="html"><![CDATA[《Neural Networks: A Comprehensive Foundation》读书笔记]]></title>
-    <link href="http://ibillxia.github.io/blog/2018/07/07/reading-neural-networks-a-comprehensive-approach/"/>
+    <link href="https://ibillxia.github.io/blog/2018/07/07/reading-neural-networks-a-comprehensive-approach/"/>
     <updated>2018-07-07T23:38:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2018/07/07/reading-neural-networks-a-comprehensive-approach</id>
+    <id>https://ibillxia.github.io/blog/2018/07/07/reading-neural-networks-a-comprehensive-approach</id>
     <content type="html"><![CDATA[<center><img src="/images/2018/IMAG2018070701.png"></center>
 
 
@@ -834,9 +834,9 @@
   
   <entry>
     <title type="html"><![CDATA[【Python机器学习】结合sklearn介绍常用特征选择方法]]></title>
-    <link href="http://ibillxia.github.io/blog/2018/05/23/sklearn-feature-selection-methods/"/>
+    <link href="https://ibillxia.github.io/blog/2018/05/23/sklearn-feature-selection-methods/"/>
     <updated>2018-05-23T11:29:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2018/05/23/sklearn-feature-selection-methods</id>
+    <id>https://ibillxia.github.io/blog/2018/05/23/sklearn-feature-selection-methods</id>
     <content type="html"><![CDATA[<p>特征选择(排序)对于数据科学家、机器学习从业者来说非常重要。好的特征选择能够提升模型的性能，更能帮助我们理解数据的特点、底层结构，这对进一步改善模型、算法都有着重要作用。</p>
 
 <p>特征选择主要有两个功能：</p>
@@ -1360,9 +1360,9 @@ for name in names:
   
   <entry>
     <title type="html"><![CDATA[【Python机器学习】回归模型评估方法总结]]></title>
-    <link href="http://ibillxia.github.io/blog/2018/04/18/regression-model-evaluation/"/>
+    <link href="https://ibillxia.github.io/blog/2018/04/18/regression-model-evaluation/"/>
     <updated>2018-04-18T15:42:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2018/04/18/regression-model-evaluation</id>
+    <id>https://ibillxia.github.io/blog/2018/04/18/regression-model-evaluation</id>
     <content type="html"><![CDATA[<p>回归模型评估常用的有四种方法，分别是：平均绝对值误差、均方误差、均方根误差和R平方值，如下表所示：</p>
 
 <table>
@@ -1454,7 +1454,7 @@ for name in names:
 
 <p>它是表征回归方程在多大程度上解释了因变量的变化，或者说方程对观测值的拟合程度如何。其取值在0与1之间，其值越接近1，则变量的解释程度就越高，其值越接近0，其解释程度就越弱。其公式如图4所示：</p>
 
-<center><img style="max-width:500px" src="http://ibillxia.github.io/images/2018/IMAG2018041804.png"></center>
+<center><img style="max-width:500px" src="https://ibillxia.github.io/images/2018/IMAG2018041804.png"></center>
 
 
 <center>图4 R平均值</center>

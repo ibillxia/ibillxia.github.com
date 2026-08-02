@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 智能硬件 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/zhi-neng-ying-jian/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/zhi-neng-ying-jian/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[互联网公司为什么都在玩硬件？]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/10/30/why-web-companies-all-are-beginning-to-play-hardware-products/"/>
+    <link href="https://ibillxia.github.io/blog/2013/10/30/why-web-companies-all-are-beginning-to-play-hardware-products/"/>
     <updated>2013-10-30T21:07:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/10/30/why-web-companies-all-are-beginning-to-play-hardware-products</id>
+    <id>https://ibillxia.github.io/blog/2013/10/30/why-web-companies-all-are-beginning-to-play-hardware-products</id>
     <content type="html"><![CDATA[<p>昨天360高调推出安全手环，延续着去年以来互联网公司进军硬件行业的风气。小米手机一炮而红后，互联网公司纷纷进军手机硬件行业，
 百度、阿里、盛大、360等等都推出了自己的定制手机，不过巨头们发现原来硬件并没有想象中那般好玩。但不好玩也得玩，你不玩别人也
 会玩。</p>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 适配器 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/gua-pei-qi/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/gua-pei-qi/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[深入理解STL源码(7) 配接器adaptor]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/11/23/insight-into-stl-7-adaptor/"/>
+    <link href="https://ibillxia.github.io/blog/2014/11/23/insight-into-stl-7-adaptor/"/>
     <updated>2014-11-23T20:21:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/11/23/insight-into-stl-7-adaptor</id>
+    <id>https://ibillxia.github.io/blog/2014/11/23/insight-into-stl-7-adaptor</id>
     <content type="html"><![CDATA[<h2>1. 概述</h2>
 
 <p>适配器（adaptor/adapter）在STL组件的灵活运用功能上，扮演着轴承、转换器的角色，将一种容器或迭代器装换或封装成另一种容器或迭代器，例如基于deque容器的stack和queue。Adaptor这个概念，实际上是一种设计模式（design pattern），是《Design Pattern》一书中提及到的23个设计模式之一，其中对adaptor的定义如下：</p>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 数据分析 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/shu-ju-fen-xi/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/shu-ju-fen-xi/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[产品与运营的数据分析能力指南]]></title>
-    <link href="http://ibillxia.github.io/blog/2019/07/27/data-analysis-for-product-ops/"/>
+    <link href="https://ibillxia.github.io/blog/2019/07/27/data-analysis-for-product-ops/"/>
     <updated>2019-07-27T12:03:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2019/07/27/data-analysis-for-product-ops</id>
+    <id>https://ibillxia.github.io/blog/2019/07/27/data-analysis-for-product-ops</id>
     <content type="html"><![CDATA[<center><img src="/images/2019/IMAG2019072701.png"></center>
 
 
@@ -398,9 +398,9 @@
   
   <entry>
     <title type="html"><![CDATA[内容类产品用户生命周期的数据指标体系]]></title>
-    <link href="http://ibillxia.github.io/blog/2017/10/23/content-product-user-lifecycle/"/>
+    <link href="https://ibillxia.github.io/blog/2017/10/23/content-product-user-lifecycle/"/>
     <updated>2017-10-23T11:06:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2017/10/23/content-product-user-lifecycle</id>
+    <id>https://ibillxia.github.io/blog/2017/10/23/content-product-user-lifecycle</id>
     <content type="html"><![CDATA[<p>文章从用户生命周期的四个阶段并贴合活跃这一维度，罗列了Pinterest内部关注的20多项指标。从Pinterest我们可以延伸至内容类产品来看待这些指标，因为和电商、互金等产品相比，活跃的波动对内容类产品有着更直接的影响。为了便于理解，文章最终提炼出了19项指标并部分添加了描述和解读，供参考。</p>
 
 <center><img src="/images/2017/IMAG2017102301.png"></center>
@@ -513,9 +513,9 @@
   
   <entry>
     <title type="html"><![CDATA[神策分析的技术选型与架构实现]]></title>
-    <link href="http://ibillxia.github.io/blog/2016/11/15/sensors-analytics-architecture/"/>
+    <link href="https://ibillxia.github.io/blog/2016/11/15/sensors-analytics-architecture/"/>
     <updated>2016-11-15T21:17:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2016/11/15/sensors-analytics-architecture</id>
+    <id>https://ibillxia.github.io/blog/2016/11/15/sensors-analytics-architecture</id>
     <content type="html"><![CDATA[<center><img src="/images/2016/IMAG2016111500.png"></center>
 
 
@@ -761,9 +761,9 @@
   
   <entry>
     <title type="html"><![CDATA[【译】大数据分析八大趋势及企业启示]]></title>
-    <link href="http://ibillxia.github.io/blog/2015/11/29/big-data-analytics-trends/"/>
+    <link href="https://ibillxia.github.io/blog/2015/11/29/big-data-analytics-trends/"/>
     <updated>2015-11-29T23:15:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2015/11/29/big-data-analytics-trends</id>
+    <id>https://ibillxia.github.io/blog/2015/11/29/big-data-analytics-trends</id>
     <content type="html"><![CDATA[<p>本文翻译自英文文章，原文作者 <a href="https://x.com/ReddyNHema">ReddyNHema</a>，以下是译文。</p>
 
 <p>我在IT行业工作超过14年，但技术为满足业务需求而快速演进的步伐仍然令我惊叹不已。技术计算的发展历程从最早占据整个房间的计算机，到大型机，再到个人电脑，然后是Web和SaaS应用，接着是移动设备，如今又到了云计算和物联网时代。</p>

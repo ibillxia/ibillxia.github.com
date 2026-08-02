@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: DOM | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/dom/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/dom/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[超好的HTML解析工具PHP Simple HTML DOM Parser]]></title>
-    <link href="http://ibillxia.github.io/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/"/>
+    <link href="https://ibillxia.github.io/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/"/>
     <updated>2010-08-28T20:49:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser</id>
+    <id>https://ibillxia.github.io/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser</id>
     <content type="html"><![CDATA[<p>采用PHP5+ 开发的一个简单的 PHP HTML DOM 分析，支持 invalid HTML 并提供非常简单的方式来操作 HTML 元素。在 HMTL 页面
 上查找标签所使用的语法与 jQuery （一个轻量级，实用的 javascript 框架） 相似，从页面中抽取内容只需要一行代码。开源代码：
 <a href="http://sourceforge.net/projects/simplehtmldom/">http://sourceforge.net/projects/simplehtmldom/</a> </p>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: Matlab | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/matlab/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/matlab/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[MFCC参数提取及Matalab实现]]></title>
-    <link href="http://ibillxia.github.io/blog/2012/07/18/MFCC-feature-extraction/"/>
+    <link href="https://ibillxia.github.io/blog/2012/07/18/MFCC-feature-extraction/"/>
     <updated>2012-07-18T20:10:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2012/07/18/MFCC-feature-extraction</id>
+    <id>https://ibillxia.github.io/blog/2012/07/18/MFCC-feature-extraction</id>
     <content type="html"><![CDATA[<h2>1.概述</h2>
 
 
@@ -199,9 +199,9 @@ m = sparse(r, c, v, p, 1+fn2);
   
   <entry>
     <title type="html"><![CDATA[Matlab代码优化方法几则]]></title>
-    <link href="http://ibillxia.github.io/blog/2012/04/25/matlab-code-optimization/"/>
+    <link href="https://ibillxia.github.io/blog/2012/04/25/matlab-code-optimization/"/>
     <updated>2012-04-25T20:07:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2012/04/25/matlab-code-optimization</id>
+    <id>https://ibillxia.github.io/blog/2012/04/25/matlab-code-optimization</id>
     <content type="html"><![CDATA[<p>1.计算向量、矩阵化，尽量减少for循环</br>
 因为MATLAB本来就是矩阵实验室的意思，他提供了极其强大而灵活的矩阵运算能力，你就没必要自己再用自己编写的for循环去实现矩阵运算的功能了。
 另外由于matlab是一种解释性语言，所以最忌讳直接使用循环语句。但在有些情况下，使用for循环可以提高程序的易读性，在效率提高不是很明显的

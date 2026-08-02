@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: State | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/state/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/state/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Apache Flink漫谈系列：State状态管理]]></title>
-    <link href="http://ibillxia.github.io/blog/2022/06/01/flink-state-management/"/>
+    <link href="https://ibillxia.github.io/blog/2022/06/01/flink-state-management/"/>
     <updated>2022-06-01T11:28:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2022/06/01/flink-state-management</id>
+    <id>https://ibillxia.github.io/blog/2022/06/01/flink-state-management</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://developer.aliyun.com/article/667562">阿里云开发者社区：Apache Flink 漫谈系列(04) - State</a></p>
 
 <h1>实际问题</h1>

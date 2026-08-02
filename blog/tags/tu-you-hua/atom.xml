@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 凸优化 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/tu-you-hua/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/tu-you-hua/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[凸优化简介]]></title>
-    <link href="http://ibillxia.github.io/blog/2012/09/26/convex-optimization-overview/"/>
+    <link href="https://ibillxia.github.io/blog/2012/09/26/convex-optimization-overview/"/>
     <updated>2012-09-26T23:03:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2012/09/26/convex-optimization-overview</id>
+    <id>https://ibillxia.github.io/blog/2012/09/26/convex-optimization-overview</id>
     <content type="html"><![CDATA[<p>在machine learning 的很多问题中，我们最终往往要求解某个函数的最优值。用数学术语表示就是，
 给定一个函数 $f: R^{n} \rightarrow R$，求 $ x \in R^{n} $使得$f(x)$ 取得最小（大）值。例如least-square,
 logistic regression, linear regression, svm, etc. 这类问题统称为优化问题。</p>
@@ -67,7 +67,7 @@ logistic regression, linear regression, svm, etc. 这类问题统称为优化问
 且对任意的$x,y\in D(f)$和$\theta \in R$且$0\leq \theta \leq 1$，都有</br>
 <center>$f(\theta x + (1-\theta)y \leq \theta f(x) + (1-\theta) f(y))$.</center>
 设$f(x)$为一元函数，那么上式的几何意义在于，曲线上任意两点处的割线在函数曲线的上方，如下图所示：</br>
-<center><img src="/images/2012/IMAG2012092602.jpg"></center>   
+<center><img src="/images/2012/IMAG2012092602.png"></center>   
 </p>
 
 

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 架构 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/jia-gou/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/jia-gou/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[神策分析的技术选型与架构实现]]></title>
-    <link href="http://ibillxia.github.io/blog/2016/11/15/sensors-analytics-architecture/"/>
+    <link href="https://ibillxia.github.io/blog/2016/11/15/sensors-analytics-architecture/"/>
     <updated>2016-11-15T21:17:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2016/11/15/sensors-analytics-architecture</id>
+    <id>https://ibillxia.github.io/blog/2016/11/15/sensors-analytics-architecture</id>
     <content type="html"><![CDATA[<center><img src="/images/2016/IMAG2016111500.png"></center>
 
 
@@ -263,9 +263,9 @@
   
   <entry>
     <title type="html"><![CDATA[【高可用架构】腾讯基于用户画像大数据的电商防刷架构]]></title>
-    <link href="http://ibillxia.github.io/blog/2015/11/24/tencent-anti-fraud-architecture/"/>
+    <link href="https://ibillxia.github.io/blog/2015/11/24/tencent-anti-fraud-architecture/"/>
     <updated>2015-11-24T13:53:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2015/11/24/tencent-anti-fraud-architecture</id>
+    <id>https://ibillxia.github.io/blog/2015/11/24/tencent-anti-fraud-architecture</id>
     <content type="html"><![CDATA[<h2>一、背景介绍</h2>
 
 <p>最近1~2年电商行业飞速发展，各种创业公司犹如雨后春笋大量涌现，商家通过各种活动形式的补贴来获取用户、培养用户的消费习惯。</p>
@@ -518,9 +518,9 @@
   
   <entry>
     <title type="html"><![CDATA[【标点符】腾讯分析系统架构解析]]></title>
-    <link href="http://ibillxia.github.io/blog/2015/11/03/tencent-analytics-architecture/"/>
+    <link href="https://ibillxia.github.io/blog/2015/11/03/tencent-analytics-architecture/"/>
     <updated>2015-11-03T15:54:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2015/11/03/tencent-analytics-architecture</id>
+    <id>https://ibillxia.github.io/blog/2015/11/03/tencent-analytics-architecture</id>
     <content type="html"><![CDATA[<center><img src="/images/2015/IMAG2015110300.jpg"></center>
 
 

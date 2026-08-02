@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 视频 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/shi-pin/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/shi-pin/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Hulu视频广告系统中的算法实践]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms/"/>
+    <link href="https://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms/"/>
     <updated>2024-07-19T14:40:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms</id>
+    <id>https://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://www.infoq.cn/article/ko9yxouspj4kuoh9jut4">https://www.infoq.cn/article/ko9yxouspj4kuoh9jut4</a></p>
 
 <h1>概述</h1>

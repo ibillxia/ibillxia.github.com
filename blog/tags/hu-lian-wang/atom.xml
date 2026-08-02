@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 互联网 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/hu-lian-wang/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/hu-lian-wang/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[【潘乱】腾讯没有梦想]]></title>
-    <link href="http://ibillxia.github.io/blog/2018/05/06/tencent-has-no-dream/"/>
+    <link href="https://ibillxia.github.io/blog/2018/05/06/tencent-has-no-dream/"/>
     <updated>2018-05-06T00:45:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2018/05/06/tencent-has-no-dream</id>
+    <id>https://ibillxia.github.io/blog/2018/05/06/tencent-has-no-dream</id>
     <content type="html"><![CDATA[<h2>腾讯没有梦想</h2>
 
 <p>原创 2018-05-05 潘乱 乱翻书</p>
@@ -419,9 +419,9 @@
   
   <entry>
     <title type="html"><![CDATA[互联网引发的制造业革命——读《创客》]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/02/23/makers-the-new-industrial-evolution/"/>
+    <link href="https://ibillxia.github.io/blog/2014/02/23/makers-the-new-industrial-evolution/"/>
     <updated>2014-02-23T22:07:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/02/23/makers-the-new-industrial-evolution</id>
+    <id>https://ibillxia.github.io/blog/2014/02/23/makers-the-new-industrial-evolution</id>
     <content type="html"><![CDATA[<p>其实很早之前就买了这本书，是在13年6月份和『看见』、『黑客与画家』等一起买的吧，看完这两本书后也就开始看『创客』了，
 但都是断断续续的看，没有花比较集中的时间，而且感觉前面几章将的内容没有那么大的吸引力。后来双11做活动，又买了10来本书，
 其中有雷军、周鸿祎等IT大佬的传记，还有几本成功励志类、文学类的书，就又跳着去看这些书了。开学初闲着无聊就又拿起这本书
@@ -532,9 +532,9 @@ DIY首饰、工艺品，DIY家具、房屋，DIY台历、杯子、布偶、玩�
   
   <entry>
     <title type="html"><![CDATA[36氪开放日杭州站回顾与总结]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/11/11/36kr-open-day-hangzhou-station-review-and-summary/"/>
+    <link href="https://ibillxia.github.io/blog/2013/11/11/36kr-open-day-hangzhou-station-review-and-summary/"/>
     <updated>2013-11-11T19:10:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/11/11/36kr-open-day-hangzhou-station-review-and-summary</id>
+    <id>https://ibillxia.github.io/blog/2013/11/11/36kr-open-day-hangzhou-station-review-and-summary</id>
     <content type="html"><![CDATA[<p>11月10日，36氪开放日第二次来到杭州站，首次进入大学，进行互联网行业创业和投资的机遇、观点和经验分享。这次开放日主要包含三个部分：</br>
 （1）成功创业者/投资者的主题分享；</br>
 （2）初创团队的产品发布与展示；</br>
@@ -730,9 +730,9 @@ DIY首饰、工艺品，DIY家具、房屋，DIY台历、杯子、布偶、玩�
   
   <entry>
     <title type="html"><![CDATA[互联网公司为什么都在玩硬件？]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/10/30/why-web-companies-all-are-beginning-to-play-hardware-products/"/>
+    <link href="https://ibillxia.github.io/blog/2013/10/30/why-web-companies-all-are-beginning-to-play-hardware-products/"/>
     <updated>2013-10-30T21:07:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/10/30/why-web-companies-all-are-beginning-to-play-hardware-products</id>
+    <id>https://ibillxia.github.io/blog/2013/10/30/why-web-companies-all-are-beginning-to-play-hardware-products</id>
     <content type="html"><![CDATA[<p>昨天360高调推出安全手环，延续着去年以来互联网公司进军硬件行业的风气。小米手机一炮而红后，互联网公司纷纷进军手机硬件行业，
 百度、阿里、盛大、360等等都推出了自己的定制手机，不过巨头们发现原来硬件并没有想象中那般好玩。但不好玩也得玩，你不玩别人也
 会玩。</p>

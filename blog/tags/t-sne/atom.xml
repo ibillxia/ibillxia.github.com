@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: t-SNE | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/t-sne/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/t-sne/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[可视化语音分析：深度对比Wavenet、t-SNE和PCA等算法]]></title>
-    <link href="http://ibillxia.github.io/blog/2017/12/07/visual-speech-analysis-wavenet-tsne/"/>
+    <link href="https://ibillxia.github.io/blog/2017/12/07/visual-speech-analysis-wavenet-tsne/"/>
     <updated>2017-12-07T13:48:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2017/12/07/visual-speech-analysis-wavenet-tsne</id>
+    <id>https://ibillxia.github.io/blog/2017/12/07/visual-speech-analysis-wavenet-tsne</id>
     <content type="html"><![CDATA[<p>选自Medium，作者：Leon Fedden</p>
 
 <p>原文链接：<a href="https://medium.com/@LeonFedden/comparative-audio-analysis-with-wavenet-mfccs-umap-t-sne-and-pca-cb8237bfce2f">https://medium.com/@LeonFedden/comparative-audio-analysis-with-wavenet-mfccs-umap-t-sne-and-pca-cb8237bfce2f</a></p>

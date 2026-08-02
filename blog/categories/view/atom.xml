@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: View | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/categories/view/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/categories/view/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[什么是 FDE？从它的爆火看软件研发的职能大洗牌]]></title>
-    <link href="http://ibillxia.github.io/blog/2026/07/03/FDE-what-why-and-future/"/>
+    <link href="https://ibillxia.github.io/blog/2026/07/03/FDE-what-why-and-future/"/>
     <updated>2026-07-03T22:02:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2026/07/03/FDE-what-why-and-future</id>
+    <id>https://ibillxia.github.io/blog/2026/07/03/FDE-what-why-and-future</id>
     <content type="html"><![CDATA[<center><img src="/images/2026/IMAG2026070301.png"></center>
 
 
@@ -345,9 +345,9 @@
   
   <entry>
     <title type="html"><![CDATA[腾讯副总裁曾宇揭秘：腾讯的程序员牛在哪]]></title>
-    <link href="http://ibillxia.github.io/blog/2019/03/31/tencent-engineer-culture/"/>
+    <link href="https://ibillxia.github.io/blog/2019/03/31/tencent-engineer-culture/"/>
     <updated>2019-03-31T23:12:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2019/03/31/tencent-engineer-culture</id>
+    <id>https://ibillxia.github.io/blog/2019/03/31/tencent-engineer-culture</id>
     <content type="html"><![CDATA[<p>曾宇先生，腾讯公司副总裁。 2002年加入腾讯，曾负责腾讯研发线管理，后续担任互动娱乐事业群研发部总经理，负责游戏、互娱相关的技术研发及管理工作，2012年升任公司VP，16年起主要负责移动互联网事业群技术管理工作，继续参与公司级技术管理工作。</p>
 
 <center><img src="/images/2019/IMAG2019033101.jpeg"></center>
@@ -463,9 +463,9 @@
   
   <entry>
     <title type="html"><![CDATA[探秘Spotify的Echo Nest]]></title>
-    <link href="http://ibillxia.github.io/blog/2018/08/14/spotify-echo-nest/"/>
+    <link href="https://ibillxia.github.io/blog/2018/08/14/spotify-echo-nest/"/>
     <updated>2018-08-14T12:00:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2018/08/14/spotify-echo-nest</id>
+    <id>https://ibillxia.github.io/blog/2018/08/14/spotify-echo-nest</id>
     <content type="html"><![CDATA[<center><img src="/images/2018/IMAG201808101.jpeg"></center>
 
 
@@ -643,9 +643,9 @@
   
   <entry>
     <title type="html"><![CDATA[【潘乱】腾讯没有梦想]]></title>
-    <link href="http://ibillxia.github.io/blog/2018/05/06/tencent-has-no-dream/"/>
+    <link href="https://ibillxia.github.io/blog/2018/05/06/tencent-has-no-dream/"/>
     <updated>2018-05-06T00:45:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2018/05/06/tencent-has-no-dream</id>
+    <id>https://ibillxia.github.io/blog/2018/05/06/tencent-has-no-dream</id>
     <content type="html"><![CDATA[<h2>腾讯没有梦想</h2>
 
 <p>原创 2018-05-05 潘乱 乱翻书</p>
@@ -1047,9 +1047,9 @@
   
   <entry>
     <title type="html"><![CDATA[揭秘：Spotify 是如何实现歌曲的个人品味精准推送的]]></title>
-    <link href="http://ibillxia.github.io/blog/2015/11/05/inside-spotify-and-the-future-of-music-streaming/"/>
+    <link href="https://ibillxia.github.io/blog/2015/11/05/inside-spotify-and-the-future-of-music-streaming/"/>
     <updated>2015-11-05T22:21:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2015/11/05/inside-spotify-and-the-future-of-music-streaming</id>
+    <id>https://ibillxia.github.io/blog/2015/11/05/inside-spotify-and-the-future-of-music-streaming</id>
     <content type="html"><![CDATA[<center><img src="/images/2015/IMAG2015110501.jpeg"></center>
 
 

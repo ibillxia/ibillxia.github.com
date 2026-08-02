@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 门控机制 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/men-kong-ji-zhi/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/men-kong-ji-zhi/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[【凉夏】推荐模型中的门控机制与动态权重]]></title>
-    <link href="http://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation/"/>
+    <link href="https://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation/"/>
     <updated>2025-01-03T10:33:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation</id>
+    <id>https://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/701181424">https://zhuanlan.zhihu.com/p/701181424</a></p>
 
 <p>大家好，我是凉夏同学。今天是我第一次在知乎分享我对算法模型的理解，有些生疏，还请大家多多指教。感兴趣的话，敬请关注公众号：凉夏的机器学习笔记。感恩~</p>

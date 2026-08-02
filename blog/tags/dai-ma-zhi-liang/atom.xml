@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 代码质量 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/dai-ma-zhi-liang/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/dai-ma-zhi-liang/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Google C++ 编程规范要点总结]]></title>
-    <link href="http://ibillxia.github.io/blog/2015/03/26/google-cpp-style-guide/"/>
+    <link href="https://ibillxia.github.io/blog/2015/03/26/google-cpp-style-guide/"/>
     <updated>2015-03-26T18:45:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2015/03/26/google-cpp-style-guide</id>
+    <id>https://ibillxia.github.io/blog/2015/03/26/google-cpp-style-guide</id>
     <content type="html"><![CDATA[<center><img src="/images/2015/IMAG2015032601.png"></center>
 
 

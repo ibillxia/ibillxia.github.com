@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 内联函数 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/nei-lian-han-shu/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/nei-lian-han-shu/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[深入理解C语言的define和内联函数]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/05/17/insight-into-define-and-inline-function-in-c/"/>
+    <link href="https://ibillxia.github.io/blog/2014/05/17/insight-into-define-and-inline-function-in-c/"/>
     <updated>2014-05-17T22:43:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/05/17/insight-into-define-and-inline-function-in-c</id>
+    <id>https://ibillxia.github.io/blog/2014/05/17/insight-into-define-and-inline-function-in-c</id>
     <content type="html"><![CDATA[<h2>概述</h2>
 
 <p>在 <code>Robert C.Searcord</code> 的 <em>The</em> <em>Cert</em> <em>C</em> <em>Secure</em> <em>Coding</em> <em>Standard</em> 一书中，关于宏定义的规范中第一条就是</p>

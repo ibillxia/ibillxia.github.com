@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://ibillxia.github.io/page3">
+  <link rel="canonical" href="https://ibillxia.github.io/page3">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -149,7 +149,7 @@ $(function () {
         </ul>
 
         
-          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
             <fieldset role="search">
               <input type="hidden" name="q" value="site:ibillxia.github.io" />
               <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
@@ -165,6 +165,60 @@ $(function () {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2024/05/22/hdfs-compression-algorithms/">HDFS常用文件类型及压缩算法对比</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2024-05-22T12:18:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2024/05/22/hdfs-compression-algorithms/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><center><img src="/images/2024/IMAG2024052201.webp"></center>
+
+
+<p>首先我们要明确一点，为什么要进行数据压缩？</p>
+
+<p>Cloudera 提出过数据压缩的基本准则：</p>
+
+<ul>
+<li><p>是否压缩数据以及使用何种压缩格式对性能具有重要的影响。</p></li>
+<li><p>需要平衡压缩和解压缩数据所需的能力、读写数据所需的磁盘 IO，以及在网络中发送数据所需的网络带宽。</p></li>
+</ul>
+
+
+<p>此外，用到哪些压缩格式，为什么使用这些压缩格式而不是其他的压缩格式？</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2024/05/22/hdfs-compression-algorithms/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -630,61 +684,6 @@ $(function () {
   
     <footer>
       <a rel="full-article" href="/blog/2020/10/16/spark-word2vec-source-analysis/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2020/05/31/spark-vs-flink-comparison/">Spark与Flink：下一代大数据计算引擎之争</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2020-05-31T16:37:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2020/05/31/spark-vs-flink-comparison/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h1>一、下一代大数据计算引擎</h1>
-
-<p>自从数据处理需求超过了传统数据库能有效处理的数据量之后，Hadoop 等各种基于 MapReduce 的海量数据处理系统应运而生。从 2004 年 Google 发表 MapReduce 论文开始，经过近 10 年的发展，基于 Hadoop 开源生态或者其它相应系统的海量数据处理已经成为业界的基本需求。</p>
-
-<p>但是，很多机构在开发自己的数据处理系统时都会发现需要面临一系列的问题。从数据中获取价值需要的投入远远超过预期。常见的问题包括：</p>
-
-<ul>
-<li>非常陡峭的学习曲线。刚接触这个领域的人经常会被需要学习的技术的数量砸晕。不像经过几十年发展的数据库一个系统可以解决大部分数据处理需求， Hadoop 等大数据生态里的一个系统往往在一些数据处理场景上比较擅长，另一些场景凑合能用，还有一些场景完全无法满足需求。结果就是需要好几个系统来处理不同的场景。</li>
-</ul>
-
-
-<center><img src="/images/2020/IMAG2020053101.png"></center>
-
-
-<p>（来源： https://mapr.com/developercentral/lambda-architecture/ ）</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2020/05/31/spark-vs-flink-comparison/">Read on &rarr;</a>
     </footer>
   
 

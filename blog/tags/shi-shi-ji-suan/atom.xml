@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 实时计算 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/shi-shi-ji-suan/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/shi-shi-ji-suan/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[【标点符】腾讯分析系统架构解析]]></title>
-    <link href="http://ibillxia.github.io/blog/2015/11/03/tencent-analytics-architecture/"/>
+    <link href="https://ibillxia.github.io/blog/2015/11/03/tencent-analytics-architecture/"/>
     <updated>2015-11-03T15:54:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2015/11/03/tencent-analytics-architecture</id>
+    <id>https://ibillxia.github.io/blog/2015/11/03/tencent-analytics-architecture</id>
     <content type="html"><![CDATA[<center><img src="/images/2015/IMAG2015110300.jpg"></center>
 
 

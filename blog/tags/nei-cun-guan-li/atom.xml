@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 内存管理 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/nei-cun-guan-li/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/nei-cun-guan-li/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Spark内存管理及调优]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/05/15/spark-memory-management-tuning/"/>
+    <link href="https://ibillxia.github.io/blog/2024/05/15/spark-memory-management-tuning/"/>
     <updated>2024-05-15T17:25:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/05/15/spark-memory-management-tuning</id>
+    <id>https://ibillxia.github.io/blog/2024/05/15/spark-memory-management-tuning</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://qiankunli.github.io/2022/05/05/spark_detail.html">https://qiankunli.github.io/2022/05/05/spark_detail.html</a></p>
 
 <h1>内存划分及用途</h1>
@@ -173,9 +173,9 @@ keywords.map((_, 1)).reduceByKey(_ + _).collect // reduceByKey 算子会引入 S
   
   <entry>
     <title type="html"><![CDATA[深入理解STL源码(1) 空间配置器(allocator)]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/"/>
+    <link href="https://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/"/>
     <updated>2014-06-13T22:04:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator</id>
+    <id>https://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator</id>
     <content type="html"><![CDATA[<p>在STL中，Memory Allocator 处于最底层的位置，为一切的 Container 提供存储服务，是一切其他组件的基石。对于一般使用 STL 的用户而言，Allocator 是不可见的，如果需要对 STL 进行扩展，如编写自定义的容器，就需要调用 Allocator 的内存分配函数进行空间配置。本文涉及到的 SGI STL 源代码文件有 <code>alloc.h</code>, <code>stl_config.h</code>, <code>stl_alloc.h</code>, <code>stl_threads.h</code> 这4个。</p>
 
 <p>在C++中，一个对象的内存配置和释放一般都包含两个步骤，对于内存的配置，首先是调用operator new来配置内存，然后调用对象的类的构造函数进行初始化；而对于内存释放，首先是调用析构函数，然后调用 operator delete进行释放。 如以下代码：
@@ -537,9 +537,9 @@ template &lt;class _Alloc&gt;class __allocator&lt;void, _Alloc&gt;
   
   <entry>
     <title type="html"><![CDATA[C++ 应用程序性能优化之 new/delete 操作符]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/05/11/cpp-program-optimization-new-delete-operator/"/>
+    <link href="https://ibillxia.github.io/blog/2014/05/11/cpp-program-optimization-new-delete-operator/"/>
     <updated>2014-05-11T20:33:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/05/11/cpp-program-optimization-new-delete-operator</id>
+    <id>https://ibillxia.github.io/blog/2014/05/11/cpp-program-optimization-new-delete-operator</id>
     <content type="html"><![CDATA[<h2>1.概述</h2>
 
 <p>C++ 程序的存储空间可以分为静态/全局存储区、栈区和堆区。下图展示了一个典型的Linux C/C++ 程序内存空间布局：</p>

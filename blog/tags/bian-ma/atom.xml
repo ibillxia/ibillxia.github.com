@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 编码 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/bian-ma/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/bian-ma/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[MySQL乱码问题详解与解决方案]]></title>
-    <link href="http://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion/"/>
+    <link href="https://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion/"/>
     <updated>2015-10-28T17:12:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion</id>
+    <id>https://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion</id>
     <content type="html"><![CDATA[<p>本文节选自<a href="http://cenalulu.github.io/mysql/mysql-mojibake/">10分钟学会理解和解决MySQL乱码问题</a>   <br/>
 PS: 原文博主通过MySQL垂直深耕，成功进入Facebook了，祝福。</p>
 
@@ -137,9 +137,9 @@ mysql&gt; ALTER TABLE charset_test_latin1 MODIFY COLUMN char_col varchar(50) cha
   
   <entry>
     <title type="html"><![CDATA[UTF8中文编码范围]]></title>
-    <link href="http://ibillxia.github.io/blog/2010/08/21/utf8-chinese-coding/"/>
+    <link href="https://ibillxia.github.io/blog/2010/08/21/utf8-chinese-coding/"/>
     <updated>2010-08-21T10:31:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2010/08/21/utf8-chinese-coding</id>
+    <id>https://ibillxia.github.io/blog/2010/08/21/utf8-chinese-coding</id>
     <content type="html"><![CDATA[<p>UTF-8有点类似于Haffman编码，它将Unicode编码为： </br>
 00000000-0000007F的字符，用单个字节来表示； </br>
 00000080-000007FF的字符用两个字节表示 （中文的编码范围） </br>

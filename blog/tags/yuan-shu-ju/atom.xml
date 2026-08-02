@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 元数据 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/yuan-shu-ju/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/yuan-shu-ju/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[饿了么元数据管理实践之路]]></title>
-    <link href="http://ibillxia.github.io/blog/2019/03/19/eleme-metadata-management/"/>
+    <link href="https://ibillxia.github.io/blog/2019/03/19/eleme-metadata-management/"/>
     <updated>2019-03-19T10:18:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2019/03/19/eleme-metadata-management</id>
+    <id>https://ibillxia.github.io/blog/2019/03/19/eleme-metadata-management</id>
     <content type="html"><![CDATA[<h1>一、背景</h1>
 
 <h2>大数据挑战</h2>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: SwiGLU | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/swiglu/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/swiglu/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[为什么大型语言模型都在使用SwiGLU作为激活函数]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/06/21/swiglu-activation-in-llm/"/>
+    <link href="https://ibillxia.github.io/blog/2024/06/21/swiglu-activation-in-llm/"/>
     <updated>2024-06-21T11:46:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/06/21/swiglu-activation-in-llm</id>
+    <id>https://ibillxia.github.io/blog/2024/06/21/swiglu-activation-in-llm</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/691227850">https://zhuanlan.zhihu.com/p/691227850</a></p>
 
 <p>如果你一直在关注大型语言模型的架构，你可能会在最新的模型和研究论文中看到“SwiGLU”这个词。SwiGLU可以说是在大语言模型中最常用到的激活函数，我们本篇文章就来对他进行详细的介绍。SwiGLU其实是2020年谷歌提出的激活函数，它结合了SWISH和GLU两者的特点。</p>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: MySQL | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/mysql/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/mysql/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[MySQL常用系统命令]]></title>
-    <link href="http://ibillxia.github.io/blog/2019/05/06/mysql-system-commands/"/>
+    <link href="https://ibillxia.github.io/blog/2019/05/06/mysql-system-commands/"/>
     <updated>2019-05-06T22:30:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2019/05/06/mysql-system-commands</id>
+    <id>https://ibillxia.github.io/blog/2019/05/06/mysql-system-commands</id>
     <content type="html"><![CDATA[<h1>1 show processlist</h1>
 
 <p>SHOW PROCESSLIST显示哪些线程正在运行。您也可以使用mysqladmin processlist语句得到此信息。如果您有SUPER权限，您可以看到所有线程。否则，您只能看到您自己的线程（也就是，与您正在使用的MySQL账户相关的线程）。如果有线程在update或者insert 某个表，此时进程的status为updating 或者 sending data。</p>
@@ -179,9 +179,9 @@
   
   <entry>
     <title type="html"><![CDATA[MySQL乱码问题详解与解决方案]]></title>
-    <link href="http://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion/"/>
+    <link href="https://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion/"/>
     <updated>2015-10-28T17:12:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion</id>
+    <id>https://ibillxia.github.io/blog/2015/10/28/mysql-charset-and-confusion</id>
     <content type="html"><![CDATA[<p>本文节选自<a href="http://cenalulu.github.io/mysql/mysql-mojibake/">10分钟学会理解和解决MySQL乱码问题</a>   <br/>
 PS: 原文博主通过MySQL垂直深耕，成功进入Facebook了，祝福。</p>
 

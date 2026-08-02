@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 特征工程 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/te-zheng-gong-cheng/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/te-zheng-gong-cheng/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[特征平台需求层次理论]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/05/14/feature-platform-hierarchy/"/>
+    <link href="https://ibillxia.github.io/blog/2024/05/14/feature-platform-hierarchy/"/>
     <updated>2024-05-14T17:49:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/05/14/feature-platform-hierarchy</id>
+    <id>https://ibillxia.github.io/blog/2024/05/14/feature-platform-hierarchy</id>
     <content type="html"><![CDATA[<h1>前言</h1>
 
 <p>原文链接：<a href="https://tech.ipalfish.com/blog/2021/05/31/feature-stores-a-hierarchy-of-needs/">https://tech.ipalfish.com/blog/2021/05/31/feature-stores-a-hierarchy-of-needs/</a></p>
@@ -349,9 +349,9 @@ prediction = model.predict(online_features)
   
   <entry>
     <title type="html"><![CDATA[【Python机器学习】使用sklearn做单机特征工程]]></title>
-    <link href="http://ibillxia.github.io/blog/2018/04/04/sklearn-feature-engineering/"/>
+    <link href="https://ibillxia.github.io/blog/2018/04/04/sklearn-feature-engineering/"/>
     <updated>2018-04-04T13:01:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2018/04/04/sklearn-feature-engineering</id>
+    <id>https://ibillxia.github.io/blog/2018/04/04/sklearn-feature-engineering</id>
     <content type="html"><![CDATA[<h1>1 特征工程是什么？</h1>
 
 <p>　　有这么一句话在业界广泛流传：数据和特征决定了机器学习的上限，而模型和算法只是逼近这个上限而已。那特征工程到底是什么呢？顾名思义，其本质是一项工程活动，目的是最大限度地从原始数据中提取特征以供算法和模型使用。通过总结和归纳，人们认为特征工程包括以下方面：</p>

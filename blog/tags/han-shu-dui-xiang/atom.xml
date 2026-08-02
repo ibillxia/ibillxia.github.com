@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 函数对象 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/han-shu-dui-xiang/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/han-shu-dui-xiang/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[深入理解STL源码(6) 仿函数|函数对象]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/11/15/insight-into-stl-6-functor-or-function-objects/"/>
+    <link href="https://ibillxia.github.io/blog/2014/11/15/insight-into-stl-6-functor-or-function-objects/"/>
     <updated>2014-11-15T10:06:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/11/15/insight-into-stl-6-functor-or-function-objects</id>
+    <id>https://ibillxia.github.io/blog/2014/11/15/insight-into-stl-6-functor-or-function-objects</id>
     <content type="html"><![CDATA[<h2>1. 仿函数|函数对象概述</h2>
 
 <p>在STL的六大组件中，仿函数可说是体积最小、观念最简单、实现最容易的一个，但小兵也能立大功——他扮演一种“策略”角色，可以让STL算法具有更加灵活的“演出”。</p>

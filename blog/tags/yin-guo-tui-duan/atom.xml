@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 因果推断 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/yin-guo-tui-duan/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/yin-guo-tui-duan/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[【DataFun】因果推断与复杂AB测试]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/07/09/causal-inference-complex-ab-testing/"/>
+    <link href="https://ibillxia.github.io/blog/2024/07/09/causal-inference-complex-ab-testing/"/>
     <updated>2024-07-09T15:51:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/07/09/causal-inference-complex-ab-testing</id>
+    <id>https://ibillxia.github.io/blog/2024/07/09/causal-inference-complex-ab-testing</id>
     <content type="html"><![CDATA[<h2>24年7月5-6北京站</h2>
 
 <h2><strong>eBay 基于Uplift Model的优惠券分发优化</strong></h2>
@@ -92,9 +92,9 @@
   
   <entry>
     <title type="html"><![CDATA[【DataFun】因果推断在微视激励和供需场景的应用]]></title>
-    <link href="http://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application/"/>
+    <link href="https://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application/"/>
     <updated>2023-12-27T16:16:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application</id>
+    <id>https://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application</id>
     <content type="html"><![CDATA[<center><img src="/images/2023/IMAG2023122701.png"></center>
 
 
@@ -311,9 +311,9 @@
   
   <entry>
     <title type="html"><![CDATA[Google长期AB测试：避免短期收益陷阱]]></title>
-    <link href="http://ibillxia.github.io/blog/2022/05/16/google-long-term-ab-testing/"/>
+    <link href="https://ibillxia.github.io/blog/2022/05/16/google-long-term-ab-testing/"/>
     <updated>2022-05-16T14:57:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2022/05/16/google-long-term-ab-testing</id>
+    <id>https://ibillxia.github.io/blog/2022/05/16/google-long-term-ab-testing</id>
     <content type="html"><![CDATA[<p>在AB测试中，我们一般会关注某个变化带来的短期影响。比如：</p>
 
 <ul>

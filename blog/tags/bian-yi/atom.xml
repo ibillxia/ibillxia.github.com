@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 编译 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/bian-yi/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/bian-yi/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[C语言编译过程全解析]]></title>
-    <link href="http://ibillxia.github.io/blog/2009/05/28/analysis-the-steps-of-compiling-c-language/"/>
+    <link href="https://ibillxia.github.io/blog/2009/05/28/analysis-the-steps-of-compiling-c-language/"/>
     <updated>2009-05-28T19:45:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2009/05/28/analysis-the-steps-of-compiling-c-language</id>
+    <id>https://ibillxia.github.io/blog/2009/05/28/analysis-the-steps-of-compiling-c-language</id>
     <content type="html"><![CDATA[<h2>0.内容摘要</h2>
 
 <p>C语言编译的整个过程是非常复杂的，里面涉及到的编译器知识、硬件知识、工具链知识都是非常多的，深入了解整个编译过程对工程师理解应用程序的编写是有很大帮助的，希望大家可以多了解一些，在遇到问题时多思考、多实践。</p>

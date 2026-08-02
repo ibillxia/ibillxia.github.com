@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: list | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/list/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/list/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[深入理解STL源码(3.2) 序列式容器之list]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/"/>
+    <link href="https://ibillxia.github.io/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/"/>
     <updated>2014-07-06T22:03:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list</id>
+    <id>https://ibillxia.github.io/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list</id>
     <content type="html"><![CDATA[<p>本文涉及到 SGI STL 源码的文件有<code>list</code>、<code>stl_list.h</code>、<code>list.h</code> 等几个文件。</p>
 
 <h2>1. list 和 slist</h2>

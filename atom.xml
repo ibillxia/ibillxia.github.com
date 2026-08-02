@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,10 +15,10 @@
   
   <entry>
     <title type="html"><![CDATA[什么是 FDE？从它的爆火看软件研发的职能大洗牌]]></title>
-    <link href="http://ibillxia.github.io/blog/2026/07/03/FDE-what-why-and-future/"/>
+    <link href="https://ibillxia.github.io/blog/2026/07/03/FDE-what-why-and-future/"/>
     <updated>2026-07-03T22:02:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2026/07/03/FDE-what-why-and-future</id>
-    <content type="html"><![CDATA[<center><img src="http://ibillxia.github.io/images/2026/IMAG2026070301.png"></center>
+    <id>https://ibillxia.github.io/blog/2026/07/03/FDE-what-why-and-future</id>
+    <content type="html"><![CDATA[<center><img src="https://ibillxia.github.io/images/2026/IMAG2026070301.png"></center>
 
 
 <p></p>
@@ -345,9 +345,9 @@
   
   <entry>
     <title type="html"><![CDATA[Claude Code源码解读]]></title>
-    <link href="http://ibillxia.github.io/blog/2026/04/26/how-claude-code-works/"/>
+    <link href="https://ibillxia.github.io/blog/2026/04/26/how-claude-code-works/"/>
     <updated>2026-04-26T20:08:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2026/04/26/how-claude-code-works</id>
+    <id>https://ibillxia.github.io/blog/2026/04/26/how-claude-code-works</id>
     <content type="html"><![CDATA[<p>这应该是目前看过的最详细、最深入的技术解读系列文章。</p>
 
 <p>第1章原文链接： <a href="https://diwang.info/how-claude-code-works/#/docs/01-overview">https://diwang.info/how-claude-code-works/#/docs/01-overview</a></p>
@@ -723,7 +723,7 @@ const taskSummaryModule = feature('BG_SESSIONS')
 
 <p>理解 Claude Code 的关键是理解<strong>数据如何在各层之间流动</strong>。下面是一次完整的用户交互的数据流：</p>
 
-<center><img src="http://ibillxia.github.io/images/2026/IMAG2026042601.png"></center>
+<center><img src="https://ibillxia.github.io/images/2026/IMAG2026042601.png"></center>
 
 
 <p></p>
@@ -761,7 +761,7 @@ const taskSummaryModule = feature('BG_SESSIONS')
 
 <p>Claude Code 的启动经过精心优化，将大量工作并行化和延迟化。整个流程分为 9 个阶段，关键路径仅约 <strong>235ms</strong>：</p>
 
-<center><img src="http://ibillxia.github.io/images/2026/IMAG2026042602.png"></center>
+<center><img src="https://ibillxia.github.io/images/2026/IMAG2026042602.png"></center>
 
 
 <p></p>
@@ -780,7 +780,7 @@ const taskSummaryModule = feature('BG_SESSIONS')
 
 <h2>1.7 架构总览</h2>
 
-<center><img src="http://ibillxia.github.io/images/2026/IMAG2026042603.png"></center>
+<center><img src="https://ibillxia.github.io/images/2026/IMAG2026042603.png"></center>
 
 
 <p></p>
@@ -858,10 +858,312 @@ const taskSummaryModule = feature('BG_SESSIONS')
   </entry>
   
   <entry>
+    <title type="html"><![CDATA[Anthropic: 多智能体协作的五种模式及其适用场景]]></title>
+    <link href="https://ibillxia.github.io/blog/2026/04/11/multi-agent-coordination-patterns/"/>
+    <updated>2026-04-11T22:07:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2026/04/11/multi-agent-coordination-patterns</id>
+    <content type="html"><![CDATA[<p>翻译自 Anthropic 官方博客，原文链接：<a href="https://claude.com/blog/multi-agent-coordination-patterns">https://claude.com/blog/multi-agent-coordination-patterns</a></p>
+
+<p><strong>五种多智能体协调模式、各自的权衡取舍，以及何时从一种模式演进到另一种模式。</strong></p>
+
+<p>在此前的一篇文章中，我们探讨了多智能体系统何时能带来价值、何时单个智能体是更好的选择。本文面向已经做出这一判断、现在需要决定哪种协调模式适合其问题的团队。</p>
+
+<p>我们发现，许多团队选择模式时往往基于"听起来复杂高端"，而非"是否契合实际问题"。我们建议从最简单的可行模式出发，观察其局限所在，再逐步演进。本文将分析以下五种模式的机制与局限：</p>
+
+<ul>
+<li><strong>生成器-验证器（Generator-Verifier）</strong>：适用于有明确评估标准的质量关键型输出</li>
+<li><strong>编排器-子智能体（Orchestrator-Subagent）</strong>：适用于任务分解清晰、子任务边界明确的场景</li>
+<li><strong>智能体团队（Agent Teams）</strong>：适用于并行、独立、长时运行的子任务</li>
+<li><strong>消息总线（Message Bus）</strong>：适用于具有不断扩展的智能体生态的事件驱动管道</li>
+<li><strong>共享状态（Shared State）</strong>：适用于智能体需要在彼此发现的基础上协作推进的场景</li>
+</ul>
+
+
+<!--more-->
+
+
+<h2>模式一：生成器-验证器（Generator-Verifier）</h2>
+
+<center><img src="https://ibillxia.github.io/images/2026/IMAG2026041101.png"></center>
+
+
+<p></p>
+
+<p>这是最简单的多智能体模式，也是部署最广泛的模式之一。我们在上一篇文章中将其介绍为"验证子智能体"模式，这里使用更宽泛的"生成器-验证器"表述，因为生成器不一定是编排器。</p>
+
+<h3>工作原理</h3>
+
+<p>生成器接收任务并产生初始输出，将其传递给验证器进行评估。验证器检查输出是否满足所需标准，若满足则接受，若不满足则附带反馈信息拒绝。拒绝后，反馈被路由回生成器，生成器据此生成修订版本。此循环持续进行，直到验证器接受输出或达到最大迭代次数为止。</p>
+
+<h3>适用场景</h3>
+
+<p>以一个针对客户工单自动生成邮件回复的支持系统为例：生成器根据产品文档和工单上下文生成初始回复；验证器对照知识库检查准确性、依据品牌指南评估语气，并确认回复是否涵盖了所有问题。未通过检查的内容会以具体反馈（如将某功能错误归属于某定价层级、或遗漏了某个工单问题）返回给生成器。</p>
+
+<p>当输出质量至关重要且评估标准可以明确定义时，适合使用此模式。它在代码生成（一个智能体写代码，另一个写并运行测试）、事实核查、基于评分标准的评级、合规性验证等领域均有良好表现——凡是"错误输出的代价高于额外生成一次的代价"的领域，都适合此模式。</p>
+
+<h3>局限所在</h3>
+
+<p>验证器的能力上限取决于其评估标准的质量。如果验证器仅被告知"检查输出是否良好"而没有进一步标准，它往往会直接通过生成器的输出。团队最常见的失败之处在于：实现了循环，却没有定义"验证"究竟意味着什么，从而制造了质量控制的假象，而非实质。</p>
+
+<p>此外，该模式假设"生成"与"验证"是可分离的技能。如果评估某种创意方案与生成它一样困难，验证器可能并不能可靠地捕获问题。</p>
+
+<p>最后，迭代循环可能陷入停滞。若生成器无法解决验证器的反馈，系统将在不收敛的情况下反复震荡。设置最大迭代次数并制定回退策略（升级给人工、带注释返回最优结果）可以防止无限循环。</p>
+
+<hr />
+
+<h2>模式二：编排器-子智能体（Orchestrator-Subagent）</h2>
+
+<center><img src="https://ibillxia.github.io/images/2026/IMAG2026041102.png"></center>
+
+
+<p></p>
+
+<p>这一模式以层级关系为核心。一个智能体充当"团队负责人"，负责规划工作、分配任务、综合结果；子智能体负责处理特定职责并汇报结果。</p>
+
+<h3>工作原理</h3>
+
+<p>主导智能体接收任务后决定如何处理：部分子任务由自身直接完成，其余分派给子智能体。子智能体完成工作后返回结果，编排器将其综合为最终输出。</p>
+
+<p><a href="https://code.claude.com/docs/en/overview">Claude Code</a> 使用的正是这一模式。主智能体自行编写代码、编辑文件、运行命令，并在需要搜索大型代码库或调查独立问题时在后台派遣子智能体——工作在结果回流的同时并行推进。每个子智能体在自己的上下文窗口中运行，返回提炼后的发现，从而使编排器的上下文专注于主要任务，而探索工作在并行中完成。</p>
+
+<h3>适用场景</h3>
+
+<p>以自动化代码审查系统为例：当 Pull Request 到来时，系统需要检查安全漏洞、验证测试覆盖率、评估代码风格、评估架构一致性。每项检查相互独立，需要不同的上下文，输出清晰明确。编排器将每项检查分派给专职子智能体，收集结果后综合为统一的审查报告。</p>
+
+<p>当任务分解清晰、子任务之间相互依赖度低时，适合使用此模式。编排器保持对整体目标的连贯视图，而子智能体则专注于各自职责。</p>
+
+<h3>局限所在</h3>
+
+<p>编排器会成为信息瓶颈。当某个子智能体发现了与另一个子智能体工作相关的信息时，该信息必须通过编排器中转。若安全子智能体发现了影响架构分析的认证漏洞，编排器必须识别这一依赖关系并适当路由信息。经过多次此类交接后，关键细节往往会丢失或被摘要删除。</p>
+
+<p>此外，顺序执行也会限制吞吐量。除非显式并行化，子智能体将依次运行，这意味着系统承担了多智能体的 Token 成本，却未获得速度上的收益。</p>
+
+<hr />
+
+<h2>模式三：智能体团队（Agent Teams）</h2>
+
+<p>当工作可以分解为能够长时间独立并行推进的子任务时，编排器-子智能体模式可能过于局限。</p>
+
+<h3>工作原理</h3>
+
+<center><img src="https://ibillxia.github.io/images/2026/IMAG2026041103.png"></center>
+
+
+<p></p>
+
+<p>协调者（Coordinator）将多个工作者智能体作为独立进程启动。团队成员从共享队列中认领任务，自主完成多步骤工作，并在完成后发出信号。</p>
+
+<p>与编排器-子智能体的核心区别在于工作者的持久性。编排器为单个有界子任务派遣子智能体，子任务完成后子智能体即终止；而团队成员则跨多次任务持续存活，不断积累上下文和领域专知，随时间推移提升表现。协调者分配工作、收集结果，但不会在任务之间重置工作者。</p>
+
+<h3>适用场景</h3>
+
+<p>以将大型代码库从一个框架迁移到另一个框架为例：每个服务可以由团队成员独立迁移，包含其各自的依赖、测试套件和部署配置。协调者将每个服务分配给某个团队成员，成员自主完成迁移工作：依赖更新、代码修改、测试修复、验证。协调者收集完成的迁移结果并在整个系统上运行集成测试。</p>
+
+<p>当子任务独立、且能从持续多步骤工作中获益时，适合使用此模式。每个团队成员会积累对其负责领域的熟悉程度，而非每次从零开始。</p>
+
+<h3>局限所在</h3>
+
+<p>独立性是关键前提。与编排器-子智能体不同（编排器可以在子智能体之间中转信息），团队成员自主运行，无法轻松共享中间发现，其输出可能因此产生冲突。</p>
+
+<p>完成检测也更加困难。由于团队成员自主工作且时长不固定，协调者必须处理"部分完成"的情况——某个成员两分钟完成，另一个需要二十分钟。</p>
+
+<p>共享资源会加剧上述问题。当多个团队成员操作同一代码库、数据库或文件系统时，可能出现编辑同一文件或做出不兼容更改的情况。此模式需要仔细的任务分区和冲突解决机制。</p>
+
+<hr />
+
+<h2>模式四：消息总线（Message Bus）</h2>
+
+<p>随着智能体数量增加、交互模式日趋复杂，直接协调变得难以管理。消息总线引入了一个共享通信层，智能体通过发布和订阅事件进行交互。</p>
+
+<h3>工作原理</h3>
+
+<center><img src="https://ibillxia.github.io/images/2026/IMAG2026041104.png"></center>
+
+
+<p></p>
+
+<p>智能体通过两种原语交互：发布（Publish）和订阅（Subscribe）。智能体订阅自己感兴趣的主题，路由器（Router）将匹配的消息分发出去。新增的具备新能力的智能体可以立即开始接收相关工作，无需重新布线现有连接。</p>
+
+<h3>适用场景</h3>
+
+<p>安全运营自动化系统是此模式的典型示例：警报从多个来源涌入，分类智能体按严重程度和类型分类，将高严重性的网络警报路由给网络调查智能体，将凭据相关警报路由给身份分析智能体。每个调查智能体可能发布上下文收集请求，由专门的上下文收集智能体来满足。发现结果流向响应协调智能体，由其确定适当的行动。</p>
+
+<p>此管道适合消息总线，因为事件从一个阶段流向下一阶段，团队可以随着威胁类别演变添加新智能体类型，各智能体可以独立开发和部署。</p>
+
+<p>当工作流程由事件驱动而非预定顺序产生，且智能体生态系统可能持续增长时，适合使用此模式。</p>
+
+<h3>局限所在</h3>
+
+<p>事件驱动通信的灵活性使追踪变得更加困难。当一个警报触发跨五个智能体的事件级联时，理解发生了什么需要仔细的日志记录和关联分析，调试难度远高于跟随编排器的顺序决策。</p>
+
+<p>路由准确性也至关重要。若路由器错误分类或丢弃某个事件，系统会悄无声息地失败——什么都没处理，却也没有崩溃。基于 LLM 的路由器提供了语义灵活性，但也引入了其自身的故障模式。</p>
+
+<hr />
+
+<h2>模式五：共享状态（Shared State）</h2>
+
+<p>前述各模式中的编排器、团队负责人和消息路由器均集中管理信息流。共享状态通过让智能体直接读写持久化存储来协调，从而去除了中间人。</p>
+
+<h3>工作原理</h3>
+
+<center><img src="https://ibillxia.github.io/images/2026/IMAG2026041105.png"></center>
+
+
+<p></p>
+
+<p>智能体自主运行，从共享数据库、文件系统或文档中读取和写入信息，没有中心协调者。智能体检查存储中的相关信息，基于发现采取行动，并将结果写回。工作通常从初始化步骤开始（在存储中植入问题或数据集），在满足终止条件时结束：时间限制、收敛阈值，或某个指定智能体判断存储中已有足够的答案。</p>
+
+<h3>适用场景</h3>
+
+<p>以研究综合系统为例：多个智能体调查某个复杂问题的不同方面——一个探索学术文献，一个分析行业报告，一个检查专利申请，一个监测新闻报道。每个智能体的发现可能影响其他智能体的调查方向。学术文献智能体发现的某位关键研究者，可能正是行业智能体需要深入研究的公司的创始人。</p>
+
+<p>有了共享状态，发现结果直接写入存储。行业智能体可以立即看到学术智能体的发现，无需等待协调者路由信息。智能体在彼此工作的基础上持续推进，共享存储成为不断演化的知识库。</p>
+
+<p>共享状态还消除了协调者作为单点故障的风险。若任意一个智能体停止运行，其他智能体仍可继续读写；而在编排器和消息总线系统中，协调者或路由器的故障将导致一切停摆。</p>
+
+<h3>局限所在</h3>
+
+<p>没有显式协调，智能体可能重复工作或追求相互矛盾的方向。两个智能体可能独立调查同一条线索。智能体之间的交互产生系统行为，而非自上而下的设计，使结果难以预测。</p>
+
+<p>更难处理的故障模式是反应式循环：智能体 A 写入一个发现，智能体 B 读取并写入跟进内容，智能体 A 看到跟进并再次响应——系统持续消耗 Token，却没有收敛。重复工作和并发写入有成熟的工程解决方案（锁、版本控制、分区），而反应式循环是行为问题，需要一流的终止条件：时间预算、收敛阈值（N 个周期内无新发现），或某个专门负责判断存储答案是否充分的指定智能体。将终止条件视为事后补充的系统往往会无限循环，或在某个智能体上下文填满时随机停止。</p>
+
+<hr />
+
+<h2>模式的选择与演进</h2>
+
+<p>正确的模式取决于系统的几个结构性问题。在前一篇文章中，我们倡导以上下文为中心的分解方式——按每个智能体所需的上下文来划分工作，而非按工作类型划分。这一原则同样适用于此。各模式的区别在于它们如何管理上下文边界和信息流动。</p>
+
+<h3>编排器-子智能体 vs. 智能体团队</h3>
+
+<center><img src="https://ibillxia.github.io/images/2026/IMAG2026041106.png"></center>
+
+
+<p></p>
+
+<p>两者都涉及协调者将工作分派给其他智能体，区别在于工作者需要维持上下文多长时间。</p>
+
+<ul>
+<li><strong>选择编排器-子智能体</strong>：子任务短暂、聚焦、输出清晰。代码审查系统适用于此，因为每项检查完成分析、生成报告，并在单次有界调用内返回，子智能体无需跨多个周期持有上下文。</li>
+<li><strong>选择智能体团队</strong>：子任务从持续多步骤工作中获益。代码库迁移适用于此，因为每个团队成员会对其负责的服务形成真正的熟悉程度——依赖图谱、测试模式、部署配置，这种积累的上下文能带来一次性派遣无法复制的效果。</li>
+</ul>
+
+
+<p>当子智能体需要跨调用保留状态时，智能体团队是更好的选择。</p>
+
+<h3>编排器-子智能体 vs. 消息总线</h3>
+
+<center><img src="https://ibillxia.github.io/images/2026/IMAG2026041107.png"></center>
+
+
+<p></p>
+
+<p>两者都能处理多步骤工作流，区别在于工作流结构的可预测性。</p>
+
+<ul>
+<li><strong>选择编排器-子智能体</strong>：步骤顺序提前已知。代码审查系统遵循固定管道：接收 PR、运行检查、综合结果。</li>
+<li><strong>选择消息总线</strong>：工作流由事件产生，可能因发现的内容而变化。安全运营系统无法预测会到来哪些警报或需要什么调查路径，也可能出现需要新处理方式的新警报类型。消息总线通过将事件路由给有能力的智能体来适应这种可变性，而非遵循预定顺序。</li>
+</ul>
+
+
+<p>当编排器中为处理不断扩展的案例类型而积累了大量条件逻辑时，消息总线能让这种路由变得显式且可扩展。</p>
+
+<h3>智能体团队 vs. 共享状态</h3>
+
+<center><img src="https://ibillxia.github.io/images/2026/IMAG2026041108.png"></center>
+
+
+<p></p>
+
+<p>两者都涉及自主工作的智能体，区别在于智能体是否需要彼此的发现。</p>
+
+<ul>
+<li><strong>选择智能体团队</strong>：智能体在互不交互的独立分区上工作。代码库迁移适用于此，每个团队成员负责自己的服务，协调者在最后合并结果。</li>
+<li><strong>选择共享状态</strong>：智能体的工作是协作性的，发现需要实时在它们之间流动。研究综合系统更适合此模式，因为学术智能体发现的关键研究者，立即与行业智能体的调查相关。</li>
+</ul>
+
+
+<p>一旦团队成员需要相互通信，而不仅仅是共享最终结果，共享状态更加自然。</p>
+
+<h3>消息总线 vs. 共享状态</h3>
+
+<center><img src="https://ibillxia.github.io/images/2026/IMAG2026041109.png"></center>
+
+
+<p></p>
+
+<p>两者都支持复杂的多智能体协调，区别在于工作是以离散事件的形式流动，还是以共享知识库的形式积累。</p>
+
+<ul>
+<li><strong>选择消息总线</strong>：智能体在管道中对事件做出反应。安全运营系统逐阶段处理警报，每个事件在完成前触发下一个事件，该模式擅长将事件路由给有能力的智能体。</li>
+<li><strong>选择共享状态</strong>：智能体随时间推移在积累的发现上持续构建。研究综合系统持续积累知识，智能体反复返回存储，查看他人的发现并调整自己的调查方向。</li>
+</ul>
+
+
+<p>消息总线仍有路由器这个中心组件来决定事件走向；共享状态则是去中心化的。若消除单点故障是优先级，共享状态能更完整地做到这一点。</p>
+
+<p>如果消息总线中的智能体正在发布事件来共享发现而非触发行动，共享状态是更好的选择。</p>
+
+<hr />
+
+<h2>快速入门</h2>
+
+<p>生产系统通常会组合使用多种模式。常见的混合方式是：用编排器-子智能体处理整体工作流，同时在协作密集的子任务中使用共享状态；或使用消息总线进行事件路由，用智能体团队风格的工作者处理每种事件类型。这些模式是构建模块，而非互斥的选择。</p>
+
+<p>下表总结了各模式的适用情境：</p>
+
+<table>
+<thead>
+<tr>
+<th> 情境 </th>
+<th> 模式 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> 质量关键型输出，有明确评估标准 </td>
+<td> 生成器-验证器 </td>
+</tr>
+<tr>
+<td> 任务分解清晰，子任务边界明确 </td>
+<td> 编排器-子智能体 </td>
+</tr>
+<tr>
+<td> 并行工作负载，独立的长时运行子任务 </td>
+<td> 智能体团队 </td>
+</tr>
+<tr>
+<td> 事件驱动管道，智能体生态持续增长 </td>
+<td> 消息总线 </td>
+</tr>
+<tr>
+<td> 协作性研究，智能体共享发现 </td>
+<td> 共享状态 </td>
+</tr>
+<tr>
+<td> 不允许单点故障 </td>
+<td> 共享状态 </td>
+</tr>
+</tbody>
+</table>
+
+
+<p>对于大多数用例，我们建议从编排器-子智能体开始。它以最低的协调开销处理最广泛的问题。观察其局限所在，再根据具体需求向其他模式演进。</p>
+
+<hr />
+
+<p><em>在即将发布的文章中，我们将结合生产实现和案例研究深入探讨每种模式。关于多智能体系统何时值得投入的背景，请参阅<a href="https://claude.com/blog/building-multi-agent-systems-when-and-how-to-use-them">《构建多智能体系统：何时以及如何使用》</a>。</em></p>
+
+<hr />
+
+<p><strong>致谢</strong>：作者 Cara Phillips，贡献者 Eugene Yan、Jiri De Jonghe、Samuel Weller 和 Erik S.</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[OpenClaw中的Agent Trigger解读]]></title>
-    <link href="http://ibillxia.github.io/blog/2026/03/05/openclaw-trigger-interpretation/"/>
+    <link href="https://ibillxia.github.io/blog/2026/03/05/openclaw-trigger-interpretation/"/>
     <updated>2026-03-05T10:08:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2026/03/05/openclaw-trigger-interpretation</id>
+    <id>https://ibillxia.github.io/blog/2026/03/05/openclaw-trigger-interpretation</id>
     <content type="html"><![CDATA[<h1>1 引言</h1>
 
 <p>自动化非常强大，但如果没有触发器，自动化系统将不会发生任何事情。</p>
@@ -870,7 +1172,7 @@ const taskSummaryModule = feature('BG_SESSIONS')
 它定义了执行的时间、原因以及条件。如果没有触发器，系统会一直处于等待状态； <br/>
 一旦触发器被激活，Agent 工作流就会自动运行。</p>
 
-<center><img src="http://ibillxia.github.io/images/2026/IMAG2026030501.png"></center>
+<center><img src="https://ibillxia.github.io/images/2026/IMAG2026030501.png"></center>
 
 
 <p></p>
@@ -1049,10 +1351,10 @@ Trigger 让 AI 从被动助手变成主动自动化系统。</p>
   
   <entry>
     <title type="html"><![CDATA[Anthropic Agentic Coding最新报告：程序员的核心能力将彻底改变]]></title>
-    <link href="http://ibillxia.github.io/blog/2026/02/23/anthropic-agentic-coding-report/"/>
+    <link href="https://ibillxia.github.io/blog/2026/02/23/anthropic-agentic-coding-report/"/>
     <updated>2026-02-23T19:07:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2026/02/23/anthropic-agentic-coding-report</id>
-    <content type="html"><![CDATA[<center><img src="http://ibillxia.github.io/images/2026/IMAG2026022301.png"></center>
+    <id>https://ibillxia.github.io/blog/2026/02/23/anthropic-agentic-coding-report</id>
+    <content type="html"><![CDATA[<center><img src="https://ibillxia.github.io/images/2026/IMAG2026022301.png"></center>
 
 
 <p>原始报告：<a href="https://resources.anthropic.com/hubfs/2026%20Agentic%20Coding%20Trends%20Report.pdf">2026 Agentic Coding Trends Report</a></p>
@@ -1080,7 +1382,7 @@ Trigger 让 AI 从被动助手变成主动自动化系统。</p>
 
 <p>从机器码到汇编，从C到高级语言，每一次抽象都缩小了人类思维与机器执行之间的鸿沟。2026年，我们将迎来最大的一次跨越：AI正在把"写代码"这个核心活动，从人类手中逐步剥离。</p>
 
-<center><img src="http://ibillxia.github.io/images/2026/IMAG2026022302.png"></center>
+<center><img src="https://ibillxia.github.io/images/2026/IMAG2026022302.png"></center>
 
 
 <p>传统的软件开发生命周期(SDLC)阶段依然存在，但节奏已经天翻地覆：</p>
@@ -1103,7 +1405,7 @@ Trigger 让 AI 从被动助手变成主动自动化系统。</p>
 
 <p>想象一下：你不是和一个AI对话，而是有一个"总指挥代理"，下面协调着专门的"测试代理"、“前端代理”、“后端代理”、“文档代理”……它们并行工作，各自有专属的上下文窗口，最后合成完整的输出。</p>
 
-<center><img src="http://ibillxia.github.io/images/2026/IMAG2026022303.png"></center>
+<center><img src="https://ibillxia.github.io/images/2026/IMAG2026022303.png"></center>
 
 
 <p>这需要什么新技能？</p>
@@ -1253,9 +1555,9 @@ TELUS公司创建超过13,000个定制AI方案，代码交付速度提升30%，�
   
   <entry>
     <title type="html"><![CDATA[Google&Kaggle五天Agent强化课程]]></title>
-    <link href="http://ibillxia.github.io/blog/2026/01/05/5d-agent-course-by-google/"/>
+    <link href="https://ibillxia.github.io/blog/2026/01/05/5d-agent-course-by-google/"/>
     <updated>2026-01-05T09:51:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2026/01/05/5d-agent-course-by-google</id>
+    <id>https://ibillxia.github.io/blog/2026/01/05/5d-agent-course-by-google</id>
     <content type="html"><![CDATA[<p>Kaggle链接：<a href="https://www.kaggle.com/learn-guide/5-day-agents">https://www.kaggle.com/learn-guide/5-day-agents</a></p>
 
 <p>推荐B站up主<a href="https://space.bilibili.com/85645193">碳硅同传</a>的讲解视频：</p>
@@ -1284,9 +1586,9 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
   
   <entry>
     <title type="html"><![CDATA[数据科学与机器学习2026年趋势展望]]></title>
-    <link href="http://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026/"/>
+    <link href="https://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026/"/>
     <updated>2025-12-12T10:27:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026</id>
+    <id>https://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026</id>
     <content type="html"><![CDATA[<p>分享两篇关于数据科学与机器学习趋势的文章，供大家参考。总结下来，最最重要的两大趋势：</p>
 
 <ul>
@@ -1297,7 +1599,7 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
 
 <h1><a href="https://towardsdatascience.com/data-science-in-2026-is-it-still-worth-it/">1. Data Science in 2026: Is It Still Worth It?</a></h1>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025121201.png"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025121201.png"></center>
 
 
 <p>Are you thinking about switching to Data Science in 2026?</p>
@@ -1331,7 +1633,7 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
 
 <p>Source: <a href="https://pixabay.com/photos/sea-wave-splash-big-wave-ocean-5499649/">pixabay</a> (Kanenori)</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025121201.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025121201.jpeg"></center>
 
 
 <p>One of the biggest mistakes of junior Data Scientists is thinking Data Science is one single job.</p>
@@ -1346,7 +1648,7 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
 
 <p><em>Screenshot taken by the author</em></p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025121202.png"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025121202.png"></center>
 
 
 <p>If you look at the description, they ask for:</p>
@@ -1384,12 +1686,12 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
 
 <p>These roles are more realistic for someone without a PhD.</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025121203.png"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025121203.png"></center>
 
 
 <p><em>Screenshot taken by the author</em></p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025121204.png"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025121204.png"></center>
 
 
 <p>Even if you don’t want to work at GAFAM, keep in mind:</p>
@@ -1400,7 +1702,7 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
 
 <p>Source: <a href="https://pixabay.com/photos/heart-couple-together-1731755/">pixabay</a> (NoName_13)</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025121205.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025121205.jpeg"></center>
 
 
 <p>Here is a controversial but honest truth for 2026: <strong>Analytical and mathematical skills matter more than just coding.</strong></p>
@@ -1443,7 +1745,7 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
 
 <p><em>Screenshot taken by the author</em></p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025121206.png"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025121206.png"></center>
 
 
 <p>We can also see on Google Trends (late 2025) that:</p>
@@ -1529,7 +1831,7 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
 
 <p>And of course, the hottest topic was….🥁… <strong>Agentic AI</strong> (no surprise there)<a href="https://substackcdn.com/image/fetch/$s_!SSnz!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fca699d07-a7ec-4eaa-9fc7-1a36f9bd3faf_3200x2408.jpeg"></a></p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025121210.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025121210.jpeg"></center>
 
 
 <p>Panel discussion on the topic of “Building the Future of AI: Scaling Foundation Models and Agents for Real-World Applications“. Image by NDSML.</p>
@@ -1551,7 +1853,7 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
 
 <h1>Three key trends that stood out (to me) the most</h1>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025121211.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025121211.jpeg"></center>
 
 
 <p>Cartoon depicting the motivation behind AutoGen. Image by AutoGen.</p>
@@ -1598,7 +1900,7 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
 
 <h3>Five real-world agentic AI use cases in Data Science</h3>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025121212.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025121212.jpeg"></center>
 
 
 <p>Diagram of how TimeGPT takes the historical values of the target values and additional exogenous variables as inputs to produce the forecasts. Image by TimeGPT.</p>
@@ -1618,7 +1920,7 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
 
 <p>I wanted to mention this concept again since I feel it might get overlooked by a lot of you reading this article, and that would be a BIG mistake.<a href="https://substackcdn.com/image/fetch/$s_!mQOI!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F6ed5744b-a2a4-4fc4-826f-e455a91c5818_960x498.png"></a></p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025121213.png"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025121213.png"></center>
 
 
 <p>Semantic Layer architecture. Image by Tallius.</p>
@@ -1631,7 +1933,7 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
 
 <p>The idea is simple: the semantic layer creates a shared definition of metrics and business logic so data scientists, stakeholders, and most importantly, AI agents, all work from the same source of truth.<a href="https://substackcdn.com/image/fetch/$s_!KeLe!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc2b78cee-94e2-45fc-a05f-8803027a9b2d_1072x814.webp"></a></p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025121214.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025121214.jpeg"></center>
 
 
 <p>Example of a semantic layer YAML file. Image by dbt.</p>
@@ -1692,14 +1994,14 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
   
   <entry>
     <title type="html"><![CDATA[GenRec综述论文笔记]]></title>
-    <link href="http://ibillxia.github.io/blog/2025/06/18/gen-rec-servey-notes/"/>
+    <link href="https://ibillxia.github.io/blog/2025/06/18/gen-rec-servey-notes/"/>
     <updated>2025-06-18T09:51:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2025/06/18/gen-rec-servey-notes</id>
+    <id>https://ibillxia.github.io/blog/2025/06/18/gen-rec-servey-notes</id>
     <content type="html"><![CDATA[<p>论文链接：<a href="https://arxiv.org/abs/2409.15173">https://arxiv.org/abs/2409.15173</a></p>
 
 <h1>book structure</h1>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025061801.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025061801.webp"></center>
 
 
 
@@ -1709,12 +2011,12 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
 
 <p>Advantages of recommender systems with generative models</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025061802.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025061802.webp"></center>
 
 
 <p>Outline of key techniques and publications in LLM-driven RSs</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025061803.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025061803.webp"></center>
 
 
 <h1>Chap4-LLM Rec</h1>
@@ -1723,27 +2025,27 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
 
 <p><strong>encoder-only LLMs</strong> can be used in two main architectures: as dense retrievers (c.f. Sec 4.3.1) or as cross-encoders (c.f. Sec 4.3.2).</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025061804.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025061804.webp"></center>
 
 
 <p>Autoregressive LLM inputs are called prompts, which are sequences of tokens expressing a task such as top-k recommendation, rating prediction, or explanation generation.</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025061805.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025061805.webp"></center>
 
 
 <h2>4.5 Retrieval Augmented Rec</h2>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025061806.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025061806.webp"></center>
 
 
 <h2>4.6 LLMs Representation Generation</h2>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025061807.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025061807.webp"></center>
 
 
 <h2>4.7 Conversational Rec</h2>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025061808.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025061808.webp"></center>
 
 
 <h1>Chap5-Multi-modal GMs for Rec</h1>
@@ -1758,29 +2060,29 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
 
 <p>CLIP</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025061809.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025061809.webp"></center>
 
 
 <p>Align BEfore Fuse (ALBEF)</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025061810.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025061810.webp"></center>
 
 
 <h2>5.3 Generative Multimodal Rec</h2>
 
 <p>GAN</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025061811.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025061811.webp"></center>
 
 
 <p>VAE</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025061812.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025061812.webp"></center>
 
 
 <p>Diffusion</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025061813.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025061813.webp"></center>
 
 
 <h2>5.4 Applications of Multimodal Rec</h2>
@@ -1798,9 +2100,9 @@ style="width: 100%; height: 600px; max-width: 900px;"></iframe>
   
   <entry>
     <title type="html"><![CDATA[基于so-vits-svc的AI翻唱歌曲教程]]></title>
-    <link href="http://ibillxia.github.io/blog/2025/03/16/music-cover-by-so-vits-svc/"/>
+    <link href="https://ibillxia.github.io/blog/2025/03/16/music-cover-by-so-vits-svc/"/>
     <updated>2025-03-16T09:51:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2025/03/16/music-cover-by-so-vits-svc</id>
+    <id>https://ibillxia.github.io/blog/2025/03/16/music-cover-by-so-vits-svc</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/635429751">https://zhuanlan.zhihu.com/p/635429751</a></p>
 
 <p>So-vits-svc(SoftVC VITS Singing Voice Conversion)是一款开源免费AI语音转换软件，最近大火的AI孙燕姿利用的也是这一技术：</p>
@@ -1903,19 +2205,19 @@ pip install fairseq
 
 <p>去除伴奏利用MDX-Net：</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025031601.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025031601.jpg"></center>
 
 
 <h3>（2）去除和声</h3>
 
 <p>把去除伴奏了的歌曲文件，利用VR Architecture去除和声：</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025031602.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025031602.jpg"></center>
 
 
 <p>如果左下角Choose VR Model中只有1_HP-UVR，可以通过Download More Models下载6_HP-Karaoke-UVR这个模型。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025031603.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025031603.jpg"></center>
 
 
 <p>最后就可以得到干净的人声了。</p>
@@ -1932,12 +2234,12 @@ pip install fairseq
 
 <p>添加人声文件，设置好输出文件夹，采用默认设置就可以了：</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025031604.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025031604.jpg"></center>
 
 
 <p>最终得到的音频片段：</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025031605.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025031605.jpg"></center>
 
 
 <p>数据集准备好后，在.\so-vits-svc\dataset_raw文件夹中新建一个文件夹，命名为该音色的名字，例如：</p>
@@ -1966,7 +2268,7 @@ python preprocess_hubert_f0.py
 
 <p>如果成功开始训练，可以得到每个Epoch的时间、loss以及模型保存的信息：</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025031606.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025031606.jpg"></center>
 
 
 <p>建议至少训练1000个Epoch。</p>
@@ -1992,7 +2294,7 @@ python preprocess_hubert_f0.py
 
 <p>在浏览器中输入http://127.0.0.1:7860，可以打开WebUI：</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025031607.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025031607.jpg"></center>
 
 
 <h3>（1）加载模型</h3>
@@ -2003,21 +2305,21 @@ python preprocess_hubert_f0.py
 
 <p>导入这两个文件后，加载模型，如果成功加载，可以得到音色名称：</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025031608.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025031608.jpg"></center>
 
 
 <h3>（2）导入歌曲并替换音色</h3>
 
 <p>将刚才准备的干净人声导入，点击音频转换即可得到转换后的音频：</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025031609.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025031609.jpg"></center>
 
 
 <h1>五、人声伴奏混合</h1>
 
 <p>得到转换后的人声音频后，需要把人声和伴奏混合，最简单的方法是利用格式工厂的音频混合功能：</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025031610.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025031610.jpg"></center>
 
 
 <p>这种方法不能条件人声和伴奏的比例，如果想要更好地去混音，可以利用AU等专业的音乐处理软件。</p>
@@ -2026,12 +2328,12 @@ python preprocess_hubert_f0.py
   
   <entry>
     <title type="html"><![CDATA[大模型入门指南：Transformer与Attention机制]]></title>
-    <link href="http://ibillxia.github.io/blog/2025/01/22/transformer-attention-guide/"/>
+    <link href="https://ibillxia.github.io/blog/2025/01/22/transformer-attention-guide/"/>
     <updated>2025-01-22T16:51:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2025/01/22/transformer-attention-guide</id>
+    <id>https://ibillxia.github.io/blog/2025/01/22/transformer-attention-guide</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://developer.aliyun.com/article/1655110">https://developer.aliyun.com/article/1655110</a></p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025012201.octet-stream"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025012201.octet-stream"></center>
 
 
 <p>阿里妹导读</p>
@@ -2065,7 +2367,7 @@ python preprocess_hubert_f0.py
 
 <p>核心技术：模型架构（此处先留下大体印象 encode+decode）</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025012202.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025012202.webp"></center>
 
 
 <h1>LLM 浅谈</h1>
@@ -2090,7 +2392,7 @@ python preprocess_hubert_f0.py
 
 <p>谈到 token，不得不提到近期一个大模型被揪出来的低级错误“Strawberry里有几个 r”。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025012203.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025012203.webp"></center>
 
 
 <p>嘲笑之后，大家也冷静了下来，开始思考：低级错误背后的本质是什么？</p>
@@ -2101,7 +2403,7 @@ python preprocess_hubert_f0.py
 
 <p>为了让大家直观地看到大模型眼里的文字世界，Karpathy特地写了一个小程序，用表情符号（emoji）来表示 token。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025012204.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025012204.webp"></center>
 
 
 <h3>尝试</h3>
@@ -2183,7 +2485,7 @@ pass
 
 <p>我们可以想象一个5x5的表格，表格中的每个格子代表一个词后面跟着另一个词的次数。这个表格可能看起来像这样：</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025012205.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025012205.webp"></center>
 
 
 <p>在这个例子中，“I”后面跟着“love”两次，而“love”后面跟着“oranges”一次，跟着“grapes”两次。为了使这个表格有用，我们需要将这些次数转换成概率，这样模型就可以预测下一个词的可能性。例如，“love”后面跟着“oranges”的概率是 1/3（大约33.3%），而跟着“grapes”的概率是 2/3（大约66.7%）。</p>
@@ -2222,7 +2524,7 @@ pass
 
 <h1>Transformer 的输入</h1>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025012202.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025012202.webp"></center>
 
 
 <p>回到框架图，Transformer中单词的输入表示x由单词Embedding和位置Embedding （Positional Encoding）相加得到。</p>
@@ -2237,7 +2539,7 @@ pass
 
 <h1>Self-Attention（自注意力机制）</h1>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025012206.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025012206.webp"></center>
 
 
 <p>上图是论文中 Transformer 的内部结构图，左侧为 Encoder block，右侧为 Decoder block。红色圈中的部分为 Multi-Head Attention，是由多个 Self-Attention组成的，可以看到 Encoder block 包含一个 Multi-Head Attention，而 Decoder block 包含两个 Multi-Head Attention (其中有一个用到 Masked)。Multi-Head Attention 上方还包括一个 Add &amp; Norm 层，Add 表示残差连接 (Residual Connection) 用于防止网络退化，Norm 表示 Layer Normalization，用于对每一层的激活值进行归一化。</p>
@@ -2269,7 +2571,7 @@ pass
 </ul>
 
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025012207.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025012207.webp"></center>
 
 
 <ul>
@@ -2277,7 +2579,7 @@ pass
 </ul>
 
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025012208.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025012208.webp"></center>
 
 
 <p>其中dk是Key向量的维度。</p>
@@ -2361,7 +2663,7 @@ pass
 
 <h2>Decoder 结构</h2>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025012209.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025012209.webp"></center>
 
 
 <p>上图红色部分为 Transformer 的 Decoder block 结构，与 Encoder block 相似，但是存在一些区别：</p>
@@ -2457,9 +2759,9 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
   
   <entry>
     <title type="html"><![CDATA[【凉夏】推荐模型中的门控机制与动态权重]]></title>
-    <link href="http://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation/"/>
+    <link href="https://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation/"/>
     <updated>2025-01-03T10:33:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation</id>
+    <id>https://ibillxia.github.io/blog/2025/01/03/gating-mechanism-in-recommendation</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/701181424">https://zhuanlan.zhihu.com/p/701181424</a></p>
 
 <p>大家好，我是凉夏同学。今天是我第一次在知乎分享我对算法模型的理解，有些生疏，还请大家多多指教。感兴趣的话，敬请关注公众号：凉夏的机器学习笔记。感恩~</p>
@@ -2482,7 +2784,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>基本上，我们见到的任何注意力机制都可以归因到上面三个问题上。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010331.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010331.jpeg"></center>
 
 
 <center>transformer中的MHA结构</center>
@@ -2504,7 +2806,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>PPNet的全称是Parameter Personalized Net，是快手提出的模型架构，将上述语音领域的LHUC架构搬到了推荐领域，将每一个“speaker”当做是每一个用户，从而提升模型个性化效果。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010332.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010332.jpg"></center>
 
 
 <center>快手PPNet网络架构</center>
@@ -2522,7 +2824,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>PEPNet全称是Parameter and Embedding Personalized Network，可以看到只在PPNet的基础上多了一个Embedding Personalized Network。体现在结构细节上，就是除了原先使用三个id特征做模型结构中间隐藏层的个性化之外，新增了使用场景特征对全部特征提前做一次个性化。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010333.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010333.jpg"></center>
 
 
 <center>PEPNet</center>
@@ -2536,7 +2838,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>AdaSparse，阿里2022年的论文《Learning Adaptively Sparse Structures for Multi-Domain Click-Through Rate Prediction》。文章也是使用到了门控机制，只是输入输出有一些差异，以及其中结合“稀疏”的思想体现了一些创新的出发点。模型如图所示，右侧②是门控网络的结构，可以看到输入使用了整个隐藏层的向量拼接上场景特征向量一起作为输入；网络结构结合了不同稀疏效果的设计了Binarization、Scaling、Fusion三种方法；最终也是作为权重与当前隐藏层进行元素乘，只是由于不同方法的稀疏性不同，所产生的效果不同。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010334.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010334.jpg"></center>
 
 
 <center>AdaSparse</center>
@@ -2546,29 +2848,29 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>AdaSparse将门控网络称之为”场景自适应的裁剪器“，其主要结构也是DNN，公式如下图：</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010335.webp"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010335.webp"></center>
 
 
 <p>第l层的隐藏层和相应的权重进行元素乘</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010336.png"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010336.png"></center>
 
 
 <p>权重的输入是向量拼接后经过一层MLP和sigmoid，之后再输入到另一个函数S</p>
 
 <p>其中S则代表了Binarization、Scaling、Fusion三种方法。Binarization是将输入的绝对值和阈值ε输入符号函数sign中，如果输入的绝对值大于ε，那么经符号函数输出1，反之输出0。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010337.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010337.jpeg"></center>
 
 
 <p>Scaling方法则是：sigmoid之后乘上缩放因子β（类似于LHUC里面的”2“），再将符号函数的输出再乘上原来的值。大概思路是：经过符号函数变为1或者0，会损失信息，如果再乘上原来的值，不仅可以知道隐藏层对应位置的信息是否要保留（对应裁剪器同位置权重是否为1），还能知道权重的大小幅度。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010338.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010338.jpeg"></center>
 
 
 <p>Fusion方法则是将上述两种思路结合起来，我们从公式上可以看出来。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010339.png"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010339.png"></center>
 
 
 <p>以上是AdaSparse门控网络的几种形式，具体哪种效果好，我们可以通过实验来确定。那么其中的稀疏是如何得到的呢？论文中将是通过将L1正则项加入到loss中得到的，而这个loss会随着训练而慢慢增大，带来的效果就是训练初期参数比较稠密，最大程度保留信息；随着训练的进行，loss逐渐变大，从而得到稀疏权重。而稀疏的优点，论文中大概是说，可以提升泛化性——因为我们是将场景特征作为门控的输入的，也就是场景特征来控制哪些特征要保留——从而可以减少不同场景的互相影响，而提升泛化性吧。我个人是这么理解的。</p>
@@ -2577,7 +2879,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>出自阿里的论文《Leaving No One Behind: A Multi-Scenario Multi-Task Meta Learning Approach for Advertiser Modeling》，两个”M“，分别对应了多场景和多目标，其中多场景是使用门控机制来解决的，多目标使用的是传统的MMOE。而这里的门控网络并不是在输出权重作用在隐藏层上，而是通过Meta Unit模块，根据“场景”特征，动态生成权重，再reshape成一个MLP。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010340.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010340.jpg"></center>
 
 
 
@@ -2591,9 +2893,9 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
   
   <entry>
     <title type="html"><![CDATA[【蘑菇先生】工业界大模型推荐实战经验梳理]]></title>
-    <link href="http://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice/"/>
+    <link href="https://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice/"/>
     <updated>2025-01-03T10:31:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice</id>
+    <id>https://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/7387477310">https://zhuanlan.zhihu.com/p/7387477310</a></p>
 
 <p>大家好，我是蘑菇先生。好久不见，今天盘点下2024年工业界大模型在搜广推上的实战落地型工作。业界工作大体分为两类：</p>
@@ -2646,7 +2948,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>如下图所示：Next Action Token prediction对应ranking任务，自回归预测的是前一个item在action上的概率分布，也即该item的行为类型。Next content token prediction对应retrieval任务。自回归预测的是next item，即在item物料上的概率分布。还是非常优雅的，将召排任务统一成“生成任务”视角。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010301.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010301.jpg"></center>
 
 
 <center>召排范式</center>
@@ -2656,7 +2958,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>模型对比图如下，左侧是传统的序列推荐模型，action只会在输入侧构建item表征时，作为额外的信息融入；输出端自回归的仍然是item本身；右侧是GR模型，输入端显式地将action也作为1种序列组成类型，输出端item和action均能够作为监督信号，来实现自回归预测。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010302.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010302.jpeg"></center>
 
 
 <center>模型架构</center>
@@ -2672,7 +2974,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>训练： 下图是训练示意图，看示意图是个召排统一的GR模型，输出侧的监督信号包括了item和action。这个地方和前文描述的稍有出路。前文描述的排序任务输出侧监督信号主要是action，召回任务输出侧监督信号主要是item。但不影响理解。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010303.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010303.jpeg"></center>
 
 
 <center>训练</center>
@@ -2688,7 +2990,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>这样实现的效果等价于对b_m个候选分别拼接到历史行为序列中，各自做1次前向传播，一共做b_m次，这样会导致历史行为序列的计算冗余。改进后，在1次前向传播推理中同时预估b_m个候选，最大程度复用算力。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010304.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010304.jpeg"></center>
 
 
 <center>推理</center>
@@ -2714,7 +3016,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>模型整体结构如下：</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010305.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010305.jpeg"></center>
 
 
 
@@ -2739,7 +3041,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 </ul>
 
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010306.png"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010306.png"></center>
 
 
 <p>j是batch内的user编号下标，i是第j个user的序列中的第i个item，E<em>{j,i}是Item LLM输出的表征，\hat{E}</em>{j,i}是User LLM预测的表征。正样本是next item，负样本从batch内非该用户序列的其他样本中采样。</p>
@@ -2749,12 +3051,12 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 </ul>
 
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010307.png"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010307.png"></center>
 
 
 <p>最后的损失如下，可以看到生成式目标实际是作为辅助损失的，主目标是LogLoss分类目标，和DIEN很像。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010308.png"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010308.png"></center>
 
 
 <p>该目标训练的过程中，能够端到端联合训练Item LLM和user LLM。item LLM的产物[ITEM]对应的表征实际上还能用于其他推荐场景：如作为item表征输入到精排建模、用于召回等。</p>
@@ -2766,7 +3068,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 </ul>
 
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010309.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010309.jpeg"></center>
 
 
 <ul>
@@ -2774,7 +3076,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 </ul>
 
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010310.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010310.jpeg"></center>
 
 
 <ul>
@@ -2782,7 +3084,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 </ul>
 
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010311.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010311.jpeg"></center>
 
 
 <p>最后我们再聊聊HLLMs的A/B Test部分，也是满满细节：基座是TinyLlama-1.1B，训练了HLLM-1B。由于性能的考虑，总共分为了3个部分：</p>
@@ -2796,7 +3098,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>线上serving的时候，item表征在新item发布的时候就会抽取表征；user表征T+1例行化更新；U/I的embedding提前存储好，用于流式训练和serving，这种情况下线上耗时几乎没变。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010312.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010312.jpeg"></center>
 
 
 <p>到此我们可以总结下HLLM和GRs的差异点：</p>
@@ -2821,7 +3123,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>整体架构图如下，自下而上：包含了笔记压缩prompt、相关笔记对构建、生成对比学习和标签/类目生成多目标学习、最后应用于I2I推荐、笔记hashtag生成、笔记类目打标等任务。整体工作流大致是：先通过prompt来构造LLMs的输入，同时预留着[EMB]占位符节点，用于I2I协同信号对比学习和标签/类目生成学习，这样就能让共现高的笔记的[EMB]相近，同时还能保留LLMs的语义信息。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010313.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010313.jpeg"></center>
 
 
 
@@ -2835,17 +3137,17 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>首先是Note Compression Prompt：为每个笔记样本构建一个统一的笔记压缩prompt，然后通过预训练LLMs进行解码学习item表征。prompt格式如下，[EMB]占位符就是学习的目标笔记表征。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010314.png"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010314.png"></center>
 
 
 <p>对于类目生成任务，引入了类目$c_i$等监督信号。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010315.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010315.jpeg"></center>
 
 
 <p>对于hashtag标签生成任务，引入了hashtags $tp_i$的监督信号。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010316.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010316.jpeg"></center>
 
 
 <p>通过上述步骤装配模版成文本tokens，通过LLMs得到上述tokens的表征序列，[EMB]处的表征会作为笔记表征，通过下面的GCL和CSFT进行预训练。</p>
@@ -2858,14 +3160,14 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>接着通过生成对比学习（GCL）使用上述压缩标记作为每个笔记的表征，并训练LLMs从in-batch的负样本中识别出相关的正样本笔记。本质是利用共现笔记中的“协同信号”，来提升这个[EMB]的学习质量，让相似的note的EMB相近。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010317.png"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010317.png"></center>
 
 
 <h2>CSFT</h2>
 
 <p>全称协同监督微调。笔记的category和hashtags有一些监督信号，可以用于多任务学习，使用自回归生成损失建模即可。具体而言，作者采用了一种协同监督微调（CSFT）方法来训练模型为每个笔记生成标签/分类。由于I2I笔记推荐任务和标签/分类生成任务中学习到的压缩标记都旨在提取笔记内容的关键概念，CSFT可以有效增强笔记嵌入。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010318.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010318.jpeg"></center>
 
 
 <p>最后，训练好的模型可以同时做I2I向量检索、类目打标、话题生成等任务。</p>
@@ -2882,7 +3184,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 </ul>
 
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010319.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010319.jpeg"></center>
 
 
 <h1>小红书 | NoteLLM-2</h1>
@@ -2899,46 +3201,46 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>在NoteLLM的prompt基础上引入了图像表征占位。是placeholder, 后面会使用从原始图像中提取的vision embedding代替。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010320.png"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010320.png"></center>
 
 
 <p>具体而言，先使用上述prompt过tokenizer后得到text embedding。然后text embedding中占位符对应的word embedding使用vision encoder(例如CLIP/BLIP等)经过Connector(MLP层)得到的visual embedding来替换，形成多模态表征序列。然后使用LLMs处理该多模态表征序列，得到最后的last hidden states作为note的多模态表征。然后使用和NoteLLM一样的共现item pairs进行对比学习预训练。如下所示，和NoteLLM是一样的。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010321.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010321.jpeg"></center>
 
 
 <p>但这个简单的改造会面临的问题在于：LLMs在端到端训练中倾向于忽视图像信息，被文本信息主导。为此，文章提出2种方法：包括：① 从prompt的视角区分“文本信息”和“图像信息”，其实就是优化prompt，称为mICL(multimodal in-context learning)；② 在LLM接入下游I2I任务的输出端引入late fusion机制，在结构上显式地让原始图像信息发挥更大作用。整体架构图如下：</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010322.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010322.jpeg"></center>
 
 
 <h2>mICL</h2>
 
 <p>首先是mICL，将prompt改造成如下格式，和NoteLLM的主要差异点是接入下游的时候有2个表征节点，新增的，因为Causal attention机制，这个节点仅提炼了前面的图像表征信息n_i<sup>v</sup>；另一个是整个prompt节点，即prompt尾巴处，提取了文本和图像多模态表征n_i<sup>m</sup>。这两个表征在下游I2I建模时都会发挥作用，以保留图像的信息。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010323.png"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010323.png"></center>
 
 
 <h2>Late Fusion</h2>
 
 <p>接着是Late Fusion机制：为图像表征和多模态表征都设置了门控融合机制，来自适应融合原始vision encoder的输出v和上述图像表征和多模态表征。例如图像表征如下，其中v是visual encoder(如BLIP/CLIP等)的原始表征，n_i<sup>v</sup>是上述经过LLM后的图像表征。二者通过门控机制融合得到\hat{n}_i^{v}。同理，多模态表征节点n_i<sup>m</sup>，也和v进行门控融合。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010324.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010324.jpeg"></center>
 
 
 <p>图像表征节点和多模态表征节点，分别过对比学习损失来建模。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010325.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010325.jpeg"></center>
 
 
 
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010326.png"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010326.png"></center>
 
 
 
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010327.png"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010327.png"></center>
 
 
 <p>从实验部分，</p>
@@ -2952,7 +3254,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>LLM大部分都是采用7B左右的，效果来看 MQwen-bigG>MQwen-Base>MTomato-Base，说明LLM和vision encoder都很重要。mICL和late fusion通过放大vision encoder的作用，都能起到一定作用。</p>
 
-<center><img src="http://ibillxia.github.io/images/2025/IMAG2025010328.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2025/IMAG2025010328.jpeg"></center>
 
 
 <p>NoteLLM-2和NoteLLM的差异：</p>
@@ -2989,9 +3291,9 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
   
   <entry>
     <title type="html"><![CDATA[Hulu视频广告系统中的算法实践]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms/"/>
+    <link href="https://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms/"/>
     <updated>2024-07-19T14:40:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms</id>
+    <id>https://ibillxia.github.io/blog/2024/07/19/hulu-video-ads-algorithms</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://www.infoq.cn/article/ko9yxouspj4kuoh9jut4">https://www.infoq.cn/article/ko9yxouspj4kuoh9jut4</a></p>
 
 <h1>概述</h1>
@@ -3016,7 +3318,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 </ul>
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071901.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071901.png"></center>
 
 
 
@@ -3062,7 +3364,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>下图总结了在 Hulu 的视频广告系统中的 <strong>核心算法问题</strong>，也是我们研究员每天在做的事情：</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071902.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071902.png"></center>
 
 
 <p>① 广告定向，涉及到：</p>
@@ -3128,7 +3430,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <h2>1. Ad Targeting 广告定向</h2>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071903.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071903.png"></center>
 
 
 <p>广告定向在品牌类广告中，是最最重要的一个环节。</p>
@@ -3149,7 +3451,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>下面分别介绍一下针对这三种类型的广告定向使用到的核心算法：</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071904.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071904.png"></center>
 
 
 <h3>a. 用户相关定向：</h3>
@@ -3170,7 +3472,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <h3>b. 上下文相关定向：</h3>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071905.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071905.png"></center>
 
 
 <p>这里主要介绍一下 AI 在视频内容上下文情景广告中的应用。视频广告会插播在视频内容播放前以及播放中， 投放与视频上下文情节比较相关的广告，会减少广告对用户的干扰，举个例子：用户当前所看的是婚礼视频，如果此时投放的广告是珠宝广告，那就毫无违和感，甚至会激起用户的购买欲望。另外，我们需要探测视频中的的一些暴力血腥画面，在这些地方不适合投放广告。</p>
@@ -3181,7 +3483,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <h3>c. 转化率优化：</h3>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071906.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071906.png"></center>
 
 
 <p>虽然品牌类的广告点击率没有那么重要，但是越来越多的广告商开始和 Hulu 谈，我把我的转化数据给你，你帮我计算下我这次投放的转化率是多少。这就带来了另外一个问题，广告商最终还是希望优化自己广告的转化率，所以我们最近开始了这方面的研究。目前开展的研究是基于 Hulu 自己的广告的转化率优化，Hulu 在自己的视频里面也会放一些推广新剧的广告内容，例如一个 15 秒的预告，希望这些广告能投放给正确的用户，得到比较高的转化率。这个问题被建模成为 CVR 预估的问题，根据投放数据以及转化数据，通过机器学习来建模用户看到广告后的 7 天内、30 天内的转化率，再投放的时候把正确的广告投放给正确的用户。</p>
@@ -3191,7 +3493,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 </ul>
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071907.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071907.png"></center>
 
 
 <p>特征主要分为三块：</p>
@@ -3212,7 +3514,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 </ul>
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071908.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071908.png"></center>
 
 
 <p>我们在评估广告转化率的时候，会考虑评估是否正确，广告是否有效，举个例子：假如有一群用户，不论你对不对他投放广告，他都会去买这辆车，如果把广告投放给这样的用户，最后评估广告的转化率的时候会评估的非常高，其实广告效果一般，因为你投不投他都会去买，其实是白白消耗了这次投放。这就需要引入 Casual Inference 作为评估指标，其核心思想是：评估这个用户看这个广告和不看这个广告的收益分别是怎么样，最后将两者之间的差作为评估指标，使用 Doubly Robust Estimator 进行建模。除此，更加重要的问题是怎么根据 Casual Inference 作为目标去进行转化率的优化，怎么找到这些广告增益最大的用户，然后把广告投放给这些用户。</p>
@@ -3222,7 +3524,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 </ul>
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071909.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071909.png"></center>
 
 
 <p>接下来是用户共享账号的问题，例如：一个账号，孩子晚上 8 点左右看动画片，妈妈晚上 10 点左右看综艺节目，爸爸周末看体育视频，妈妈使用该账号的时候，发现推荐的都是动画片，找不到自己喜欢看的内容。这个在推荐以及广告定向中都是非常重要的问题，例如有的广告商，希望这个体育类广告只推荐给家庭中的爸爸，如果是小孩和妈妈看是没有效果的。</p>
@@ -3243,7 +3545,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>问题简单描述为：给定未来的一段时间，一些定向条件的组合，预估有多少广告流量库存。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071910.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071910.png"></center>
 
 
 <p>这个问题可以建模成时序预估的问题，通常有以下两个步骤：</p>
@@ -3273,12 +3575,12 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>Prophe 模型是专门为具有这几种特性的时序数据而设计的时序预估模型。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071911.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071911.png"></center>
 
 
 <p>Prophet 把时序数据拆成了三部分：趋势部分，周期性和季节性部分，节假日部分，每一部分会单独做预测模型，最后合到一起得到最终的预测结果。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071912.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071912.png"></center>
 
 
 <p>例如，上图为 Prophet 模型产生的几种因素的分解：左上角为趋势，左下角为节假日，右边为季度性，分别为每个月和每周的变化，可以观察到淡季和旺季的变化。目前，我们采用的是 Prophet 模型，在 Hulu 的广告流量预估问题上表现稳健。</p>
@@ -3287,7 +3589,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>流量匹配在担保式广告的投放环节发挥着重要的作用，保证所有广告订单都可以按时按量并且节奏均匀的投放完成。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071913.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071913.png"></center>
 
 
 <p>流量匹配算法会分为以下几个步骤：</p>
@@ -3300,7 +3602,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>第一个步骤比较简单，下面简单介绍一下第二、三步中具体用到的算法。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071914.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071914.png"></center>
 
 
 <p>在离线匹配中，我们把问题建模成一个二部图匹配问题。</p>
@@ -3309,12 +3611,12 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>之后可以根据二部图建模优化问题，求解目标是每个边的权重，表示该流量以多大的比例分配给某个广告订单。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071915.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071915.png"></center>
 
 
 <p>首先会将原始优化问题转化为拉格朗日对偶问题，求解得到对偶变量 αj​ 和 betaj​，表示的分别是广告的对偶变量和流量的对偶变量。根据最优解满足 KKT 条件，我们可以只将相对数量级较低的广告对偶变量 αj​ 记下来，提高存储效率，线上再根据 KKT 条件计算 betaj​ 和 xij​。αj​ 可以被看做各个订单重要程度影响因子，作为线上选择订单的权重。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071916.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071916.png"></center>
 
 
 <p>但是这里还是存在一个问题，这里全部都是用的预估的流量和订单来进行匹配，但实际上会发生一些变化。所以需要第三步，线上实时调控。第一可以保证适应真实的线上流量， 第二也可以进一步保证投放节奏的稳定性。一般使用 PID ( Proportion Integration Differentiation ) 控制技术，这是常用于机械、电气系统中的一种应用非常广泛的自动控制技术，分为比例调节、积分调节、微分调节这 3 项的调节，根据线上广告真实投放的快慢来调控接下来应该投放的速度。</p>
@@ -3327,14 +3629,14 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
   
   <entry>
     <title type="html"><![CDATA[使用TensorFlow、ONNX和TensorRT加速深度学习推理]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference/"/>
+    <link href="https://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference/"/>
     <updated>2024-07-15T15:17:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference</id>
+    <id>https://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://developer.nvidia.cn/blog/speeding-up-deep-learning-inference-using-tensorflow-onnx-and-tensorrt/">https://developer.nvidia.cn/blog/speeding-up-deep-learning-inference-using-tensorflow-onnx-and-tensorrt/</a></p>
 
 <p>从 TensorRT 7 . 0 开始， Universal Framework Format（ UFF ）被弃用。在本文中，您将学习如何使用新的 TensorFlow -ONNX- TensorRT 工作流部署经过 TensorFlow 培训的深度学习模型。图 1 显示了 TensorRT 的高级工作流。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071501.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071501.png"></center>
 
 
 <p>图 1 。 TensorRT 是一种推理加速器。</p>
@@ -3346,7 +3648,7 @@ print(f"Epoch {epoch+1}, Loss: {loss.item()}")
 
 <p>要优化在 TensorFlow 中实现的模型，只需将模型转换为 ONNX 格式，并使用 TensorRT 中的 ONNX 解析器解析模型并构建 TensorRT 引擎。图 2 显示了高级 ONNX 工作流。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071502.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071502.jpeg"></center>
 
 
 <p>图 2 。 ONNX 工作流。</p>
@@ -3634,7 +3936,7 @@ keras_to_onnx(semantic_model, 'semantic_segmentation.onnx')
 
 <p>图 3 显示了网络的体系结构。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071503.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071503.png"></center>
 
 
 <p>图 3 。基于 VGG16 的语义分割模型。</p>
@@ -3740,22 +4042,22 @@ colorImage_k.save(“keras_output.png”)
 
 <p>图 4 显示了实际图像和实际情况，以及 Keras 的输出与 TensorRT 引擎的输出的对比。如您所见， TensorRT 发动机的输出与 Keras 的类似。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071504.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071504.png"></center>
 
 
 <p>图 4a 原始图像 .</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071505.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071505.png"></center>
 
 
 <p>图 4b 地面真相标签。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071506.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071506.png"></center>
 
 
 <p>图 4c . TensorRT 的输出。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071507.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071507.png"></center>
 
 
 <p>图 4d : Keras 的输出。</p>
@@ -3804,21 +4106,21 @@ save_engine(engine, engine_name)
 
 <h1>关于作者</h1>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071508.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071508.jpeg"></center>
 
 
 <p>关于 Houman Abbasian</p>
 
 <p>Houman 是 NVIDIA 的高级深度学习软件工程师。他一直致力于开发和生产 NVIDIA 在自动驾驶车辆中的深度学习解决方案，提高 DNN 的推理速度、精度和功耗，并实施和试验改进 NVIDIA 汽车 DNN 的新思想。他在渥太华大学获得计算机科学博士学位，专注于机器学习。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071509.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071509.jpeg"></center>
 
 
 <p>于德成简介</p>
 
 <p>于德成是 NVIDIA 自主驾驶组高级深度学习软件工程师，从事自驾领域的各种感知任务的神经结构搜索和 DNN 模型训练、压缩和部署，包括目标检测、分割、路径轨迹生成等。他于 2016 年获得卡内基梅隆大学机器人学硕士学位。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024071510.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024071510.jpeg"></center>
 
 
 <p>关于乔希·帕克</p>
@@ -3829,16 +4131,16 @@ save_engine(engine, engine_name)
   
   <entry>
     <title type="html"><![CDATA[【DataFun】因果推断与复杂AB测试]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/07/09/causal-inference-complex-ab-testing/"/>
+    <link href="https://ibillxia.github.io/blog/2024/07/09/causal-inference-complex-ab-testing/"/>
     <updated>2024-07-09T15:51:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/07/09/causal-inference-complex-ab-testing</id>
+    <id>https://ibillxia.github.io/blog/2024/07/09/causal-inference-complex-ab-testing</id>
     <content type="html"><![CDATA[<h2>24年7月5-6北京站</h2>
 
 <h2><strong>eBay 基于Uplift Model的优惠券分发优化</strong></h2>
 
 <p><a href="https://drive.weixin.qq.com/s?k=AJEAIQdfAAoRew3eteAZgAQAbMAKM#/preview?fileId=s.1970325010981265.7204251960EC_f.720425750F67V">https://drive.weixin.qq.com/s?k=AJEAIQdfAAoRew3eteAZgAQAbMAKM#/preview?fileId=s.1970325010981265.7204251960EC_f.720425750F67V</a></p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070901.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070901.png"></center>
 
 
 
@@ -3848,22 +4150,22 @@ save_engine(engine, engine_name)
 
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070902.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070902.png"></center>
 
 
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070903.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070903.png"></center>
 
 
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070904.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070904.png"></center>
 
 
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070905.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070905.png"></center>
 
 
 <h2><strong>字节 推荐场景下的复杂AB实验设计</strong></h2>
@@ -3874,48 +4176,48 @@ save_engine(engine, engine_name)
 
 <p>⼀、双边效应导致的策略效果评估有偏问题</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070906.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070906.png"></center>
 
 
 <p>⼆、⽹络效应导致的策略效果评估有偏问题</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070907.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070907.png"></center>
 
 
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070908.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070908.png"></center>
 
 
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070909.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070909.png"></center>
 
 
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070910.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070910.png"></center>
 
 
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070911.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070911.png"></center>
 
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[PyTorch+CUDA+显卡算力对应关系]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility/"/>
+    <link href="https://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility/"/>
     <updated>2024-07-04T17:06:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility</id>
+    <id>https://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility</id>
     <content type="html"><![CDATA[<h1>Pytorch 各个GPU版本CUDA和cuDNN对应版本</h1>
 
 <p><a href="https://blog.csdn.net/weixin_45508265/article/details/122006134">https://blog.csdn.net/weixin_45508265/article/details/122006134</a></p>
 
 <p><a href="https://pytorch.org/get-started/previous-versions/">https://pytorch.org/get-started/previous-versions/</a></p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070401.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070401.png"></center>
 
 
 
@@ -3941,7 +4243,7 @@ save_engine(engine, engine_name)
 
 <p>查看cuda+torch版本及算力（<a href="https://developer.aliyun.com/article/1374303">https://developer.aliyun.com/article/1374303</a>）</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070402.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070402.png"></center>
 
 
 <h1>nvcc和nvidia-smi显示的版本不一致？</h1>
@@ -3966,9 +4268,9 @@ save_engine(engine, engine_name)
   
   <entry>
     <title type="html"><![CDATA[AI绘画原理解析：从CLIP、DALLE到Stable Diffusion]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/07/02/ai-painting-clip-dalle-stable-diffusion/"/>
+    <link href="https://ibillxia.github.io/blog/2024/07/02/ai-painting-clip-dalle-stable-diffusion/"/>
     <updated>2024-07-02T15:16:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/07/02/ai-painting-clip-dalle-stable-diffusion</id>
+    <id>https://ibillxia.github.io/blog/2024/07/02/ai-painting-clip-dalle-stable-diffusion</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://blog.csdn.net/v_JULY_v/article/details/131205615">https://blog.csdn.net/v_JULY_v/article/details/131205615</a></p>
 
 <h1>前言</h1>
@@ -3988,7 +4290,7 @@ save_engine(engine, engine_name)
 
 <p>沿着上文之后，本文将写清楚下面表格中带下划线的模型</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070201.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070201.png"></center>
 
 
 
@@ -4020,7 +4322,7 @@ save_engine(engine, engine_name)
 
 <p>其训练过程如下图所示：</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070202.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070202.png"></center>
 
 
 <ol>
@@ -4079,7 +4381,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>如果让你把下图左侧三张图和右侧三句话配对，你可以轻松完成这个连线。但对 AI 来说，图片就是一系列像素点，文本就是一串字符，要完成这个工作可不简单。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070203.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070203.png"></center>
 
 
 <p>原因在于</p>
@@ -4091,7 +4393,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>CLIP会努力将对应的 I1与T1(蓝色方块)匹配，而不是 I1与T2(灰色方块)匹配</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070204.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070204.png"></center>
 
 
 <ol>
@@ -4099,7 +4401,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 </ol>
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070205.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070205.png"></center>
 
 
 <h2>1.2 从BLIP1、BLIP2到miniGPT4</h2>
@@ -4116,7 +4418,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>如下图所示，为了预训练一个同时具有理解和生成能力的统一模型，BLIP模型主要由4个部分组成，从左至右分别是</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070206.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070206.jpeg"></center>
 
 
 <ul>
@@ -4139,7 +4441,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>为方便对比，把BLIP的模型结构图再贴一遍</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070207.jpeg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070207.jpeg"></center>
 
 
 <ul>
@@ -4178,7 +4480,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>如下图所示</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070208.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070208.png"></center>
 
 
 <p>CapFilt 方法包含两个模块：</p>
@@ -4195,14 +4497,14 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>下图展示了被过滤器接受和拒绝的文本可视化(绿色 文本是被 filter 认可的，而 红色 文本是被 filter 拒绝的)</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070209.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070209.png"></center>
 
 
 <h3>1.2.2 BLIP2：CLIP ViT-G/14 + Q-Former + FLAN-T5</h3>
 
 <p>下图是BLIP-2的模型结构 (论文地址：BLIP-2: Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models)，其中视觉侧和文本侧分别使用预训练的CLIP ViT-G/14模型和FLAN-T5模型，仅中间的起桥接作用的Q-Former参与训练，训练需要的成本和数据量进一步降低，BLIP-2的训练数据量仅129M，16卡A100训练9天</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070210.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070210.png"></center>
 
 
 <ul>
@@ -4219,7 +4521,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>miniGPT4的模型架构由一个语言模型拼接一个视觉模型，最后加一个线性投影层来对齐，具体而言</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070211.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070211.png"></center>
 
 
 <ul>
@@ -4251,7 +4553,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 </ol>
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070212.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070212.png"></center>
 
 
 <p>DALL·E和VQ-VAE-2一样，也是一个两阶段模型：</p>
@@ -4284,7 +4586,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>对于DALL·E2而言，基本就是整合了CLIP和基于扩散模型的GLIDE，而后者则采用了两阶段的训练方式：文本 → 文本特征 → 图片特征 → 图片</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070213.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070213.png"></center>
 
 
 <ol>
@@ -4359,7 +4661,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 </ul>
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070214.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070214.png"></center>
 
 
 <p>不过这里将text decoder均分成两个部分：</p>
@@ -4374,7 +4676,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>具体而言，如下图的左半部分所示</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070215.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070215.png"></center>
 
 
 <ol>
@@ -4408,7 +4710,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 </ol>
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070216.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070216.png"></center>
 
 
 <h4>2.1.1.2 分别通过短caption、长caption微调预训练好的image captioner</h4>
@@ -4425,7 +4727,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>下图展示了三个样例图像各自的原始caption(ground-truth)，以及生成的短caption、长caption</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070217.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070217.png"></center>
 
 
 <ul>
@@ -4462,7 +4764,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>通过上一节对DALLE 2的分析，我们得知最后的文生图decoder模型是基于扩散模型的</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070218.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070218.png"></center>
 
 
 <p>而DALLE 3的论文中训练的文生图是latent diffusion模型</p>
@@ -4488,7 +4790,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>下图展示了采用三种caption训练的模型在CLIP score上的差异：</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070219.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070219.png"></center>
 
 
 <ul>
@@ -4503,7 +4805,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>接下来的问题就是通过实验来找到最佳的数据混合比例。所以又增加了混合比例为65%、80%、90%的实验，下图展示了不同混合比例训练出来的模型其CLIP score的差异，可以看到采用95%的合成caption训练的模型在效果上要明显高于采用更低比例的caption训练的模型。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070220.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070220.png"></center>
 
 
 <p>所以最终的结论是采用合成的caption对模型提升帮助比较大，而且要采用描述详细的长caption，训练的混合比例高达95%，这也是后面DALL-E 3的数据训练策略。</p>
@@ -4512,12 +4814,12 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>为了解决这个问题，OpenAI采用GPT-4来“upsample”用户的caption，下面展示了如何用GPT-4来进行这个优化，不论用户输入什么样的caption，经过GPT-4优化后就得到了长caption：</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070221.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070221.png"></center>
 
 
 <p>下图展示了三个具体的例子，可以看到使用优化后的长caption(图中第二排)其生成图像效果要优于原来的短caption(图中第一排)：</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070222.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070222.png"></center>
 
 
 <p>所以，DALL-E 3接入ChatGPT其实是不得已而为之的事情，因为这样才能保证DALL-E 3的输入不偏离训练的分布</p>
@@ -4536,7 +4838,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>另外如小小将所说，附录里面给出了一个细节是</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070223.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070223.png"></center>
 
 
 <ul>
@@ -4586,7 +4888,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>下表给出了DALL-E 3与其它模型的对比结果，可以看到DALL-E 3还是明显优于DALL-E 2和SDXL。不过自动评测所选择的三个指标都是评测模型的prompt following能力，并不涉及到图像质量</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070224.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070224.png"></center>
 
 
 <h4>2.3.3.2 针对DALLE 3的人工评测</h4>
@@ -4606,12 +4908,12 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>所有人工评测的对比结果如表所示，可以看到DALL-E 3具有明显优势：</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070225.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070225.png"></center>
 
 
 <p>这里的ELO score是GLIDE中所提出的来计算胜率的指标：</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070226.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070226.png"></center>
 
 
 <p>尽管DALL-E 3在prompt following方面有很大的提升，但是它依然有一定的局限性</p>
@@ -4648,7 +4950,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>说白了，就是通过告诉U-Net 我们在每一步添加了多少噪声，从而手把手一步步教U-Net 怎么去估计噪声</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070227.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070227.png"></center>
 
 
 <ol>
@@ -4658,12 +4960,12 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>原理很简单，通过噪声估计器预测出噪声后，不模糊的图片便减去每一步添加的噪声以清晰化 不就ok了么</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070228.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070228.png"></center>
 
 
 <p>而如果用一句话介绍Stable Diffusion(SD对应的论文为《High-Resolution Image Synthesis with Latent Diffusion Models》，由慕尼黑大学和runway于2021年年底共同提交，其一作为Robin Rombach)，可以理解为：改进版的DDPM，Stable Diffusion原来的名字叫“Latent Diffusion Model”(LDM)，很明显就是扩散过程发生隐空间中(即latent space，下文或其他地方也有说潜在空间或压缩空间之类的，都一个意思)，其实就是对图片做了压缩</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070229.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070229.png"></center>
 
 
 <p>总之，Stable Diffusion会先训练一个自编码器，来学习将图像压缩成低维表示</p>
@@ -4676,7 +4978,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>在将图像压缩成latent data后，便可以在latent space中完成扩散过程，对比下和Diffusion扩散过程的区别，如下图所示：</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070230.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070230.png"></center>
 
 
 <p>可以看到Diffusion扩散模型就是在原图 x 上进行的操作，而Stale Diffusion是在压缩后的图像 z 上进行操作</p>
@@ -4687,7 +4989,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>stable diffusion和上面DALL E2的原理其实差不多，具体而言，会先后经历以下几个步骤「左边红色是像素空间 pixel space(含编码器ε和解码器D)、中间绿色区域是潜在空间latent space、右边灰色的是条件condition」</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070231.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070231.png"></center>
 
 
 <ol>
@@ -4728,43 +5030,43 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>a) 事实上，扩散模型可以理解为一个时序去噪自编码器</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070232.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070232.png"></center>
 
 
 <p>，我们需要训练使得预测的噪声与真实噪声相近，则目标函数为：</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070233.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070233.png"></center>
 
 
 <p>b) 而在 Latent Diffusion Models 中，引入了预训练的感知压缩模型，它包含一个编码器和一个解码器，这样就可以在训练时利用 得到 latent representation ，从而让模型在潜在表示空间中学习，其目标函数为：</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070234.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070234.png"></center>
 
 
 <p>c ) 对于条件生成任务，我们将拓展为：，这样就可以通过来控制图片合成的过程，通过在 U-Net 上增加 cross-attention 机制来实现</p>
 
 <p>而为了能够从不同的模态预处理，论文引入了一个领域专用编码器，它用来将映射成一个中间表示</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070235.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070235.png"></center>
 
 
 <p>，这样我们就可以很方便的引入各种形式的条件，例如文本、类别、layout等</p>
 
 <p>d) 最终模型可通过一个 cross-attention 将去噪条件引导融入到 UNet 中(作为query向量，作为key和value向量)，cross-attention 表示为：</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070236.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070236.png"></center>
 
 
 <p>其中</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070237.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070237.png"></center>
 
 
 <p>是 UNet 的一个中间表征</p>
 
 <p>最终，目标函数可以写为：</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070238.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070238.png"></center>
 
 
 <p>总之，加噪后的隐式表达zt和文本语义表征通过Attention的方式输入到U-Net，用以更好的学习文本和图像的匹配关系，这里文本的语义向量就是条件(用户的输入text或prompt)，控制图像生成往我们想要的方向发展，通过U-Net来预测每一步要减少的噪声</p>
@@ -4780,12 +5082,12 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>下图亦可辅助理解</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070239.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070239.png"></center>
 
 
 <h3>3.2.2 从源码层面理解SD</h3>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024070240.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024070240.png"></center>
 
 
 <p>// 待更</p>
@@ -4836,9 +5138,9 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
   
   <entry>
     <title type="html"><![CDATA[多模态大语言模型调研]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/06/27/multimodal-llm-survey/"/>
+    <link href="https://ibillxia.github.io/blog/2024/06/27/multimodal-llm-survey/"/>
     <updated>2024-06-27T10:53:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/06/27/multimodal-llm-survey</id>
+    <id>https://ibillxia.github.io/blog/2024/06/27/multimodal-llm-survey</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/689385182">https://zhuanlan.zhihu.com/p/689385182</a></p>
 
 <p>本文是关于论文《MM-LLMs: Recent Advances in MultiModal Large Language Models》的简要介绍。大型语言模型沿着多模态方向发展成为目前越来越受关注的研究领域，这篇论文从方法角度整理了2022年到2024年2月的经典多模态大语言模型，并从技术角度给出了一些前瞻思路。本文主要按照作者提供的框架和案例进行介绍。</p>
@@ -4880,14 +5182,14 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>自从GPT-4和Gemini诞生后，多模态大语言模型吸引众多研究者加入；早期框架还是致力于用LLM辅助特定模态的理解，例如LLaVA、BLIP-2、Video-ChatGPT等；后续陆陆续续有研究关注多模态生成任务，例如MiniGPT-5、SpeechGPT、AudioPaLM等；近期最新成果关注和人类类似的从任意到任意（Any-to-Any）模态的交互，例如AudioGPT、NExt-GPT等。很多公司和机构高也在布局大语言模型以服务于特定的业务需要。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024062701.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024062701.png"></center>
 
 
 <h1>2. 多模态大语言模型的整体架构</h1>
 
 <p>目前的多模态大语言模型采取并联式的框架，以NExtGPT为例，多模态数据送到各自模态的编码器后得到各自模态的编码，这些编码通过各自模态的输入转换器（Input Projection）后得到对齐到大语言模型的文本编码，经过大语言模型处理后的输出，经过限定模态的输出转换器（Output Projection）以及生成器得到多模态的数据。通常的，Input Projection和Output Projection是需要训练的，这些模块占整个框架的参数量的比例很小，通常在2%左右。其他模块多是现成的经过大量数据训练过的，可以固定参数，也可以跟随Projection模块一起微调。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024062702.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024062702.png"></center>
 
 
 <h2>2.1 各个模态的编码器</h2>
@@ -4942,12 +5244,12 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>分类。作者根据设计思路将多模态大语言模型按照功能和设计进行分类。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024062703.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024062703.png"></center>
 
 
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024062704.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024062704.png"></center>
 
 
 <p>目前的大语言模型表现出以下趋势：</p>
@@ -4965,7 +5267,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>作者以视觉-语言任务为例，提供了多模态大语言模型在18个benchmark上的性能：</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024062705.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024062705.png"></center>
 
 
 <p>并且有一些发现：</p>
@@ -4995,7 +5297,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <h1>附录：论文的思维导图（大图，请在新标签页打开查阅）</h1>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024062706.png"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024062706.png"></center>
 
 
 <p>有关本专栏的更多内容，请参考<a href="https://zhuanlan.zhihu.com/p/690590730">大语言模型文献调研专栏</a></p>
@@ -5004,14 +5306,14 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
   
   <entry>
     <title type="html"><![CDATA[为什么大型语言模型都在使用SwiGLU作为激活函数]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/06/21/swiglu-activation-in-llm/"/>
+    <link href="https://ibillxia.github.io/blog/2024/06/21/swiglu-activation-in-llm/"/>
     <updated>2024-06-21T11:46:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/06/21/swiglu-activation-in-llm</id>
+    <id>https://ibillxia.github.io/blog/2024/06/21/swiglu-activation-in-llm</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/691227850">https://zhuanlan.zhihu.com/p/691227850</a></p>
 
 <p>如果你一直在关注大型语言模型的架构，你可能会在最新的模型和研究论文中看到“SwiGLU”这个词。SwiGLU可以说是在大语言模型中最常用到的激活函数，我们本篇文章就来对他进行详细的介绍。SwiGLU其实是2020年谷歌提出的激活函数，它结合了SWISH和GLU两者的特点。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024062101.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024062101.jpg"></center>
 
 
 <p>我们一个一个来介绍：</p>
@@ -5028,7 +5330,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>函数的曲线：</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024062102.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024062102.jpg"></center>
 
 
 <p>其中，ß 为可学习参数。Swish可以比ReLU激活函数更好，因为它在0附近提供了更平滑的转换，这可以带来更好的优化。</p>
@@ -5042,7 +5344,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024062103.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024062103.jpg"></center>
 
 
 <p>GLU可以有效地捕获序列中的远程依赖关系，同时避免与lstm和gru等其他门控机制相关的一些梯度消失问题。</p>
@@ -5086,12 +5388,12 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>SwiGLU与其他GLU变体进行比较，我们可以看到SwiGLU在两种预训练期间都表现得更好。</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024062104.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024062104.jpg"></center>
 
 
 <p>下游任务</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024062105.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024062105.jpg"></center>
 
 
 <p>效果表现得最好，所以现在的llm，如LLAMA, OLMO和PALM都在其实现中采用SwiGLU。但是为什么SwiGLU比其他的好呢？</p>
@@ -5120,9 +5422,9 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
   
   <entry>
     <title type="html"><![CDATA[工业界推荐系统技术要点总结]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary/"/>
+    <link href="https://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary/"/>
     <updated>2024-05-26T11:25:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary</id>
+    <id>https://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/689894486">https://zhuanlan.zhihu.com/p/689894486</a></p>
 
 <p>工业界的推荐系统技术要点有很多，想从事推荐系统相关方向的同学都建议刷一刷。</p>
@@ -5131,7 +5433,7 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>回顾一下推荐系统的链路</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052601.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052601.jpg"></center>
 
 
 
@@ -5141,497 +5443,198 @@ loss = (loss_i + loss_t)/2 # 对称式的目标函数
 
 <p>常见的交互指标</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052602.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052602.jpg"></center>
 
 
 <p>排序模型做的事情</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052603.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052603.jpg"></center>
 
 
 <p>多目标模型就是要预测多个目标</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052604.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052604.jpg"></center>
 
 
 <p>预测概率和实际是否交互求交叉熵损失</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052605.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052605.jpg"></center>
 
 
 <p>训练时通常会遇到类别不平衡问题，可以考虑做采样</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052606.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052606.jpg"></center>
 
 
 <p>采样可能导致预估点击率偏高</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052607.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052607.jpg"></center>
 
 
 <p>可以通过校准公式进行校准</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052608.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052608.jpg"></center>
 
 
 <p>Multi-gate Mixture-of-Experts</p>
 
 <p>几个专家就是放几个神经网络</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052609.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052609.jpg"></center>
 
 
 <p>进一步考虑对多个神经网络的输出进行加权</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052610.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052610.jpg"></center>
 
 
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052611.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052611.jpg"></center>
 
 
 <p>可能会出现极化的现象</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052612.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052612.jpg"></center>
 
 
 <p>可以通过dropout的方式来解决极化</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052613.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052613.jpg"></center>
 
 
 <p>多目标有多个预估分数就可以有不同融合方式</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052614.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052614.jpg"></center>
 
 
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052615.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052615.jpg"></center>
 
 
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052616.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052616.jpg"></center>
 
 
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052617.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052617.jpg"></center>
 
 
 <p>视频播放建模</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052618.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052618.jpg"></center>
 
 
 <p>播放时长建模</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052619.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052619.jpg"></center>
 
 
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052620.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052620.jpg"></center>
 
 
 <p>视频完播用回归或分类都可以</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052621.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052621.jpg"></center>
 
 
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052622.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052622.jpg"></center>
 
 
 <p>完播率通常和视频时长有关，不能直接把预估的完播率⽤到融分公式</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052623.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052623.jpg"></center>
 
 
 <p>通常做个调整再用到融分公式</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052624.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052624.jpg"></center>
 
 
 <h1>排序模型的特征</h1>
 
 <p>用户画像</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052625.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052625.jpg"></center>
 
 
 <p>物品画像</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052626.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052626.jpg"></center>
 
 
 <p>用户统计特征</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052627.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052627.jpg"></center>
 
 
 <p>笔记统计特征</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052628.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052628.jpg"></center>
 
 
 <p>场景特征</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052629.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052629.jpg"></center>
 
 
 <p>特征处理</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052630.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052630.jpg"></center>
 
 
 <p>特征覆盖率的概念</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052631.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052631.jpg"></center>
 
 
 <p>数据服务分三步</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052632.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052632.jpg"></center>
 
 
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052633.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052633.jpg"></center>
 
 
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052634.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052634.jpg"></center>
 
 
 <h1>粗排</h1>
 
 <p>精排模型的线上推理代价大</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052635.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052635.jpg"></center>
 
 
 <p>双塔模型牺牲准确性换计算量</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052636.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052636.jpg"></center>
 
 
 <p>粗排的三塔模型</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052637.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052637.jpg"></center>
 
 
 
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052638.jpg"></center>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052638.jpg"></center>
 
 
 <p>三塔模型的推理</p>
 
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052639.jpg"></center>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[HDFS常用文件类型及压缩算法对比]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/05/22/hdfs-compression-algorithms/"/>
-    <updated>2024-05-22T12:18:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/05/22/hdfs-compression-algorithms</id>
-    <content type="html"><![CDATA[<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052201.webp"></center>
-
-
-<p>首先我们要明确一点，为什么要进行数据压缩？</p>
-
-<p>Cloudera 提出过数据压缩的基本准则：</p>
-
-<ul>
-<li><p>是否压缩数据以及使用何种压缩格式对性能具有重要的影响。</p></li>
-<li><p>需要平衡压缩和解压缩数据所需的能力、读写数据所需的磁盘 IO，以及在网络中发送数据所需的网络带宽。</p></li>
-</ul>
-
-
-<p>此外，用到哪些压缩格式，为什么使用这些压缩格式而不是其他的压缩格式？</p>
-
-<!--more-->
-
-
-<p>主要考虑到：</p>
-
-<ul>
-<li><p>文件和压缩算法的组合是否支持可分片, MapReduce在读取数据的时候需要并行, 这就要求压缩后的文件可以分片读取。</p></li>
-<li><p>io读取性能, 读取相同信息量的信息, 压缩后的文件不仅占用的存储空间低, 而且还会提高磁盘io的读取效率。提高程序的运行速度</p></li>
-<li><p>CPU资源也是启用何种压缩算法不得不考虑的因素, 一般来说压缩效率越高的算法对io效率和存储利用率的提升越有促进作用, 但另一方面也会更高的消耗CPU资源。所以我们需要在这中间寻求一个平衡点。</p></li>
-<li><p>共通性, 文件格式是否支持多种语言, 服务的读取。比如Hadoop主要的序列化格式为Writables, 但是Writables只支持Java, 所以后面衍生出了Avro, Thrift等格式。还如OrcFile是对Hive设计的一种列式存储格式, 但是他不支持Impala, 数据的共用性受到了制约。</p></li>
-<li><p>错误处理能力, 有的文件的某一部分坏掉之后会影响整个表, 有的只会影响其后的数据, 有的只会影响坏掉数据块本身(Avro)。</p></li>
-<li><p>读取和载入效率, RCFile的载入速度慢, 但是查询相应速度快, 相对更适合数据仓库一次插入多次读取的特性。</p></li>
-</ul>
-
-
-<h1>一、HDFS中的文件类型</h1>
-
-<ul>
-<li><p>基于文件存储</p></li>
-<li><p>序列化和列式存储，例如：Avro、RCFile和Parquet</p></li>
-</ul>
-
-
-<p>下面我们依次来介绍。</p>
-
-<h2>1.1 基于文件的SequenceFile</h2>
-
-<p>sequenceFile文件是Hadoop用来存储二进制形式的[Key,Value]对而设计的一种平面文件(Flat File)。可以把SequenceFile当做是一个容器，把所有的文件打包到SequenceFile类中可以高效的对小文件进行存储和处理。SequenceFile文件并不按照其存储的Key进行排序存储，SequenceFile的内部类Writer提供了append功能。SequenceFile中的Key和Value可以是任意类型Writable或者是自定义Writable。</p>
-
-<p>在存储结构上，SequenceFile主要由一个Header后跟多条Record组成，Header主要包含了Key classname，value classname，存储压缩算法，用户自定义元数据等信息，此外，还包含了一些同步标识，用于快速定位到记录的边界。每条Record以键值对的方式进行存储，用来表示它的字符数组可以一次解析成：记录的长度、Key的长度、Key值和value值，并且Value值的结构取决于该记录是否被压缩。</p>
-
-<p>SequenceFile支持三种记录存储方式：</p>
-
-<ul>
-<li><p>无压缩, io效率较差. 相比压缩, 不压缩的情况下没有什么优势.</p></li>
-<li><p>记录级压缩, 对每条记录都压缩. 这种压缩效率比较一般.</p></li>
-<li><p>块级压缩, 这里的块不同于hdfs中的块的概念. 这种方式会将达到指定块大小的二进制数据压缩为一个块. 相对记录级压缩, 块级压缩拥有更高的压缩效率. 一般来说使用SequenceFile都会使用块级压缩.</p></li>
-</ul>
-
-
-<p>但是SequenceFile只支持Java, SequenceFile一般用来作为小文件的容器使用, 防止小文件占用过多的NameNode内存空间来存储其在DataNode位置的元数据。</p>
-
-<h2>1.2 序列化存储格式和列式存储</h2>
-
-<p>序列化指的是数据格式转化为字节流的过程, 主要用于远程传输或存储. hadoop采用的序列化格式主要是Writables. 但是它只能支持Java语言, 所以后来就出现了Thrift, Avro等格式。</p>
-
-<ul>
-<li>Thrift</li>
-</ul>
-
-
-<p>Thrift是Facebook开发的框架，用于实现跨语言提供服务和接口，满足跨平台通信。但是Thrift不支持分片，且缺少MapReduce的原生支持。所以我们可以忽略这个压缩算法。</p>
-
-<ul>
-<li>Avro</li>
-</ul>
-
-
-<p>Avro 是 Hadoop 中的一个子项目，也是 Apache 中一个独立的项目，Avro 是一个基于二进制数据传输高性能的中间件。在 Hadoop 的其他项目中，例如 HBase 和 Hive 的 Client 端与服务端的数据传输也采用了这个工具。</p>
-
-<p>Avro是一个语言无关的数据序列化的系统，它的出现主要是为了解决Writables缺少跨语言移植的缺陷。Avro将模式存储在文件头中，所以每个文件都是自描述的，而且Avro还支持模式演进(schema evolution)，也就是说，读取文件的模式不需要与写入文件的模式严格匹配，当有新需求时，可以在模式中加入新的字段。</p>
-
-<pre><code>- Avro支持分片, 即使是进行Gzip压缩之后
-
-- 支持跨语言的支持
-</code></pre>
-
-<ul>
-<li>ORCFile</li>
-</ul>
-
-
-<p>ORC的全称是(Optimized Row Columnar)，ORC文件格式是一种Hadoop生态圈中的列式存储格式，它的产生早在2013年初，最初产生自Apache Hive，用于降低Hadoop数据存储空间和加速Hive查询速度。和Parquet类似，它并不是一个单纯的列式存储格式，仍然是首先根据行组分割整个表，在每一个行组内进行按列存储。ORC文件是自描述的，它的元数据使用Protocol Buffers序列化，并且文件中的数据尽可能的压缩以降低存储空间的消耗，目前也被Spark SQL、Presto等查询引擎支持。2015年ORC项目被Apache项目基金会提升为Apache顶级项目。ORC具有以下一些优势：</p>
-
-<pre><code>- ORC是列式存储，有多种文件压缩方式，并且有着很高的压缩比
-
-- 文件是可切分（Split）的。因此，在Hive中使用ORC作为表的文件存储格式，不仅节省HDFS存储资源，查询任务的输入数据量减少，使用的MapTask也就减少了
-
-- 提供了多种索引，row group index、bloom filter index
-
-- ORC可以支持复杂的数据结构（比如Map等）
-
-- 支持所有的hive类型, 包括复合类型: structs, lists, maps 和 unions
-
-- 支持分片
-
-- 可以仅返回查询的列, 减少io消耗, 提升性能
-
-- 可以与Zlib, LZO和Snappy结合进一步压缩
-</code></pre>
-
-<h2>1.3 常用的存储格式对比</h2>
-
-<p>存储格式的对比</p>
-
-<table>
-<thead>
-<tr>
-<th> 存储格式 </th>
-<th> 是否默认 </th>
-<th> 存储方式 </th>
-<th> 压缩算法 </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td> TextFile </td>
-<td> 是 </td>
-<td> 行式存储 </td>
-<td> Gzip、Bzip2 </td>
-</tr>
-<tr>
-<td> SequenceFile </td>
-<td> 否 </td>
-<td> 行式存储 </td>
-<td> NONE、RECORD、BLOCK </td>
-</tr>
-<tr>
-<td> Parquet </td>
-<td> 否 </td>
-<td> 列式存储 </td>
-<td> Uncompress(默认)、Snappy、Gzip、Lzo </td>
-</tr>
-<tr>
-<td> RCFile </td>
-<td> 否 </td>
-<td> 数据按行分块，每块按列存储 </td>
-<td> - </td>
-</tr>
-<tr>
-<td> ORCFile(RCFile的进化版本) </td>
-<td> 否 </td>
-<td> 数据按行分块，每块按照列存储 </td>
-<td> NONE、ZLIB(默认)、SNAPPY </td>
-</tr>
-</tbody>
-</table>
-
-
-<p>存储方式的对比</p>
-
-<table>
-<thead>
-<tr>
-<th> 存储方式 </th>
-<th> 行查询效率 </th>
-<th> 列查询效率 </th>
-<th> 压缩效率 </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td> 行式存储 </td>
-<td> 高 </td>
-<td> 低 </td>
-<td> 低 </td>
-</tr>
-<tr>
-<td> 列式存储 </td>
-<td> 低 </td>
-<td> 高 </td>
-<td> 高 </td>
-</tr>
-</tbody>
-</table>
-
-
-<h1>二、压缩算法</h1>
-
-<h2>2.1 gzip压缩</h2>
-
-<p>优点：压缩率比较高，而且压缩/解压速度也比较快；hadoop本身支持，在应用中处理gzip格式的文件就和直接处理文本一样；有hadoop native库；大部分linux系统都自带gzip命令，使用方便。缺点：不支持split。应用场景：当每个文件压缩之后在130M以内的（1个块大小内），都可以考虑用gzip压缩格式。譬如说一天或者一个小时的日志压缩成一个gzip文件，运行mapreduce程序的时候通过多个gzip文件达到并发。hive程序，streaming程序，和java写的mapreduce程序完全和文本处理一样，压缩之后原来的程序不需要做任何修改。</p>
-
-<h2>2.2 lzo压缩</h2>
-
-<p>优点：压缩/解压速度也比较快，合理的压缩率；支持split，是hadoop中最流行的压缩格式；支持hadoop native库；可以在linux系统下安装lzop命令，使用方便。缺点：压缩率比gzip要低一些；hadoop本身不支持，需要安装；在应用中对lzo格式的文件需要做一些特殊处理（为了支持split需要建索引，还需要指定inputformat为lzo格式）。应用场景：一个很大的文本文件，压缩之后还大于200M以上的可以考虑，而且单个文件越大，lzo优点越明显。</p>
-
-<p>snappy压缩 优点：高速压缩速度和合理的压缩率；支持hadoop native库。缺点：不支持split；压缩率比gzip要低；hadoop本身不支持，需要安装；linux系统下没有对应的命令。应用场景：当mapreduce作业的map输出的数据比较大的时候，作为map到reduce的中间数据的压缩格式；或者作为一个mapreduce作业的输出和另外一个mapreduce作业的输入。</p>
-
-<h2>2.3 bzip2压缩</h2>
-
-<p>优点：支持split；具有很高的压缩率，比gzip压缩率都高；hadoop本身支持，但不支持native；在linux系统下自带bzip2命令，使用方便。缺点：压缩/解压速度慢；不支持native。应用场景：适合对速度要求不高，但需要较高的压缩率的时候，可以作为mapreduce作业的输出格式；或者输出之后的数据比较大，处理之后的数据需要压缩存档减少磁盘空间并且以后数据用得比较少的情况；或者对单个很大的文本文件想压缩减少存储空间，同时又需要支持split，而且兼容之前的应用程序（即应用程序不需要修改）的情况。</p>
-
-<p>最后，我们用一张图来对这4种压缩格式进行比较：</p>
-
-<center><img src="http://ibillxia.github.io/images/2024/IMAG2024052202.webp"></center>
-
-
-<h2>2.4 压缩算法对比</h2>
-
-<p>Hive 在处理数据时，一般都需要经历文件读取和文件写出的过程，如果按照原文件的大小进行读写和传输，不仅效率查而且带宽的占用也很高，此时就需要我们这里所讲的 存储格式 和 压缩算法</p>
-
-<h3>不同的存储格式+压缩算法性能比较</h3>
-
-<p>文件存储格式不同对应不同的压缩算法，从而带来不同的性能，我们根据实际使用考虑压缩算法的性能，主要通过以下 3 个指标：</p>
-
-<p><strong>① 压缩比</strong></p>
-
-<p>压缩比越高，压缩后文件越小，所以压缩比越高越好；</p>
-
-<p>压缩比越高，存储磁盘空间占用越小，可以降低单节点的磁盘IO，同时可以减少占用的带宽；</p>
-
-<p><strong>② 压缩时间</strong></p>
-
-<p>越快越好，加快数据在Hadoop集群流动的速度和磁盘 IO 的速度</p>
-
-<p><strong>③ 压缩后的文件是否可以再分割</strong></p>
-
-<p>可以分割的格式允许单一文件由多个Mapper程序处理，可以更好的并行化</p>
-
-<table>
-<thead>
-<tr>
-<th> 压缩方式 </th>
-<th> 压缩比 </th>
-<th> 压缩速度 </th>
-<th> 解压缩速度 </th>
-<th> 是否可分割 </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td> gzip </td>
-<td> 13.4% </td>
-<td> 21 MB/s </td>
-<td> 118 MB/s </td>
-<td> 否 </td>
-</tr>
-<tr>
-<td> bzip2 </td>
-<td> 13.2% </td>
-<td> 2.4MB/s </td>
-<td> 9.5MB/s </td>
-<td> 是 </td>
-</tr>
-<tr>
-<td> lzo </td>
-<td> 20.5% </td>
-<td> 135 MB/s </td>
-<td> 410 MB/s </td>
-<td> 是 </td>
-</tr>
-<tr>
-<td> snappy </td>
-<td> 22.2% </td>
-<td> 172 MB/s </td>
-<td> 409 MB/s </td>
-<td> 否 </td>
-</tr>
-</tbody>
-</table>
-
-
-<h1>三、使用总结</h1>
-
-<pre><code>*# 压缩比比较*ORC &gt;  PARQUET &gt; TEXTFILE*# 查询速度*ORC &gt;  TEXTFILE &gt; PARQUET*# 存储格式为ORC,不同的压缩算法比较压缩后的文件大小*ZLIB &lt; SNAPPY &lt; 非压缩
-</code></pre>
-
-<h2>① 数据量较大</h2>
-
-<p>如果单个文件比较大，可以使用 Parquet 存储，lzo 压缩，可以避免由于读取不可分割大文件引发的数据倾斜</p>
-
-<h2>② 计算逻辑比较少</h2>
-
-<p>使用 ORC 存储 + ZLIB 压缩，可以尽量减少占用存储空间</p>
-
-<h2>③ 计算逻辑比较多</h2>
-
-<p>使用 ORC 存储 + SNAPPY 压缩，可以提高读写速度，从而提高整体计算性能</p>
-
-<h1>参考资料</h1>
-
-<ol>
-<li><a href="https://cloud.tencent.com/developer/article/1777790">HDFS常用文件类型及压缩算法对比</a></li>
-</ol>
+<center><img src="https://ibillxia.github.io/images/2024/IMAG2024052639.jpg"></center>
 
 ]]></content>
   </entry>

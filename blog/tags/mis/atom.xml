@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: MIS | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/mis/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/mis/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[基于UML的图书管理系统的需求分析]]></title>
-    <link href="http://ibillxia.github.io/blog/2010/07/18/UML-based-library-management-system-requirement-analysis-and-system-design/"/>
+    <link href="https://ibillxia.github.io/blog/2010/07/18/UML-based-library-management-system-requirement-analysis-and-system-design/"/>
     <updated>2010-07-18T10:06:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2010/07/18/UML-based-library-management-system-requirement-analysis-and-system-design</id>
+    <id>https://ibillxia.github.io/blog/2010/07/18/UML-based-library-management-system-requirement-analysis-and-system-design</id>
     <content type="html"><![CDATA[<p>一个图书馆的图书资料库在正常运转中总是面对大量的读者信息、书籍信息以及两者相互作用产生的借书信息、还书信息。
 图书馆作为一个信息资源的集散地，图书和用户借阅资料繁多，包含着很多的信息数据。图书管理系统的开发和应用主要通过
 两个步骤来实现：首先是基于系统功能的需求分析，其次是系统模型的设计和实现。

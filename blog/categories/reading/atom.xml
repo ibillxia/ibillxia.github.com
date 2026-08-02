@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Reading | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/categories/reading/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/categories/reading/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[《Neural Networks: A Comprehensive Foundation》读书笔记]]></title>
-    <link href="http://ibillxia.github.io/blog/2018/07/07/reading-neural-networks-a-comprehensive-approach/"/>
+    <link href="https://ibillxia.github.io/blog/2018/07/07/reading-neural-networks-a-comprehensive-approach/"/>
     <updated>2018-07-07T23:38:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2018/07/07/reading-neural-networks-a-comprehensive-approach</id>
+    <id>https://ibillxia.github.io/blog/2018/07/07/reading-neural-networks-a-comprehensive-approach</id>
     <content type="html"><![CDATA[<center><img src="/images/2018/IMAG2018070701.png"></center>
 
 
@@ -124,9 +124,9 @@
   
   <entry>
     <title type="html"><![CDATA[《腾讯大学-CEO来了》笔记]]></title>
-    <link href="http://ibillxia.github.io/blog/2018/06/02/tencent-univercity-ceo-comming/"/>
+    <link href="https://ibillxia.github.io/blog/2018/06/02/tencent-univercity-ceo-comming/"/>
     <updated>2018-06-02T22:30:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2018/06/02/tencent-univercity-ceo-comming</id>
+    <id>https://ibillxia.github.io/blog/2018/06/02/tencent-univercity-ceo-comming</id>
     <content type="html"><![CDATA[<center><img src="/images/2018/IMAG2018060201.png"></center>
 
 
@@ -388,9 +388,9 @@
   
   <entry>
     <title type="html"><![CDATA[《微信背后的产品观》学习笔记]]></title>
-    <link href="http://ibillxia.github.io/blog/2016/01/04/wechat-product-conception-by-zhangxiaolong/"/>
+    <link href="https://ibillxia.github.io/blog/2016/01/04/wechat-product-conception-by-zhangxiaolong/"/>
     <updated>2016-01-04T20:13:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2016/01/04/wechat-product-conception-by-zhangxiaolong</id>
+    <id>https://ibillxia.github.io/blog/2016/01/04/wechat-product-conception-by-zhangxiaolong</id>
     <content type="html"><![CDATA[<center><img src="/images/2016/IMAG2016010401.png"></center>
 
 
@@ -642,9 +642,9 @@ UI设计师禁止使用竞品 <br/>
   
   <entry>
     <title type="html"><![CDATA[《你不可不知道的音乐大师及其名作》读书笔记]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/12/06/world-most-famous-musicians-and-there-works/"/>
+    <link href="https://ibillxia.github.io/blog/2014/12/06/world-most-famous-musicians-and-there-works/"/>
     <updated>2014-12-06T20:17:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/12/06/world-most-famous-musicians-and-there-works</id>
+    <id>https://ibillxia.github.io/blog/2014/12/06/world-most-famous-musicians-and-there-works</id>
     <content type="html"><![CDATA[<center><img src="/images/2014/IMAG2014120601.jpg"></center>
 
 
@@ -731,9 +731,9 @@ UI设计师禁止使用竞品 <br/>
   
   <entry>
     <title type="html"><![CDATA[读书笔记 - 《谁是谷歌想要的人才》]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/05/21/are-you-smart-enought-to-work-at-google/"/>
+    <link href="https://ibillxia.github.io/blog/2014/05/21/are-you-smart-enought-to-work-at-google/"/>
     <updated>2014-05-21T22:30:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/05/21/are-you-smart-enought-to-work-at-google</id>
+    <id>https://ibillxia.github.io/blog/2014/05/21/are-you-smart-enought-to-work-at-google</id>
     <content type="html"><![CDATA[<p>《谁是谷歌想要的人才 : 破解世界最顶尖公司的面试密码》</p>
 
 <p><img src="/images/2014/IMAG2014052101.jpg"></p>

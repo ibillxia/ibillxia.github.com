@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://ibillxia.github.io/page2">
+  <link rel="canonical" href="https://ibillxia.github.io/page2">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -149,7 +149,7 @@ $(function () {
         </ul>
 
         
-          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
             <fieldset role="search">
               <input type="hidden" name="q" value="site:ibillxia.github.io" />
               <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
@@ -165,6 +165,57 @@ $(function () {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2025/01/03/gating-mechanism-in-recommendation/">【凉夏】推荐模型中的门控机制与动态权重</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2025-01-03T10:33:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2025/01/03/gating-mechanism-in-recommendation/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>原文链接：<a href="https://zhuanlan.zhihu.com/p/701181424">https://zhuanlan.zhihu.com/p/701181424</a></p>
+
+<p>大家好，我是凉夏同学。今天是我第一次在知乎分享我对算法模型的理解，有些生疏，还请大家多多指教。感兴趣的话，敬请关注公众号：凉夏的机器学习笔记。感恩~</p>
+
+<p>今天要讲的是最近比较火的一种网络结构，可以近乎“无脑地”加入到网络结构当中，基本上都可以带来或多或少的效果提升。这个网络结构有人叫他门控网络、门控结构，也有人叫他的英文名“gating”，也有人叫他动态权重。</p>
+
+<p>这篇文章，我会先讲一下我对门控机制的理解，然后会简单介绍几个使用门控机制的论文。</p>
+
+<h1>门控的本质</h1>
+
+<p>一直都觉得深度学习模型架构里，很多东西都是相同的，虽然很多时候他们有不同的名称、亦或是用在了不同的模型位置，但底层的思想和逻辑很可能是一致的。而我认为，门控网络结构的本质就是注意力机制。说到注意力机制，大家应该都不陌生，该结构出现在以DNN模型为基础的各种应用结构中，例如：transformer里面使用了multi-head attention（MHA）这种多头自注意力机制；用户行为序列建模DIN结构使用了target attention结构。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2025/01/03/gating-mechanism-in-recommendation/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -663,60 +714,6 @@ $(function () {
   
     <footer>
       <a rel="full-article" href="/blog/2024/05/26/recommendation-system-industry-summary/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2024/05/22/hdfs-compression-algorithms/">HDFS常用文件类型及压缩算法对比</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2024-05-22T12:18:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2024/05/22/hdfs-compression-algorithms/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><center><img src="/images/2024/IMAG2024052201.webp"></center>
-
-
-<p>首先我们要明确一点，为什么要进行数据压缩？</p>
-
-<p>Cloudera 提出过数据压缩的基本准则：</p>
-
-<ul>
-<li><p>是否压缩数据以及使用何种压缩格式对性能具有重要的影响。</p></li>
-<li><p>需要平衡压缩和解压缩数据所需的能力、读写数据所需的磁盘 IO，以及在网络中发送数据所需的网络带宽。</p></li>
-</ul>
-
-
-<p>此外，用到哪些压缩格式，为什么使用这些压缩格式而不是其他的压缩格式？</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2024/05/22/hdfs-compression-algorithms/">Read on &rarr;</a>
     </footer>
   
 

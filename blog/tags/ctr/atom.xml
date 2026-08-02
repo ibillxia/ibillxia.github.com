@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: CTR | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/ctr/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/ctr/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[【美团】深入FFM原理与实践]]></title>
-    <link href="http://ibillxia.github.io/blog/2017/07/06/ctr-prediction-fm-ffm/"/>
+    <link href="https://ibillxia.github.io/blog/2017/07/06/ctr-prediction-fm-ffm/"/>
     <updated>2017-07-06T12:54:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2017/07/06/ctr-prediction-fm-ffm</id>
+    <id>https://ibillxia.github.io/blog/2017/07/06/ctr-prediction-fm-ffm</id>
     <content type="html"><![CDATA[<p>FM和FFM模型是最近几年提出的模型，凭借其在数据量比较大并且特征稀疏的情况下，仍然能够得到优秀的性能和效果的特性，屡次在各大公司举办的CTR预估比赛中获得不错的战绩。美团点评技术团队在搭建DSP的过程中，探索并使用了FM和FFM模型进行CTR和CVR预估，并且取得了不错的效果。本文旨在把我们对FM和FFM原理的探索和应用的经验介绍给有兴趣的读者。</p>
 
 <h1>前言</h1>

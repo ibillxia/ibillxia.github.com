@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: Leetcode | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/leetcode/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/leetcode/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[全排列及某排列的后继的求解及其STL实现的分析]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/"/>
+    <link href="https://ibillxia.github.io/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/"/>
     <updated>2014-04-24T23:24:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation</id>
+    <id>https://ibillxia.github.io/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation</id>
     <content type="html"><![CDATA[<p>在Leetcode上有好几道全排列相关的题，一直以来只是会写基于递归的全排列生成算法，遇到这几道题后，搜了下一些非递归的实现方法，发现其实全排列的生成还是很有规律的有木有！这里就总结一下递归和非递归的全排列生成方法，并分析一下 STL 的实现。</p>
 
 <p>递归和非递归实现全排列生成的方法也分别有多种，递归法有基于交换的，有基于链接的，还有回溯，非递归法有排序、回溯、求模等，关于所有这些方法的具体实现参见 <a href="http://mengliao.blog.51cto.com/876134/824079">全排列的六种算法</a>. 本文只实现一种递归和一种非递归算法，并在最后对 STL 的非递归算法进行分析。</p>

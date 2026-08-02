@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: ClickHouse | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/clickhouse/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/clickhouse/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[ClickHouse基础知识与实践]]></title>
-    <link href="http://ibillxia.github.io/blog/2019/10/08/clickhouse-basics/"/>
+    <link href="https://ibillxia.github.io/blog/2019/10/08/clickhouse-basics/"/>
     <updated>2019-10-08T16:27:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2019/10/08/clickhouse-basics</id>
+    <id>https://ibillxia.github.io/blog/2019/10/08/clickhouse-basics</id>
     <content type="html"><![CDATA[<center><img src="/images/2019/IMAG2019100801.png"></center>
 
 

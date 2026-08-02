@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: swap | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/swap/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/swap/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[原地交换两个变量的值]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/04/11/swap-two-variables-in-place/"/>
+    <link href="https://ibillxia.github.io/blog/2014/04/11/swap-two-variables-in-place/"/>
     <updated>2014-04-11T22:27:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/04/11/swap-two-variables-in-place</id>
+    <id>https://ibillxia.github.io/blog/2014/04/11/swap-two-variables-in-place</id>
     <content type="html"><![CDATA[<h2>引子</h2>
 
 <p>在码代码的过程中，不经意间就会遇到需要交换两个变量的情况，一般情况下都是通过新定义一个同类型的变量来中转，但自己也知道可以不用定义新变量直接原地交换，但具体如何原地交换以及其中可能隐藏的bug却了解得不是很清楚，于是乎google了一下，发现这里面还真是有很多学问呢，这里整理和总结一下。</p>

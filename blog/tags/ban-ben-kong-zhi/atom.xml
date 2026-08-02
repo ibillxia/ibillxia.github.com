@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 版本控制 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/ban-ben-kong-zhi/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/ban-ben-kong-zhi/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[SVN迁移到Git的过程与技巧]]></title>
-    <link href="http://ibillxia.github.io/blog/2019/05/07/svn-to-git-migration/"/>
+    <link href="https://ibillxia.github.io/blog/2019/05/07/svn-to-git-migration/"/>
     <updated>2019-05-07T09:49:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2019/05/07/svn-to-git-migration</id>
+    <id>https://ibillxia.github.io/blog/2019/05/07/svn-to-git-migration</id>
     <content type="html"><![CDATA[<p>关于在VCS中SVN和Git之间的迁移（Clone）这个部分网上已经有大批的文章介绍，而且都非常不错，能够满足我们的常见的需求，这里介绍的是我自己整理的一些技巧和使用中出现的一些问题和疑问。</p>
 
 <p>阅读本篇文章，请先有一些Git和SVN的使用经验（又是经验，经验到底是什么？我都不知道）。</p>

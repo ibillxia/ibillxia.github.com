@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://ibillxia.github.io/page10">
+  <link rel="canonical" href="https://ibillxia.github.io/page10">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -149,7 +149,7 @@ $(function () {
         </ul>
 
         
-          <form class="pull-right navbar-search" action="http://www.google.com/" method="get">
+          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
             <fieldset role="search">
               <input type="hidden" name="q" value="site:ibillxia.github.io" />
               <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
@@ -165,6 +165,75 @@ $(function () {
     <div class="row-fluid">
       <div class="span9">
   
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
+      <h1 class="entry-title"><a href="/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/">深入理解STL源码(3.2) 序列式容器之list</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-07-06T22:03:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>本文涉及到 SGI STL 源码的文件有<code>list</code>、<code>stl_list.h</code>、<code>list.h</code> 等几个文件。</p>
+
+<h2>1. list 和 slist</h2>
+
+<p>STL中也实现了链表这种数据结构，list是STL标准的双向链表，而slit是SGI的单链表。相比于vector的连续线性空间而言，list即有有点也有缺点：优点是空间分配更灵活，对任何位置的插入删除操作都是常数时间；缺点是排序不方便。list和vector是比较常用的线性容器，那么什么时候用哪一种容器呢，需要视元素的多少、元素构造的复杂度（是否为POD数据）以及元素存取行为的特性而定。限于篇幅，本文主要介绍list的内容，关于单链表slist可以参见源码和侯捷的书。</p>
+
+<h2>2. list 的数据结构</h2>
+
+<p>在数据结构中，我们知道链表的节点node和链表list本身是不同的数据结构，以下分别是node和list的数据结构：<br/>
+<code>cpp
+struct _List_node_base {
+  _List_node_base* _M_next;
+  _List_node_base* _M_prev;
+};
+template &lt;class _Tp&gt;
+struct _List_node : public _List_node_base {  // node 的定义
+  _Tp _M_data;
+};
+template &lt;class _Tp, class _Alloc&gt;
+class _List_base {
+protected:
+  _List_node&lt;_Tp&gt;* _M_node; // 只要一个指针就可以表示整个双向链表
+};
+template &lt;class _Tp, class _Alloc = __STL_DEFAULT_ALLOCATOR(_Tp) &gt;
+class list : protected _List_base&lt;_Tp, _Alloc&gt; {
+public:
+  typedef _List_node&lt;_Tp&gt; _Node;
+};
+</code></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -650,61 +719,6 @@ Allocator 的作用相当于operator new 和operator delete的功能，只是它
   
     <footer>
       <a rel="full-article" href="/blog/2014/05/04/android-ndk-development/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2014/04/28/configure-twitter-bootstrap-theme-in-octopress/">给Octopress博客配置Twitter Bootstrap主题</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-04-28T22:37:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2014/04/28/configure-twitter-bootstrap-theme-in-octopress/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>很长一段时间以来就看到各种基于 Twitter Bootstrap 主题的博客很清爽，而且对 Tag 的归档也做得很赞，于是很想将自己的博客也换成 Bootstrap 的主题，随着看到的博客越来越多，自己的 Octopress 主题先得越来越臃肿，而 Tags 归档功能也相形见绌，更换主题的欲望越来越强烈了。于是乎，趁这个周末捣鼓了一番，最终大功告成，在这里分享一下具体过程。</p>
-
-<h2>Bootstrap 主题的安装</h2>
-
-<p>首先下载适用于 Octopress 的 <a href="https://github.com/bkutil/bootstrap-theme">Bootstrap主题</a> 并解压缩到博客的 .theme 目录，然后安装：</p>
-
-<pre><code class="sh">rake install['bootstrap']
-</code></pre>
-
-<p>安装的过程中可能会提示有 sass 或其他依赖库的语法错误神马的，这是因为 sass 的版本过低，可以通过如下命令来跟新：</p>
-
-<pre><code class="sh">bundle update sass
-</code></pre>
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/04/28/configure-twitter-bootstrap-theme-in-octopress/">Read on &rarr;</a>
     </footer>
   
 

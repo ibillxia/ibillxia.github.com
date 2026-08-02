@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: Spark | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/spark/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/spark/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Spark内存管理及调优]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/05/15/spark-memory-management-tuning/"/>
+    <link href="https://ibillxia.github.io/blog/2024/05/15/spark-memory-management-tuning/"/>
     <updated>2024-05-15T17:25:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/05/15/spark-memory-management-tuning</id>
+    <id>https://ibillxia.github.io/blog/2024/05/15/spark-memory-management-tuning</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://qiankunli.github.io/2022/05/05/spark_detail.html">https://qiankunli.github.io/2022/05/05/spark_detail.html</a></p>
 
 <h1>内存划分及用途</h1>
@@ -173,9 +173,9 @@ keywords.map((_, 1)).reduceByKey(_ + _).collect // reduceByKey 算子会引入 S
   
   <entry>
     <title type="html"><![CDATA[Spark Word2Vec源码详细解析]]></title>
-    <link href="http://ibillxia.github.io/blog/2020/10/16/spark-word2vec-source-analysis/"/>
+    <link href="https://ibillxia.github.io/blog/2020/10/16/spark-word2vec-source-analysis/"/>
     <updated>2020-10-16T18:40:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2020/10/16/spark-word2vec-source-analysis</id>
+    <id>https://ibillxia.github.io/blog/2020/10/16/spark-word2vec-source-analysis</id>
     <content type="html"><![CDATA[<p>目录：</p>
 
 <p>1.简单介绍spark word2vec</p>
@@ -1373,9 +1373,9 @@ object Word2VecCBOWSolver extends Logging {
   
   <entry>
     <title type="html"><![CDATA[Spark与Flink：下一代大数据计算引擎之争]]></title>
-    <link href="http://ibillxia.github.io/blog/2020/05/31/spark-vs-flink-comparison/"/>
+    <link href="https://ibillxia.github.io/blog/2020/05/31/spark-vs-flink-comparison/"/>
     <updated>2020-05-31T16:37:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2020/05/31/spark-vs-flink-comparison</id>
+    <id>https://ibillxia.github.io/blog/2020/05/31/spark-vs-flink-comparison</id>
     <content type="html"><![CDATA[<h1>一、下一代大数据计算引擎</h1>
 
 <p>自从数据处理需求超过了传统数据库能有效处理的数据量之后，Hadoop 等各种基于 MapReduce 的海量数据处理系统应运而生。从 2004 年 Google 发表 MapReduce 论文开始，经过近 10 年的发展，基于 Hadoop 开源生态或者其它相应系统的海量数据处理已经成为业界的基本需求。</p>
@@ -1729,9 +1729,9 @@ object Word2VecCBOWSolver extends Logging {
   
   <entry>
     <title type="html"><![CDATA[Apache Spark的API三剑客：RDD、DataFrame和Dataset]]></title>
-    <link href="http://ibillxia.github.io/blog/2019/09/17/spark-rdd-dataframe-dataset/"/>
+    <link href="https://ibillxia.github.io/blog/2019/09/17/spark-rdd-dataframe-dataset/"/>
     <updated>2019-09-17T15:15:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2019/09/17/spark-rdd-dataframe-dataset</id>
+    <id>https://ibillxia.github.io/blog/2019/09/17/spark-rdd-dataframe-dataset</id>
     <content type="html"><![CDATA[<h1>一、Spark 1.X</h1>
 
 <p>spark 2.X开始，三者的关系发生了变化，可以参考《且谈Apache Spark的API三剑客：RDD、DataFrame和Dataset》 ,在2.X中DataFrame=DataSet[Row],其实是不知道类型。下面介绍是1.X，以免误导大家。</p>
@@ -2059,9 +2059,9 @@ val eventsRDD = deviceEventsDS.rdd.take(10)
   
   <entry>
     <title type="html"><![CDATA[Spark在Windows下的环境搭建]]></title>
-    <link href="http://ibillxia.github.io/blog/2018/07/22/spark-windows-setup/"/>
+    <link href="https://ibillxia.github.io/blog/2018/07/22/spark-windows-setup/"/>
     <updated>2018-07-22T15:34:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2018/07/22/spark-windows-setup</id>
+    <id>https://ibillxia.github.io/blog/2018/07/22/spark-windows-setup</id>
     <content type="html"><![CDATA[<p>由于Spark是用Scala来写的，所以Spark对Scala肯定是原生态支持的，因此这里以Scala为主来介绍Spark环境的搭建，主要包括四个步骤，分别是：JDK的安装，Scala的安装，Spark的安装，Hadoop的下载和配置。为了突出”From Scratch”的特点（都是标题没选好的缘故），所以下面的步骤稍显有些啰嗦，老司机大可不必阅读，直接跳过就好。</p>
 
 <!--more-->

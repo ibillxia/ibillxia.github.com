@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: Email | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/email/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/email/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[PHP发送邮件]]></title>
-    <link href="http://ibillxia.github.io/blog/2010/07/21/php-send-email/"/>
+    <link href="https://ibillxia.github.io/blog/2010/07/21/php-send-email/"/>
     <updated>2010-07-21T10:05:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2010/07/21/php-send-email</id>
+    <id>https://ibillxia.github.io/blog/2010/07/21/php-send-email</id>
     <content type="html"><![CDATA[<p>现在很多主机空间都是IIS上执行PHP程序，大多不能直接用mail()发送邮件，有了这个类只要你有注册过邮箱，
 就可以随意的发送邮件，速度也不慢哦。</p>
 

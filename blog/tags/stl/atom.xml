@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: STL | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/stl/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/stl/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[深入理解STL源码系列文章归档]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/11/26/insight-into-stl-archive/"/>
+    <link href="https://ibillxia.github.io/blog/2014/11/26/insight-into-stl-archive/"/>
     <updated>2014-11-26T18:19:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/11/26/insight-into-stl-archive</id>
+    <id>https://ibillxia.github.io/blog/2014/11/26/insight-into-stl-archive</id>
     <content type="html"><![CDATA[<p>前后花了大概快六个月的时间（从6月8日到11月23），终于把侯捷的《STL 源码剖析》看完了，同时也把 SGI 实现 STL 的最新版本看完了。在这段时间里，几乎是每个周末花大约一天的时间来看书和代码，并将相应内容在博客中加以归纳和总结。由于基本上都是在周末抽时间看的，所以周期拉得比较长，但收获还是挺多的，其中印象比较深刻的是 STL 中的迭代器与型别萃取、空间配置与内存池的实现、双端队列 (deque)  的实现、红黑树的实现、排序等算法的实现、类与函数的偏特化、函数对象与适配器等等，对 STL 的整体架构也有了比较深入的认识。这段时间也经历了很多事情，看书和代码的过程中也遇到了很多问题，有些经过反复琢磨自己解决了，还有些仍未完全弄清楚，需要再回过头去看一遍。另外，在看书和代码的过程中，基本没有去写代码、去实践，只停留在理论上，再看一遍的时候可以写些测试的代码或自己实现一个相应的模块或功能。</p>
 
 <p>这里再把之前写的深入理解 STL 源码的系列文章进行一个归档：</p>
@@ -91,9 +91,9 @@
   
   <entry>
     <title type="html"><![CDATA[深入理解STL源码(7) 配接器adaptor]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/11/23/insight-into-stl-7-adaptor/"/>
+    <link href="https://ibillxia.github.io/blog/2014/11/23/insight-into-stl-7-adaptor/"/>
     <updated>2014-11-23T20:21:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/11/23/insight-into-stl-7-adaptor</id>
+    <id>https://ibillxia.github.io/blog/2014/11/23/insight-into-stl-7-adaptor</id>
     <content type="html"><![CDATA[<h2>1. 概述</h2>
 
 <p>适配器（adaptor/adapter）在STL组件的灵活运用功能上，扮演着轴承、转换器的角色，将一种容器或迭代器装换或封装成另一种容器或迭代器，例如基于deque容器的stack和queue。Adaptor这个概念，实际上是一种设计模式（design pattern），是《Design Pattern》一书中提及到的23个设计模式之一，其中对adaptor的定义如下：</p>
@@ -264,9 +264,9 @@ mem_fun(_Ret (_Tp::*__f)()) { return mem_fun_t&lt;_Ret,_Tp&gt;(__f); } // mem_fu
   
   <entry>
     <title type="html"><![CDATA[深入理解STL源码(6) 仿函数|函数对象]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/11/15/insight-into-stl-6-functor-or-function-objects/"/>
+    <link href="https://ibillxia.github.io/blog/2014/11/15/insight-into-stl-6-functor-or-function-objects/"/>
     <updated>2014-11-15T10:06:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/11/15/insight-into-stl-6-functor-or-function-objects</id>
+    <id>https://ibillxia.github.io/blog/2014/11/15/insight-into-stl-6-functor-or-function-objects</id>
     <content type="html"><![CDATA[<h2>1. 仿函数|函数对象概述</h2>
 
 <p>在STL的六大组件中，仿函数可说是体积最小、观念最简单、实现最容易的一个，但小兵也能立大功——他扮演一种“策略”角色，可以让STL算法具有更加灵活的“演出”。</p>
@@ -427,9 +427,9 @@ struct _Project2nd : public binary_function&lt;_Arg1, _Arg2, _Arg2&gt; {
   
   <entry>
     <title type="html"><![CDATA[深入理解STL源码(5.4) 算法之复杂算法algorithm]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms/"/>
+    <link href="https://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms/"/>
     <updated>2014-11-01T10:33:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms</id>
+    <id>https://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms</id>
     <content type="html"><![CDATA[<p>本文主要介绍STL中的稍微复杂的算法，主要涉及到的源码文件有 <code>stl_algo.h</code> 等。</p>
 
 <p>在文件 <code>stl_algo.h</code> 中有很多常用的算法，包括查找、计数、旋转、删除、排序、合并、集合的交并等运算、求极值、排列组合等等，本文将按源码中各算法的实现顺序来介绍其具体实现细节。由于本文涉及到的算法和相关代码太多，在文中就尽量不贴出代码了，详细的代码及相关注释请参见 <a href="http://ibillxia.github.io/upload/code/stl_algo.h">stl_algo.h</a>。</p>
@@ -622,9 +622,9 @@ return __first == __last ? __first
   
   <entry>
     <title type="html"><![CDATA[深入理解STL源码(5.3) 算法之基本算法algobase]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/10/25/insight-into-stl-5-algorithm-3-base-algorithms-algobase/"/>
+    <link href="https://ibillxia.github.io/blog/2014/10/25/insight-into-stl-5-algorithm-3-base-algorithms-algobase/"/>
     <updated>2014-10-25T21:13:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/10/25/insight-into-stl-5-algorithm-3-base-algorithms-algobase</id>
+    <id>https://ibillxia.github.io/blog/2014/10/25/insight-into-stl-5-algorithm-3-base-algorithms-algobase</id>
     <content type="html"><![CDATA[<p>本文主要介绍STL中的基本算法，主要涉及到的源码文件有 <code>stl_algobase.h</code> 等。</p>
 
 <p>在 <code>stl_algobase.h</code> 中定义的算法都比较简单基础，主要涉及区间相等判断、区间填充、求极值、交换、拷贝、字典序比较等算法，而其他诸如查找、计数、排序、旋转等算法则在文件 <code>stl_algo.h</code> 中实现。在algobase基本算法中，除了字典序比较、复制/拷贝算法外，其他都比较简单，这里先依次介绍这些简单的算法，然后再介绍字典序比较和拷贝算法。</p>

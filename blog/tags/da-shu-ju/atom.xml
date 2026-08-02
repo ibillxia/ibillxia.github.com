@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 大数据 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/da-shu-ju/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/da-shu-ju/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[HDFS常用文件类型及压缩算法对比]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/05/22/hdfs-compression-algorithms/"/>
+    <link href="https://ibillxia.github.io/blog/2024/05/22/hdfs-compression-algorithms/"/>
     <updated>2024-05-22T12:18:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/05/22/hdfs-compression-algorithms</id>
+    <id>https://ibillxia.github.io/blog/2024/05/22/hdfs-compression-algorithms</id>
     <content type="html"><![CDATA[<center><img src="/images/2024/IMAG2024052201.webp"></center>
 
 
@@ -314,9 +314,9 @@
   
   <entry>
     <title type="html"><![CDATA[Spark与Flink：下一代大数据计算引擎之争]]></title>
-    <link href="http://ibillxia.github.io/blog/2020/05/31/spark-vs-flink-comparison/"/>
+    <link href="https://ibillxia.github.io/blog/2020/05/31/spark-vs-flink-comparison/"/>
     <updated>2020-05-31T16:37:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2020/05/31/spark-vs-flink-comparison</id>
+    <id>https://ibillxia.github.io/blog/2020/05/31/spark-vs-flink-comparison</id>
     <content type="html"><![CDATA[<h1>一、下一代大数据计算引擎</h1>
 
 <p>自从数据处理需求超过了传统数据库能有效处理的数据量之后，Hadoop 等各种基于 MapReduce 的海量数据处理系统应运而生。从 2004 年 Google 发表 MapReduce 论文开始，经过近 10 年的发展，基于 Hadoop 开源生态或者其它相应系统的海量数据处理已经成为业界的基本需求。</p>
@@ -670,9 +670,9 @@
   
   <entry>
     <title type="html"><![CDATA[ClickHouse基础知识与实践]]></title>
-    <link href="http://ibillxia.github.io/blog/2019/10/08/clickhouse-basics/"/>
+    <link href="https://ibillxia.github.io/blog/2019/10/08/clickhouse-basics/"/>
     <updated>2019-10-08T16:27:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2019/10/08/clickhouse-basics</id>
+    <id>https://ibillxia.github.io/blog/2019/10/08/clickhouse-basics</id>
     <content type="html"><![CDATA[<center><img src="/images/2019/IMAG2019100801.png"></center>
 
 
@@ -1383,9 +1383,9 @@ select dim2, uniqMerge(uv) from test.aggregatingmergetree_view group by dim2 ord
   
   <entry>
     <title type="html"><![CDATA[Apache Spark的API三剑客：RDD、DataFrame和Dataset]]></title>
-    <link href="http://ibillxia.github.io/blog/2019/09/17/spark-rdd-dataframe-dataset/"/>
+    <link href="https://ibillxia.github.io/blog/2019/09/17/spark-rdd-dataframe-dataset/"/>
     <updated>2019-09-17T15:15:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2019/09/17/spark-rdd-dataframe-dataset</id>
+    <id>https://ibillxia.github.io/blog/2019/09/17/spark-rdd-dataframe-dataset</id>
     <content type="html"><![CDATA[<h1>一、Spark 1.X</h1>
 
 <p>spark 2.X开始，三者的关系发生了变化，可以参考《且谈Apache Spark的API三剑客：RDD、DataFrame和Dataset》 ,在2.X中DataFrame=DataSet[Row],其实是不知道类型。下面介绍是1.X，以免误导大家。</p>
@@ -1713,9 +1713,9 @@ val eventsRDD = deviceEventsDS.rdd.take(10)
   
   <entry>
     <title type="html"><![CDATA[Apache Flink入门教程与资料汇总]]></title>
-    <link href="http://ibillxia.github.io/blog/2019/08/11/apache-flink-introduction/"/>
+    <link href="https://ibillxia.github.io/blog/2019/08/11/apache-flink-introduction/"/>
     <updated>2019-08-11T16:53:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2019/08/11/apache-flink-introduction</id>
+    <id>https://ibillxia.github.io/blog/2019/08/11/apache-flink-introduction</id>
     <content type="html"><![CDATA[<center><img src="/images/2019/IMAG2019081100.png"></center>
 
 

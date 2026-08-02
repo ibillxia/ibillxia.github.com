@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: DataScience | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/categories/datascience/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/categories/datascience/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[数据科学与机器学习2026年趋势展望]]></title>
-    <link href="http://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026/"/>
+    <link href="https://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026/"/>
     <updated>2025-12-12T10:27:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026</id>
+    <id>https://ibillxia.github.io/blog/2025/12/12/data-science-trends-2026</id>
     <content type="html"><![CDATA[<p>分享两篇关于数据科学与机器学习趋势的文章，供大家参考。总结下来，最最重要的两大趋势：</p>
 
 <ul>
@@ -423,9 +423,9 @@
   
   <entry>
     <title type="html"><![CDATA[使用TensorFlow、ONNX和TensorRT加速深度学习推理]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference/"/>
+    <link href="https://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference/"/>
     <updated>2024-07-15T15:17:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference</id>
+    <id>https://ibillxia.github.io/blog/2024/07/15/tensorflow-onnx-tensorrt-inference</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://developer.nvidia.cn/blog/speeding-up-deep-learning-inference-using-tensorflow-onnx-and-tensorrt/">https://developer.nvidia.cn/blog/speeding-up-deep-learning-inference-using-tensorflow-onnx-and-tensorrt/</a></p>
 
 <p>从 TensorRT 7 . 0 开始， Universal Framework Format（ UFF ）被弃用。在本文中，您将学习如何使用新的 TensorFlow -ONNX- TensorRT 工作流部署经过 TensorFlow 培训的深度学习模型。图 1 显示了 TensorRT 的高级工作流。</p>
@@ -925,9 +925,9 @@ save_engine(engine, engine_name)
   
   <entry>
     <title type="html"><![CDATA[【DataFun】因果推断与复杂AB测试]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/07/09/causal-inference-complex-ab-testing/"/>
+    <link href="https://ibillxia.github.io/blog/2024/07/09/causal-inference-complex-ab-testing/"/>
     <updated>2024-07-09T15:51:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/07/09/causal-inference-complex-ab-testing</id>
+    <id>https://ibillxia.github.io/blog/2024/07/09/causal-inference-complex-ab-testing</id>
     <content type="html"><![CDATA[<h2>24年7月5-6北京站</h2>
 
 <h2><strong>eBay 基于Uplift Model的优惠券分发优化</strong></h2>
@@ -1002,9 +1002,9 @@ save_engine(engine, engine_name)
   
   <entry>
     <title type="html"><![CDATA[PyTorch+CUDA+显卡算力对应关系]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility/"/>
+    <link href="https://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility/"/>
     <updated>2024-07-04T17:06:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility</id>
+    <id>https://ibillxia.github.io/blog/2024/07/04/pytorch-cuda-gpu-compatibility</id>
     <content type="html"><![CDATA[<h1>Pytorch 各个GPU版本CUDA和cuDNN对应版本</h1>
 
 <p><a href="https://blog.csdn.net/weixin_45508265/article/details/122006134">https://blog.csdn.net/weixin_45508265/article/details/122006134</a></p>
@@ -1062,9 +1062,9 @@ save_engine(engine, engine_name)
   
   <entry>
     <title type="html"><![CDATA[【DataFun】因果推断在微视激励和供需场景的应用]]></title>
-    <link href="http://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application/"/>
+    <link href="https://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application/"/>
     <updated>2023-12-27T16:16:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application</id>
+    <id>https://ibillxia.github.io/blog/2023/12/27/causal-inference-weishi-application</id>
     <content type="html"><![CDATA[<center><img src="/images/2023/IMAG2023122701.png"></center>
 
 

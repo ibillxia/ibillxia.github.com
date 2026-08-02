@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 工程实践 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/gong-cheng-shi-jian/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/gong-cheng-shi-jian/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[【蘑菇先生】工业界大模型推荐实战经验梳理]]></title>
-    <link href="http://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice/"/>
+    <link href="https://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice/"/>
     <updated>2025-01-03T10:31:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice</id>
+    <id>https://ibillxia.github.io/blog/2025/01/03/llm-recommendation-industry-practice</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/7387477310">https://zhuanlan.zhihu.com/p/7387477310</a></p>
 
 <p>大家好，我是蘑菇先生。好久不见，今天盘点下2024年工业界大模型在搜广推上的实战落地型工作。业界工作大体分为两类：</p>
@@ -413,9 +413,9 @@
   
   <entry>
     <title type="html"><![CDATA[工业界推荐系统技术要点总结]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary/"/>
+    <link href="https://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary/"/>
     <updated>2024-05-26T11:25:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary</id>
+    <id>https://ibillxia.github.io/blog/2024/05/26/recommendation-system-industry-summary</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/689894486">https://zhuanlan.zhihu.com/p/689894486</a></p>
 
 <p>工业界的推荐系统技术要点有很多，想从事推荐系统相关方向的同学都建议刷一刷。</p>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: Stable | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/stable/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/stable/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[AI绘画原理解析：从CLIP、DALLE到Stable Diffusion]]></title>
-    <link href="http://ibillxia.github.io/blog/2024/07/02/ai-painting-clip-dalle-stable-diffusion/"/>
+    <link href="https://ibillxia.github.io/blog/2024/07/02/ai-painting-clip-dalle-stable-diffusion/"/>
     <updated>2024-07-02T15:16:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2024/07/02/ai-painting-clip-dalle-stable-diffusion</id>
+    <id>https://ibillxia.github.io/blog/2024/07/02/ai-painting-clip-dalle-stable-diffusion</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://blog.csdn.net/v_JULY_v/article/details/131205615">https://blog.csdn.net/v_JULY_v/article/details/131205615</a></p>
 
 <h1>前言</h1>

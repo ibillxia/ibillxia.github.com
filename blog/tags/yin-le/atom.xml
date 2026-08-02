@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 音乐 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/yin-le/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/yin-le/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[探秘Spotify的Echo Nest]]></title>
-    <link href="http://ibillxia.github.io/blog/2018/08/14/spotify-echo-nest/"/>
+    <link href="https://ibillxia.github.io/blog/2018/08/14/spotify-echo-nest/"/>
     <updated>2018-08-14T12:00:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2018/08/14/spotify-echo-nest</id>
+    <id>https://ibillxia.github.io/blog/2018/08/14/spotify-echo-nest</id>
     <content type="html"><![CDATA[<center><img src="/images/2018/IMAG201808101.jpeg"></center>
 
 
@@ -195,9 +195,9 @@
   
   <entry>
     <title type="html"><![CDATA[《你不可不知道的音乐大师及其名作》读书笔记]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/12/06/world-most-famous-musicians-and-there-works/"/>
+    <link href="https://ibillxia.github.io/blog/2014/12/06/world-most-famous-musicians-and-there-works/"/>
     <updated>2014-12-06T20:17:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/12/06/world-most-famous-musicians-and-there-works</id>
+    <id>https://ibillxia.github.io/blog/2014/12/06/world-most-famous-musicians-and-there-works</id>
     <content type="html"><![CDATA[<center><img src="/images/2014/IMAG2014120601.jpg"></center>
 
 

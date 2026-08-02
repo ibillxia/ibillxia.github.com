@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Tag: 音乐生成 | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/tags/yin-le-sheng-cheng/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/tags/yin-le-sheng-cheng/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[基于so-vits-svc的AI翻唱歌曲教程]]></title>
-    <link href="http://ibillxia.github.io/blog/2025/03/16/music-cover-by-so-vits-svc/"/>
+    <link href="https://ibillxia.github.io/blog/2025/03/16/music-cover-by-so-vits-svc/"/>
     <updated>2025-03-16T09:51:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2025/03/16/music-cover-by-so-vits-svc</id>
+    <id>https://ibillxia.github.io/blog/2025/03/16/music-cover-by-so-vits-svc</id>
     <content type="html"><![CDATA[<p>原文链接：<a href="https://zhuanlan.zhihu.com/p/635429751">https://zhuanlan.zhihu.com/p/635429751</a></p>
 
 <p>So-vits-svc(SoftVC VITS Singing Voice Conversion)是一款开源免费AI语音转换软件，最近大火的AI孙燕姿利用的也是这一技术：</p>

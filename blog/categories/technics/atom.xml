@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Technics | Bill's Blog]]></title>
-  <link href="http://ibillxia.github.io/blog/categories/technics/atom.xml" rel="self"/>
-  <link href="http://ibillxia.github.io/"/>
-  <updated>2026-07-05T20:49:09+08:00</updated>
-  <id>http://ibillxia.github.io/</id>
+  <link href="https://ibillxia.github.io/blog/categories/technics/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-02T22:51:26+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
     <email><![CDATA[ibillxia@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Koding——一个惊艳的在线编程开发平台]]></title>
-    <link href="http://ibillxia.github.io/blog/2014/03/01/koding-an-amazing-online-development-environment/"/>
+    <link href="https://ibillxia.github.io/blog/2014/03/01/koding-an-amazing-online-development-environment/"/>
     <updated>2014-03-01T22:43:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2014/03/01/koding-an-amazing-online-development-environment</id>
+    <id>https://ibillxia.github.io/blog/2014/03/01/koding-an-amazing-online-development-environment</id>
     <content type="html"><![CDATA[<p>最近在v2ex上发现了一个非常酷的云编程发开平台——Koding，与大家分享一下，主要介绍一下它的基本功能和操作。</p>
 
 
@@ -481,9 +481,9 @@ Server built:   Jul 12 2013 13:18:14
   
   <entry>
     <title type="html"><![CDATA[2013IDF声龙语音识别技术演示]]></title>
-    <link href="http://ibillxia.github.io/blog/2013/04/10/Intel-Developer-Forum-2013-Nuance-Dragon-Presentation/"/>
+    <link href="https://ibillxia.github.io/blog/2013/04/10/Intel-Developer-Forum-2013-Nuance-Dragon-Presentation/"/>
     <updated>2013-04-10T12:57:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2013/04/10/Intel-Developer-Forum-2013-Nuance-Dragon-Presentation</id>
+    <id>https://ibillxia.github.io/blog/2013/04/10/Intel-Developer-Forum-2013-Nuance-Dragon-Presentation</id>
     <content type="html"><![CDATA[<p>2013英特尔信息技术峰会(Intel Developer Forum, IDF)上，来自Nuance的声龙语音合成和识别技术的演示，中文语音识别不给力，
 笑点频出啊，哈哈</p>
 
@@ -499,9 +499,9 @@ Server built:   Jul 12 2013 13:18:14
   
   <entry>
     <title type="html"><![CDATA[EFI和操作系统]]></title>
-    <link href="http://ibillxia.github.io/blog/2012/09/23/EFI-and-operating-system/"/>
+    <link href="https://ibillxia.github.io/blog/2012/09/23/EFI-and-operating-system/"/>
     <updated>2012-09-23T23:03:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2012/09/23/EFI-and-operating-system</id>
+    <id>https://ibillxia.github.io/blog/2012/09/23/EFI-and-operating-system</id>
     <content type="html"><![CDATA[<p>前两天在98上看到一个帖子 windows 8 没法和linux共存？ 里面有一个概念就是EFI</p>
 
 <h2>什么是EFI？</h2>
@@ -594,9 +594,9 @@ EFI系统不提供复杂的缓存器保护功能，它只具备简单的缓存�
   
   <entry>
     <title type="html"><![CDATA[伪造IP地址的原理]]></title>
-    <link href="http://ibillxia.github.io/blog/2010/08/31/the-elements-of-ip-faking/"/>
+    <link href="https://ibillxia.github.io/blog/2010/08/31/the-elements-of-ip-faking/"/>
     <updated>2010-08-31T09:41:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2010/08/31/the-elements-of-ip-faking</id>
+    <id>https://ibillxia.github.io/blog/2010/08/31/the-elements-of-ip-faking</id>
     <content type="html"><![CDATA[<p>入侵者使用假IP地址发送包，利用基于IP地址证实的应用程序。其结果是未授权的远端用户进入带有防火墙的主机系统。</p>
 
 
@@ -647,9 +647,9 @@ EFI系统不提供复杂的缓存器保护功能，它只具备简单的缓存�
   
   <entry>
     <title type="html"><![CDATA[UTF8中文编码范围]]></title>
-    <link href="http://ibillxia.github.io/blog/2010/08/21/utf8-chinese-coding/"/>
+    <link href="https://ibillxia.github.io/blog/2010/08/21/utf8-chinese-coding/"/>
     <updated>2010-08-21T10:31:00+08:00</updated>
-    <id>http://ibillxia.github.io/blog/2010/08/21/utf8-chinese-coding</id>
+    <id>https://ibillxia.github.io/blog/2010/08/21/utf8-chinese-coding</id>
     <content type="html"><![CDATA[<p>UTF-8有点类似于Haffman编码，它将Unicode编码为： </br>
 00000000-0000007F的字符，用单个字节来表示； </br>
 00000080-000007FF的字符用两个字节表示 （中文的编码范围） </br>
