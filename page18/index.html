@@ -171,6 +171,68 @@ $(function () {
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2010/10/19/10-difference-between-linux-and-bsd/">Linux与BSD之间的10个不同之处</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-10-19T22:30:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2010/10/19/10-difference-between-linux-and-bsd/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>也许你经常会听到人们把Linux及BSD系统混为一谈，甚至于媒体都这么说。当然，事实上这两者确实有很多相似之处，比如它们都是基于Unix演变而来，
+而且基本上这两类系统都是由非盈利组织及团队开发，另外我更想说的是，这两个系统都有一个共同的目标–那就是创建最有用、最可靠的操作系统。 那么
+这两个系统的区别到底在哪里?国外一位名为 Jack Wallen 的科技 Blogger 发表了一篇名为 10 differences between Linux and BSD 的文章，从许可证、
+代码控制、内核 vs 操作系统、UNIX-Like、基本系统、更多来自于源代码、升级、前沿技术、硬件支持及用户群等10方面描述了 Linux 与 BSD 之间的 10 
+个不同之处。</p>
+
+
+
+
+<h3>1、许可证</h3>
+
+
+<p>正如我们所知道的，Linux 操作系统是基于 GPL 许可证授权下的。该许可证可防止开源软件被转换为封闭源代码软件及确保源代码的可用性。 GPL 许可证的
+目的就是防止二进制包成为唯一的软件发行源。</p>
+
+
+
+
+<p>而 BSD 许可证的限制则要少得多，它甚至允许二进制包成为唯一的发行源。这就是核心差异，可以这样理解：GPL 许可证让您有权拥有任何你想要使用该软件的
+方法，但你必须确保提供源代码给下一个使用它的人(包括你对它的改变部分)。而 BSD 许可证并不是要求你必须那么做。( 译者注：这里分别维基百科上对 BSD 及 GPL 
+许可证的解释)</p>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/10/19/10-difference-between-linux-and-bsd/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2010/10/16/something-about-idle-in-linux-kernel-analysis/">分析linux内核的idle的知识</a></h1>
     
     
@@ -707,75 +769,6 @@ call_user_func('a', "333","444");
   
     <footer>
       <a rel="full-article" href="/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2010/07/21/php-send-email/">PHP发送邮件</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2010-07-21T10:05:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2010/07/21/php-send-email/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>现在很多主机空间都是IIS上执行PHP程序，大多不能直接用mail()发送邮件，有了这个类只要你有注册过邮箱，
-就可以随意的发送邮件，速度也不慢哦。</p>
-
-
-
-
-<p>先给一个具体的使用示例：</p>
-
-
-
-
-<pre><code class="php">&lt;? 
-require (FILE_DIR."smtp.php"); 
-$smtpserver = "smtp.xxx.com";//SMTP服务器 
-$smtpserverport =25;//SMTP服务器端口 
-$smtpusermail = "xxxxx@xxx.com";//SMTP服务器的用户邮箱 
-$smtpemailto = "aaaaa@xxx.com";//发送给谁 
-$smtpuser = "xxxxx";//SMTP服务器的用户帐号 
-$smtppass = "xxxxx";//SMTP服务器的用户密码 
-$mailsubject = "Test Subject";//邮件主题 
-$mailbody = "&lt;h1&gt;This is a test mail&lt;/h1&gt;";//邮件内容 
-$mailtype = "HTML";//邮件格式（HTML/TXT）,TXT为文本邮件 
-$smtp = new smtp($smtpserver,$smtpserverport,true,$smtpuser,$smtppass);//这里面的一个true是表示使用身份验证,否则不使用身份验证. 
-$smtp-&gt;debug = TRUE;//是否显示发送的调试信息 
-$smtp-&gt;sendmail($smtpemailto, $smtpusermail, $mailsubject, $mailbody, $mailtype); 
-?&gt;
-</code></pre>
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2010/07/21/php-send-email/">Read on &rarr;</a>
     </footer>
   
 

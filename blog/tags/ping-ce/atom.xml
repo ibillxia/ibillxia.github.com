@@ -1,0 +1,892 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: 评测 | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/ping-ce/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-08-20T18:09:06+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Data Agent全景调研：从技术架构到产业实践]]></title>
+    <link href="https://ibillxia.github.io/blog/2026/08/20/data-agent-servey-from-arch-to-practice/"/>
+    <updated>2026-08-20T18:08:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2026/08/20/data-agent-servey-from-arch-to-practice</id>
+    <content type="html"><![CDATA[<center><img src="/images/2026/IMAG2026082001.png"></center>
+
+
+<p></p>
+
+<h2>一、引言</h2>
+
+<p>2023 年以来，随着大模型推理、工具调用、代码执行与企业数据治理能力逐步成熟，<code>Data Agent</code> 从早期的 <code>NL2SQL</code> 或“智能问数”快速演化为一个更宽的系统范式：它不只是把自然语言翻译成 SQL，而是试图在<strong>受治理的数据环境中</strong>，完成从任务理解、数据发现、语义对齐、查询/代码生成、执行验证、可视化、报告生成到后续行动的一整条闭环。2025年被业界公认为智能体（Agent）落地元年，也是数据智能发展的关键拐点。本文基于 2023—2026 年间公开可获得的官方产品文档、论文、基准测试、技术博客及部分大会/发布会资料，对国内外大厂与初创公司在 Data Agent 方向上的工作进行系统梳理，重点回答五个问题：</p>
+
+<!--more-->  
+
+
+<ol>
+<li>Data Agent 到底覆盖哪些方向？</li>
+<li>当前主流系统架构长什么样？</li>
+<li>它们共同面对哪些核心难题？</li>
+<li>业界与学界如何评测这类系统？</li>
+<li>各类方案的真实效果与边界在哪里？</li>
+</ol>
+
+
+<p>本文的核心判断是：<strong>Data Agent 的竞争焦点，正在从“会不会生成 SQL”转向“能否在复杂真实企业环境里稳定地产生可验证、可治理、可复用的分析结果”。</strong> 因而真正决定上限的，不是单点模型能力，而是语义层/本体、受控工具链、执行验证、权限与合规、以及持续评测体系的组合质量。与此同时，公开 benchmark 也给行业泼了冷水：在真实多步、多源、异构、长上下文环境中，当前最强模型与系统距离“可放心替代高级分析师”仍有明显差距，高级分析师也还没到要失业的程度。但另一方面，高级分析师也需要积极主动拥抱和参与构建更智能、更高效的Data Agent中，把自己的经验、技能蒸馏到系统中，才能在与同行的竞争中立于不败之地。</p>
+
+<p>由于Data Agent包含的概念和范围可宽可窄，在正式开始正文之前，先声明下本文调研所涉及的技术路线范围和核心资料来源。</p>
+
+<h3>1.1 研究边界</h3>
+
+<p>本文采用五条技术路线作为边界：</p>
+
+<ul>
+<li><strong>企业问数与语义层（NL2SQL/BI）</strong></li>
+<li><strong>端到端数据分析与报告生成</strong></li>
+<li><strong>自动化数据科学与机器学习</strong></li>
+<li><strong>异构/多模态数据分析</strong></li>
+<li><strong>数据治理与数据工程 Agent</strong></li>
+</ul>
+
+
+<p>时间上，重点覆盖 <strong>2023 年至今</strong>，必要时补充更早的 Text-to-SQL、AutoML、BI 语义层前史，以解释今天 Data Agent 为何会长成现在的样子。</p>
+
+<h3>1.2 资料类型</h3>
+
+<p>本文优先使用以下来源：</p>
+
+<ul>
+<li>厂商官方文档、产品页、官方博客</li>
+<li>论文主页、arXiv、ACM/ACL/ICLR 等会议论文页</li>
+<li>官方发布会/峰会配套博客与会议信息</li>
+<li>少量行业技术文章，用于补足实践语境</li>
+</ul>
+
+
+<h3>1.3 一个必要提醒</h3>
+
+<p>不同厂商口中的 “Data Agent / Analytics Agent / Conversational Analytics / Agentic Analytics / Data Science Agent” 并不是完全同义。为了避免混淆，本文不按营销名词分类，而按<strong>系统能力边界</strong>分类。换言之，凡是系统目标落在“理解数据问题并调用数据与分析工具给出结果”的，都纳入讨论，但会明确区分它们是偏问数、偏分析、偏数据科学，还是偏治理工程。</p>
+
+<h2>二、Data Agent 的五条主线：今天的“数据智能体”到底是什么？</h2>
+
+<h3>2.1 从 NL2SQL 到 Agentic Analytics</h3>
+
+<p>最早一代产品主要解决的是自然语言问库问题：把“上个月华东地区订单额是多少”翻译成 SQL 并返回结果。这一路线的技术核心，是 schema linking、SQL 生成与执行正确率。问题是，企业真实数据场景并不只需要一条 SQL。用户经常要做的是：</p>
+
+<ul>
+<li>明确模糊业务口径</li>
+<li>从多个数据源中找对表与指标</li>
+<li>做清洗、转换、拼接与聚合</li>
+<li>对异常做归因</li>
+<li>进一步生成图表、摘要、报告甚至行动建议</li>
+</ul>
+
+
+<p>于是，Data Agent 逐步从“问数助手”演化为“分析执行体”。这也是为什么近两年越来越多厂商开始把语义层、知识图谱、工作流编排、代码执行器、可视化引擎与权限治理统一包装成一个系统，而不再把 NL2SQL 视作全部。</p>
+
+<h3>2.2 五条技术路线</h3>
+
+<p><strong>第一条：企业问数与语义层（NL2SQL/BI）</strong></p>
+
+<p>这一条仍然是当前最成熟、商业化最快的方向。典型代表包括 Snowflake Cortex Analyst、Databricks Genie、Microsoft Fabric Data Agent、Google BigQuery Conversational Analytics、Amazon Q in QuickSight、阿里云 Data Agent、火山引擎智能问数 Agent，以及 AskTable、Seek AI、Aloudata 等。它们的共同特征是：</p>
+
+<ul>
+<li>都强调自然语言到数据查询的转换</li>
+<li>都不再把底层裸 schema 直接暴露给模型，而是引入语义层/本体/verified queries/样例查询</li>
+<li>都把权限、口径一致性与可解释性作为卖点</li>
+</ul>
+
+
+<p><strong>第二条：端到端数据分析与报告生成</strong></p>
+
+<p>这一方向不满足于给出查询结果，而是追求从问题到洞察再到报告的一整段闭环。火山引擎智能分析 Agent、腾讯云的DataBuddy、Amazon Q 的 Stories/Executive Summaries、Databricks Genie Agents、部分初创公司的“AI 数据分析师”都落在这条线上。</p>
+
+<p><strong>第三条：自动化数据科学与机器学习</strong></p>
+
+<p>这类系统不仅要查数，还要写 Python、做 EDA、跑统计检验、建模、画图、做实验解释。学术上对应 InfiAgent-DABench、DA-Code、DSAEval、WebDS 等基准；工业上则能看到 Databricks Genie Code、Google 的 Data Science Agent 等产品/能力。</p>
+
+<p><strong>第四条：异构/多模态数据分析</strong></p>
+
+<p>现实世界的数据问题越来越少只靠结构化表就能解决。PDF、网页、知识文档、图像、音视频、半结构化 JSON/MongoDB、日志与事件流，都会进入分析链路。FDABench、UniDataBench、DAB 都在推动这一方向；Google、Microsoft、Snowflake 也开始在官方叙述中明确支持结构化与非结构化联动。</p>
+
+<p><strong>第五条：数据治理与数据工程 Agent</strong></p>
+
+<p>这条路线强调的不是“回答问题”本身，而是围绕数据资产管理、元数据、质量、血缘、访问控制、数据管道开发与运维来做智能体。阿里云 Data Agent for Meta、Salesforce/Tableau 的 Agentic Analytics 平台、Google 的 Data Engineering Agent、Databricks 以 Unity Catalog 为核心的治理体系，都带有这一路线特征。</p>
+
+<h3>2.3 Data Agent 一个更准确的定义</h3>
+
+<p>基于以上观察，本文把 Data Agent 定义为：</p>
+
+<blockquote><p><strong>一种运行在受治理数据环境中的自主或半自主软件系统，它以自然语言或高层任务为输入，通过语义对齐、检索、规划、工具调用、SQL/Python/工作流执行、验证与结果生成等步骤，为用户交付可追溯的数据答案、洞察或行动。</strong></p></blockquote>
+
+<p>这一定义的关键不在“会不会聊天”，而在三件事：</p>
+
+<ol>
+<li><strong>能否接触真实数据资产</strong></li>
+<li><strong>能否完成多步执行而不是单轮生成</strong></li>
+<li><strong>能否在企业治理边界内给出可复核结果</strong></li>
+</ol>
+
+
+<h2>三、产业图谱：大厂与初创公司分别在做什么</h2>
+
+<h3>3.1 海外大厂：把 Data Agent 内生到数据平台</h3>
+
+<p>海外大厂的共同趋势，是把 Data Agent 作为<strong>数据平台的原生能力</strong>，而不是外挂聊天机器人。</p>
+
+<p><strong>Google BigQuery Conversational Analytics</strong> 则体现了“数据平台 + Agent 开发生态”的组合打法。它一方面提供对话式分析、verified queries、语义元数据 grounding、透明展示思考过程与底层 SQL；另一方面又推出 BigQuery Data Agent/Agent Kit、remote MCP server、ADK toolset、Data Science Agent、Data Engineering Agent，试图把 BigQuery 从查询引擎升级为 agentic data platform。</p>
+
+<p><strong>AWS Amazon Q in QuickSight</strong> 代表的是“生成式 BI”的产品化路线。其特点在于更强调业务用户的可用性：多视觉对象问答、自然语言创建 dashboard、生成 stories 和 executive summaries。与前几家相比，AWS 的技术叙事没有那么强调复杂 agent 架构，而是更强调 BI 消费体验与 ROI 案例。</p>
+
+<p><strong>Salesforce/Tableau</strong> 的方向是“Agentic Analytics Platform”。其关键词包括 Knowledge Engine、Decision Engine、Auto Knowledge Graph、Tableau Semantics、Einstein Trust Layer、Agentforce Analytics Skills。它说明另一条重要趋势：Data Agent 不只是数据回答器，而是要嵌入 CRM、业务流程、决策执行链路，变成“分析—判断—执行”的连续体。</p>
+
+<p><strong>Microsoft Fabric Data Agent</strong> 的特点是平台统一性。它基于 Azure OpenAI Assistant API，在 Fabric 内把 Lakehouse、Warehouse、Power BI 语义模型、KQL、本体、Microsoft Graph 等数据源纳入一个入口，并按源类型分别走 <code>NL2SQL</code>、<code>NL2DAX</code>、<code>NL2KQL</code> 或 Graph 查询路径。它的优势不是“最聪明”，而是与 Purview、RLS/CLS、组织级策略的深度整合，说明微软的思路是先把企业权限与治理接稳，再做问答。</p>
+
+<p><strong>Snowflake Cortex Analyst</strong> 代表的是“语义模型优先”的路线。其核心不是让模型直接读库，而是通过 YAML 定义的 semantic views，把逻辑表、维度、事实、指标、关系、同义词和样例问题交给系统。Snowflake 明确强调，语义模型是提高文本到 SQL 准确率的关键，并把 verified queries 作为持续评估与回归优化手段。Snowflake 在 Summit 2025 进一步把 Cortex Analyst 纳入 Snowflake Intelligence，向更 agentic 的“从数据到行动”方向延伸。</p>
+
+<p><strong>Databricks Genie</strong> 则把 Data Agent 提升为“上下文图谱 + 可定制智能体”的组合。官方在 2026 年重点发布了 <code>Genie Ontology</code>，即一个持续更新的上下文图谱，用来统一指标定义、业务术语、查询与仪表盘资产关系；同时又推出 Genie Agents、Genie Code，把能力从问数扩展到多步分析、ML 开发与运维场景。Databricks 的独特处在于，它把 Agent 的正确性问题更多地转写为<strong>上下文工程问题</strong>：上下文是否权威、是否治理过、是否可持续更新。</p>
+
+<h3>3.2 国内大厂：更强调企业问数落地、性能与安全闭环</h3>
+
+<p><strong>阿里云 Data Agent</strong> 兼具“智能问数 + 分析 + 元数据治理”三种色彩。其公开资料反复强调 Multi-Agent 协作、OneMeta 管理系统、任务透明度、安全白皮书、VPC 闭环和内核级沙箱等，说明阿里把重点放在<strong>企业级可控性</strong>上，而不是只卷单轮回答效果。Data Agent for Meta 还进一步把智能体拉到数据管理与元数据层面，体现出从“分析 Agent”向“数据管理 Agent”延伸的意图。</p>
+
+<p><strong>火山引擎 Data Agent / 智能分析 Agent</strong> 的特点是“分析原生”。它不仅做智能问数，还明确支持生成 SQL 与 Python、输出深度研究报告，并把语义模型、企业知识引擎、Prompt 干预、召回逻辑自定义作为效果保障手段。再加上 ByteHouse 的秒级查询能力与豆包模型能力，说明其系统定位更接近“受治理的企业分析助手”，而不是单纯聊天式 BI。</p>
+
+<p><strong>腾讯云 WeData DataBuddy</strong> 把能力边界进一步扩展到“数据分析、数据治理、数据工程”全链路。DataBuddy 是 WeData 上的大数据原生智能体工作台：DataBuddy 负责自然语言交互、任务拆解与 Agent 执行，WeData 作为统一控制面，底层原生连接 DLC 数据湖计算引擎。其公开架构包括 WorkBuddy 同源 Harness、沉淀大数据经验的 Skills、六层知识体系、统一元数据与语义、最小权限控制、Agent Guardrail 和全链路审计。与只回答问题的 ChatBI 不同，它可以从一句话触发数据接入、数仓分层、ETL/SQL 开发、DAG 编排、质量诊断与智能修复。腾讯云官方发布材料称，典型建仓工作可从 1—2 周压缩到小时级，数据治理可从数十人天压缩到小时级；这些属于厂商案例口径，尚缺独立公开 benchmark 验证。</p>
+
+<p><strong>百度智能云</strong> 当前更适合分成平台层与应用层理解。平台层的 <strong>百度胜算·数据智能平台</strong> 以业务本体为核心，把“业务对象关系、业务逻辑、业务执行”组织为三张图，并配套多模态数据结构化、统一工具体系、沙箱、权限、审计、前向仿真与后向溯源，使 Agent 不仅能查询和分析，还能在受控环境中参与判断与执行。应用层则包括 <strong>Sugar BI 智能问数</strong> 与千帆中的数据库问数组件：前者围绕数据模型、维度和度量生成查询、图表及业务结论，并允许查看底层 SQL 和人工调整。Create 2026 发布材料称百度胜算已覆盖 20 余个行业，提供 370 多种关系型与多模态算子；报道还披露南方电网深圳供电局案例中人工复核时间节省 50%。对于“复杂场景准确率 99%”等数字，应视为发布报道中的厂商口径，而不是可与 BIRD、Spider 2.0 直接比较的标准成绩。</p>
+
+<p><strong>网易智企知数 Data Agent</strong> 的产品路线是“智能问数 + 专业分析 + AI 报告 + 知识解读 + 固定工作流”。快速问数基于预配置指标和数据集生成查询与图表；专业问数则面向归因、趋势预测、模糊问题和多任务编排，并可调用内置工具、扩展 Skill 与附件。它还把企业文档解析、向量召回、专家方法论沉淀和行级数据权限纳入同一产品。网易与恒丰银行的实践采用数据层、AI 层、触达层、交互层四层架构：统一指标口径，结合私有化模型与角色化 Prompt，通过内部即时通讯主动推送绩效解读，并支持持续追问。公开案例显示绩效反馈从月度周期缩短到 T+1；这一定位体现了 Data Agent 与传统 BI 的互补关系——BI 负责高频固定报表，Agent 处理低频、临时与探索式分析。</p>
+
+<h3>3.3 初创公司：在速度、灵活性和垂直语义上寻找机会</h3>
+
+<p>初创公司的打法大致分三类。</p>
+
+<p><strong>第一类是语义层 + 问数产品化。</strong> 典型如 AskTable、Seek AI、Zenlytic。它们都意识到一个事实：企业客户最怕的不是“模型笨”，而是“口径错”。所以它们重点建设业务知识层、语义配置、权限感知与多端接入。AskTable 明确把元数据、业务文档、分析偏好和专家技能沉淀成共享知识层；Zenlytic 则通过语义层与 Clarity Engine 来减少幻觉。</p>
+
+<p><strong>第二类是可信语义层 + 复杂业务编排。</strong> Aloudata 的 NoETL 可信语义层和 Agentic Harness 就属于这个方向。它的核心观点与许多企业实践一致：不要让模型直接面对混乱物理表，而应先把业务世界表达成可组合的指标、维度、过滤与权限边界，再让 Agent 在受控语义空间里工作。</p>
+
+<p><strong>第三类是 foundation model / agent infra 路线。</strong> Numbers Station 更偏底层，通过 NSQL 系列模型、知识图谱与多 Agent 系统构建企业数据代理；其后被 Alation 收购，也说明语义治理厂商正在把“会分析的 agent”吸收到自己的元数据/治理栈里。</p>
+
+<p>国内创业公司中，<strong>数花智算（SparkData）</strong> 选择了“企业经营分析 Agent”路线。其 DataQ&amp;A/数问产品体系围绕“提问—查询—追问—归因—报告—预警协同”构建连续工作流，强调统一指标口径和业务对象语义、查询过程回放、结果可解释与可验证，并可自动生成图表、管理层材料和 HTML 报告。与通用 ChatBI 相比，它更聚焦销售日报归因、项目周会、渠道预警、材料价格预测等经营场景。当前官网披露的底层模型、数据库兼容范围和标准 benchmark 较少，因此更适合将其视为“场景与交付驱动”的早期 Data Agent 公司，而不宜仅凭产品叙述判断通用能力上限。</p>
+
+<p><strong>数势科技（DigitForce）SwiftAgent / Data Agent</strong> 则是国内“指标语义本体优先”路线的典型。其架构由 SwiftMetrics 指标治理底座、Data Agent 和数据计算加速引擎组成，采用 <code>NL2Semantics</code> 而非直接 <code>NL2SQL</code>：先理解指标、维度与业务口径，再调用治理后的可信数据资产。系统支持任务自动规划、行业模型适配、追问与反问、持续反思学习，以及维度/因子/时间序列归因、相关性分析、图表推荐和行业报告生成。数势官网披露的“响应速度提升超 80%、运营效率提升 60% 以上”来自具体客户实践，并非统一第三方 benchmark；其入选行业图谱也不能等同于标准化性能排名。</p>
+
+<h3>3.4 一个代表性厂商对比表</h3>
+
+<table>
+<thead>
+<tr>
+<th> 类别 </th>
+<th> 代表 </th>
+<th> 典型定位 </th>
+<th> 架构关键词 </th>
+<th> 核心优势 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> 海外大厂 </td>
+<td> Microsoft Fabric Data Agent </td>
+<td> 平台内统一问数与推理 </td>
+<td> 本体、Graph、Purview、RLS/CLS、NL2SQL/DAX/KQL </td>
+<td> 强治理、强平台整合 </td>
+</tr>
+<tr>
+<td> 海外大厂 </td>
+<td> Snowflake Cortex Analyst </td>
+<td> 高准确率文本到 SQL </td>
+<td> Semantic Views、YAML、verified queries、RBAC </td>
+<td> 语义模型优先 </td>
+</tr>
+<tr>
+<td> 海外大厂 </td>
+<td> Databricks Genie </td>
+<td> Agentic analytics + ML 工作流 </td>
+<td> Genie Ontology、Unity Catalog、Genie Agents/Code、MCP </td>
+<td> 强上下文工程 </td>
+</tr>
+<tr>
+<td> 海外大厂 </td>
+<td> Google BigQuery CA </td>
+<td> 对话式分析 + Agent kit </td>
+<td> verified queries、semantic metadata、ADK、remote MCP </td>
+<td> 平台生态外溢 </td>
+</tr>
+<tr>
+<td> 海外大厂 </td>
+<td> AWS Amazon Q in QuickSight </td>
+<td> 生成式 BI 消费层 </td>
+<td> Topics、Stories、Executive Summaries </td>
+<td> 强业务用户体验 </td>
+</tr>
+<tr>
+<td> 国内大厂 </td>
+<td> 阿里云 Data Agent </td>
+<td> 智能分析 + 元数据治理 </td>
+<td> OneMeta、Multi-Agent、安全闭环、MCP </td>
+<td> 强企业可控性 </td>
+</tr>
+<tr>
+<td> 国内大厂 </td>
+<td> 火山引擎 Data Agent </td>
+<td> 智能问数 + 深度分析 </td>
+<td> ByteHouse、语义模型、知识引擎、SQL/Python </td>
+<td> 强分析闭环 </td>
+</tr>
+<tr>
+<td> 国内大厂 </td>
+<td> 腾讯云 WeData DataBuddy </td>
+<td> 分析、治理、工程全链路 Agent </td>
+<td> WeData 控制面、Harness、Skills、DLC、六层知识、Guardrail </td>
+<td> 强数据工程交付 </td>
+</tr>
+<tr>
+<td> 国内大厂 </td>
+<td> 百度胜算 / Sugar BI 智能问数 </td>
+<td> 本体驱动平台 + 问数应用 </td>
+<td> 业务本体、三张业务图、多模态算子、沙箱审计 </td>
+<td> 强业务执行闭环 </td>
+</tr>
+<tr>
+<td> 国内大厂 </td>
+<td> 网易知数 Data Agent </td>
+<td> 问数、归因、报告与主动触达 </td>
+<td> 指标口径、私有化模型、知识解读、工作流、行级权限 </td>
+<td> 强行业应用与报告 </td>
+</tr>
+<tr>
+<td> 初创公司 </td>
+<td> AskTable </td>
+<td> 企业 AI 数据分析平台 </td>
+<td> 共享知识层、语义配置、多端接入 </td>
+<td> 快速落地 </td>
+</tr>
+<tr>
+<td> 初创公司 </td>
+<td> Aloudata </td>
+<td> 可信分析智能体 </td>
+<td> NoETL 语义层、Agentic Harness </td>
+<td> 可信与审计 </td>
+</tr>
+<tr>
+<td> 初创公司 </td>
+<td> Seek AI / Zenlytic / Numbers Station </td>
+<td> 企业问数/分析 Agent </td>
+<td> 语义层、知识库、多 Agent、模型/工具链 </td>
+<td> 灵活与专注 </td>
+</tr>
+<tr>
+<td> 初创公司 </td>
+<td> 数花智算 SparkData </td>
+<td> 企业经营分析 Agent </td>
+<td> 指标语义、归因、报告、预警协同、过程回放 </td>
+<td> 场景与交付驱动 </td>
+</tr>
+<tr>
+<td> 初创公司 </td>
+<td> 数势科技 DigitForce </td>
+<td> 可信问数与分析中枢 </td>
+<td> SwiftMetrics、NL2Semantics、规划、归因、持续学习 </td>
+<td> 指标语义本体优先 </td>
+</tr>
+</tbody>
+</table>
+
+
+<h2>四、核心挑战：为什么这个问题比“做个 NL2SQL”难得多</h2>
+
+<h3>4.1 语义歧义与口径漂移</h3>
+
+<p>企业里最常见的问题不是模型不会写 SQL，而是“同一个词，在不同团队口中不是同一个指标”。例如“新增用户”“活跃用户”“GMV”“净收入”“有效订单”都可能有多个版本。裸 schema 无法表达这些约定，因此 Data Agent 必须依赖语义层、本体、业务文档与示例查询。没有这一层，问数系统几乎不可避免地掉入“SQL 对了、业务错了”的陷阱。</p>
+
+<h3>4.2 长上下文与复杂 schema</h3>
+
+<p>Spider 2.0 直接把问题暴露得很清楚：现实企业库不是几十列，而可能上千列、多个方言、夹带文档与 DBT 工程。模型即便知道 SQL 语法，也不等于知道在长上下文中该抓什么。Databricks、Snowflake、Google 等厂商的所有“语义图谱/verified queries/上下文存储”设计，本质上都在解决这个问题：<strong>降低模型直接面对原始 schema 的认知负荷。</strong></p>
+
+<h3>4.3 多源异构与 join 键混乱</h3>
+
+<p>DAB 提出的四个现实难点里，多数据库集成和 ill-formatted join keys 非常关键。现实里同一客户/商品/门店 ID 在不同库里常常格式不一致，甚至埋在自由文本里。这个问题用单条 SQL 很难稳妥处理，往往需要先做规范化、抽取、匹配，再进入后续分析。也正因为如此，异构多模态 benchmark 的难度远高于传统 Text-to-SQL。</p>
+
+<h3>4.4 非结构化数据抽取与外部知识依赖</h3>
+
+<p>很多真实分析问题的关键证据不在表里，而在 PDF 手册、网页规则、邮件、对话、日志、图片或视频里。DAB、FDABench、UniDataBench、DSAEval 都表明，一旦任务需要从非结构化信息中抽值、做归类或结合领域知识进行判断，当前系统性能会明显下降。对企业来说，这意味着：<strong>Data Agent 要真正有用，不能只会查库，必须具备 document intelligence。</strong></p>
+
+<h3>4.5 多步规划、状态管理与中间验证</h3>
+
+<p>DABstep、WebDS、DA-Code、DSAEval 的共同结论是：当前系统在“长程多步任务”中非常脆弱。问题主要不是某一步不会做，而是：</p>
+
+<ul>
+<li>规划漏步</li>
+<li>中间结果忘记复用</li>
+<li>反复试错导致成本飙升</li>
+<li>格式要求干扰推理</li>
+<li>执行了正确工具却做出错误解释</li>
+</ul>
+
+
+<p>这也是为什么越来越多系统引入 planner、memory、reflection、checklist、verifier。Data Agent 未来的竞争重点，极可能就在<strong>可靠编排</strong>而不是更大的单模型。</p>
+
+<h3>4.6 安全、合规与组织采纳</h3>
+
+<p>企业真正上线 Data Agent 时，会立刻遇到这些问题：</p>
+
+<ul>
+<li>谁能看哪些数据？</li>
+<li>输出是否可审计？</li>
+<li>中间数据会不会泄露？</li>
+<li>模型会不会把客户数据拿去训练？</li>
+<li>错误答案造成的业务责任谁承担？</li>
+</ul>
+
+
+<p>这决定了 Data Agent 的产品成功不是纯技术问题，而是<strong>治理技术 + 组织流程 + 风险管理</strong>问题。很多初创公司能做出很惊艳的 demo，但企业最后采购的，往往是治理边界更清楚的平台型方案。</p>
+
+<h3>4.7 成本、延迟与效果三角</h3>
+
+<p>FDABench、DAB、DSAEval 都强调了成本/延迟的重要性。复杂 workflow、reflection、多 Agent 往往能提升质量，但会显著增加 token 成本与响应时间。对企业用户来说，几十秒、几美元才能回答一次的问题，和 2 秒、几分钱的问数体验，其适用场景完全不同。因此 Data Agent 必须做分层：</p>
+
+<ul>
+<li>高频问数 → 轻量、快、受控</li>
+<li>深度分析 → 慢一些，但可解释、可复核</li>
+<li>自动化研究/报告 → 允许更长链路和更高成本</li>
+</ul>
+
+
+<h2>五、解决方案：主流系统架构 - Data Agent 今天大致长成什么样</h2>
+
+<p>虽然厂商命名各不相同，但把公开材料对齐后，主流系统架构基本都可分成七层，如下图所示（gen by chatgpt）。</p>
+
+<center><img src="/images/2026/IMAG2026082002.png"></center>
+
+
+<p></p>
+
+<h3>5.1 接入层：多数据源与多工作区</h3>
+
+<p>首先是数据接入。早期系统往往只连接一个数据库；现在主流系统都强调多源：</p>
+
+<ul>
+<li>关系数据库 / 数仓 / Lakehouse</li>
+<li>BI 语义模型</li>
+<li>文档、网页、知识库</li>
+<li>半结构化数据（JSON/MongoDB）</li>
+<li>图像、音视频等非结构化资产</li>
+</ul>
+
+
+<p>这一步的难点不在“连得上”，而在<strong>如何让后续推理知道该用哪个源</strong>。Microsoft 明确支持最多混合 5 个数据源；Google 与 Snowflake 开始强调结构化 + 非结构化联动；FDABench、DAB、UniDataBench 则说明学术界已经把这种异构接入视为标准难题。</p>
+
+<h3>5.2 语义/本体层：真实企业落地的决定性中间层</h3>
+
+<p>这是今天几乎所有可落地方案的共同核心。不同公司叫法不同：</p>
+
+<ul>
+<li>Snowflake：Semantic Views / YAML semantic model</li>
+<li>Databricks：Genie Ontology</li>
+<li>AskTable：Knowledge Layer / Semantic Configuration</li>
+<li>Aloudata：可信语义层</li>
+<li>AWS：Topics</li>
+<li>Google：semantic metadata + verified queries</li>
+<li>Microsoft：ontology + example queries + agent instructions</li>
+<li>腾讯云 DataBuddy：六层知识体系 + 统一元数据与语义</li>
+<li>百度胜算：业务本体 + 业务对象/逻辑/执行三张图</li>
+<li>数势科技：SwiftMetrics + NL2Semantics</li>
+<li>数花智算：统一指标口径 + 业务对象语义</li>
+<li>网易知数：统一指标口径 + 企业知识解读</li>
+</ul>
+
+
+<p>它们的本质都一样：<strong>把“表结构世界”翻译成“业务语义世界”</strong>。原因很简单：企业问题不是“帮我查 <code>fact_order_detail</code> 表”，而是“这个月新客转化为什么掉了”。如果系统无法把“新客”“转化”“掉了”“本月”“归因”映射到定义良好的指标、维度、关系和样例逻辑，模型就只能在物理 schema 上盲猜，错误率必然很高。</p>
+
+<p>因此，过去两年真正成熟的 Data Agent 几乎都在走一条共识路线：<strong>NL2SQL 不是直接对 schema 做生成，而是 NL → 业务语义表达 → SQL/代码/工作流</strong>。这也是为什么国内一些实践会明确提出 <code>NL2Semantic2SQL</code> 或 <code>NL2MQL2SQL</code>。</p>
+
+<h3>5.3 规划与编排层：从单轮生成到多步工作流</h3>
+
+<p>当用户任务不再是单条 SQL，而是“先找原因、再按区域对比、再解释异常并给图表”，系统就必须引入规划器。当前主流编排模式大致有三类：</p>
+
+<ol>
+<li><strong>单 Agent + 工具调用</strong>：适合相对简单的问数任务。</li>
+<li><strong>Planner-Executor-Verifier</strong>：先拆解任务，再执行，再复核，是很多工业系统的隐含主流。</li>
+<li><strong>多 Agent 协作</strong>：把任务交给不同角色，例如意图分析、schema 检索、SQL 生成、代码执行、事实核验、报告撰写等。</li>
+</ol>
+
+
+<p>阿里云、Numbers Station、部分学术系统都明确使用了 multi-agent 或多角色协作；Google、Databricks、火山引擎则更强调多阶段 reasoning workflow。学术 benchmark 的结论也非常明确：<strong>一旦进入多步推理场景，规划与中间状态管理就会成为主要瓶颈</strong>。</p>
+
+<h3>5.4 执行层：SQL 只是开始，Python/工作流才是下一步</h3>
+
+<p>SQL 在 Data Agent 中依然重要，但越来越不是全部。因为很多真实任务需要：</p>
+
+<ul>
+<li>数据清洗与预处理</li>
+<li>特征工程</li>
+<li>统计检验</li>
+<li>图表生成</li>
+<li>模型训练与预测</li>
+<li>文本提取与正则处理</li>
+<li>多文件融合</li>
+</ul>
+
+
+<p>因此火山引擎明确支持 SQL + Python；Google 推出 Data Science Agent 和 Data Engineering Agent；Databricks 推 Genie Code；学术 benchmark 几乎都默认需要在沙箱中执行代码。换句话说，<strong>Data Agent 正在向“可执行分析环境中的代码代理”靠拢。</strong></p>
+
+<h3>5.5 验证与反思层：从“生成答案”转向“证明答案”</h3>
+
+<p>Data Agent 在企业中最怕的不是不会答，而是<strong>答得像真的但其实错了</strong>。为此，工业系统普遍引入了某种验证层：</p>
+
+<ul>
+<li>verified queries / golden queries</li>
+<li>样例问题与基准回放</li>
+<li>多轮重写与 self-reflection</li>
+<li>SQL 执行检查与结果一致性验证</li>
+<li>证据链、来源展示、可追溯中间过程</li>
+</ul>
+
+
+<p>Google 强调 verified queries；Snowflake 强调 verified queries 和语义视图持续评估；FDABench 的研究进一步指出，当前瓶颈往往不是工具执行本身，而是<strong>工具选择与结果解释</strong>。这意味着“执行成功”并不等于“结论正确”。</p>
+
+<h3>5.6 治理与安全层：真正决定企业能否上线</h3>
+
+<p>所有大厂都在强调这层，原因很现实：Data Agent 一旦接到生产数据，权限、审计、合规、数据不出域、是否参与训练、可回溯性都会立刻成为采购门槛。</p>
+
+<ul>
+<li>Microsoft 强调 Purview、RLS/CLS、组织意图优先级</li>
+<li>Snowflake 强调数据与提示留在治理边界内，不使用客户数据训练</li>
+<li>阿里云强调实例隔离、VPC 闭环、任务销毁</li>
+<li>AWS 强调不使用客户数据训练</li>
+<li>AskTable/Aloudata 等则强调权限感知与口径受控</li>
+</ul>
+
+
+<p>因此，<strong>Data Agent 的系统架构从第一天起就是“AI 架构 + 数据治理架构”的叠加体</strong>。缺任一边都难落地。</p>
+
+<h3>5.7 交付层：结果不再只是表格</h3>
+
+<p>成熟产品的输出层也在演化：</p>
+
+<ul>
+<li>表格/SQL</li>
+<li>图表与 dashboard</li>
+<li>narrative summary / executive summary</li>
+<li>stories / reports</li>
+<li>可共享 app 或嵌入式体验</li>
+<li>后续动作（通知、写回、触发工作流）</li>
+</ul>
+
+
+<p>这一步意味着 Data Agent 从“回答器”变成“交付器”。Snowflake Intelligence、Amazon Q Stories、火山引擎深度研究、Databricks Genie Agents 都在往这个方向走。</p>
+
+<h2>六、评估基准：学界与业界到底在怎么测</h2>
+
+<p>Data Agent 评测大致经历了三个阶段：</p>
+
+<ol>
+<li><strong>SQL 正确不正确</strong></li>
+<li><strong>端到端答案对不对</strong></li>
+<li><strong>多源、多步、异构环境下，整个分析链条是否可靠</strong></li>
+</ol>
+
+
+<h3>6.1 Text-to-SQL：BIRD 与 Spider 2.0</h3>
+
+<p><strong>BIRD</strong> 是现实数据库场景下最重要的 Text-to-SQL 基准之一，包含 95 个数据库、约 33.4GB 数据、12,751 个问题-SQL 对。它把脏数据、外部知识和效率都纳入考虑。BIRD 的意义在于提醒行业：学术版“简单问表”与工业版“问真实数据库”不是一回事。</p>
+
+<p><strong>Spider 2.0</strong> 则进一步把问题推进到企业工作流级别。它包含超长上下文、多方言、文档与 DBT 工程，要求系统在更接近真实环境的条件下完成任务。其代表性结论很刺眼：在 Spider 1.0 上很强的通用模型，到 Spider 2.0 上成功率会显著下滑。这说明传统 Text-to-SQL 指标很容易高估真实能力。</p>
+
+<h3>6.2 端到端数据分析：InfiAgent-DABench 与 DA-Code</h3>
+
+<p><strong>InfiAgent-DABench</strong> 是最早把“数据分析 agent”单独拉出来测的 benchmark。它要求系统在 CSV 与 Python 环境中完成端到端分析，指标包括 ABQ、PASQ、UASQ。它的价值在于把“生成一段可执行分析代码”作为核心能力，而不是只看语言回答。</p>
+
+<p><strong>DA-Code</strong> 更关注数据科学代码生成，包括 DW、ML、EDA 等任务。其结论非常重要：即便是强模型，在真实、多文件、可执行环境中的总分也并不高，说明代码代理在数据科学场景仍远未成熟。</p>
+
+<h3>6.3 多步推理：DABstep</h3>
+
+<p>DABstep 是近两年最能暴露现有系统短板的 benchmark 之一。它要求模型在支付数据、手册文档、JSON/CSV 等混合环境中完成多步推理，而且 Hard 任务占比高。公开结果说明，即使是最强模型，Hard 集上的准确率仍然很低。工程含义非常直接：<strong>当前 Data Agent 在“复杂严谨分析”上离生产级可靠性还差一大截。</strong></p>
+
+<h3>6.4 异构多模态：FDABench 与 UniDataBench</h3>
+
+<p><strong>FDABench</strong> 把结构化数据库、CSV、PDF、网页、图像、视频、音频统统纳入一个分析基准，任务数达到 2007。它不仅测答案，还测工具召回、成功率、延迟、token 成本与外部调用次数。它的主要结论之一是：反射型 workflow 与规划型 workflow 各有优势，复杂架构并非总能压倒更简洁的系统。</p>
+
+<p><strong>UniDataBench</strong> 更强调从多源异构数据中提取洞察与总结。它的意义在于把评测目标从“对错”扩展到“是否真正产出了有用 insight”。这也是 Data Agent 与纯 SQL agent 的分水岭。</p>
+
+<h3>6.5 更接近真实企业的 benchmark：DAB</h3>
+
+<p><strong>DAB（Data Agent Benchmark）</strong> 直接针对企业数据问题建模，提出了四个现实难点：多数据库集成、join key 混乱、非结构化文本转换、领域知识依赖。其结果非常值得关注：最强模型初期 pass@1 只有 38%，说明现实世界数据任务的可靠性远低于大众对“AI 数据分析师”的想象。后续专业系统能把 pass@1 提到 80%+，也说明<strong>系统工程</strong>仍然是决定性变量。</p>
+
+<h3>6.6 数据科学全流程：DSAEval 与 WebDS</h3>
+
+<p><strong>DSAEval</strong> 把 reasoning、code、result 三个维度放到同一框架下，并引入多模态感知、成本、时长、步数等效率指标。它代表了“数据科学 agent 评测”的成熟方向。</p>
+
+<p><strong>WebDS</strong> 则把环境进一步推到 web-based data science，要求系统在真实网页与混合工作区中完成完整流程。结果显示，SOTA agent 与人类之间仍存在巨大差距。这说明很多“demo 中看起来很能干”的 agent，一旦进入开放环境，稳定性会迅速下降。</p>
+
+<h3>6.7 一个 benchmark 总结表</h3>
+
+<table>
+<thead>
+<tr>
+<th> 基准 </th>
+<th> 主要测什么 </th>
+<th> 为什么重要 </th>
+<th> 核心结论 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> BIRD </td>
+<td> 真实数据库 Text-to-SQL </td>
+<td> 检验大规模真实库问数 </td>
+<td> 强系统可到 80%+，但仍远低于人类 </td>
+</tr>
+<tr>
+<td> Spider 2.0 </td>
+<td> 企业级工作流 Text-to-SQL </td>
+<td> 把文档、长上下文、DBT 带进评测 </td>
+<td> 通用模型在真实环境大幅掉点 </td>
+</tr>
+<tr>
+<td> InfiAgent-DABench </td>
+<td> CSV + Python 端到端分析 </td>
+<td> 把分析 agent 从 SQL 中拆出来 </td>
+<td> 说明专门训练有明显价值 </td>
+</tr>
+<tr>
+<td> DA-Code </td>
+<td> 数据科学代码代理 </td>
+<td> 看可执行多文件任务 </td>
+<td> 总分仍偏低，难度很高 </td>
+</tr>
+<tr>
+<td> DABstep </td>
+<td> 多步严谨数据分析 </td>
+<td> 看规划、状态与执行闭环 </td>
+<td> Hard 集准确率很低 </td>
+</tr>
+<tr>
+<td> FDABench </td>
+<td> 异构多模态分析 </td>
+<td> 看工具编排、成本与延迟 </td>
+<td> “模型+架构”需匹配 </td>
+</tr>
+<tr>
+<td> DAB </td>
+<td> 企业真实数据难点 </td>
+<td> 看跨库、文本、领域知识 </td>
+<td> 初期 pass@1 仅 38% </td>
+</tr>
+<tr>
+<td> DSAEval / WebDS </td>
+<td> 数据科学全流程 </td>
+<td> 更接近真实项目与开放环境 </td>
+<td> 现有系统远未达到人类水平 </td>
+</tr>
+</tbody>
+</table>
+
+
+<h3>6.8 结果对比：应该如何正确理解“厂商效果”</h3>
+
+<h4>6.8.1 不能把所有分数放在一张榜上直接比</h4>
+
+<p>Data Agent 的一个常见误区，是把不同 benchmark、不同任务、不同评估协议下的分数直接横向比较。例如：</p>
+
+<ul>
+<li>BIRD 的执行准确率</li>
+<li>Spider 2.0 的工作流成功率</li>
+<li>DAB 的 pass@1</li>
+<li>DSAEval 的综合得分</li>
+<li>厂商自有 benchmark 的首次回答正确率</li>
+</ul>
+
+
+<p>这些数字的含义并不一样。一个 80% 的 BIRD 分数，不等于 80% 的多步严谨分析能力；一个 84.5% 的内部任务准确率，也不等于开放环境下的端到端可靠性。因此，真正可用的比较方式，不是问“谁分最高”，而是问：</p>
+
+<ol>
+<li>它在哪类任务上强？</li>
+<li>评测环境有多接近真实生产？</li>
+<li>它是否依赖重度语义层配置？</li>
+<li>它的成本、时延和治理前提是什么？</li>
+</ol>
+
+
+<h4>6.8.2 大厂效果说明了什么</h4>
+
+<p>从公开资料看，大厂的共同结论是：<strong>加语义层、加治理、加验证，通常能显著改善效果。</strong></p>
+
+<ul>
+<li>Snowflake 明确强调 semantic views 能把 Text-to-SQL 从“猜”变成“在已定义业务空间内生成”。</li>
+<li>Google 把 verified queries 视为 grounding 手段，本质上是在把历史正确逻辑变成 agent 的先验。</li>
+<li>Databricks 的 Genie Ontology 则进一步把上下文资产化、图谱化，用权威性判断来筛选可用上下文。</li>
+<li>Microsoft 用 example queries、instructions、ontology 和 Purview 共同约束 agent。</li>
+</ul>
+
+
+<p>这说明企业级 Data Agent 的成败，并不只由底层模型决定，而更由<strong>上下文质量与系统约束</strong>决定。</p>
+
+<h4>6.8.3 初创公司效果说明了什么</h4>
+
+<p>初创公司的优势通常体现在：</p>
+
+<ul>
+<li>部署快、接入灵活</li>
+<li>语义配置更贴近具体业务问题</li>
+<li>在特定垂直场景能形成强体验</li>
+</ul>
+
+
+<p>但其挑战也明显：</p>
+
+<ul>
+<li>治理与合规能力是否足够企业级</li>
+<li>复杂多源、多步任务下是否稳定</li>
+<li>是否过于依赖人工配置与专家介入</li>
+<li>能否在组织规模扩大后保持一致性</li>
+</ul>
+
+
+<p>因此，如果企业需求是“让几十个业务团队快速试用问数”，初创公司的轻量产品可能极有吸引力；如果需求是“在统一数据平台内给全公司上生产”，平台型大厂往往更有优势。</p>
+
+<h3>6.8.4 一个更实用的比较框架</h3>
+
+<p>如果把 Data Agent 分为三档目标，可以得到更清晰的比较：</p>
+
+<p><strong>第一档：高频问数</strong></p>
+
+<p>要求秒级、便宜、口径稳定、权限严格。这里最适合语义层成熟的 BI/NL2SQL 路线。Snowflake、Databricks、Microsoft、Google、AskTable、Aloudata 都在卷这一层。</p>
+
+<p><strong>第二档：深度分析</strong></p>
+
+<p>要求能做归因、多步探索、图表与报告。这时单纯 Text-to-SQL 不够，需要 planner、Python、知识检索与验证链路。火山引擎、Databricks Genie Agents、部分 Google 与 Snowflake 新能力都在往这里延伸。</p>
+
+<p><strong>第三档：自治型数据工作流</strong></p>
+
+<p>要求从问题到行动自动完成，包括数据工程、ML、治理与业务动作。这里目前还处于较早阶段。Google 的 Data Science/Data Engineering Agent、Databricks Genie Code/ZeroOps、Tableau Agentic Analytics、Snowflake Intelligence 都属于探索前沿，但离“低风险全面自治”仍然有距离。</p>
+
+<h2>七、未来趋势：从大会与发布会看，行业正在往哪里走？</h2>
+
+<p>如果把 2025—2026 年几家头部厂商的发布与大会信息放在一起看，可以看到三个非常清晰的行业转向。</p>
+
+<h3>7.1 从“聊天问数”转向“可行动的 agentic analytics”</h3>
+
+<p>Snowflake 在 Summit 2025 提出 Snowflake Intelligence，并把 Cortex Analyst 作为其结构化数据理解底座，同时强调 Deep Research Agent for Analytics、跨结构化与非结构化数据、以及从洞察到行动的闭环。Databricks 在 Data + AI Summit 2026 则发布 Genie Ontology、Genie Agents、Genie Code 的一系列升级，明显不再满足于“帮你写 SQL”，而是在构建一套覆盖分析、ML 与运维的 agent 体系。Google 在 2026 年也把 BigQuery 放进“agentic era”的叙事里，配套推出 Agent Kit、Data Science Agent、Data Engineering Agent 和 remote MCP server。</p>
+
+<p>这三家的共同信号是：<strong>问数只是入口，真正想做的是以数据平台为中心的智能工作流系统。</strong></p>
+
+<h3>7.2 从“模型能力”转向“上下文工程”</h3>
+
+<p>Databricks 用 Genie Ontology，Snowflake 用 semantic views，Google 用 verified queries 与 semantic metadata，Microsoft 用 ontology 与 example queries，国内厂商则大量强调语义模型、知识引擎和业务知识库。这个趋势非常重要：行业已经逐渐接受一个现实——<strong>在企业数据场景中，上下文质量常常比模型参数更决定答案质量。</strong></p>
+
+<h3>7.3 从“能回答”转向“能被企业负责地使用”</h3>
+
+<p>不论是微软的 Purview、Snowflake 的治理边界、AWS 的“不用客户数据训练”，还是阿里云的实例隔离与安全白皮书，都说明 Data Agent 已经从炫技阶段进入企业采购阶段。到了这个阶段，CIO/数据平台负责人关心的问题会变成：</p>
+
+<ul>
+<li>能不能审计？</li>
+<li>会不会越权？</li>
+<li>出错后能否定位？</li>
+<li>是否支持版本化评估与回归测试？</li>
+<li>是否能嵌入现有数据平台与权限体系？</li>
+</ul>
+
+
+<p>换句话说，<strong>Data Agent 的胜负手正从模型 leaderboard 转向平台工程与治理体系。</strong></p>
+
+<h2>八、给技术负责人/架构师的几个判断</h2>
+
+<h3>8.1 不要把 Data Agent 当作一个单独模型项目</h3>
+
+<p>如果把 Data Agent 当作“接个 LLM API，然后做个聊天页面”，大概率只能做出一个 demo。真正的生产系统更像是以下组件的组合：</p>
+
+<ul>
+<li>数据资产目录</li>
+<li>语义层/指标层/本体</li>
+<li>检索与上下文组装</li>
+<li>planner / router / verifier</li>
+<li>SQL/Python/工作流执行环境</li>
+<li>审计、权限和治理系统</li>
+<li>评估与回归平台</li>
+</ul>
+
+
+<p>因此，Data Agent 更接近一个<strong>数据平台能力升级项目</strong>，而不是一个简单的应用层 feature。</p>
+
+<h3>8.2 先做语义层，再做 agent，通常比反过来更稳</h3>
+
+<p>许多企业会先尝试“直接让模型查库”，然后发现错误频出、口径不稳、权限复杂。更稳妥的路径往往是：</p>
+
+<ol>
+<li>先把核心指标、维度、口径、权限和样例问题整理出来；</li>
+<li>再把这些内容变成语义层/知识层；</li>
+<li>最后让 agent 在这个受控空间里工作。</li>
+</ol>
+
+
+<p>从行业公开材料看，这是目前最接近共识的方法。</p>
+
+<h3>8.3 评估不要只看单轮正确率</h3>
+
+<p>一个能上线的 Data Agent，至少应该同时测：</p>
+
+<ul>
+<li><strong>答案质量</strong>：SQL/结果/报告对不对</li>
+<li><strong>过程质量</strong>：是否选对数据源、是否按计划执行、是否可解释</li>
+<li><strong>治理质量</strong>：是否越权、是否审计完整、是否符合组织策略</li>
+<li><strong>经济质量</strong>：延迟、token、调用次数、单位问题成本</li>
+</ul>
+
+
+<p>换句话说，评测要从“答对率”扩展到“可靠性 + 成本 + 合规性”。</p>
+
+<h3>8.4 未来 12—24 个月最值得关注的三个方向</h3>
+
+<p><strong>第一，跨结构化与非结构化的统一分析。</strong>
+当前很多真正有价值的业务结论，都需要表格数据与文档/网页/工单/会议记录一起分析。谁能把这个问题做稳，谁就会从 BI 助手升级为企业知识工作流入口。</p>
+
+<p><strong>第二，针对数据任务的专门推理与验证架构。</strong>
+通用模型已经证明自己“能做一些”，但 benchmark 也证明了它们在严谨多步分析上的脆弱性。未来更强的系统，很可能来自更细粒度的 verifier、更好的执行反馈、更专门的数据任务策略。</p>
+
+<p><strong>第三，agent 与治理/元数据平台的深度合流。</strong>
+Numbers Station 被 Alation 收购、各大平台把语义层与 agent 绑在一起，都说明未来的 Data Agent 不会独立存在，而会成为元数据平台、指标平台、数据目录、权限系统的一部分。</p>
+
+<h2>九、总结</h2>
+
+<p>如果用一句话概括 2023—2026 年 Data Agent 的演进，那就是：</p>
+
+<blockquote><p><strong>它已经从“自然语言问数”演化为“受治理的数据执行系统”，但离稳定替代高水平分析师仍有明显距离。</strong></p></blockquote>
+
+<p>今天最领先的方案，已经在以下方面形成清晰共识：</p>
+
+<ul>
+<li>不能只靠裸 NL2SQL，必须有语义层/本体/verified queries</li>
+<li>不能只做单轮回答，必须支持多步规划、工具调用与执行验证</li>
+<li>不能只看答案是否像样，必须保证权限、审计、解释与回归评估</li>
+<li>不能只处理结构化表，必须逐步纳入文档、网页、图像、音视频等异构数据</li>
+</ul>
+
+
+<p>而 benchmark 则提醒我们：</p>
+
+<ul>
+<li>BIRD/Spider 2.0 说明真实企业问数远难于经典 Text-to-SQL</li>
+<li>DABstep/DA-Code/DSAEval/WebDS 说明多步数据科学任务仍然很难</li>
+<li>FDABench/DAB/UniDataBench 说明异构环境中的工具选择、规划与解释才是下一阶段瓶颈</li>
+</ul>
+
+
+<p>因此，对企业技术负责人来说，当前最现实的策略不是幻想“一步到位的全自治数据员工”，而是分层推进：</p>
+
+<ol>
+<li>先在高频、清晰、语义稳定的问数场景落地；</li>
+<li>再把 agent 扩展到归因、报告和深度分析；</li>
+<li>最后才考虑数据工程、治理和自动行动的闭环。</li>
+</ol>
+
+
+<p>谁能把这条路线走稳，谁就更可能在未来一轮 Data Agent 平台竞争中占据优势。</p>
+
+<hr />
+
+<h2>十、参考来源（按主题归类）</h2>
+
+<h3>厂商官方与产品文档</h3>
+
+<ol>
+<li>Microsoft Fabric Data Agent 概念文档<br/>
+https://learn.microsoft.com/en-us/fabric/data-science/concept-data-agent</li>
+<li>Snowflake Cortex Analyst 文档<br/>
+https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst</li>
+<li>Databricks：Introducing Genie One, Genie Ontology and Genie Agents<br/>
+https://www.databricks.com/blog/introducing-genie-one-genie-ontology-and-genie-agents</li>
+<li>Google Cloud：Introducing Conversational Analytics in BigQuery<br/>
+https://cloud.google.com/blog/products/data-analytics/introducing-conversational-analytics-in-bigquery</li>
+<li>Google Cloud：Unveiling new BigQuery capabilities for the agentic era<br/>
+https://cloud.google.com/blog/products/data-analytics/unveiling-new-bigquery-capabilities-for-the-agentic-era</li>
+<li>AWS：Amazon Q is now generally available in Amazon QuickSight<br/>
+https://aws.amazon.com/blogs/business-intelligence/amazon-q-is-now-generally-available-in-amazon-quicksight-bringing-generative-bi-capabilities-to-the-entire-organization/</li>
+<li>阿里云：Data Agent for Analytics<br/>
+https://www.alibabacloud.com/help/en/dms/data-agent-for-analytics/</li>
+<li>阿里云：Data Agent for Meta<br/>
+https://www.alibabacloud.com/help/en/dms/data-agent-for-meta/</li>
+<li>火山引擎：数据智能体/智能分析 Agent 相关文档<br/>
+https://www.volcengine.com/docs/85637/1588463</li>
+<li>AskTable 官网<br/>
+https://www.asktable.com/</li>
+<li>Aloudata Agent 官网<br/>
+https://aloudata.com/products/agent</li>
+<li>Snowflake Summit 2025: Snowflake Intelligence<br/>
+https://www.snowflake.com/en/blog/intelligence-snowflake-summit-2025/</li>
+<li>Databricks Data + AI Summit 2026: What’s new in Genie Code<br/>
+https://www.databricks.com/blog/whats-new-genie-code-data-ai-summit-2026</li>
+<li>腾讯云：大数据智能体工作台 DataBuddy<br/>
+https://cloud.tencent.com/product/databuddy</li>
+<li>腾讯云：欢迎新 Buddy——DataBuddy 发布与架构介绍<br/>
+https://cloud.tencent.com/developer/article/2672626</li>
+<li>百度智能云：百度胜算·数据智能平台<br/>
+https://cloud.baidu.com/product/databuilder</li>
+<li>百度智能云：Sugar BI 智能问数文档<br/>
+https://cloud.baidu.com/doc/SUGAR/s/Xlpqgy2fl</li>
+<li>网易智企：知数 Data Agent 产品文档<br/>
+https://study.sf.163.com/documents/read/manual/DataAgentoverview.md</li>
+<li>网易智企：Data Agent 与恒丰银行实践案例<br/>
+https://grow.163.com/cms/9ZWfP8zr.html</li>
+<li>数花智算 SparkData 官网<br/>
+https://www.sparkdata.cn/</li>
+<li>数势科技：SwiftAgent / Data Agent<br/>
+https://digitforce.com/product/sa</li>
+</ol>
+
+
+<h3>Benchmark 与论文</h3>
+
+<ol>
+<li>BIRD benchmark<br/>
+https://bird-bench.github.io/</li>
+<li>Spider 2.0 主页<br/>
+https://spider2-sql.github.io/</li>
+<li>InfiAgent-DABench<br/>
+https://arxiv.org/abs/2401.05507</li>
+<li>DABstep<br/>
+https://arxiv.org/abs/2506.23719</li>
+<li>FDABench<br/>
+https://arxiv.org/abs/2509.02473</li>
+<li>DAB: Data Agent Benchmark<br/>
+https://arxiv.org/abs/2603.20576</li>
+<li>DSAEval<br/>
+https://arxiv.org/abs/2601.13591</li>
+<li>UniDataBench<br/>
+https://aclanthology.org/2026.acl-long.1556/</li>
+<li>WebDS<br/>
+https://arxiv.org/abs/2508.01222</li>
+<li>DA-Code<br/>
+https://da-code-bench.github.io/</li>
+</ol>
+
+
+<h3>行业与补充资料</h3>
+
+<ol>
+<li>IBM 收购 Seek AI 新闻稿<br/>
+https://newsroom.ibm.com/2025-06-02-ibm-unveils-watsonx-ai-labs-the-ultimate-accelerator-for-ai-builders,-startups-and-enterprises-in-new-york-city</li>
+<li>Alation 收购 Numbers Station 新闻稿<br/>
+https://www.alation.com/blog/alation-acquires-numbers-station-ai/</li>
+<li>InfoQ：从技术到应用，火山引擎 Data Agent 分析智能体提效落地实践<br/>
+https://www.infoq.cn/video/ORCYPcm7U84r572WeTwm</li>
+<li>中国能源新闻网：百度智能云发布企业数据智能平台“百度胜算”<br/>
+https://www.cpnn.com.cn/qiye/jishu2023/202605/t20260515_1887937_wap.html</li>
+<li>数势科技：SwiftAgent 入选行业图谱及客户实践说明<br/>
+https://digitforce.com/newsinfo/689</li>
+</ol>
+
+
+<blockquote><p>创作声明：本文借助DeepSeek网页版、AnyGen智能体（字节退出的对标Manus的通用智能体产品）、ChatGPT生图等AI工具和模型进行资料收集、内容概括和整理，虽然大部分经过人工审核校验，但仍不可避免少部分内容和细节可能存在纰漏和幻觉，阅读和引用过程中需要读者自行甄别。</p></blockquote>
+]]></content>
+  </entry>
+  
+</feed>

@@ -171,6 +171,55 @@ $(function () {
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2020/10/16/spark-word2vec-source-analysis/">Spark Word2Vec源码详细解析</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2020-10-16T18:40:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2020/10/16/spark-word2vec-source-analysis/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>目录：</p>
+
+<p>1.简单介绍spark word2vec</p>
+
+<p>2.skip-gram 层次softmax版本的源码解析</p>
+
+<p>3.word2vec 的原理 只需要看层次哈弗曼树skip-gram那部分</p>
+
+<p>4.skip-gram negetive sample 的版本源码解析</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2020/10/16/spark-word2vec-source-analysis/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2020/05/31/spark-vs-flink-comparison/">Spark与Flink：下一代大数据计算引擎之争</a></h1>
     
     
@@ -622,68 +671,6 @@ $(function () {
   
     <footer>
       <a rel="full-article" href="/blog/2019/06/14/apache-kylin-guide/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2019/06/12/python-periodic-time-series/">用Python预测周期性时间序列</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2019-06-12T19:45:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2019/06/12/python-periodic-time-series/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>原文链接： <a href="https://juejin.cn/post/6844903585742848013">https://juejin.cn/post/6844903585742848013</a>  <br/>
-github项目： <a href="https://github.com/scarlettgin/cyclical_series_predict">https://github.com/scarlettgin/cyclical_series_predict</a></p>
-
-<h1>1、背景</h1>
-
-<p>公司平台上有不同的api，供内部或外部调用，这些api承担着不同的功能，如查询账号、发版、抢红包等等。日志会记录下每分钟某api被访问了多少次，即一个api每天会有1440条记录（1440分钟），将每天的数据连起来观察，有点类似于股票走势的意思。我想通过前N天的历史数据预测出第N+1天的流量访问情况，预测值即作为合理参考，供新一天与真实值做实时对比。当真实流量跟预测值有较大出入，则认为有异常访问，触发报警。</p>
-
-<h1>2、数据探索</h1>
-
-<p>我放了一份样例数据在data文件夹下，看一下数据大小和结构</p>
-
-<pre><code>data = pd.read_csv(filename)
-print('size: ',data.shape)
-print(data.head())
-</code></pre>
-
-
-
-<center><img src="/images/2019/IMAG2019061201.webp"></center>
-
-
-<p><br></p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2019/06/12/python-periodic-time-series/">Read on &rarr;</a>
     </footer>
   
 

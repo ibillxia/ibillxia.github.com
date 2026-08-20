@@ -171,6 +171,83 @@ $(function () {
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2013/04/06/Convolutional-Neural-Networks/">卷积神经网络（CNN）</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-04-06T23:34:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/04/06/Convolutional-Neural-Networks/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>1. 概述</h2>
+
+
+<p>卷积神经网络是一种特殊的深层的神经网络模型，它的特殊性体现在两个方面，一方面它的神经元间的连接是<strong>非全连接</strong>的，
+另一方面同一层中某些神经元之间的连接的<strong>权重是共享的</strong>（即相同的）。它的非全连接和权值共享的网络结构使之更类似于生物
+神经网络，降低了网络模型的复杂度（对于很难学习的深层结构来说，这是非常重要的），减少了权值的数量。</p>
+
+
+
+
+<p>卷积网络最初是受视觉神经机制的启发而设计的，是为识别二维形状而设计的一个多层感知器，这种网络结构对平移、比例缩放、倾斜或者共他
+形式的变形具有高度不变性。1962年Hubel和Wiesel通过对猫视觉皮层细胞的研究，提出了感受野(receptive field)的概念，1984年日本学者Fukushima
+基于感受野概念提出的神经认知机(neocognitron)模型，它可以看作是卷积神经网络的第一个实现网络，也是感受野概念在人工神经网络领域的首次应用。</p>
+
+
+
+
+<p>神经认知机将一个视觉模式分解成许多子模式(特征)，然后进入分层递阶式相连的特征平面进行处理，它试图将视觉系统模型化，使其能够在即使物体有
+位移或轻微变形的时候，也能完成识别。神经认知机能够利用位移恒定能力从激励模式中学习，并且可识别这些模式的变化形。在其后的应用研究中，Fukushima
+将神经认知机主要用于手写数字的识别。随后，国内外的研究人员提出多种卷积神经网络形式，在邮政编码识别（Y. LeCun etc）、车牌识别和人脸识别等方面
+得到了广泛的应用。</p>
+
+
+
+
+<h2>2. CNN的结构</h2>
+
+
+<p>卷积网络是为识别二维形状而特殊设计的一个多层感知器，这种网络结构对平移、比例缩放、倾斜或者共他形式的变形具有高度不变性。
+这些良好的性能是网络在有监督方式下学会的，网络的结构主要有稀疏连接和权值共享两个特点，包括如下形式的约束：</br>
+1 特征提取。每一个神经元从上一层的局部接受域得到突触输人，因而迫使它提取<strong>局部特征</strong>。一旦一个特征被提取出来，
+只要它相对于其他特征的位置被近似地保留下来，它的精确位置就变得没有那么重要了。</br>
+2 特征映射。网络的每一个计算层都是由<strong>多个特征映射组</strong>成的，每个特征映射都是平面形式的。平面中单独的神经元在约束下<strong>共享
+相同的突触权值</strong>集，这种结构形式具有如下的有益效果：a.平移不变性。b.自由参数数量的缩减(通过权值共享实现)。</br>
+3.子抽样。每个卷积层跟着一个实现局部平均和子抽样的计算层，由此特征映射的分辨率降低。这种操作具有使特征映射的输出对平移和其他
+形式的变形的敏感度下降的作用。</p>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/04/06/Convolutional-Neural-Networks/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2013/04/04/why-do-Fourier-transformation/">为什么要进行傅立叶变换</a></h1>
     
     
@@ -745,62 +822,6 @@ and the same lower-level concepts can help to define many higher-level concepts.
   
     <footer>
       <a rel="full-article" href="/blog/2012/12/21/human-audio-system-neural-parts/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2012/12/21/human-audio-system-out-part/">人的听觉系统生理结构（1）——外周部分</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2012-12-21T21:43:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2012/12/21/human-audio-system-out-part/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>概述</h2>
-
-
-<p>人的听觉系统是一个十分巧妙的音频信号处理器，它具有良好的抗噪声识别能力，它对声音信号的处理能力就来源于其巧妙的生理结构。</p>
-
-
-
-
-<p>听觉系统可分为两大部分，即耳朵和听觉中枢。其中耳朵又分为外耳、中耳、内耳、听神经，听觉中枢则纵跨脑干、中脑、丘脑的大脑皮层，
-是感觉系统中最长的中枢通路之一。</br>
-<center><img src="/images/2012/IMAG2012122101.jpg"></center>
-<center>图 1 双耳听觉系统</center>
-</p>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/12/21/human-audio-system-out-part/">Read on &rarr;</a>
     </footer>
   
 

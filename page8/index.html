@@ -171,6 +171,53 @@ $(function () {
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2015/11/05/inside-spotify-and-the-future-of-music-streaming/">揭秘：Spotify 是如何实现歌曲的个人品味精准推送的</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2015-11-05T22:21:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2015/11/05/inside-spotify-and-the-future-of-music-streaming/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><center><img src="/images/2015/IMAG2015110501.jpeg"></center>
+
+
+<p></br>
+在线音乐服务已经成为了大势所趋。但是如何在这个领域胜出呢？答案只有一个： <strong> 针对每一个用户量身打造最适合他音乐品味的歌单 </strong>。Spotify 就在这方面给我们做了很好的示范。它不是人们所想象的那样单纯凭借智能算法来做到这一切，真正有效的方式是人工筛选与计算机算法有机结合起来！</p>
+
+<p>Spotify 上有一个播放歌单「Discover Weekly」。这个列表每周一就会收录各式各样的歌曲，做全面的更新.有一些歌也许耳熟能详，有一些也许从来没听过，但是它们无一例外的全部击中每一个用户的内心。人们纷纷表示这个歌单里面每一首都要值得收藏！ <strong> Spotify 似乎有着一种洞悉每一个人内心喜好的魔力，对每一个人的音乐品味都了如指掌！ </strong></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2015/11/05/inside-spotify-and-the-future-of-music-streaming/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2015/11/03/tencent-analytics-architecture/">【标点符】腾讯分析系统架构解析</a></h1>
     
     
@@ -631,60 +678,6 @@ PS: 原文博主通过MySQL垂直深耕，成功进入Facebook了，祝福。</p
   
     <footer>
       <a rel="full-article" href="/blog/2014/11/15/insight-into-stl-6-functor-or-function-objects/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms/">深入理解STL源码(5.4) 算法之复杂算法algorithm</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-11-01T10:33:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>本文主要介绍STL中的稍微复杂的算法，主要涉及到的源码文件有 <code>stl_algo.h</code> 等。</p>
-
-<p>在文件 <code>stl_algo.h</code> 中有很多常用的算法，包括查找、计数、旋转、删除、排序、合并、集合的交并等运算、求极值、排列组合等等，本文将按源码中各算法的实现顺序来介绍其具体实现细节。由于本文涉及到的算法和相关代码太多，在文中就尽量不贴出代码了，详细的代码及相关注释请参见 <a href="http://ibillxia.github.io/upload/code/stl_algo.h">stl_algo.h</a>。</p>
-
-<p><strong>1. 求三个数的中值 median</strong><br/>
-该算法比较简单，几个if-else语句就解决了。该函数只提供内部算法使用，并不对外提供接口，也不是STL标准中的算法，限于篇幅这里就不贴代码了。另外，该算法有两个版本，一个是使用默认的大小比较，另一个是可以指定比较函数。</p>
-
-<p><strong>2. for_each</strong><br/>
-也很简单，就是对区间 [first, last) 中的每一个元素执行一个给定函数的运算，就一行语句：</p>
-
-<pre><code class="cpp">for ( ; __first != __last; ++__first) __f(*__first);
-</code></pre>
-
-<p>其中 <code>__f</code> 为用户传入的一个指定的仿函数。该算法的返回值仍为传入的仿函数 <code>__f</code> 。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms/">Read on &rarr;</a>
     </footer>
   
 

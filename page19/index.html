@@ -171,6 +171,75 @@ $(function () {
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2010/07/21/php-send-email/">PHP发送邮件</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-07-21T10:05:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2010/07/21/php-send-email/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>现在很多主机空间都是IIS上执行PHP程序，大多不能直接用mail()发送邮件，有了这个类只要你有注册过邮箱，
+就可以随意的发送邮件，速度也不慢哦。</p>
+
+
+
+
+<p>先给一个具体的使用示例：</p>
+
+
+
+
+<pre><code class="php">&lt;? 
+require (FILE_DIR."smtp.php"); 
+$smtpserver = "smtp.xxx.com";//SMTP服务器 
+$smtpserverport =25;//SMTP服务器端口 
+$smtpusermail = "xxxxx@xxx.com";//SMTP服务器的用户邮箱 
+$smtpemailto = "aaaaa@xxx.com";//发送给谁 
+$smtpuser = "xxxxx";//SMTP服务器的用户帐号 
+$smtppass = "xxxxx";//SMTP服务器的用户密码 
+$mailsubject = "Test Subject";//邮件主题 
+$mailbody = "&lt;h1&gt;This is a test mail&lt;/h1&gt;";//邮件内容 
+$mailtype = "HTML";//邮件格式（HTML/TXT）,TXT为文本邮件 
+$smtp = new smtp($smtpserver,$smtpserverport,true,$smtpuser,$smtppass);//这里面的一个true是表示使用身份验证,否则不使用身份验证. 
+$smtp-&gt;debug = TRUE;//是否显示发送的调试信息 
+$smtp-&gt;sendmail($smtpemailto, $smtpusermail, $mailsubject, $mailbody, $mailtype); 
+?&gt;
+</code></pre>
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/07/21/php-send-email/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2010/07/19/ucenter-sync-login-mechanism/">UCenter同步登陆机制</a></h1>
     
     

@@ -171,6 +171,56 @@ $(function () {
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2014/05/04/android-ndk-development/">Ubuntu 下 Android NDK 开发入门</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-05-04T23:53:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2014/05/04/android-ndk-development/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>本文首先介绍一下在 Ubuntu 下如何配置 Android NDK 开发环境，然后用一个简单的 hello-jni 项目来介绍 NDK 开发流程，本文的全部代码下载链接：<a href="https://ibillxia.github.io/upload/code/20140504-HelloJni.tar.gz">HelloJni.tar.gz</a>，也可以在我的 <a href="https://github.com/ibillxia/Demo/tree/master/HelloJni">GitHub</a> 上下载。</p>
+
+<h2>1. 简介</h2>
+
+<p>什么是 Android NDK 呢？ NDK(Native Development Kit) 是一个允许开发者用一些本地语言(C/C++)编写 Android App 的部分功能的工具集。对于一些特定的 App，NDK 非常有利于我们直接使用现成的用 C/C++ 编写的代码库（但对于大多数 App 来说，NDK 是没有必要的）。使用 NDK 进行 C/C++ Android 开发的基本结构和流程如下图（来自<a href="http://shihongzhi.com/ndk/">shihongzhi博客</a> ）：</p>
+
+<center> <img src="/images/2014/IMAG2014050401.jpg"> </center>
+
+
+<p>在开始之前，这里要提醒大家：NDK 对大多数 App 而言是不会有太多的好处的，在 Android 上使用原生 C/C++ 代码并不会很明显的提升应用的性能，但却增加了你开发应用的复杂度。所以，仅仅在需要使用 NDK 时才使用它 —— 不要因为你更喜欢用 C/C++。典型的 NDK 应用场景是一些 CPU 操作密集而不需要太多内存的场合，如信号处理、物理模拟等等，很多这些处理过程都已经封装到了 Android 系统内部，所以当你不确定是否要使用本地 C/C++ 代码时，先看看你的需求，以及 Android 框架中的 API 是否已经提供你需要的功能。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/05/04/android-ndk-development/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2014/04/28/configure-twitter-bootstrap-theme-in-octopress/">给Octopress博客配置Twitter Bootstrap主题</a></h1>
     
     
@@ -691,62 +741,6 @@ SVDFeature包含一个很灵活的Matrix Factorization推荐框架，能方便�
   
     <footer>
       <a rel="full-article" href="/blog/2013/11/11/36kr-open-day-hangzhou-station-review-and-summary/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2013/10/30/why-web-companies-all-are-beginning-to-play-hardware-products/">互联网公司为什么都在玩硬件？</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2013-10-30T21:07:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2013/10/30/why-web-companies-all-are-beginning-to-play-hardware-products/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>昨天360高调推出安全手环，延续着去年以来互联网公司进军硬件行业的风气。小米手机一炮而红后，互联网公司纷纷进军手机硬件行业，
-百度、阿里、盛大、360等等都推出了自己的定制手机，不过巨头们发现原来硬件并没有想象中那般好玩。但不好玩也得玩，你不玩别人也
-会玩。</p>
-
-
-
-
-<center><img src="/images/2013/IMAG2013103001.jpeg"></center>
-
-
-
-
-<p>但今年，巨头们不玩手机了，改玩其他了，有的是自己独立生产，有的是与厂家合作，内嵌自己的服务。这其中的玩家包括百度、360、小米、盛大、乐视等。</p>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/10/30/why-web-companies-all-are-beginning-to-play-hardware-products/">Read on &rarr;</a>
     </footer>
   
 
