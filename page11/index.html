@@ -171,6 +171,60 @@ $(function () {
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2014/05/11/cpp-program-optimization-new-delete-operator/">C++ 应用程序性能优化之 New/delete 操作符</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2014-05-11T20:33:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2014/05/11/cpp-program-optimization-new-delete-operator/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>1.概述</h2>
+
+<p>C++ 程序的存储空间可以分为静态/全局存储区、栈区和堆区。下图展示了一个典型的Linux C/C++ 程序内存空间布局：</p>
+
+<center><img src="/images/2014/IMAG2014051101.png"></center>
+
+
+<p>其中，每一部分的具体涵义如下：<br/>
+- <strong>代码段（.text）</strong>：这里存放的是CPU要执行的指令。代码段是可共享的，相同的代码在内存中只会有一个拷贝，同时这个段是<strong>只读</strong>的，防止程序由于错误而修改自身的指令。<br/>
+- <strong>初始化数据段（.data）</strong>：这里存放的是程序中需要明确赋初始值的变量，例如位于所有函数之外的全局变量：<code>int val=100;</code> 。 需要强调的是，以上两段都是位于程序的可执行文件中，内核在调用 exec 函数启动该程序时从源程序文件中读入。<br/>
+- <strong>未初始化数据段（.bss）</strong>：位于这一段中的数据，内核在执行该程序前，将其初始化为0或者null。例如出现在任何函数之外的全局变量：<code>int sum;</code><br/>
+- <strong>堆（Heap）</strong>：这个段用于在程序中进行动态内存申请，例如经常用到的 malloc，new 系列函数就是从这个段中申请内存。<br/>
+- <strong>栈（Stack）</strong>：函数中的局部变量以及在函数调用过程中产生的临时变量都保存在此段中。<br/>
+静态/全局存储区和栈区一般在程序编译阶段决定；而堆区则随着程序的运行而动态变化，每一次程序运行都会有不同的行为，因此动态内存管理对于一个程序在运行过程中占用的内存大小及程序运行性能有非常重要的影响。 本文主要探讨在C++中如何管理动态内存，以及如何使用 C++ 的语言特性来提高动态内存的管理效率，减少错误的发生。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2014/05/11/cpp-program-optimization-new-delete-operator/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2014/05/04/android-ndk-development/">Ubuntu 下 Android NDK 开发入门</a></h1>
     
     
@@ -677,70 +731,6 @@ SVDFeature包含一个很灵活的Matrix Factorization推荐框架，能方便�
   
     <footer>
       <a rel="full-article" href="/blog/2013/12/24/if-giraffe-cried-would-it-choking-so-long/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2013/11/11/36kr-open-day-hangzhou-station-review-and-summary/">36氪开放日杭州站回顾与总结</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2013-11-11T19:10:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2013/11/11/36kr-open-day-hangzhou-station-review-and-summary/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>11月10日，36氪开放日第二次来到杭州站，首次进入大学，进行互联网行业创业和投资的机遇、观点和经验分享。这次开放日主要包含三个部分：</br>
-（1）成功创业者/投资者的主题分享；</br>
-（2）初创团队的产品发布与展示；</br>
-（3）观众参与: 10位观众每人1分钟demo展示。</br>
-本文回顾并总结一下这次活动的主要观点。</p>
-
-
-
-
-<center><img src="/images/2013/IMAG2013111101.jpg"></center>
-
-
-
-
-<p>主题分享的特邀嘉宾有来自阿里的副总裁纪纲，来自阿米巴的资本合伙人、挖财董事长李治国，来自丁香园的CTO、微信「小道消息」作者冯大辉@Fenng，
-毕业于浙大的个推创始人方毅@方毅_个推，来自网易杭研院的产品经理、目前负责易信的章行，来自Nokia的体验创新中心总经理傅蕾。</p>
-
-
-<p>初创团队的产品展示有7个，分别是——金亦冶-Kivvi收银平板：时尚店主的POS收银机，徐文俊-找大巴：首创BO2O大巴招投标预订直销模式、大巴预订神器，何翱翔-九漫：交互式动态漫画，
-袁一伦-要出发旅行：主打周边自驾游，李军-微洽：面向企业的社交化工作平台，胡笃晟-阿姨厨房：为厨艺爱好者提供在家创业、P2P模式的餐饮服务电子商务平台，凌曙-同船渡：位置景点
-创建和结伴出游的旅行产品。</p>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/11/11/36kr-open-day-hangzhou-station-review-and-summary/">Read on &rarr;</a>
     </footer>
   
 

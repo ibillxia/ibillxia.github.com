@@ -171,6 +171,55 @@ $(function () {
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2015/11/24/tencent-anti-fraud-architecture/">【高可用架构】腾讯基于用户画像大数据的电商防刷架构</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2015-11-24T13:53:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2015/11/24/tencent-anti-fraud-architecture/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>一、背景介绍</h2>
+
+<p>最近1~2年电商行业飞速发展，各种创业公司犹如雨后春笋大量涌现，商家通过各种活动形式的补贴来获取用户、培养用户的消费习惯。</p>
+
+<p>但任何一件事情都具有两面性，高额的补贴、优惠同时了也催生了"羊毛党"。</p>
+
+<p>"羊毛党"的行为距离欺诈只有一步之遥，他们的存在严重破环了活动的目的，侵占了活动的资源，使得正常的用户享受不到活动的直接好处。</p>
+
+<p>今天主要分享下腾讯自己是如何通过大数据、用户画像、建模来防止被刷、恶意撞库的。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2015/11/24/tencent-anti-fraud-architecture/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2015/11/05/inside-spotify-and-the-future-of-music-streaming/">揭秘：Spotify 是如何实现歌曲的个人品味精准推送的</a></h1>
     
     
@@ -625,59 +674,6 @@ PS: 原文博主通过MySQL垂直深耕，成功进入Facebook了，祝福。</p
   
     <footer>
       <a rel="full-article" href="/blog/2014/11/23/insight-into-stl-7-adaptor/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2014/11/15/insight-into-stl-6-functor-or-function-objects/">深入理解STL源码(6) 仿函数|函数对象</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-11-15T10:06:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2014/11/15/insight-into-stl-6-functor-or-function-objects/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>1. 仿函数|函数对象概述</h2>
-
-<p>在STL的六大组件中，仿函数可说是体积最小、观念最简单、实现最容易的一个，但小兵也能立大功——他扮演一种“策略”角色，可以让STL算法具有更加灵活的“演出”。</p>
-
-<p>在STL的历史上，仿函数(functor)是早期的命名，C++标准规格定下来后采用了新的名称——函数对象(function object)。就实际意义而言，函数对象的称谓更加贴切：一种具有函数特质的对象。函数对象对调用者而言可以向函数调用一样地被调用，而对被调用者而言则是以对象所定义的函数调用操作符(function call operator)。</p>
-
-<p>在C++中，函数调用操作符是指左右小括弧 <code>()</code> ，该操作符是可以重载的。许多 STL 算法都提供了两个版本，一个用于一般情况（例如排序时使用 <code>operator&lt;</code> 以递增方式排列），一个用于特殊情况（例如排序时按照使用者自定义的大小关系进行排序）。这有点类似于C语言中的函数指针，但函数指针无法满足STL对抽象性的要求，也不能和STL其他组件（如配接器adaptor）搭配，产生更灵活的变化，关于这一点下一节将详细介绍。</p>
-
-<h2>2. 可适配(Adaptable)的关键</h2>
-
-<p>STL算法非常灵活的一个关键因素之一在于STL仿函数的可配接性(adaptability)，即函数可以被配接器修饰，彼此相积木一样地串接。为了拥有配接能力，每一个仿函数必须定义自己的相应型别(associate types)，就像迭代器如果要融入整个STL大家庭，也必须依照规定定义自己的5个相应型别一样。这样做是为了让配接器能够获得函数的一些特性。相应型别都只是一些 typedef，所有必要操作在编译期就就全部完成了，对程序的执行效率没有任何影响，不带来任何额外负担。</p>
-
-<p>仿函数相应型别主要用来表示函数的参数型别和返回值型别，为了方便，<code>stl_function.h</code> 中定义了两个基类，分别是 <code>unary_function</code> 和 <code>binary_function</code>，分别表示一元函数和二元函数，其中都是一些型别的定义，仿函数只需要继承其中一个类，就可以拥有配接能力了。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/11/15/insight-into-stl-6-functor-or-function-objects/">Read on &rarr;</a>
     </footer>
   
 

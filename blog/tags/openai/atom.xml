@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: OpenAI | Bill's Blog]]></title>
+  <link href="https://ibillxia.github.io/blog/tags/openai/atom.xml" rel="self"/>
+  <link href="https://ibillxia.github.io/"/>
+  <updated>2026-09-14T17:46:13+08:00</updated>
+  <id>https://ibillxia.github.io/</id>
+  <author>
+    <name><![CDATA[Bill Xia]]></name>
+    <email><![CDATA[ibillxia@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[OpenAI Data Agent的核心Skill解读：数据Agent如何把问题变成可信的决策]]></title>
+    <link href="https://ibillxia.github.io/blog/2026/09/14/openai-data-agent-skills-interpretation/"/>
+    <updated>2026-09-14T13:16:00+08:00</updated>
+    <id>https://ibillxia.github.io/blog/2026/09/14/openai-data-agent-skills-interpretation</id>
+    <content type="html"><![CDATA[<center><img src="/images/2026/IMAG2026091401.png"></center>
+
+
+<p> <br/>
+我把 OpenAI Data Analytics 官方页面中的技能说明整理成了 skill 格式，放到了github上 <a href="https://github.com/ibillxia/OpenAI-Data-Analytics">OpenAI-Data-Analytics</a>，部分md文件官方页面有提到，但没有泄漏具体内容，我让codex补全了下，见分支 codex/fill-empty-markdown，欢迎star/fork。</p>
+
+<!--more-->  
+
+
+<h2>前言</h2>
+
+<p>一个数据 Agent 接到“最近转化率为什么下降了”这样的问题，应该从哪里开始？</p>
+
+<p>找到一张表，写出 SQL，生成一条折线，再列出几个可能原因，这条路径很容易演示。但真正把结果交给业务负责人时，问题才刚刚开始：转化率的分母是什么？这周的数据到齐了吗？不同渠道的用户结构有没有变化？所谓“原因”，究竟是算出来的贡献，还是看起来合理的猜测？</p>
+
+<p>逐项阅读这15+Skill，最吸引我的，是这些说明对分析工作中间环节的约束：什么时候需要补背景、什么问题应该交给另一个技能、哪些数字必须复算，以及最终成果应满足什么条件。</p>
+
+<p>这让我形成一个判断：<strong>数据 Agent 的产品价值，很大一部分来自把分析工作的责任和完成标准写清楚。</strong> 模型负责理解、计算和表达，工作流则要让这些能力在合适的位置发生，并留下能够检查的证据。</p>
+
+<p>本文围绕最初页面截图中的 15 个核心技能展开。它是一篇基于技能文本的设计解读，文中的数值案例为说明机制而构造，不是插件实测结果。</p>
+
+<h2>从 15 个名字，看见一套分析工作的分工</h2>
+
+<p>先把技能按职责排列，整体关系会清楚很多。</p>
+
+<table>
+<thead>
+<tr>
+<th> 环节 </th>
+<th> 核心技能 </th>
+<th> 需要回答的问题 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> 任务分流 </td>
+<td> Index </td>
+<td> 这是查数、诊断、指标设计，还是业务决策？ </td>
+</tr>
+<tr>
+<td> 理解业务 </td>
+<td> Gather Business Context </td>
+<td> 谁要做什么决定，背景和口径是什么？ </td>
+</tr>
+<tr>
+<td> 沉淀知识 </td>
+<td> Create Data Context </td>
+<td> 哪些定义与规则值得保存，供下次复用？ </td>
+</tr>
+<tr>
+<td> 设计度量 </td>
+<td> Design KPIs </td>
+<td> 什么指标能衡量目标，哪些风险需要护栏？ </td>
+</tr>
+<tr>
+<td> 检查数据 </td>
+<td> Analyze Data Quality </td>
+<td> 这些数据是否适合当前用途？ </td>
+</tr>
+<tr>
+<td> 解释变化 </td>
+<td> Metric Diagnostics </td>
+<td> 变化能否复现，哪些部分解释了变化？ </td>
+</tr>
+<tr>
+<td> 形成建议 </td>
+<td> Product And Business Analysis </td>
+<td> 证据支持哪种行动，机会是否可实现？ </td>
+</tr>
+<tr>
+<td> 经营汇报 </td>
+<td> KPI Reporting </td>
+<td> 实际表现如何，是否赶得上目标？ </td>
+</tr>
+<tr>
+<td> 估算机会 </td>
+<td> Market Sizing </td>
+<td> 市场有多大，结果依赖哪些假设？ </td>
+</tr>
+<tr>
+<td> 保存计算 </td>
+<td> Jupyter Notebooks </td>
+<td> 分析能否从头执行并复算？ </td>
+</tr>
+<tr>
+<td> 校验结论 </td>
+<td> Validate Data </td>
+<td> 方法、计算和判断是否经得起检查？ </td>
+</tr>
+<tr>
+<td> 表达证据 </td>
+<td> Visualize Data </td>
+<td> 图形是否适合当前问题？ </td>
+</tr>
+<tr>
+<td> 持续监控 </td>
+<td> Build Dashboard </td>
+<td> 默认视图能否帮助读者判断状态？ </td>
+</tr>
+<tr>
+<td> 组织报告 </td>
+<td> Build Report </td>
+<td> 读者能否看懂结论并找到证据？ </td>
+</tr>
+<tr>
+<td> 分享成果 </td>
+<td> publish-artifact-to-sites </td>
+<td> 经验证的产物如何交付，数据边界是什么？ </td>
+</tr>
+</tbody>
+</table>
+
+
+<p>这张表表达的是职责关系，不是要求每次都从头到尾调用 15 个技能的流水线。一次简单查数，和一次解释经营异常的任务，所需的工作量本来就不同。</p>
+
+<p>另一个容易混淆的地方是：技能数量不等于 Agent 数量。从这些文本可以看见工作如何拆分，却不能据此推断每个技能都由独立模型或独立进程执行。</p>
+
+<h2>1. Index 的重要性：先选对要做的工作</h2>
+
+<center><img style="width:60%;" src="https://ibillxia.github.io/images/2026/IMAG2026091402.webp"></center>
+
+
+<p></p>
+
+<p>Index 负责识别任务，选择合适的分析路径和交付形式。它把“分析什么”和“以什么形式交付”分开处理。</p>
+
+<p>比如，“为什么转化率下降”主要是诊断任务；“帮我做一页转化率下降的报告”，依然需要先完成诊断，再组织报告。用户提到了“报告”，不会让原因调查自动消失。</p>
+
+<p>相反，如果用户只是查询一个已经定义清楚的指标，也没有要求解释变化或提出建议，工作流就不应该自动扩展成全面诊断。文档对简答、报告、看板、Notebook 等输出作了区分，并保留用户明确选择交付方式的空间。</p>
+
+<p>这里最值得借鉴的是<strong>任务归属</strong>。诊断技能对解释负责，报告技能对表达负责，校验技能对证据与结论是否相称负责。下游生成了一个漂亮页面，并不代表上游分析已经完成。</p>
+
+<p>从产品设计角度看，这有助于避免一种常见情况：Agent 交付了很多东西，用户最初的问题却仍然没有被回答。好的路由应首先确定什么结果才算完成，然后选择必要的步骤。</p>
+
+<h2>2. 上下文为什么分成两个技能</h2>
+
+<center><img src="/images/2026/IMAG2026091403.webp"></center>
+
+
+<p>
+Gather Business Context 和 Create Data Context 看起来相近，但解决的是不同时间尺度的问题。</p>
+
+<p>前者服务于当前任务。转化率下降发生在什么业务阶段？团队刚调整过投放策略吗？负责人关心的是新增付费用户，还是某个页面的点击？哪些文档、讨论和指标定义会改变解释？这些信息决定接下来应该怎样分析。</p>
+
+<p>后者负责把可复用的数据语义保存下来。这里的语义层可以包含指标定义、数据表粒度、关联规则、过滤条件、查询模式、来源优先级和注意事项。</p>
+
+<p>可以用一个简单例子理解：</p>
+
+<ul>
+<li>“这次活动面向新注册用户”是当前分析需要确认的背景。</li>
+<li>“付费转化率统一按注册后七天内首次付费计算，排除测试账号”则可能值得成为长期维护的口径。</li>
+</ul>
+
+
+<p>文档把语义层视为明确、可检查的产物，并为其创建、维护和保存规定了流程。它不是“对话越多就自动懂业务”的隐含承诺。</p>
+
+<p>更细的一点是，已有语义层只提供起点。遇到数据源冲突时，还需要比较定义、粒度、覆盖范围、新鲜度与来源权威性。去年保存的口径不能让今年的事实核验自动免除。</p>
+
+<p>我的理解是：企业数据 Agent 需要让业务知识有版本、有出处，也有失效和更新的可能。把所有历史聊天堆进上下文，并不能自然得到一致的业务定义。</p>
+
+<h2>3. 数据质量与结论质量，为什么要分开检查</h2>
+
+<center><img src="/images/2026/IMAG2026091404.webp"></center>
+
+
+<p>
+Analyze Data Quality 检查数据是否可信，Validate Data 检查分析是否成立。</p>
+
+<p>两者会在粒度、关联和分母等问题上重叠，但检查对象不同。前者围绕底层数据的用途展开，后者还要审查最终分析是否回答了正确的问题，以及证据是否支持建议。</p>
+
+<p>例如，一张订单表没有空值、主键唯一、每天按时更新，依然可能被错误使用：把它关联到一张每个用户有多条记录的标签表后，收入就可能被重复计算。即使汇总数字也正确，用最近三天去比较上一周七天，结论仍然可能失真。</p>
+
+<p>再往前一步，即便时间窗口、分母和计算都正确，“新版本上线后转化率下降”也不能直接写成“新版本导致转化率下降”。这已经涉及因果解释，需要与主张相称的证据。</p>
+
+<p>Validate Data 文本要求关注这些层次：人群与排除规则、指标定义、比较基准、加权平均、关联放大、时区、图表表达，以及超出证据范围的推断。它还区分会阻止分享的实质性问题和可以披露的限制，避免把所有问题都当成同一等级。</p>
+
+<p>这对产品评估也有启发。只统计 SQL 是否执行成功，覆盖不了这些错误。数据 Agent 至少需要分别回答：<strong>输入能不能用、计算有没有错、结论能不能这样说。</strong></p>
+
+<h2>4. 用一个转化率案例，看懂诊断顺序</h2>
+
+<p>下面构造一个简化案例。假设两个时期均有 1,000 名符合口径的用户，渠道划分互斥，观察窗口完整，转化人数统计一致。</p>
+
+<table>
+<thead>
+<tr>
+<th> 渠道 </th>
+<th style="text-align:right;"> 上期用户数 </th>
+<th style="text-align:right;"> 上期转化人数 </th>
+<th style="text-align:right;"> 上期转化率 </th>
+<th style="text-align:right;"> 本期用户数 </th>
+<th style="text-align:right;"> 本期转化人数 </th>
+<th style="text-align:right;"> 本期转化率 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> A </td>
+<td style="text-align:right;"> 800 </td>
+<td style="text-align:right;"> 80 </td>
+<td style="text-align:right;"> 10% </td>
+<td style="text-align:right;"> 200 </td>
+<td style="text-align:right;"> 22 </td>
+<td style="text-align:right;"> 11% </td>
+</tr>
+<tr>
+<td> B </td>
+<td style="text-align:right;"> 200 </td>
+<td style="text-align:right;"> 4 </td>
+<td style="text-align:right;"> 2% </td>
+<td style="text-align:right;"> 800 </td>
+<td style="text-align:right;"> 24 </td>
+<td style="text-align:right;"> 3% </td>
+</tr>
+<tr>
+<td> 合计 </td>
+<td style="text-align:right;"> 1,000 </td>
+<td style="text-align:right;"> 84 </td>
+<td style="text-align:right;"> 8.4% </td>
+<td style="text-align:right;"> 1,000 </td>
+<td style="text-align:right;"> 46 </td>
+<td style="text-align:right;"> 4.6% </td>
+</tr>
+</tbody>
+</table>
+
+
+<p>整体转化率从 8.4% 降到 4.6%，下降了 3.8 个百分点。但两个渠道各自都提高了 1 个百分点。</p>
+
+<p>如果只看总指标，再结合“最近刚发了一个版本”，很容易写出产品体验恶化的故事。按 Metric Diagnostics 的思路，首先应该复现整体变化，再检查分子、分母和分组贡献，区分组内表现与人群结构。</p>
+
+<p>用本期渠道占比和上期渠道转化率做一个标准化计算：</p>
+
+<pre><code class="text">按本期结构、上期转化率计算：
+20% × 10% + 80% × 2% = 3.6%
+
+结构变化贡献：3.6% - 8.4% = -4.8 个百分点
+组内表现贡献：4.6% - 3.6% = +1.0 个百分点
+合计：-4.8 + 1.0 = -3.8 个百分点
+</code></pre>
+
+<p>这个分解说明：在该计算顺序下，渠道结构变化拉低了整体指标，组内改善抵消了一部分下降。它解释了统计变化如何构成。</p>
+
+<p>但这里还不能直接下经营结论。渠道 B 是否更便宜？是否处于新客拓展期？转化用户的长期价值是否不同？团队是否有意增加 B 的占比？这些需要业务背景和进一步证据。</p>
+
+<p>也要说明，分解顺序会影响交互部分被分配到哪里；上面是一个明确约定的描述性分解，不是唯一分解，更不是因果识别。它证明了“结构变化可以解释整体下降”，并没有证明某项投放决策的因果效应。</p>
+
+<p>这个例子最能体现诊断技能的价值：<strong>先把变化算明白，再讨论为什么发生，以及该不该干预。</strong> 对真实业务，数据未齐、埋点变化、未知渠道占比等因素，还需要在解释前排查。</p>
+
+<h2>5. 从解释变化到提出建议，中间还有一道工作</h2>
+
+<center><img src="/images/2026/IMAG2026091405.webp"></center>
+
+
+<p>
+Metric Diagnostics 解释指标变化，Product And Business Analysis 则把证据放回决策环境，形成可行动的建议。</p>
+
+<p>继续上面的案例，即使确认渠道结构是主要解释，也不等于应该立即减少渠道 B 的预算。决策还要比较规模、效率、增长趋势、可触达人群、长期价值和执行约束。一个群体贡献的总量很大，可能只是因为它人数多；一个群体人均表现更好，也未必还有足够的增量空间。</p>
+
+<p>这也是为什么文档要求先说明谁要做什么选择，再倒推需要哪些分析。否则，Agent 很容易不断增加切片、图表和相关性，最后把探索过程当成决策建议。</p>
+
+<p>Design KPIs 负责更前置的问题：团队到底应该衡量什么。它推荐少量主指标，在有必要时增加驱动指标和护栏，并要求指标能影响真实决策、能够持续测量，也不容易通过牺牲其他重要结果来“做漂亮”。</p>
+
+<p>指标选择与目标设置又被分成两步。先确定付费转化率是否代表当前目标，再讨论目标应该是 5% 还是 7%；历史基线、计划动作和可影响范围，都应参与后一个判断。</p>
+
+<p>KPI Reporting 则把定义好的指标用于经营读数：实际值、变化、目标与进度如何。需要调查新原因时，它应衔接诊断工作，而不是在汇报中临时生成一套缺少验证的解释。</p>
+
+<p>Market Sizing 延续了类似纪律：把事实、代理输入、假设和推算拆开，展示计算链与敏感性。对于缺少可靠输入的估算，指出“补什么证据最有价值”，往往比多报几位小数更有帮助。</p>
+
+<h2>6. 图表也是分析方法的一部分</h2>
+
+<p>Visualize Data 的规则比配色和字体更具体。它要求先明确图表要表达的问题，再判断数据是否足够支持这种表达。</p>
+
+<p>例如，趋势图通常争取 8–12 个时间点，散点图通常争取 12–20 个有意义的观测点。这里应理解为文档给出的默认指导，而非通用统计定律。少量观测也可以有价值，但应解释为什么这种图形仍然合适。</p>
+
+<p>对于上面的转化率案例，只有两个时期，画一条折线容易让人误读为持续趋势。一个同时展示整体与分渠道变化的对比表，或者清楚标注结构与组内贡献的图形，会更直接。</p>
+
+<p>同样，绝对量柱图通常从零开始，是为了让长度比较有意义；对大基数上的小幅差值，聚焦尺度也可能合理，但需要把数值、单位和尺度讲清楚。</p>
+
+<p>这些细节意味着，图表技能本身承担一部分分析责任。图形选择、尺度和标签会改变读者理解，因此最终画面也需要检查。</p>
+
+<h2>7. Notebook、报告和看板，有不同的完成标准</h2>
+
+<center><img src="/images/2026/IMAG2026091406.webp"></center>
+
+
+<p>
+这三个产物经常被统称为“输出”，实际服务于不同的使用方式。</p>
+
+<p>Notebook 保存分析过程。数据读取、参数、转换、计算与解释应该能追踪，摘要应来自执行后的结果。写好了代码却没有运行，和运行成功后得到结果，是两种状态；缺少执行条件时，文档要求把缺口说清楚。</p>
+
+<p>报告服务于一次有明确问题的阅读。Build Report 强调直接回答问题，让关键证据、解释、限制和下一步形成连续的阅读路径。图表旁边要有解释，读者不应被迫自己猜测图形支持哪条结论。</p>
+
+<p>看板服务于反复查看与探索。Build Dashboard 关心默认打开时的状态概览、主指标和驱动因素、趋势与明细，以及筛选是否真的控制了所承诺的内容。卡片、图表和表格还需要共享一致的日期和指标口径。</p>
+
+<p>因此，一份单次诊断报告加上筛选器，并不自动成为好看板；一个展示很多指标的看板，也不一定完成了报告需要承担的解释工作。</p>
+
+<p>文档对报告修改还有一条很实用的要求：局部修订要保留无关章节、图表和来源。它把持续编辑也纳入完成标准，防止 Agent 在“改好某一段”的过程中丢掉其他成果。</p>
+
+<h2>8. 交付协议为何值得关注</h2>
+
+<p>Build Report 等说明涉及规范化产物、共享的呈现方式以及来源信息。我的理解是，这为分析与展示之间建立了可检查的交接：交给下游的内容不应只有一张结果表，还要包含主张、解释、限制和证据。</p>
+
+<p>如果每次都重新生成一套彼此无关的页面，后续核对同一指标、修改图表、导出不同格式时，内容就容易分叉。共享产物格式有机会缓解这一问题，但真正能否做到一致，仍要看配套实现与验证。</p>
+
+<p>发布环节也有明确边界。<code>publish-artifact-to-sites</code> 描述的是经验证的产物与有界快照的发布。网站拥有交互界面，不代表它自动获得实时数据源连接；修改页面文字，也不等于底层数据已刷新。</p>
+
+<p>对使用者而言，这意味着报告需要交代时间：数据截止到哪一天、分析对应哪个观察窗口、何时生成。对产品设计者而言，内容版本、数据版本与展示版本之间的关系，值得被显式维护。</p>
+
+<h2>9. 如果自己做数据 Agent，我会怎样借鉴</h2>
+
+<p>下面是基于这些文本形成的设计建议，并非对 OpenAI 内部架构的描述。</p>
+
+<p>首先，为每个技能写明任务入口、输入、输出和完成条件。比如诊断技能的输出可以包括已复现的变化、口径、分解结果、解释状态和未解决问题。单独写一句“你是一名资深分析师”，不足以让下游判断工作是否结束。</p>
+
+<p>其次，把关键证据作为可以复查的记录保存下来。查询参数、时间范围、来源、指标定义、假设和计算过程，不一定全部出现在正文中，但应该能被审阅。最终答案简洁，与底层证据完整，可以同时成立。</p>
+
+<p>第三，让验证真正影响交付。一个“请检查一下”的步骤，如果发现分母错误后仍照常输出确定性结论，就没有形成有效约束。重要错误应回到分析环节，证据不足应影响措辞与建议范围。</p>
+
+<p>第四，根据实际风险控制工作量。关键来源缺失时，不能悄悄换成方便获取但含义不同的数据；如果缺的是可选补充信息，则可以继续并交代限制。把这两种情况分清，有助于同时提高可靠性和完成效率。</p>
+
+<p>第五，用带有已知陷阱的案例评估工作流，而不只看它能不能产出图表。可以设计下面这样的评估题：</p>
+
+<table>
+<thead>
+<tr>
+<th> 测试情境 </th>
+<th> 应观察的行为 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> 本期只有三天，上期有七天 </td>
+<td> 是否对齐窗口，或明确披露不可直接比较 </td>
+</tr>
+<tr>
+<td> 标签表关联导致订单重复 </td>
+<td> 是否检查关联前后行数与指标放大 </td>
+</tr>
+<tr>
+<td> 整体下降但各组上升 </td>
+<td> 是否识别人群结构变化 </td>
+</tr>
+<tr>
+<td> 看板与直接查询结果冲突 </td>
+<td> 是否核对口径、时效和来源权威性 </td>
+</tr>
+<tr>
+<td> 发布报告后要求修改一段 </td>
+<td> 是否保留其他内容、图表与来源 </td>
+</tr>
+<tr>
+<td> 数据未执行，只提供了代码 </td>
+<td> 是否避免把预计输出写成验证过的发现 </td>
+</tr>
+</tbody>
+</table>
+
+
+<p>这些题目可以帮助判断：工作流是否在关键位置阻止错误传播。至于应该采用单个模型、多阶段调用还是多个 Agent，则需要在相同任务上比较质量、延迟和成本，不能从技能数量直接得出答案。</p>
+
+<p>我从这次阅读中最想带回自己的产品设计里的，是一个具体的验收问题：<strong>Agent 回答完之后，别人能否找到证据、复算关键数字，并理解为什么这个结论足以支持下一步行动？</strong></p>
+
+<p>如果这三个问题仍然回答不清楚，那么生成更多图表和更长报告，未必能让数据分析更接近完成。</p>
+
+<hr />
+
+<p>内容依据：基于 <a href="https://chatgpt.com/plugins/Plugin_fc9843a6fb34819195d6c7802398a8a7">OpenAI Data Analytics 官方插件页面</a> 整理的技能文件，本文中的流程案例和产品设计建议为作者解读。</p>
+
+<p>github项目地址：<a href="https://github.com/ibillxia/OpenAI-Data-Analytics">https://github.com/ibillxia/OpenAI-Data-Analytics</a> <br/>
+原文定位：整理仓库的 <code>plugins/data-analytics/skills/</code> 目录。 <br/>
+任务路由参见 <code>index/SKILL.md</code>； <br/>
+上下文参见 <code>gather-business-context/SKILL.md</code> 与 <code>create-data-context/SKILL.md</code>； <br/>
+质量与诊断参见 <code>analyze-data-quality/SKILL.md</code>、<code>metric-diagnostics/SKILL.md</code> 和 <code>validate-data/SKILL.md</code>； <br/>
+业务判断参见 <code>design-kpis/SKILL.md</code>、<code>product-business-analysis/SKILL.md</code>、<code>kpi-reporting/SKILL.md</code> 与 <code>market-sizing/SKILL.md</code>； <br/>
+计算与交付参见 <code>jupyter-notebook/SKILL.md</code>、<code>visualize-data/SKILL.md</code>、<code>build-report/SKILL.md</code>、<code>build-dashboard/SKILL.md</code> 和 <code>publish-artifact-to-sites/SKILL.md</code>。</p>
+]]></content>
+  </entry>
+  
+</feed>

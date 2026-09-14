@@ -171,6 +171,66 @@ $(function () {
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2010/10/26/UML-model-building-example-for-requirement-analysis/">UML需求分析步骤实例解析</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2010-10-26T13:08:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2010/10/26/UML-model-building-example-for-requirement-analysis/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>本节向大家介绍一下UML需求分析的一般步骤，本节用实例向大家介绍，相信通过本节的介绍你对UML需求分析有一定的认识。下面让我们一起来学习具体介绍吧。</p>
+
+
+<h2>基于UML需求分析</h2>
+
+
+<p>在初步的业务需求描述已经形成的前提下，基于UML需求分析大致可分为以下步骤：</br>
+（1）利用用例及用例图表示需求。从业务需求描述出发获取执行者和场景；对场景进行汇总、分类、抽象；形成用例；确定执行者与用例、用例与用例图
+之间的关系，生成用例图。</br>
+（2）利用包图及类图表示目标软件系统的总体框架结构。根据领域知识、业务需求描述和既往经验设计目标软件系统的顶层架构；从业务需求描述中
+提取“关键概念”，形成领域概念模型；从概念模型和用例出发，研究系统中主要的类之间的关系，生成类图。</br>
+上述两个步骤并没有时序关系，它们可以并行展开，如图1所示。</br>
+<center><img src="/images/2010/IMAG2010102601.jpg"></center>
+</p>
+
+
+
+
+<p>本节将依次介绍上述步骤中涉及的UML语言机制，并结合“家庭保安系统”实例说明每步骤中基于UML需求分析方法。</p>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/10/26/UML-model-building-example-for-requirement-analysis/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2010/10/19/10-difference-between-linux-and-bsd/">Linux与BSD之间的10个不同之处</a></h1>
     
     
@@ -713,62 +773,6 @@ Nutch是一个基于Lucene，类似Google的完整网络搜索引擎解决方案
   
     <footer>
       <a rel="full-article" href="/blog/2010/08/10/php-connecting-tool-snoopy-introduction-and-application/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/">PHP函数`call_user_func`和`call_user_func_array`详解</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2010-08-04T21:38:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>`call_user_func`函数类似于一种特别的调用函数的方法，使用方法如下：</p>
-
-
-
-
-<pre><code class="php">function a($b,$c) 
-{
-    echo $b;
-    echo $c;
-}
-call_user_func('a', "111","222");
-call_user_func('a', "333","444");
-//显示 111 222 333 444
-</code></pre>
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/">Read on &rarr;</a>
     </footer>
   
 

@@ -171,6 +171,118 @@ $(function () {
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2012/03/01/05-zju-program-test-solution/">05年浙大复试机试题解</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-03-01T11:41:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2012/03/01/05-zju-program-test-solution/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>
+以下是05年浙大研究生复试机试题解，感觉题目与ACM题相比，难度还相差很远，
+基本上直接贴上代码了（后续年度的题解同上），
+而且将整年的5道题的代码在一篇文章中贴出来。
+</p>
+
+
+
+
+<h3>A题：A+B （hdoj1228）（ 九度1010）</h3>
+
+
+<p>水题，不解释，直接上代码：</p>
+
+
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem A </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span><span class="c1"> </span>
+</span><span class='line'><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string.h&gt;</span><span class="c1"> </span>
+</span><span class='line'><span class="kt">char</span><span class="w"> </span><span class="n">map</span><span class="p">[][</span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;zero&quot;</span><span class="p">,</span><span class="s">&quot;one&quot;</span><span class="p">,</span><span class="s">&quot;two&quot;</span><span class="p">,</span><span class="s">&quot;three&quot;</span><span class="p">,</span><span class="s">&quot;four&quot;</span><span class="p">,</span><span class="s">&quot;five&quot;</span><span class="p">,</span><span class="s">&quot;six&quot;</span><span class="p">,</span><span class="s">&quot;seven&quot;</span><span class="p">,</span><span class="s">&quot;eight&quot;</span><span class="p">,</span><span class="s">&quot;nine&quot;</span><span class="p">};</span>
+</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="nf">cmp</span><span class="p">(</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">s</span><span class="p">[]</span><span class="w"> </span><span class="p">)</span><span class="w"> </span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="w">  </span><span class="k">for</span><span class="p">(</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">9</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="w"> </span><span class="p">)</span>
+</span><span class='line'><span class="w">      </span><span class="k">if</span><span class="p">(</span><span class="w"> </span><span class="n">strcmp</span><span class="p">(</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="n">map</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">)</span>
+</span><span class='line'><span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="w">  </span><span class="kt">char</span><span class="w"> </span><span class="n">s</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span>
+</span><span class='line'><span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">;</span>
+</span><span class='line'><span class="w">  </span><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span>
+</span><span class='line'><span class="w">  </span><span class="p">{</span>
+</span><span class='line'><span class="w">      </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="w">      </span><span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span><span class="n">s</span><span class="p">)</span><span class="o">&amp;&amp;</span><span class="n">strcmp</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="s">&quot;+&quot;</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span>
+</span><span class='line'><span class="w">          </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="o">*</span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">cmp</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+</span><span class='line'><span class="w">      </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="w">      </span><span class="k">while</span><span class="p">(</span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span><span class="n">s</span><span class="p">)</span><span class="o">&amp;&amp;</span><span class="n">strcmp</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="s">&quot;=&quot;</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span>
+</span><span class='line'><span class="w">          </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="o">*</span><span class="n">b</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">cmp</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+</span><span class='line'><span class="w">      </span><span class="k">if</span><span class="p">(</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="k">break</span><span class="p">;</span>
+</span><span class='line'><span class="w">      </span><span class="n">printf</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="w"> </span><span class="p">);</span>
+</span><span class='line'><span class="w">  </span><span class="p">}</span>
+</span><span class='line'><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/03/01/05-zju-program-test-solution/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2012/02/19/beatiful-sentences-in-bi-ye-shi-ke/">“毕业时刻”中的经典台词</a></h1>
     
     
@@ -759,66 +871,6 @@ LinkedIn有着商业范儿的严肃简洁，只有一些基本的联络和互动
   
     <footer>
       <a rel="full-article" href="/blog/2011/03/12/linkedin-10-years-ancestor-of-commercial-sns/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2010/10/26/UML-model-building-example-for-requirement-analysis/">UML需求分析步骤实例解析</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2010-10-26T13:08:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2010/10/26/UML-model-building-example-for-requirement-analysis/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>本节向大家介绍一下UML需求分析的一般步骤，本节用实例向大家介绍，相信通过本节的介绍你对UML需求分析有一定的认识。下面让我们一起来学习具体介绍吧。</p>
-
-
-<h2>基于UML需求分析</h2>
-
-
-<p>在初步的业务需求描述已经形成的前提下，基于UML需求分析大致可分为以下步骤：</br>
-（1）利用用例及用例图表示需求。从业务需求描述出发获取执行者和场景；对场景进行汇总、分类、抽象；形成用例；确定执行者与用例、用例与用例图
-之间的关系，生成用例图。</br>
-（2）利用包图及类图表示目标软件系统的总体框架结构。根据领域知识、业务需求描述和既往经验设计目标软件系统的顶层架构；从业务需求描述中
-提取“关键概念”，形成领域概念模型；从概念模型和用例出发，研究系统中主要的类之间的关系，生成类图。</br>
-上述两个步骤并没有时序关系，它们可以并行展开，如图1所示。</br>
-<center><img src="/images/2010/IMAG2010102601.jpg"></center>
-</p>
-
-
-
-
-<p>本节将依次介绍上述步骤中涉及的UML语言机制，并结合“家庭保安系统”实例说明每步骤中基于UML需求分析方法。</p>
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2010/10/26/UML-model-building-example-for-requirement-analysis/">Read on &rarr;</a>
     </footer>
   
 
