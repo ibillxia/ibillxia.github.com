@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 哈希表 | Bill's Blog]]></title>
   <link href="https://ibillxia.github.io/blog/tags/ha-xi-biao/atom.xml" rel="self"/>
   <link href="https://ibillxia.github.io/"/>
-  <updated>2026-11-13T10:55:53+08:00</updated>
+  <updated>2026-11-13T12:37:02+08:00</updated>
   <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -308,7 +308,7 @@ __STL_TEMPLATE_NULL struct hash&lt;unsigned long&gt; {
   size_t operator()(unsigned long __x) const { return __x; }
 };
 </code>
-关于函数调用操作符的更多介绍，可以参见我的另一篇文章 【<a href="http://ibillxia.github.io/blog/2014/05/24/function-pointer-in-c-and-function-call-operator-in-cpp/">C语言函数指针与C++函数调用操作符</a>】。</p>
+关于函数调用操作符的更多介绍，可以参见我的另一篇文章 【<a href="https://ibillxia.github.io/blog/2014/05/24/function-pointer-in-c-and-function-call-operator-in-cpp/">C语言函数指针与C++函数调用操作符</a>】。</p>
 ]]></content>
   </entry>
   

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Life | Bill's Blog]]></title>
   <link href="https://ibillxia.github.io/blog/categories/life/atom.xml" rel="self"/>
   <link href="https://ibillxia.github.io/"/>
-  <updated>2026-11-13T10:55:53+08:00</updated>
+  <updated>2026-11-13T12:37:02+08:00</updated>
   <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -291,11 +291,11 @@
 
 <h2>学业-平平淡淡</h2>
 
-<p>作为一个仍在校园里生活的学生，学业还是最重要的，年终总结也必然要提到。作为一个研究僧硕士狗+码农程序猿，这一年在学业上是平平淡淡、颗粒无收，没有什么值得一提的，没有发表什么论文，也没有学到什么新的知识和技术。如果真要扯一点的话，那就是3月份参加了阿里的大数据竞赛，把推荐系统及相关算法学习和捣鼓了一番，虽然最后连初赛都没过，但还是收获不少吧。在推荐算法方面，主要看了libMF的代码和论文，然后把比较好的一些开源推荐工具进行了非常简单的也并非太原创的总结——<a href="http://ibillxia.github.io/blog/2014/03/10/top-10-open-source-recommendation-systems/">TOP 10开源的推荐系统简介</a>，没想到居然被人推荐到Fenng的类似于Haker news的<a href="http://news.dbanotes.net/">dbanotes startup news</a>上了，那几天博客的访问量一下子飙上去了不少，想想还是挺鸡冻的有木有^-^</p>
+<p>作为一个仍在校园里生活的学生，学业还是最重要的，年终总结也必然要提到。作为一个研究僧硕士狗+码农程序猿，这一年在学业上是平平淡淡、颗粒无收，没有什么值得一提的，没有发表什么论文，也没有学到什么新的知识和技术。如果真要扯一点的话，那就是3月份参加了阿里的大数据竞赛，把推荐系统及相关算法学习和捣鼓了一番，虽然最后连初赛都没过，但还是收获不少吧。在推荐算法方面，主要看了libMF的代码和论文，然后把比较好的一些开源推荐工具进行了非常简单的也并非太原创的总结——<a href="https://ibillxia.github.io/blog/2014/03/10/top-10-open-source-recommendation-systems/">TOP 10开源的推荐系统简介</a>，没想到居然被人推荐到Fenng的类似于Haker news的<a href="http://news.dbanotes.net/">dbanotes startup news</a>上了，那几天博客的访问量一下子飙上去了不少，想想还是挺鸡冻的有木有^-^</p>
 
-<p>在参加这个比赛的过程中还对并行计算和并发编程进行了一些浅显的研究，因为发现简单的算法运行时间太长，而多核CPU根本没法好好利用，于是捣鼓了一下Hadoop和Mahout，学了一下一门比较新的传说对并发支持比较nice的由高大上的Google开发的Go语言，并总结在 <a href="http://ibillxia.github.io/blog/2014/03/16/go-concurrent-programming-first-try/">Go并发编程初探</a> 一文中，但之后就没有怎么用Go做什么东西了，新的一年希望能捡起来再捣鼓出一点东西来。</p>
+<p>在参加这个比赛的过程中还对并行计算和并发编程进行了一些浅显的研究，因为发现简单的算法运行时间太长，而多核CPU根本没法好好利用，于是捣鼓了一下Hadoop和Mahout，学了一下一门比较新的传说对并发支持比较nice的由高大上的Google开发的Go语言，并总结在 <a href="https://ibillxia.github.io/blog/2014/03/16/go-concurrent-programming-first-try/">Go并发编程初探</a> 一文中，但之后就没有怎么用Go做什么东西了，新的一年希望能捡起来再捣鼓出一点东西来。</p>
 
-<p>另一个值得一提的就是，非常非常认真的读了SGI STL的源代码并用一些列博文进行了总结——<a href="http://ibillxia.github.io/blog/2014/11/26/insight-into-stl-archive/">深入理解STL源码系列文章归档</a>，搞明白了STL中简单的内存池实现，也才知道原来STL双端队列底层是由一块块内存通过链表连接起来的，而set和map的底层是插入操作很复杂的红黑树，还有其中的排序算法并不是数据结构和算法中学的那样的快速排序，还还有其中一些关于变量类型萃取、偏特化等等独具匠心的设计和技巧。</p>
+<p>另一个值得一提的就是，非常非常认真的读了SGI STL的源代码并用一些列博文进行了总结——<a href="https://ibillxia.github.io/blog/2014/11/26/insight-into-stl-archive/">深入理解STL源码系列文章归档</a>，搞明白了STL中简单的内存池实现，也才知道原来STL双端队列底层是由一块块内存通过链表连接起来的，而set和map的底层是插入操作很复杂的红黑树，还有其中的排序算法并不是数据结构和算法中学的那样的快速排序，还还有其中一些关于变量类型萃取、偏特化等等独具匠心的设计和技巧。</p>
 
 <h2>工作-顺顺利利</h2>
 

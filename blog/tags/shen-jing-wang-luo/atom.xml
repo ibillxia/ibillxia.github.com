@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 神经网络 | Bill's Blog]]></title>
   <link href="https://ibillxia.github.io/blog/tags/shen-jing-wang-luo/atom.xml" rel="self"/>
   <link href="https://ibillxia.github.io/"/>
-  <updated>2026-11-13T10:55:53+08:00</updated>
+  <updated>2026-11-13T12:37:02+08:00</updated>
   <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -30,7 +30,7 @@
 
 <h3>一、关于Knowledge Representation</h3>
 
-<p>第一章主要介绍性的内容，值得一提的是1.7节中关于Knowledge Representation的内容讲得比较好！（在我的blog中也有具体记述：<a href="http://ibillxia.github.io/blog/2013/03/27/learning-process-of-neural-networks/">神经网络的学习方法概述</a>）</p>
+<p>第一章主要介绍性的内容，值得一提的是1.7节中关于Knowledge Representation的内容讲得比较好！（在我的blog中也有具体记述：<a href="https://ibillxia.github.io/blog/2013/03/27/learning-process-of-neural-networks/">神经网络的学习方法概述</a>）</p>
 
 <p>首先是知识的定义，然后是知识的表示，再然后该书将现实世界的知识分为先验知识和观察数据两种，其中后者包含有label的和无label的。</p>
 

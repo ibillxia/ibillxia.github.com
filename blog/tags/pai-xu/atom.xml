@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 排序 | Bill's Blog]]></title>
   <link href="https://ibillxia.github.io/blog/tags/pai-xu/atom.xml" rel="self"/>
   <link href="https://ibillxia.github.io/"/>
-  <updated>2026-11-13T10:55:53+08:00</updated>
+  <updated>2026-11-13T12:37:02+08:00</updated>
   <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -20,7 +20,7 @@
     <id>https://ibillxia.github.io/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms</id>
     <content type="html"><![CDATA[<p>本文主要介绍STL中的稍微复杂的算法，主要涉及到的源码文件有 <code>stl_algo.h</code> 等。</p>
 
-<p>在文件 <code>stl_algo.h</code> 中有很多常用的算法，包括查找、计数、旋转、删除、排序、合并、集合的交并等运算、求极值、排列组合等等，本文将按源码中各算法的实现顺序来介绍其具体实现细节。由于本文涉及到的算法和相关代码太多，在文中就尽量不贴出代码了，详细的代码及相关注释请参见 <a href="http://ibillxia.github.io/upload/code/stl_algo.h">stl_algo.h</a>。</p>
+<p>在文件 <code>stl_algo.h</code> 中有很多常用的算法，包括查找、计数、旋转、删除、排序、合并、集合的交并等运算、求极值、排列组合等等，本文将按源码中各算法的实现顺序来介绍其具体实现细节。由于本文涉及到的算法和相关代码太多，在文中就尽量不贴出代码了，详细的代码及相关注释请参见 <a href="https://ibillxia.github.io/upload/code/stl_algo.h">stl_algo.h</a>。</p>
 
 <p><strong>1. 求三个数的中值 median</strong><br/>
 该算法比较简单，几个if-else语句就解决了。该函数只提供内部算法使用，并不对外提供接口，也不是STL标准中的算法，限于篇幅这里就不贴代码了。另外，该算法有两个版本，一个是使用默认的大小比较，另一个是可以指定比较函数。</p>
@@ -189,7 +189,7 @@ return __first == __last ? __first
 遍历整个区间，找到其中最大/小的元素的值，返回的是指向最大/小值的迭代器。</p>
 
 <p><strong>22. 排列的后继和前驱 next/pre permutation</strong><br/>
-关于该算法在之前的一篇文章中有详细介绍，请参见 <a href="http://ibillxia.github.io/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/">全排列及某排列的后继的求解及其STL实现的分析</a> .</p>
+关于该算法在之前的一篇文章中有详细介绍，请参见 <a href="https://ibillxia.github.io/blog/2014/04/24/next-permutation-and-analysis-of-its-stl-implementation/">全排列及某排列的后继的求解及其STL实现的分析</a> .</p>
 
 <p><strong>23. 找第一次出现的位置 find first of</strong><br/>
 在第一个序列中依次查找第二个序列中某个元素第一次出现的位置，使用一个双重循环，外循环遍历第一个序列，内循环遍历第二个序列，只要找到一个就立即返回在序列1中的位置，没有找到则返回序列1的尾迭代器。</p>

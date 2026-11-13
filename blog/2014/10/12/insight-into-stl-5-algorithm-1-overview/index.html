@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="https://ibillxia.github.io/blog/2014/10/12/insight-into-stl-5-algorithm-1-overview">
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2014/10/12/insight-into-stl-5-algorithm-1-overview/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -136,10 +136,10 @@ $(function () {
       <div class="nav-collapse">
         <ul class="nav">
   <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-  <li><a href="/blog/categories">Categories</a></li>
-  <li><a href="/blog/tags">Tags</a></li>
-  <li><a href="/about">About</a></li>
+  <li><a href="/blog/archives/">Archives</a></li>
+  <li><a href="/blog/categories/">Categories</a></li>
+  <li><a href="/blog/tags/">Tags</a></li>
+  <li><a href="/about/">About</a></li>
 </ul>
 
 
@@ -231,7 +231,7 @@ $(function () {
 
 <p>所有泛型算法的前两个参数都是一对迭代器（iterators），通常称为 first 和 last，用以标识算法的操作区间，STL 习惯采用前闭后开区间表示法，写成 <code>[first, last)</code> ，当 <code>frist==last</code> 时，表示的是空区间。这个 <code>[first, last)</code> 的必要条件是，必须能够进过 increment （累加）操作的反复运用，从 first 到 last，编译器本身无法强求这一点，如果这个条件不成立，会导致无法预料的结果。</p>
 
-<p>前面讲<a href="http://ibillxia.github.io/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/">迭代器</a>时我们知道，STL有5类迭代器，他们是input、output、forward、bidirectional、random_access。_每个 STL 算法的声明，都表现出它所需要的最低程度的迭代器类型，例如 <code>find()</code> 需要一个 inputIterators 是最低要求，但也可以接受更高类型的，如 forwardIterators、bidirectionalIterators、randomAccessIterators，但如果传给它一个outputIterators，则会导致错误。将无效的迭代器传给某个算法，虽然是一种错误，却不能保证在编译时期就被捕捉出来，因为所谓的迭代器型别并不是真实的型别，他们只是 function template 的一种型别参数（type parameters）。</p>
+<p>前面讲<a href="https://ibillxia.github.io/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/">迭代器</a>时我们知道，STL有5类迭代器，他们是input、output、forward、bidirectional、random_access。_每个 STL 算法的声明，都表现出它所需要的最低程度的迭代器类型，例如 <code>find()</code> 需要一个 inputIterators 是最低要求，但也可以接受更高类型的，如 forwardIterators、bidirectionalIterators、randomAccessIterators，但如果传给它一个outputIterators，则会导致错误。将无效的迭代器传给某个算法，虽然是一种错误，却不能保证在编译时期就被捕捉出来，因为所谓的迭代器型别并不是真实的型别，他们只是 function template 的一种型别参数（type parameters）。</p>
 
 <p>许多 STL 算法都有很多个版本，除了默认的只包含迭代器参数的实现之外，还有一个可以传入仿函数（functor）参数的版本，例如 <code>unique()</code> 缺省情况下使用 <code>equality</code> 操作符来比较两个相邻的元素，但如果这些元素的型别并未提供 <code>equality</code> 操作符，或如果用户希望定义自己的 <code>equality</code> 操作符，便可以传一个仿函数给另一个版本的 <code>unique()</code> ，有些算法干脆将这样的两个版本分为两个不同名的实体，如 <code>find_if()</code>、<code>replace_if()</code> 等。</p>
 
@@ -351,7 +351,7 @@ Iterator find(Iterator begin, Iterator end, const T&amp; value){
         href="/blog/2014/09/27/insight-into-stl-4-associative-containers-5-hashset-and-hashmap/" title="Previous Post:
         深入理解STL源码(4.5) 关联式容器之hashset和hashmap">&laquo; 深入理解STL源码(4.5) 关联式容器之hashset和hashmap</a></li>
       
-      <li><a href="/blog/archives">Blog Archives</a></li>
+      <li><a href="/blog/archives/">Blog Archives</a></li>
       
       <li class="next"><a class="basic-alignment right" href="/blog/2014/10/19/insight-into-stl-5-algorithm-2-numeric-algorithms/"
         title="Next Post: 深入理解STL源码(5.2) 算法之数值算法">深入理解STL源码(5.2) 算法之数值算法

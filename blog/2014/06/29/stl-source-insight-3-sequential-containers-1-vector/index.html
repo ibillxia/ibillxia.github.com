@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="https://ibillxia.github.io/blog/2014/06/29/stl-source-insight-3-sequential-containers-1-vector">
+  <link rel="canonical" href="https://ibillxia.github.io/blog/2014/06/29/stl-source-insight-3-sequential-containers-1-vector/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -136,10 +136,10 @@ $(function () {
       <div class="nav-collapse">
         <ul class="nav">
   <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-  <li><a href="/blog/categories">Categories</a></li>
-  <li><a href="/blog/tags">Tags</a></li>
-  <li><a href="/about">About</a></li>
+  <li><a href="/blog/archives/">Archives</a></li>
+  <li><a href="/blog/categories/">Categories</a></li>
+  <li><a href="/blog/tags/">Tags</a></li>
+  <li><a href="/about/">About</a></li>
 </ul>
 
 
@@ -224,7 +224,7 @@ class vector : protected _Vector_base&lt;_Tp, _Alloc&gt;{
 
 <h2>3. vector 的配置器</h2>
 
-<p>vector的空间配置器 STL 默认的 <code>alloc</code> 即 <code>__default_alloc_template</code> 配置器，即第二级配置器，它对于 POD(plain old data) 类型数据使用内建内存池来应对内存碎片问题，关于该默认配置器的更多介绍请参见本系列第2篇文章 <a href="http://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/">深入理解STL源码(1) 空间配置器</a> . 除此之外，SGI vector 还定义了一个 <code>data_allocator</code>，为的是更方便的以元素大小为配置单位：<br/>
+<p>vector的空间配置器 STL 默认的 <code>alloc</code> 即 <code>__default_alloc_template</code> 配置器，即第二级配置器，它对于 POD(plain old data) 类型数据使用内建内存池来应对内存碎片问题，关于该默认配置器的更多介绍请参见本系列第2篇文章 <a href="https://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/">深入理解STL源码(1) 空间配置器</a> . 除此之外，SGI vector 还定义了一个 <code>data_allocator</code>，为的是更方便的以元素大小为配置单位：<br/>
 <code>cpp
 template &lt;class _Tp, class _Alloc&gt;
 class _Vector_base  // vector 继承了该基类
@@ -335,7 +335,7 @@ public  iterator erase(iterator __first, iterator __last) {
         href="/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/" title="Previous Post:
         深入理解STL源码(2) 迭代器(Iterators)和Traits">&laquo; 深入理解STL源码(2) 迭代器(Iterators)和Traits</a></li>
       
-      <li><a href="/blog/archives">Blog Archives</a></li>
+      <li><a href="/blog/archives/">Blog Archives</a></li>
       
       <li class="next"><a class="basic-alignment right" href="/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/"
         title="Next Post: 深入理解STL源码(3.2) 序列式容器之list">深入理解STL源码(3.2) 序列式容器之list

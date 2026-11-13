@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: 函数对象 | Bill's Blog]]></title>
   <link href="https://ibillxia.github.io/blog/tags/han-shu-dui-xiang/atom.xml" rel="self"/>
   <link href="https://ibillxia.github.io/"/>
-  <updated>2026-11-13T10:55:53+08:00</updated>
+  <updated>2026-11-13T12:37:02+08:00</updated>
   <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -172,7 +172,7 @@ struct _Project2nd : public binary_function&lt;_Arg1, _Arg2, _Arg2&gt; {
 <p>除此之外，SGI STL实现中还有 <code>constant_void_fun</code>，<code>constant_unary_fun</code>， <code>constant_binary_fun</code>， <code>subtractive_rng</code>， <code>mem_fun_t</code> 等等，想深入详细了解的可以去看看源代码，还是很好理解的。</p>
 
 <p>相关文章：<br/>
-<a href="http://ibillxia.github.io/blog/2014/05/24/function-pointer-in-c-and-function-call-operator-in-cpp/">C语言函数指针与C++函数调用操作符</a></p>
+<a href="https://ibillxia.github.io/blog/2014/05/24/function-pointer-in-c-and-function-call-operator-in-cpp/">C语言函数指针与C++函数调用操作符</a></p>
 ]]></content>
   </entry>
   

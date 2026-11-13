@@ -4,7 +4,7 @@
   <title><![CDATA[Tag: Jekyll | Bill's Blog]]></title>
   <link href="https://ibillxia.github.io/blog/tags/jekyll/atom.xml" rel="self"/>
   <link href="https://ibillxia.github.io/"/>
-  <updated>2026-11-13T10:55:53+08:00</updated>
+  <updated>2026-11-13T12:37:02+08:00</updated>
   <id>https://ibillxia.github.io/</id>
   <author>
     <name><![CDATA[Bill Xia]]></name>
@@ -41,7 +41,7 @@
 
 <h2>配置 Tags 归档</h2>
 
-<p>接下来是配置类似 <a href="http://ibillxia.github.io/blog/tags/">这种显示结果</a> 的 Tags 归档页面了。</p>
+<p>接下来是配置类似 <a href="https://ibillxia.github.io/blog/tags/">这种显示结果</a> 的 Tags 归档页面了。</p>
 
 <p>首先，需要安装 <a href="https://github.com/plusjade/jekyll-bootstrap">jekyll-bootstrap</a> 的一些东西，请先下载并解压。主要是 <em>includes/JB/ 目录下的内容，将 JB 文件夹拷贝到 $BLOG_HOME/source/</em>includes/ 目录下，还有 jekyll-bootstrap 根目录下的 tags.html 拷贝到你想展示 Tags 的目录，并在 _config.yml 文件中配置 tag_dir 项的值为该目录，例如我这里的配置是：</p>
 
