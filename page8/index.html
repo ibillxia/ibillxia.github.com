@@ -171,6 +171,61 @@ $(function () {
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2015/11/29/big-data-analytics-trends/">【译】大数据分析八大趋势及企业启示</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2015-11-29T23:15:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2015/11/29/big-data-analytics-trends/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>本文翻译自英文文章，原文作者 <a href="https://x.com/ReddyNHema">ReddyNHema</a>，以下是译文。</p>
+
+<p>我在IT行业工作超过14年，但技术为满足业务需求而快速演进的步伐仍然令我惊叹不已。技术计算的发展历程从最早占据整个房间的计算机，到大型机，再到个人电脑，然后是Web和SaaS应用，接着是移动设备，如今又到了云计算和物联网时代。</p>
+
+<p>正是这段漫长的发展历程，使得大数据成为了世界上最新的自然资源。大数据的价值不言自明，而企业对能够释放这些价值的强大分析能力的需求日益迫切。企业领导者不再质疑数据中是否蕴含价值，他们只想知道如何提取这些价值，以更好地了解客户并满足关键业务需求。</p>
+
+<p>这种需求催生了一代数据丰富、分析驱动的企业，它们热切地关注着大数据和分析领域的趋势。下面让我们深入了解IBM如何帮助客户找到创新的大数据解决方案。</p>
+
+<h2>1. 数据化驱动的创新</h2>
+
+<center><img src="/images/2015/IMAG2015112901.jpeg"></center>
+
+
+<p></br>
+数据是竞争优势的新基础。利用数据和高级分析的企业能够将洞察转化为创新，创建高效的新业务流程，为战略决策提供信息支撑，并在多个方面超越同行。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2015/11/29/big-data-analytics-trends/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2015/11/24/tencent-anti-fraud-architecture/">【高可用架构】腾讯基于用户画像大数据的电商防刷架构</a></h1>
     
     
@@ -623,57 +678,6 @@ PS: 原文博主通过MySQL垂直深耕，成功进入Facebook了，祝福。</p
   
     <footer>
       <a rel="full-article" href="/blog/2014/11/26/insight-into-stl-archive/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2014/11/23/insight-into-stl-7-adaptor/">深入理解STL源码(7) 配接器adaptor</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-11-23T20:21:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2014/11/23/insight-into-stl-7-adaptor/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>1. 概述</h2>
-
-<p>适配器（adaptor/adapter）在STL组件的灵活运用功能上，扮演着轴承、转换器的角色，将一种容器或迭代器装换或封装成另一种容器或迭代器，例如基于deque容器的stack和queue。Adaptor这个概念，实际上是一种设计模式（design pattern），是《Design Pattern》一书中提及到的23个设计模式之一，其中对adaptor的定义如下：</p>
-
-<blockquote><p>将一个class的接口转换为另一个class的接口，使原本因接口不兼容而不能合作的classes，可以一起运作。</p></blockquote>
-
-<p>在STL中，除了上面提到的容器或迭代器的适配器之外，还可以对函数或更广义的仿函数使用适配器，改变其接口，这种称为function adaptor，相应的针对容器或迭代器的适配器则分别称为container adaptor，iterator adaptor，下面将分别介绍这三种适配器。</p>
-
-<h2>2. 容器适配器</h2>
-
-<p>容器适配器相对而言比较简单，比较典型的就是上面提到的低层由deque构成的stack和queue，其基本实现原理是，在 stack 和 queue 内部定义一个 protected 的 deque 类型的成员变量，然后只对外提供 deque 的部分功能或其异构，如 stack 的 push 和 pop 都是从 deque 的尾部进行插入和删除，而 queue 的 push 和 pop 分别是从尾部和头部进行插入和删除，这样 stack 和 queue 都可以看做是适配器，作用于容器 deque 之上的适配器。关于 stack 和 queue 的具体内容请参见之前将容器的文章 <a href="http://ibillxia.github.io/blog/2014/07/13/stl-source-insight-3-sequential-containers-3-deque-and-stack-queue/">深入理解STL源码(3.3) 序列式容器之deque和stack、queue</a>。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2014/11/23/insight-into-stl-7-adaptor/">Read on &rarr;</a>
     </footer>
   
 

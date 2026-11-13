@@ -171,6 +171,71 @@ $(function () {
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2013/05/22/audio-signal-processing-time-domain-Voice-Activity-Detection/">语音信号处理之时域分析-端点检测及Python实现</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2013-05-22T22:22:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2013/05/22/audio-signal-processing-time-domain-Voice-Activity-Detection/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>端点检测</h2>
+
+
+<p>端点检测（End-Point Detection，EPD）的目标是要决定信号的语音开始和结束的位置，所以又可以称为Speech Detection或Voice Activity Detection（VAD）。
+端点检测在语音预处理中扮演着一个非常重要的角色。</p>
+
+
+
+
+<p>常见的端点检测方法大致可以分为如下两类：</br>
+（1）时域（Time Domain）的方法：计算量比较小，因此比较容易移植到计算能力较差的嵌入式平台</br>
+（a）音量：只使用音量来进行端检，是最简单的方法，但是容易对清音造成误判。另外，不同的音量计算方法得到的结果也不尽相同，至于那种方法更好也没有定论。</br>
+（b）音量和过零率：以音量为主，过零率为辅，可以对清音进行较精密的检测。</br>
+（2）频域（Frequency Domain）的方法：计算量相对较大。</br>
+（a）频谱的变化性（Variance）：有声音的频谱变化较规律，可以作为一个判断标准。</br>
+（b）频谱的Entropy：有规律的频谱的Entropy一般较小，这也可以作为一个端检的判断标准。
+</p>
+
+
+
+
+<p>下面我们分别从这两个方面来探讨端检的具体方法和过程。</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/05/22/audio-signal-processing-time-domain-Voice-Activity-Detection/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2013/05/18/audio-signal-processing-time-domain-timbre-python-realization/">语音信号处理之时域分析-音色及其Python实现</a></h1>
     
     
@@ -721,76 +786,6 @@ perfect的报告，但也有些不太感兴趣的，有的甚至感觉很2。除
 
 </div>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines/">基于能量的模型和波尔兹曼机</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2013-04-12T22:12:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>由于深度置信网络（Deep Belief Networks，DBN）是基于限制性玻尔兹曼机（Restricted Boltzmann Machines，RBM）的深层网络结构，
-所以本文重点讨论一下玻尔兹曼机（BM），以及它的学习算法——对比散度（Contrastive Divergence，CD）算法。在介绍BM前，我们首先介绍一下
-基于能量的模型（Energy Based Model，EBM），因为BM是一种特殊的EBM。</p>
-
-
-
-
-<h2>1. 基于能量的模型(EBM)</h2>
-
-
-<p>基于能量的模型是一种具有普适意义的模型，可以说它是一种模型框架，在它的框架下囊括传统的判别模型和生成模型，图变换网络(Graph-transformer 
-Networks)，条件随机场，最大化边界马尔科夫网络以及一些流形学习的方法等。EBM通过对变量的每个配置施加一个有范围限制的能量来捕获变量之间的依赖
-关系。EBM有两个主要的任务，一个是推断(Inference)，它主要是在给定观察变量的情况，找到使能量值最小的那些隐变量的配置；另一个是学习(Learning)，
-它主要是寻找一个恰当的能量函数，使得观察变量的能量比隐变量的能量低。</p>
-
-
-
-
-<p>基于能量的概率模型通过一个能量函数来定义概率分布，
-<center>$p(x) = \frac{e^{E(x)}}{Z}.$ ... ①</center>
-其中Z为规整因子，
-<center>$Z = \sum _{x} e^{-E(x)}.$ ... ②</center>
-基于能量的模型可以利用使用梯度下降或随机梯度下降的方法来学习，具体而言，就是以训练集的负对数作为损失函数，
-<center>$l(\theta,D) = -L(\theta,D) = - \frac{1}{N}\sum_{x^{(i)}\in D} log p(x^{(i)}).$ ... ③</center>
-其中$\theta$为模型的参数，将损失函数对$\theta$求偏导，
-<center>$\Delta = \frac{\partial l(\theta,D)}{\partial \theta} = - \frac{1}{N} \frac{\partial \sum log p(x^{(i)})}{\partial \theta}.$ ... ④</center>
-即得到损失函数下降最快的方向。</p>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/04/12/Energy-Based-Models-and-Boltzmann-Machines/">Read on &rarr;</a>
-    </footer>
   
 
 
