@@ -1,447 +1,129 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>C语言输入输出缓冲区 - Bill's Blog</title>
-  <meta name="author" content="Bill Xia">
-
-  
-  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="https://ibillxia.github.io/blog/2009/06/05/io-buffer-in-c-language/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <style type="text/css">
-    body {
-      padding-bottom: 0px;
-    }
-    h1 {
-      margin-bottom: 15px;
-    }
-    img {
-      max-width: 100%;
-    }
-    .sharing, .meta, .pager {
-      margin: 20px 0px 20px 0px;
-    }
-    .page-footer p {
-      text-align: center;
-    }
-  </style>
-  <script src="/javascripts/libs/jquery.js"></script>
-  <script src="/javascripts/libs/modernizr-2.0.js"></script>
-  <script src="/javascripts/libs/bootstrap.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-34DJ0T23LB');
-  </script>
-  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
-  <script type="text/javascript">
-function addBlankTargetForLinks () {
-  $('a[href^="http"]').each(function(){
-      $(this).attr('target', '_blank');
-  });
-}
-
-$(function () {
-  addBlankTargetForLinks();
-  if (typeof MutationObserver !== 'undefined') {
-    new MutationObserver(function () {
-      addBlankTargetForLinks();
-    }).observe(document.body, { childList: true, subtree: true });
-  }
-});
-</script>
-<!-- MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = 'https://ssl.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
-</head>
-
-<body   >
-  <nav role="navigation"><div class="navbar navbar-inverse">
-  <div class="navbar-inner">
-    <div class="container">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-
-      <a class="brand" href="/">Bill's Blog</a>
-
-      <div class="nav-collapse">
-        <ul class="nav">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives/">Archives</a></li>
-  <li><a href="/blog/categories/">Categories</a></li>
-  <li><a href="/blog/tags/">Tags</a></li>
-  <li><a href="/about/">About</a></li>
-</ul>
-
-
-        <ul class="nav pull-right" data-subscription="rss">
-          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-          
-        </ul>
-
-        
-          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
-            <fieldset role="search">
-              <input type="hidden" name="q" value="site:ibillxia.github.io" />
-              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
-            </fieldset>
-          </form>
-        
-      </div>
-    </div>
-  </div>
-</div>
-</nav>
-  <div class="container">
-    <div class="row-fluid">
-      
-<article class="hentry span9" role="article">
-
-  
-  <header class="page-header">
-    
-      <h1 class="entry-title">C语言输入输出缓冲区</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2009-06-05T23:02:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><p>原文链接：<a href="http://blog.csdn.net/cxyol/archive/2006/03/18/628324.aspx">http://blog.csdn.net/cxyol/archive/2006/03/18/628324.aspx</a></p>
-
-<h2>1.输入输出缓冲区的概念（C++用的多一些）</h2>
-
-<p>我想以一个例子说明，比如我想把一篇文章以字符序列的方式输出到计算机显示器屏幕上，那么我的程序内存作为数据源而显示器驱动程序作为数据目标，如果数据源直接对数据目标发送数据的话。数据目标获得第一个字符，便将它显示。然后从端口读取下一个字符，可是这时就不能保证数据源向端口发送的恰好是第二个字符（也许是第三个，而第二个已经在数据目标显示时发送过了）。这样的话就不能保证输出的数据能完整的被数据目标所接受并处理。</p>
-
-<p>为了解决这个问题，我们需要在数据源与数据目标中间放置一个保存完整数据内容的区域，那就是 “缓冲区”。这样的话， 数据源可以不考虑数据目标正在处理哪部分数据，只要把数据输出到缓冲区就可以了，数据目标也可以不考虑数据源的发送频率，只是从缓冲区中依次取出下一个数据。从而保证了数据发送的完整性，同时也提高了程序的效率。</p>
-
-<p>当然<code>getch()</code>，<code>getche()</code>没有用到缓冲区。</p>
-
-<!-- more -->
-
-
-<h2>2.几个函数的区别</h2>
-
-<p>首先不要忘了，<strong>要用getch()必须引入头文件<code>conio.h</code> </strong>，以前学C语言的时候，我们总喜欢用在程序的末尾加上它，利用它来实现程序运行完了暂停不退出的效果。如果不加这句话，在TC2.0的环境中我们用Ctrl+F9编译并运行后，程序一运行完了就退回到TC环境中，我们根本来不及看到结果，这时要看结果，我们就要按Alt+F5回到DOS环境中去看结果，这很麻烦。而如果在程序的结尾加上一行 <code>getch();</code> 语句，我们就可以省掉会DOS看结果这个步骤，因为程序运行完了并不退出，而是在程序最后把屏幕停住了，按任意键才退回到TC环境中去。</p>
-
-<p>那我们来看看 <code>getch()</code> 到底起的什么作用， <code>getch()</code> 实际是一个输入命令，作用是从键盘接收一个字符，而且并不把这个字符显示出来，就是说，你按了一个键后它并不在屏幕上显示你按的什么，而继续运行后面的代码，所以我们在C++中可以用它来实现“按任意键继续”的效果，即程序中遇到getch();这行语句，它就会把程序暂停下来，等你按任意键，它接收了这个字符键后再继续执行后面的代码。</p>
-
-<p>你也许会问，为什么我们在C++中就没有在程序的末尾加上 <code>getch()</code> ，解释是，软件总是不断更新的，不好的地方当然要进行改正， <code>getch()</code> 加在程序末尾，它又不赋值给任何变量，所以它在这个地方完全是垃圾代码，与程序无关。C++中考虑到这一点，于是在每次程序运行完了并不退出，而是自动把屏幕停下来，并显示 “press any key...” 叫你按任意键退出，这就好比C++在它的环境中运行程序，在程序的末尾自动加上了一行 <code>getch();</code> 语句，并且在这行语句前还添加了一行输出语句 <code>cout&lt;&lt;"press any key...";</code> 来提示你程序结束了，按任意键继续。</p>
-
-<p>实际上我们编译好的程序在程序结束了本身是不会停下来的，我们可以在编译产生的Debug目录中找到这个编译好的应用程序（扩展名exe），在文件夹中双击运行它，你会发现屏幕闪了一下MS-DOS窗口就关闭了，因为程序运行完就自动退出了，回到了windows环境，当然，如果我们在DOS环境中运行这个程序，我们就可以直接在看到DOS屏幕上看到程序运行结果，因为程序运行完后并不清屏。但是，visual stdio.net2003有返回到了tc那样的情况，你必需要有个 <code>getch()</code> 才行。</p></p>
-
-<p><code>getche()</code> 和 <code>getch()</code> 很相似，它也需要引入头文件 <code>conio.h</code> ，那它们之间的区别又在哪里呢？不同之处就在于 <code>getch()</code> 无返回显示，<code>getche()</code> 有返回显示。就这么一点看看下面的例子：</p>
-
-<pre><code class="c">#include&lt;stdio.h&gt;
-#include&lt;conio.h&gt;
-void main()
-{
-    char ch;
-    for(int i=0;i&lt;5;i++)
-    {
-        ch=getch();
-        printf("%c",ch);
-    }
-}
-</code></pre>
-
-<p>首先这是个连续5次的循环来实现5次停顿，等待我们输入，我们编译并运行这个程序，假设我们分别输入 <code>abcde</code> ，屏幕上显示的结果是 <code>abcde</code> ，这个 <code>abcde</code> 并不是在 <code>ch=getch();</code> 中输出的，我们把 <code>printf("%c",ch);</code> 这行语句去掉，就会发现我们按5次任意键程序就结束了，但屏幕上什么都没有显示。</p>
-
-<p>然后我们在把代码中的 <code>getch()</code> 换成 <code>getche()</code> 看看有什么不同，我们还是分别输入 <code>abcde</code> ，这时屏幕上显示的结果是 <code>aabbccddee</code> ，我们把 <code>printf("%c",ch);</code> 这行语句再去掉看看，显示的结果就是 <code>abcde</code> 了，说明程序在执行 <code>ch=getche();</code> 这条语句的时候就把我们输入的键返回显示在屏幕上，有无回显就是它们的唯一区别。</p>
-
-<p>有人会说，既然是C的函数库中的，那么就应该淘汰了，我们还研究它，还用它干嘛？但是我发现还是有用着它的地方，否则我也不会在这里说这么多来耽误大家的时间。我就举个例子吧，程序如下：</p>
-
-<pre><code class="c">#include&lt;stdio.h&gt;
-#include&lt;conio.h&gt;
-void main()
-{
-    char ch='*';
-    while(ch=='*')
-    {
-        printf("/n按 * 继续循环，按其他键退出！");
-        ch=getch();
-    }
-    printf("/n退出程序！");
-}
-</code></pre>
-
-<p>我们可以在这个循环体中添加我们想要的功能，程序中按*继续循环，其他任意键退出，而且利用 <code>getch()</code> 无回显的特性，我们不管按什么，都不会在屏幕上留下痕迹，使我们的界面达到美观效果，如果还有更好的办法实现这个功能。例子：</p>
-
-<pre><code class="c">#include&lt;stdio.h&gt;
-#include&lt;conio.h&gt;
-void main()
-{ 
-    char c, ch;
-    c=getch();     /*从键盘上读入一个字符不回显送给字符变量c*/
-    putchar(c);    /*输出该字符*/
-    ch=getche();   /*从键盘上带回显的读入一个字符送给字符变量ch*/
-    putchar(ch);
-    printf("/n/n");
-}
-</code></pre>
-
-<p><strong>值得注意的是前面两个函数都是从键盘读入数据！</strong><br/>
-还有 <code>getchar</code> 是很值得研究的：<code>getchar()</code> 是 <code>stdio.h</code> 中的库函数，它的作用是从 <code>stdin</code> 流中读入一个字符，也就是说，如果 <code>stdin</code> 有数据的话不用输入它就可以直接读取了。而 <code>getch()</code> 和 <code>getche()</code> 是 <code>conio.h</code> 中的库函数，它的作用是从键盘接收字符。<code>getchar</code> 带有显示。</p></p>
-
-<p>与前面两个函数的区别在于： <code>getchar()</code> 函数等待输入直到按回车才结束（前提是缓冲区没有数据），回车前的所有输入字符都会逐个显示在屏幕上。但只有第一个字符作为函数的返回值。</p>
-
-<pre><code class="c">#include&lt;stdio.h&gt;
-#include&lt;conio.h&gt;
-void main()
-{
-    char c;
-    c=getchar();   /*从键盘读入字符直到回车结束*/
-    //getchar()在这里它只返回你输入字符串的第一个字符，并把返回值赋值给c
-    putchar(c);    /*显示输入的第一个字符*/
-    printf("/n/n");
-}
-</code></pre>
-
-<p>例四：呵呵，这个程序你运行一下，相信你又会有疑问了。这个就是从缓冲区中读取了例子。第一次 <code>getchar()</code> 时，确实需要人工的输入，但是如果你输了多个字符，以后的 <code>getchar()</code> 再执行时就会直接从缓冲区中读取了。</p>
-
-<pre><code class="c">#include&lt;stdio.h&gt;
-#include&lt;conio.h&gt;
-void main()
-{
-    char c;
-    while ((c=getchar())!='/n')    /*每个getchar()依次读入一个字符*/
-        printf("%c",c);        /*按照原样输出*/
-    printf("/n/n");
-}
-</code></pre>
-
-<p>程序运行时，首先停下来，等你输入一串字符串，输入完毕后，它把你输入的整个字符串都输出来了，咦，你不是说 <code>getchar()</code> 只返回第一个字符么，这里怎么？</p>
-
-<p>因为我们输入的字符串并不是取了第一个字符就把剩下的字符串丢掉了，它还在我们的内存中，就好比，开闸放水，我们把水放到闸里去以后，开一次闸就放掉一点，开一次就放掉一点，直到放光了为止，这里开闸动作就相当于调用一次 <code>getchar()</code> 。我们输入的字符串也是这么一回事，首先我们输入的字符串是放在内存的缓冲区中的，我们调用一次 <code>getchar()</code> 就把缓冲区中里出口最近的一个字符输出，也就是最前面的一个字符输出，输出后，就把它释放掉了，但后面还有字符串，所以我们就用循环把最前面的一个字符一个个的在内存中释放掉，直到不满足循环条件退出为止。</p>
-
-<p>例子中循环条件里的 <code>'/n'</code> 实际上就是你输入字符串后的回车符，所以意思就是说，直到遇到回车符才结束循环，而 <code>getchar()</code> 函数就是等待输入（或缓冲区中的数据）直到按回车才结束，所以实现了整个字符串的输出。当然，我们也可以把循环条件改一下，比如 <code>while ((c=getchar())!='a')</code> ，什么意思呢，意思就是遇到字符'a'就停止循环，当然意思是如果你输入 <code>“12345a213123/n”</code> 那么只会输出到 <code>a</code> ，结果是 <code>12345a</code> 。</p>
-
-<p>再次注意：用 <code>getchar()</code> 它是从“流”中间去读取，所以第一个 <code>getchar()</code> 接受的是刚刚中断的流队列中即将出列的第一个字符（不限于回车符，上面举过例子了），如果流队列不为空，执行 <code>getchar()</code> 就继续放水，直到把回车符也放空为止，空了之后再在执行 <code>getchar()</code> 就停下等待你的输入了；我们用 <code>getch()</code> 为什么每次都是等待用户的输入呢？因为 <code>getch()</code> 是从键盘接收，即时的接收，并不是从 <code>stdin</code> 流中去读取数据。</p>
-
-<p>补充：按键盘上的回车产生了2个字符:回车符(<code>'/r'</code>)和换行符(<code>'/n'</code>)。回车符<code>'/r'</code>(CR:carriage return:倒车）使光标回到这行的首部，换行符(<code>'/n'</code>)(new line)然后再换行。</p>
-
-<p>所以当输入字符'w',并按下回车键以后。首先得到回车符。那个 <code>getchar</code> 函数结束了。 但是还存在一个换行符。所以如果用 <code>getchar()</code> 来做判断的时候。最好再写一次 <code>getchar()</code> 清除缓冲区的'/n'.</p>
-
-<h2>3.如何清空输入缓冲区的内容？</h2>
-
-<p>如果我想让 <code>getchar()</code> 每次都能够等待用户输入的话就要清空缓冲区，下面就介绍方法（不同平台）。</p>
-
-<p>C标准规定 <code>fflush()</code> 函数是用来刷新输出（stdout）缓存的。对于输入（stdin），它是没有定义的。但是有些编译器也定义了 <code>fflush( stdin )</code> 的实现，比如微软的VC。其它编译器是否也定义了 <code>fflush( stdin )</code> 的实现应当查找它的手册。GCC编译器没有定义它的实现，所以不能使用 <code>fflush( stdin )</code> 来刷新输入缓存。</p>
-
-<p>对于没有定义 <code>fflush( stdin )</code> 的编译器，可以使用 <code>fgets()</code> 函数来代替它（比用  <code>getchar()</code>、<code>scanf()</code> 等函数通用性好）。可以这样忽略输入流中留下的回车等其它输入，从而使下一次的输入总保持一个“干净”的状态。（这个是任何平台下都可以的）</p>
-
-<pre><code class="c">// ...
-char sbuf[1024];
-// ...
-fgets( sbuf, 1024, stdin );
-// ...
-在windows 的vc下面就可以这样了：
-for(int i=0;i&lt;10;++i)
-{
-   char ch=getchar();
-   fflush(stdin); //每次都会有等待状态了
-}
-</code></pre>
-
-<h2>4.总结</h2>
-
-<p>主要看 <code>getch()</code>，<code>getche()</code> 的是否显示，<code>getchar()</code> 是读取流，而且和前面两个函数不是一个库。掌握清空缓冲区的方法。</p>
-</div>
-<div id="copyleft" class="well" >
-	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2009/06/05/io-buffer-in-c-language/</a></br>
-	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
-</div>
-
-
-  <footer>
-    <p class="meta">
-      
-<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
-
-      
-
-
-
-
-
-
-
-
-
-<time datetime="2009-06-05T23:02:00+08:00" pubdate data-updated="true"></time>
-		
-		
-		
-		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
-		
-		
-		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/cyu-yan/'>C语言</a>, <a class='tag' href='/blog/tags/io/'>IO</a>, <a class='tag' href='/blog/tags/huan-chong-qu/'>缓冲区</a></span>
-		
-    </p>
-    
-      
-         <div class="sharing">
-  
-  
-  
-</div>
-
-      
-    
-	</br>
-	 <ul class="pager">
-      
-      <li class="previous"><a class="basic-alignment left"
-        href="/blog/2009/05/28/analysis-the-steps-of-compiling-c-language/" title="Previous Post:
-        C语言编译过程全解析">&laquo; C语言编译过程全解析</a></li>
-      
-      <li><a href="/blog/archives/">Blog Archives</a></li>
-      
-      <li class="next"><a class="basic-alignment right" href="/blog/2009/07/20/useful-commands-in-MS-SQL-Server/"
-        title="Next Post: Sql Server数据库常用的命令语句">Sql Server数据库常用的命令语句
-        &raquo;</a></li>
-      
-    </ul>
-    
-    <section>
-      <h1>Comments</h1>
-      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-    </section>
-    
-   
-  </footer>
-</article>
-
-<aside class="sidebar-nav span3">
-  
-    
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo" class="page-footer">
-<hr>
-<p>
-  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'ibillxia';
-      
-        
-        // var disqus_developer = 1;
-        var disqus_identifier = 'https://ibillxia.github.io/blog/2009/06/05/io-buffer-in-c-language/';
-        var disqus_url = 'https://ibillxia.github.io/blog/2009/06/05/io-buffer-in-c-language/';
-        var disqus_script = 'embed.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-
-
-
-
-
-
-
-
-
-</body>
-</html>
+<!doctype html><html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f7"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1b1b1e"><meta name="viewport" content="width=device-width, user-scalable=no initial-scale=1, shrink-to-fit=no, viewport-fit=cover" ><meta name="generator" content="Jekyll v4.4.1" /><meta property="og:title" content="C语言输入输出缓冲区" /><meta property="og:locale" content="zh_CN" /><meta name="description" content="原文链接：http://blog.csdn.net/cxyol/archive/2006/03/18/628324.aspx" /><meta name="twitter:description" property="og:description" content="原文链接：http://blog.csdn.net/cxyol/archive/2006/03/18/628324.aspx" /><link rel="canonical" href="https://ibillxia.github.io/blog/2009/06/05/io-buffer-in-c-language/" /><meta property="og:url" content="https://ibillxia.github.io/blog/2009/06/05/io-buffer-in-c-language/" /><meta property="og:site_name" content="Bill’s Blog" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2009-06-05T23:02:00+08:00" /><meta property="article:modified_time" content="2009-06-05T23:02:00+08:00" /><meta property="og:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:card" content="summary_large_image" /><meta property="twitter:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:title" content="C语言输入输出缓冲区" /><meta name="twitter:site" content="@ibillxia" /><meta name="msvalidate.01" content="1538BC1807507674B6BD4942F25493B2" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2009-06-05T23:02:00+08:00","datePublished":"2009-06-05T23:02:00+08:00","description":"原文链接：http://blog.csdn.net/cxyol/archive/2006/03/18/628324.aspx","headline":"C语言输入输出缓冲区","mainEntityOfPage":{"@type":"WebPage","@id":"https://ibillxia.github.io/blog/2009/06/05/io-buffer-in-c-language/"},"url":"https://ibillxia.github.io/blog/2009/06/05/io-buffer-in-c-language/"}</script><title>C语言输入输出缓冲区 | Bill's Blog</title><link rel="icon" type="image/png" href="/assets/img/favicons/favicon-96x96.png" sizes="96x96"><link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico"><link rel="shortcut icon" href="/assets/img/favicon.ico"><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="stylesheet" href="/assets/css/jekyll-theme-chirpy.css"><link rel="stylesheet" href="/assets/lib/fonts/main.css"><link rel="stylesheet" href="/assets/lib/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="/assets/lib/tocbot/tocbot.min.css"><link rel="stylesheet" href="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.min.css"><link rel="stylesheet" href="/assets/lib/glightbox/glightbox.min.css"> <script src="/assets/js/dist/theme.min.js"></script> <script defer src="/assets/lib/simple-jekyll-search/simple-jekyll-search.min.js"></script> <script defer src="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.umd.min.js"></script> <script defer src="/assets/lib/glightbox/glightbox.min.js"></script> <script defer src="/assets/lib/clipboard/clipboard.min.js"></script> <script defer src="/assets/lib/dayjs/dayjs.min.js"></script> <script defer src="/assets/lib/dayjs/locale/en.js"></script> <script defer src="/assets/lib/dayjs/plugin/relativeTime.js"></script> <script defer src="/assets/lib/dayjs/plugin/localizedFormat.js"></script> <script defer src="/assets/lib/tocbot/tocbot.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script defer src="/app.min.js?baseurl=&register=true" ></script> <script defer src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script> <script> document.addEventListener('DOMContentLoaded', () => { window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-34DJ0T23LB'); }); </script><body><aside aria-label="Sidebar" id="sidebar" class="d-flex flex-column align-items-end"><header class="profile-wrapper"> <a href="/" id="avatar" class="rounded-circle"><img src="/assets/img/rock_coder.png" width="112" height="112" alt="avatar" onerror="this.style.display='none'"></a> <a class="site-title d-block" href="/">Bill's Blog</a><p class="site-subtitle fst-italic mb-0">Program Hard, Play Hard, Live Crazy!</p></header><nav class="flex-column flex-grow-1 w-100 ps-0"><ul class="nav"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home"></i> <span>首页</span> </a><li class="nav-item"> <a href="/blog/archives/" class="nav-link"> <i class="fa-fw fas fa-archive"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/blog/categories/" class="nav-link"> <i class="fa-fw fas fa-stream"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/blog/tags/" class="nav-link"> <i class="fa-fw fas fa-tags"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle"></i> <span>关于</span> </a></ul></nav><div class="sidebar-bottom d-flex flex-wrap align-items-center w-100"><div class="btn-group dropup"> <button type="button" class="btn btn-link nav-link" aria-label="Switch Mode" id="mode-toggle" data-bs-toggle="dropdown" ><i class="fa-regular fa-sun" data-theme-mode="light"></i><i class="fa-regular fa-moon" data-theme-mode="dark"></i><i class="fa-solid fa-display" data-theme-mode="system"></i></button><ul class="dropdown-menu rounded-3 mb-1 p-1"><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="light"><i class="fa-regular fa-sun" data-theme-mode="light"></i>浅色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="dark"><i class="fa-regular fa-moon" data-theme-mode="dark"></i>深色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="system"><i class="fa-solid fa-display" data-theme-mode="system"></i>跟随系统</button></ul></div><span class="icon-border"></span> <a href="https://github.com/ibillxia" aria-label="github" target="_blank" rel="noopener noreferrer" > <i class="fab fa-github"></i> </a> <a href="https://x.com/ibillxia" aria-label="x" target="_blank" rel="noopener noreferrer" > <i class="fa-brands fa-x-twitter"></i> </a> <a href="javascript:void(location.href = 'mailto:' + ['ibillxia','gmail.com'].join('@'))" aria-label="email" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" > <i class="fas fa-rss"></i> </a> <a href="https://stackoverflow.com/users/1602285/bill-xia" aria-label="stack-overflow" target="_blank" rel="noopener noreferrer" > <i class="fab fa-stack-overflow"></i> </a> <a href="https://weibo.com/ibillxia" aria-label="weibo" target="_blank" rel="noopener noreferrer" > <i class="fab fa-weibo"></i> </a></div></aside><div id="main-wrapper" class="d-flex justify-content-center"><div class="container d-flex flex-column px-xxl-5"><header id="topbar-wrapper" class="flex-shrink-0" aria-label="Top Bar"><div id="topbar" class="d-flex align-items-center justify-content-between px-lg-3 h-100" ><nav id="breadcrumb" aria-label="Breadcrumb"> <span> <a href="/">首页</a> </span> <span>C语言输入输出缓冲区</span></nav><button type="button" id="sidebar-trigger" class="btn btn-link" aria-label="Sidebar"> <i class="fas fa-bars fa-fw"></i> </button><div id="topbar-title"> 文章</div><button type="button" id="search-trigger" class="btn btn-link" aria-label="Search"> <i class="fas fa-search fa-fw"></i> </button> <search id="search" class="align-items-center ms-3 ms-lg-0"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="搜索..." > </search> <button type="button" class="btn btn-link text-decoration-none" id="search-cancel">取消</button></div></header><div class="row flex-grow-1"><main aria-label="Main Content" class="col-12 col-lg-11 col-xl-9 px-md-4"><article class="px-1" data-toc="true"><header><h1 data-toc-skip>C语言输入输出缓冲区</h1><div class="post-meta text-muted"> <span> 发表于 <time data-ts="1244214120" data-df="YYYY/MM/DD" data-bs-toggle="tooltip" data-bs-placement="bottom" > 2009/06/05 </time> </span><div class="d-flex justify-content-between"> <span> 作者 <em> <a href="https://github.com/ibillxia">Bill Xia</a> </em> </span><div> <span class="readtime" data-bs-toggle="tooltip" data-bs-placement="bottom" title="3350 字" > <em>18 分钟</em>阅读</span></div></div></div></header><div id="toc-bar" class="d-flex align-items-center justify-content-between invisible"> <span class="label text-truncate">C语言输入输出缓冲区</span> <button type="button" class="toc-trigger btn me-1"> <i class="fa-solid fa-list-ul fa-fw"></i> </button></div><button id="toc-solo-trigger" type="button" class="toc-trigger btn btn-outline-secondary btn-sm"> <span class="label ps-2 pe-1">文章内容</span> <i class="fa-solid fa-angle-right fa-fw"></i> </button> <dialog id="toc-popup" class="p-0"><div class="header d-flex flex-row align-items-center justify-content-between"><div class="label text-truncate py-2 ms-4">C语言输入输出缓冲区</div><button id="toc-popup-close" type="button" class="btn-close btn-sm mx-3" aria-label="Close"></button></div><div id="toc-popup-content" class="px-4 py-3 pb-4"></div></dialog><div class="content"><p>原文链接：<a href="http://blog.csdn.net/cxyol/archive/2006/03/18/628324.aspx">http://blog.csdn.net/cxyol/archive/2006/03/18/628324.aspx</a></p><h2 id="1输入输出缓冲区的概念c用的多一些"><span class="me-2">1.输入输出缓冲区的概念（C++用的多一些）</span><a href="#1输入输出缓冲区的概念c用的多一些" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>我想以一个例子说明，比如我想把一篇文章以字符序列的方式输出到计算机显示器屏幕上，那么我的程序内存作为数据源而显示器驱动程序作为数据目标，如果数据源直接对数据目标发送数据的话。数据目标获得第一个字符，便将它显示。然后从端口读取下一个字符，可是这时就不能保证数据源向端口发送的恰好是第二个字符（也许是第三个，而第二个已经在数据目标显示时发送过了）。这样的话就不能保证输出的数据能完整的被数据目标所接受并处理。</p><p>为了解决这个问题，我们需要在数据源与数据目标中间放置一个保存完整数据内容的区域，那就是 “缓冲区”。这样的话， 数据源可以不考虑数据目标正在处理哪部分数据，只要把数据输出到缓冲区就可以了，数据目标也可以不考虑数据源的发送频率，只是从缓冲区中依次取出下一个数据。从而保证了数据发送的完整性，同时也提高了程序的效率。</p><p>当然<code class="language-plaintext highlighter-rouge">getch()</code>，<code class="language-plaintext highlighter-rouge">getche()</code>没有用到缓冲区。</p><h2 id="2几个函数的区别"><span class="me-2">2.几个函数的区别</span><a href="#2几个函数的区别" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>首先不要忘了，**要用getch()必须引入头文件<code class="language-plaintext highlighter-rouge">conio.h</code> **，以前学C语言的时候，我们总喜欢用在程序的末尾加上它，利用它来实现程序运行完了暂停不退出的效果。如果不加这句话，在TC2.0的环境中我们用Ctrl+F9编译并运行后，程序一运行完了就退回到TC环境中，我们根本来不及看到结果，这时要看结果，我们就要按Alt+F5回到DOS环境中去看结果，这很麻烦。而如果在程序的结尾加上一行 <code class="language-plaintext highlighter-rouge">getch();</code> 语句，我们就可以省掉会DOS看结果这个步骤，因为程序运行完了并不退出，而是在程序最后把屏幕停住了，按任意键才退回到TC环境中去。</p><p>那我们来看看 <code class="language-plaintext highlighter-rouge">getch()</code> 到底起的什么作用， <code class="language-plaintext highlighter-rouge">getch()</code> 实际是一个输入命令，作用是从键盘接收一个字符，而且并不把这个字符显示出来，就是说，你按了一个键后它并不在屏幕上显示你按的什么，而继续运行后面的代码，所以我们在C++中可以用它来实现“按任意键继续”的效果，即程序中遇到getch();这行语句，它就会把程序暂停下来，等你按任意键，它接收了这个字符键后再继续执行后面的代码。</p><p>你也许会问，为什么我们在C++中就没有在程序的末尾加上 <code class="language-plaintext highlighter-rouge">getch()</code> ，解释是，软件总是不断更新的，不好的地方当然要进行改正， <code class="language-plaintext highlighter-rouge">getch()</code> 加在程序末尾，它又不赋值给任何变量，所以它在这个地方完全是垃圾代码，与程序无关。C++中考虑到这一点，于是在每次程序运行完了并不退出，而是自动把屏幕停下来，并显示 “press any key…” 叫你按任意键退出，这就好比C++在它的环境中运行程序，在程序的末尾自动加上了一行 <code class="language-plaintext highlighter-rouge">getch();</code> 语句，并且在这行语句前还添加了一行输出语句 <code class="language-plaintext highlighter-rouge">cout&lt;&lt;"press any key...";</code> 来提示你程序结束了，按任意键继续。</p><p>实际上我们编译好的程序在程序结束了本身是不会停下来的，我们可以在编译产生的Debug目录中找到这个编译好的应用程序（扩展名exe），在文件夹中双击运行它，你会发现屏幕闪了一下MS-DOS窗口就关闭了，因为程序运行完就自动退出了，回到了windows环境，当然，如果我们在DOS环境中运行这个程序，我们就可以直接在看到DOS屏幕上看到程序运行结果，因为程序运行完后并不清屏。但是，visual stdio.net2003有返回到了tc那样的情况，你必需要有个 <code class="language-plaintext highlighter-rouge">getch()</code> 才行。&lt;/p&gt;</p><p><code class="language-plaintext highlighter-rouge">getche()</code> 和 <code class="language-plaintext highlighter-rouge">getch()</code> 很相似，它也需要引入头文件 <code class="language-plaintext highlighter-rouge">conio.h</code> ，那它们之间的区别又在哪里呢？不同之处就在于 <code class="language-plaintext highlighter-rouge">getch()</code> 无返回显示，<code class="language-plaintext highlighter-rouge">getche()</code> 有返回显示。就这么一点看看下面的例子：</p><div class="language-c highlighter-rouge"><div class="code-header"> <span data-label-text="C"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre><td class="rouge-code"><pre><span class="cp">#include</span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+#include</span><span class="cpf">&lt;conio.h&gt;</span><span class="cp">
+</span><span class="kt">void</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">char</span> <span class="n">ch</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="mi">5</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">ch</span><span class="o">=</span><span class="n">getch</span><span class="p">();</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span><span class="n">ch</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>首先这是个连续5次的循环来实现5次停顿，等待我们输入，我们编译并运行这个程序，假设我们分别输入 <code class="language-plaintext highlighter-rouge">abcde</code> ，屏幕上显示的结果是 <code class="language-plaintext highlighter-rouge">abcde</code> ，这个 <code class="language-plaintext highlighter-rouge">abcde</code> 并不是在 <code class="language-plaintext highlighter-rouge">ch=getch();</code> 中输出的，我们把 <code class="language-plaintext highlighter-rouge">printf("%c",ch);</code> 这行语句去掉，就会发现我们按5次任意键程序就结束了，但屏幕上什么都没有显示。</p><p>然后我们在把代码中的 <code class="language-plaintext highlighter-rouge">getch()</code> 换成 <code class="language-plaintext highlighter-rouge">getche()</code> 看看有什么不同，我们还是分别输入 <code class="language-plaintext highlighter-rouge">abcde</code> ，这时屏幕上显示的结果是 <code class="language-plaintext highlighter-rouge">aabbccddee</code> ，我们把 <code class="language-plaintext highlighter-rouge">printf("%c",ch);</code> 这行语句再去掉看看，显示的结果就是 <code class="language-plaintext highlighter-rouge">abcde</code> 了，说明程序在执行 <code class="language-plaintext highlighter-rouge">ch=getche();</code> 这条语句的时候就把我们输入的键返回显示在屏幕上，有无回显就是它们的唯一区别。</p><p>有人会说，既然是C的函数库中的，那么就应该淘汰了，我们还研究它，还用它干嘛？但是我发现还是有用着它的地方，否则我也不会在这里说这么多来耽误大家的时间。我就举个例子吧，程序如下：</p><div class="language-c highlighter-rouge"><div class="code-header"> <span data-label-text="C"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre><td class="rouge-code"><pre><span class="cp">#include</span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+#include</span><span class="cpf">&lt;conio.h&gt;</span><span class="cp">
+</span><span class="kt">void</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">char</span> <span class="n">ch</span><span class="o">=</span><span class="sc">'*'</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">ch</span><span class="o">==</span><span class="sc">'*'</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"/n按 * 继续循环，按其他键退出！"</span><span class="p">);</span>
+        <span class="n">ch</span><span class="o">=</span><span class="n">getch</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"/n退出程序！"</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>我们可以在这个循环体中添加我们想要的功能，程序中按*继续循环，其他任意键退出，而且利用 <code class="language-plaintext highlighter-rouge">getch()</code> 无回显的特性，我们不管按什么，都不会在屏幕上留下痕迹，使我们的界面达到美观效果，如果还有更好的办法实现这个功能。例子：</p><div class="language-c highlighter-rouge"><div class="code-header"> <span data-label-text="C"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre><td class="rouge-code"><pre><span class="cp">#include</span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+#include</span><span class="cpf">&lt;conio.h&gt;</span><span class="cp">
+</span><span class="kt">void</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span> 
+    <span class="kt">char</span> <span class="n">c</span><span class="p">,</span> <span class="n">ch</span><span class="p">;</span>
+    <span class="n">c</span><span class="o">=</span><span class="n">getch</span><span class="p">();</span>     <span class="cm">/*从键盘上读入一个字符不回显送给字符变量c*/</span>
+    <span class="n">putchar</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>    <span class="cm">/*输出该字符*/</span>
+    <span class="n">ch</span><span class="o">=</span><span class="n">getche</span><span class="p">();</span>   <span class="cm">/*从键盘上带回显的读入一个字符送给字符变量ch*/</span>
+    <span class="n">putchar</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"/n/n"</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p><strong>值得注意的是前面两个函数都是从键盘读入数据！</strong><br /> 还有 <code class="language-plaintext highlighter-rouge">getchar</code> 是很值得研究的：<code class="language-plaintext highlighter-rouge">getchar()</code> 是 <code class="language-plaintext highlighter-rouge">stdio.h</code> 中的库函数，它的作用是从 <code class="language-plaintext highlighter-rouge">stdin</code> 流中读入一个字符，也就是说，如果 <code class="language-plaintext highlighter-rouge">stdin</code> 有数据的话不用输入它就可以直接读取了。而 <code class="language-plaintext highlighter-rouge">getch()</code> 和 <code class="language-plaintext highlighter-rouge">getche()</code> 是 <code class="language-plaintext highlighter-rouge">conio.h</code> 中的库函数，它的作用是从键盘接收字符。<code class="language-plaintext highlighter-rouge">getchar</code> 带有显示。&lt;/p&gt;</p><p>与前面两个函数的区别在于： <code class="language-plaintext highlighter-rouge">getchar()</code> 函数等待输入直到按回车才结束（前提是缓冲区没有数据），回车前的所有输入字符都会逐个显示在屏幕上。但只有第一个字符作为函数的返回值。</p><div class="language-c highlighter-rouge"><div class="code-header"> <span data-label-text="C"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre><td class="rouge-code"><pre><span class="cp">#include</span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+#include</span><span class="cpf">&lt;conio.h&gt;</span><span class="cp">
+</span><span class="kt">void</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">char</span> <span class="n">c</span><span class="p">;</span>
+    <span class="n">c</span><span class="o">=</span><span class="n">getchar</span><span class="p">();</span>   <span class="cm">/*从键盘读入字符直到回车结束*/</span>
+    <span class="c1">//getchar()在这里它只返回你输入字符串的第一个字符，并把返回值赋值给c</span>
+    <span class="n">putchar</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>    <span class="cm">/*显示输入的第一个字符*/</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"/n/n"</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>例四：呵呵，这个程序你运行一下，相信你又会有疑问了。这个就是从缓冲区中读取了例子。第一次 <code class="language-plaintext highlighter-rouge">getchar()</code> 时，确实需要人工的输入，但是如果你输了多个字符，以后的 <code class="language-plaintext highlighter-rouge">getchar()</code> 再执行时就会直接从缓冲区中读取了。</p><div class="language-c highlighter-rouge"><div class="code-header"> <span data-label-text="C"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre><span class="cp">#include</span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+#include</span><span class="cpf">&lt;conio.h&gt;</span><span class="cp">
+</span><span class="kt">void</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">char</span> <span class="n">c</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">((</span><span class="n">c</span><span class="o">=</span><span class="n">getchar</span><span class="p">())</span><span class="o">!=</span><span class="err">'</span><span class="o">/</span><span class="n">n</span><span class="err">'</span><span class="p">)</span>    <span class="cm">/*每个getchar()依次读入一个字符*/</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span><span class="n">c</span><span class="p">);</span>        <span class="cm">/*按照原样输出*/</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"/n/n"</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>程序运行时，首先停下来，等你输入一串字符串，输入完毕后，它把你输入的整个字符串都输出来了，咦，你不是说 <code class="language-plaintext highlighter-rouge">getchar()</code> 只返回第一个字符么，这里怎么？</p><p>因为我们输入的字符串并不是取了第一个字符就把剩下的字符串丢掉了，它还在我们的内存中，就好比，开闸放水，我们把水放到闸里去以后，开一次闸就放掉一点，开一次就放掉一点，直到放光了为止，这里开闸动作就相当于调用一次 <code class="language-plaintext highlighter-rouge">getchar()</code> 。我们输入的字符串也是这么一回事，首先我们输入的字符串是放在内存的缓冲区中的，我们调用一次 <code class="language-plaintext highlighter-rouge">getchar()</code> 就把缓冲区中里出口最近的一个字符输出，也就是最前面的一个字符输出，输出后，就把它释放掉了，但后面还有字符串，所以我们就用循环把最前面的一个字符一个个的在内存中释放掉，直到不满足循环条件退出为止。</p><p>例子中循环条件里的 <code class="language-plaintext highlighter-rouge">'/n'</code> 实际上就是你输入字符串后的回车符，所以意思就是说，直到遇到回车符才结束循环，而 <code class="language-plaintext highlighter-rouge">getchar()</code> 函数就是等待输入（或缓冲区中的数据）直到按回车才结束，所以实现了整个字符串的输出。当然，我们也可以把循环条件改一下，比如 <code class="language-plaintext highlighter-rouge">while ((c=getchar())!='a')</code> ，什么意思呢，意思就是遇到字符’a’就停止循环，当然意思是如果你输入 <code class="language-plaintext highlighter-rouge">“12345a213123/n”</code> 那么只会输出到 <code class="language-plaintext highlighter-rouge">a</code> ，结果是 <code class="language-plaintext highlighter-rouge">12345a</code> 。</p><p>再次注意：用 <code class="language-plaintext highlighter-rouge">getchar()</code> 它是从“流”中间去读取，所以第一个 <code class="language-plaintext highlighter-rouge">getchar()</code> 接受的是刚刚中断的流队列中即将出列的第一个字符（不限于回车符，上面举过例子了），如果流队列不为空，执行 <code class="language-plaintext highlighter-rouge">getchar()</code> 就继续放水，直到把回车符也放空为止，空了之后再在执行 <code class="language-plaintext highlighter-rouge">getchar()</code> 就停下等待你的输入了；我们用 <code class="language-plaintext highlighter-rouge">getch()</code> 为什么每次都是等待用户的输入呢？因为 <code class="language-plaintext highlighter-rouge">getch()</code> 是从键盘接收，即时的接收，并不是从 <code class="language-plaintext highlighter-rouge">stdin</code> 流中去读取数据。</p><p>补充：按键盘上的回车产生了2个字符:回车符(<code class="language-plaintext highlighter-rouge">'/r'</code>)和换行符(<code class="language-plaintext highlighter-rouge">'/n'</code>)。回车符<code class="language-plaintext highlighter-rouge">'/r'</code>(CR:carriage return:倒车）使光标回到这行的首部，换行符(<code class="language-plaintext highlighter-rouge">'/n'</code>)(new line)然后再换行。</p><p>所以当输入字符’w’,并按下回车键以后。首先得到回车符。那个 <code class="language-plaintext highlighter-rouge">getchar</code> 函数结束了。 但是还存在一个换行符。所以如果用 <code class="language-plaintext highlighter-rouge">getchar()</code> 来做判断的时候。最好再写一次 <code class="language-plaintext highlighter-rouge">getchar()</code> 清除缓冲区的’/n’.</p><h2 id="3如何清空输入缓冲区的内容"><span class="me-2">3.如何清空输入缓冲区的内容？</span><a href="#3如何清空输入缓冲区的内容" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>如果我想让 <code class="language-plaintext highlighter-rouge">getchar()</code> 每次都能够等待用户输入的话就要清空缓冲区，下面就介绍方法（不同平台）。</p><p>C标准规定 <code class="language-plaintext highlighter-rouge">fflush()</code> 函数是用来刷新输出（stdout）缓存的。对于输入（stdin），它是没有定义的。但是有些编译器也定义了 <code class="language-plaintext highlighter-rouge">fflush( stdin )</code> 的实现，比如微软的VC。其它编译器是否也定义了 <code class="language-plaintext highlighter-rouge">fflush( stdin )</code> 的实现应当查找它的手册。GCC编译器没有定义它的实现，所以不能使用 <code class="language-plaintext highlighter-rouge">fflush( stdin )</code> 来刷新输入缓存。</p><p>对于没有定义 <code class="language-plaintext highlighter-rouge">fflush( stdin )</code> 的编译器，可以使用 <code class="language-plaintext highlighter-rouge">fgets()</code> 函数来代替它（比用 <code class="language-plaintext highlighter-rouge">getchar()</code>、<code class="language-plaintext highlighter-rouge">scanf()</code> 等函数通用性好）。可以这样忽略输入流中留下的回车等其它输入，从而使下一次的输入总保持一个“干净”的状态。（这个是任何平台下都可以的）</p><div class="language-c highlighter-rouge"><div class="code-header"> <span data-label-text="C"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre><td class="rouge-code"><pre><span class="c1">// ...</span>
+<span class="kt">char</span> <span class="n">sbuf</span><span class="p">[</span><span class="mi">1024</span><span class="p">];</span>
+<span class="c1">// ...</span>
+<span class="n">fgets</span><span class="p">(</span> <span class="n">sbuf</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="n">stdin</span> <span class="p">);</span>
+<span class="c1">// ...</span>
+<span class="err">在</span><span class="n">windows</span> <span class="err">的</span><span class="n">vc</span><span class="err">下面就可以这样了：</span>
+<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="mi">10</span><span class="p">;</span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="p">{</span>
+   <span class="kt">char</span> <span class="n">ch</span><span class="o">=</span><span class="n">getchar</span><span class="p">();</span>
+   <span class="n">fflush</span><span class="p">(</span><span class="n">stdin</span><span class="p">);</span> <span class="c1">//每次都会有等待状态了</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h2 id="4总结"><span class="me-2">4.总结</span><a href="#4总结" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>主要看 <code class="language-plaintext highlighter-rouge">getch()</code>，<code class="language-plaintext highlighter-rouge">getche()</code> 的是否显示，<code class="language-plaintext highlighter-rouge">getchar()</code> 是读取流，而且和前面两个函数不是一个库。掌握清空缓冲区的方法。</p></div><div class="post-tail-wrapper text-muted"><div class="d-flex justify-content-between align-items-center gap-3 mb-3"><div class="post-meta"> <i class="far fa-folder-open fa-fw me-1"></i> <a href="/blog/categories/program/">Program</a></div></div><div class="post-tags"> <i class="fa fa-tags fa-fw me-1"></i> <a href="/blog/tags/c%E8%AF%AD%E8%A8%80/" class="post-tag no-text-decoration" >C语言</a> <a href="/blog/tags/io/" class="post-tag no-text-decoration" >IO</a> <a href="/blog/tags/%E7%BC%93%E5%86%B2%E5%8C%BA/" class="post-tag no-text-decoration" >缓冲区</a></div><div class=" post-tail-bottom d-flex justify-content-between align-items-center mt-5 pb-2 " ><div class="license-wrapper"> 本文由作者按照 <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> 进行授权</div><div class="share-wrapper d-flex align-items-center"> <span class="share-label text-muted">分享</span> <span class="share-icons"> <a href="https://x.com/intent/tweet?text=C%E8%AF%AD%E8%A8%80%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E7%BC%93%E5%86%B2%E5%8C%BA%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2009%2F06%2F05%2Fio-buffer-in-c-language%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Twitter" aria-label="Twitter"> <i class="fa-fw fa-brands fa-square-x-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=C%E8%AF%AD%E8%A8%80%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E7%BC%93%E5%86%B2%E5%8C%BA%20-%20Bill's%20Blog&u=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2009%2F06%2F05%2Fio-buffer-in-c-language%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Facebook" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://t.me/share/url?url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2009%2F06%2F05%2Fio-buffer-in-c-language%2F&text=C%E8%AF%AD%E8%A8%80%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E7%BC%93%E5%86%B2%E5%8C%BA%20-%20Bill's%20Blog" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Telegram" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <a href="https://service.weibo.com/share/share.php?title=C%E8%AF%AD%E8%A8%80%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E7%BC%93%E5%86%B2%E5%8C%BA%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2009%2F06%2F05%2Fio-buffer-in-c-language%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Weibo" aria-label="Weibo"> <i class="fa-fw fab fa-weibo"></i> </a> <button id="copy-link" aria-label="Copy link" class="btn small" data-bs-toggle="tooltip" data-bs-placement="top" title="分享链接" data-title-succeed="链接已复制！" > <i class="fa-fw fas fa-link pe-none fs-6"></i> </button> </span></div></div></div></article></main><aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 text-muted"><div class="access"><section id="access-lastmod"><h2 class="panel-heading">最近更新</h2><ul class="content list-unstyled ps-0 pb-1 ms-1 mt-2"><li class="text-truncate lh-lg"> <a href="/blog/2026/11/16/anthropic-the-components-of-agent-memory/">【译】Anthropic：智能体记忆的组成部分</a><li class="text-truncate lh-lg"> <a href="/blog/2026/11/09/is-FDE-actually-established-in-China/">前鹅厂王津银：FDE 在中国，到底成立吗？</a><li class="text-truncate lh-lg"> <a href="/blog/2026/09/14/openai-data-agent-skills-interpretation/">OpenAI Data Agent的核心Skill解读：数据Agent如何把问题变成可信的决策</a><li class="text-truncate lh-lg"> <a href="/blog/2026/08/20/data-agent-servey-from-arch-to-practice/">Data Agent全景调研：从技术架构到产业实践</a><li class="text-truncate lh-lg"> <a href="/blog/2026/07/03/FDE-what-why-and-future/">什么是 FDE？从它的爆火看软件研发的职能大洗牌</a></ul></section><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div><div class="toc-border-cover z-3"></div><section id="toc-wrapper" class="invisible position-sticky ps-0 pe-4 pb-4"><h2 class="panel-heading ps-3 pb-2 mb-0">文章内容</h2><nav id="toc"></nav></section></aside></div><div class="row"><div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 px-md-4"><aside id="related-posts" aria-labelledby="related-label"><h3 class="mb-4" id="related-label">相关文章</h3><nav class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4"><article class="col"> <a href="/blog/2013/07/20/details-of-wave-format-and-reading-wave-files-in-C-language/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1374322020" data-df="YYYY/MM/DD" > 2013/07/20 </time><h4 class="pt-0 my-2">PCM WAVE格式详解及用C语言实现wave文件的读取</h4><div class="text-muted"><p>1.PCM Wave格式详解 WAVE文件格式是微软RIFF(Resource Interchange File Format,资源交换文件标准)的一种，是针对于多媒体文件存储的一种文件格式和标准。 一般而言，RIFF文件由文件头和数据两部分组成，一个WAVE文件由一个“WAVE”数据块组成，这个“WAVE”块又由一个"fmt"子数据块和一个“data”子 数据块组成，也称这种格式为“Can...</p></div></div></a></article><article class="col"> <a href="/blog/2014/05/24/function-pointer-in-c-and-function-call-operator-in-cpp/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1400938020" data-df="YYYY/MM/DD" > 2014/05/24 </time><h4 class="pt-0 my-2">C语言函数指针与C++函数调用操作符</h4><div class="text-muted"><p>概述 在编程过程中，一些特殊的时候，我们需要向一个函数传递另一个函数的地址（比如在快速排序中，我们需要传入两个元素大小比较的函数的地址），此时在C语言中一般是通过传递一个函数指针来实现。最近在看《STL源码剖析》一书，上面提到，在C++中其实可以通过另一种方式实现，那就是函数调用操作符() 。本文首先介绍一下C语言中函数指针的用法，然后再介绍C++中函数调用操作符的用法。 C语言中的函数指...</p></div></div></a></article><article class="col"> <a href="/blog/2014/05/17/insight-into-define-and-inline-function-in-c/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1400337780" data-df="YYYY/MM/DD" > 2014/05/17 </time><h4 class="pt-0 my-2">深入理解C语言的define和内联函数</h4><div class="text-muted"><p>概述 在 Robert C.Searcord 的 The Cert C Secure Coding Standard 一书中，关于宏定义的规范中第一条就是 用内联函数或静态函数替代与函数相似的宏 这个规范非常实用。内联函数是C99标准中新增的，当宏定义和内联函数可以互换时，应该优先考虑选择内联函数，这也是为什么在C++标准库函数中 max, min, swap 等都是通过内联函数...</p></div></div></a></article></nav></aside><nav class="post-navigation d-flex justify-content-between" aria-label="Post Navigation"> <a href="/blog/2009/05/28/analysis-the-steps-of-compiling-c-language/" class="btn btn-outline-primary" aria-label="上一篇" ><p>C语言编译过程全解析</p></a> <a href="/blog/2009/07/20/useful-commands-in-MS-SQL-Server/" class="btn btn-outline-primary" aria-label="下一篇" ><p>Sql Server数据库常用的命令语句</p></a></nav><footer aria-label="Site Info" class=" d-flex flex-column justify-content-center text-muted flex-lg-row justify-content-lg-between align-items-lg-center pb-lg-3 " ><p>© <time>2026</time> <a href="https://github.com/ibillxia">Bill Xia</a>. <span data-bs-toggle="tooltip" data-bs-placement="top" title="除非另有说明，本网站上的博客文章均由作者按照知识共享署名 4.0 国际 (CC BY 4.0) 许可协议进行授权。" >保留部分权利。</span></p><p>本站采用 <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> 主题 <a data-bs-toggle="tooltip" data-bs-placement="top" title="v7.6.0" href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener" >Chirpy</a></p></footer></div></div><div id="search-result-wrapper" class="d-flex justify-content-center d-none"><div class="col-11 content"><div id="search-hints"><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><aside aria-label="Scroll to Top"> <button id="back-to-top" type="button" class="btn btn-lg btn-box-shadow"> <i class="fas fa-angle-up"></i> </button></aside></div><div id="mask" class="d-none position-fixed w-100 h-100 z-1"></div><aside id="notification" class="toast w-auto rounded-5 text-nowrap" role="alert" aria-live="assertive" aria-atomic="true" data-bs-animation="true" data-bs-autohide="false" ><div class="d-flex align-items-center"><div class="toast-body ps-3">发现新内容</div><button type="button" class="btn btn-primary btn-sm rounded-2 py-0" aria-label="Update" >更新</button> <button type="button" class="btn-close mx-3 ms-2" data-bs-dismiss="toast" aria-label="Close" ></button></div></aside><script> var disqus_config = function () { this.page.url = 'https://ibillxia.github.io/blog/2009/06/05/io-buffer-in-c-language/'; this.page.identifier = '/blog/2009/06/05/io-buffer-in-c-language/'; }; function addDisqus() { let disqusThread = document.createElement('div'); let paragraph = document.createElement('p'); disqusThread.id = 'disqus_thread'; paragraph.className = 'text-center text-muted small'; paragraph.innerHTML = 'Comments powered by <a href="https://disqus.com/">Disqus</a>.'; disqusThread.appendChild(paragraph); const footer = document.querySelector('footer'); footer.insertAdjacentElement("beforebegin", disqusThread); }function reloadDisqus(event) { if (event.source === window && event.data && event.data.id === Theme.eventId) {if (typeof DISQUS === 'undefined') { return; } if (document.readyState == 'complete') { DISQUS.reset({ reload: true, config: disqus_config }); } } } addDisqus(); if (Theme.isToggleable) { addEventListener('message', reloadDisqus); }var disqusObserver = new IntersectionObserver( function (entries) { if (entries[0].isIntersecting) { var d = document, s = d.createElement('script'); s.src = 'https://ibillxia.disqus.com/embed.js'; s.setAttribute('data-timestamp', +new Date()); (d.head || d.body).appendChild(s); disqusObserver.disconnect(); } }, { threshold: [0] } ); disqusObserver.observe(document.getElementById('disqus_thread')); </script> <script> document.addEventListener('DOMContentLoaded', () => { SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<article class="px-1 px-sm-2 px-lg-4 px-xl-0"><header><h2><a href="{url}">{title}</a></h2><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div></header><p>{content}</p></article>', noResultsText: '<p class="mt-5">搜索结果为空</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="me-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); }); </script>

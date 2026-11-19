@@ -1,528 +1,383 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>用Windows API实现一个简单的录音程序 - Bill's Blog</title>
-  <meta name="author" content="Bill Xia">
-
-  
-  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="https://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <style type="text/css">
-    body {
-      padding-bottom: 0px;
-    }
-    h1 {
-      margin-bottom: 15px;
-    }
-    img {
-      max-width: 100%;
-    }
-    .sharing, .meta, .pager {
-      margin: 20px 0px 20px 0px;
-    }
-    .page-footer p {
-      text-align: center;
-    }
-  </style>
-  <script src="/javascripts/libs/jquery.js"></script>
-  <script src="/javascripts/libs/modernizr-2.0.js"></script>
-  <script src="/javascripts/libs/bootstrap.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-34DJ0T23LB');
-  </script>
-  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
-  <script type="text/javascript">
-function addBlankTargetForLinks () {
-  $('a[href^="http"]').each(function(){
-      $(this).attr('target', '_blank');
-  });
-}
-
-$(function () {
-  addBlankTargetForLinks();
-  if (typeof MutationObserver !== 'undefined') {
-    new MutationObserver(function () {
-      addBlankTargetForLinks();
-    }).observe(document.body, { childList: true, subtree: true });
-  }
-});
-</script>
-<!-- MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = 'https://ssl.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
-</head>
-
-<body   >
-  <nav role="navigation"><div class="navbar navbar-inverse">
-  <div class="navbar-inner">
-    <div class="container">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-
-      <a class="brand" href="/">Bill's Blog</a>
-
-      <div class="nav-collapse">
-        <ul class="nav">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives/">Archives</a></li>
-  <li><a href="/blog/categories/">Categories</a></li>
-  <li><a href="/blog/tags/">Tags</a></li>
-  <li><a href="/about/">About</a></li>
-</ul>
-
-
-        <ul class="nav pull-right" data-subscription="rss">
-          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-          
-        </ul>
-
-        
-          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
-            <fieldset role="search">
-              <input type="hidden" name="q" value="site:ibillxia.github.io" />
-              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
-            </fieldset>
-          </form>
-        
-      </div>
-    </div>
-  </div>
-</div>
-</nav>
-  <div class="container">
-    <div class="row-fluid">
-      
-<article class="hentry span9" role="article">
-
-  
-  <header class="page-header">
-    
-      <h1 class="entry-title">用Windows API实现一个简单的录音程序</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2013-06-04T23:59:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><p>本文介绍如何使用Windows API来录制语音信号兵保存到wave文件中，主要用到三个结构体和几个wave开头的API函数（在Winmm.lib文件中）。其中三个结构体是WAVEFORMATEX、WAVEHDR、MMTIME，其详细定义都在MMSystem.h中定义，
-可以转到定义看其详细内容及每一项的英文注释。用到的API函数的详细用法可以参见MSDN： http://msdn.microsoft.com/en-us/library/windows/desktop/dd743847(v=vs.85).aspx
-详细的使用过程请看下文的源代码，这是一个Win32 Application，需要手动添加Winmm.lib的依赖。</p>
-
-
-
-
-<!--more-->
-
-
-
-
-<p>实例程序</p>
-
-
-<pre><code class="c">// ******************* FileName: WinMain.cpp *****************************
-// 该源程序需要加入到 VC6 的 Win32 Application 的 empty Project 中
-// 对于工程的 Link 选项，至少要包含以下库: msvcrt.lib Winmm.lib
-
-#include &lt;stdio.h&gt;
-#include &lt;atlstr.h&gt;
-#include &lt;windows.h&gt;
-#include &lt;Mmsystem.h&gt;
-
-#pragma comment(lib,"Winmm.lib")
-
-char lpTemp[256];
-
-DWORD FCC(LPSTR lpStr)
-{
-    DWORD Number = lpStr[0] + lpStr[1] *0x100 + lpStr[2] *0x10000 + lpStr[3] *0x1000000 ;
-    return Number;
-}
-
-int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow )
-{
-    DWORD datasize = 48000;
-
-    // 设置录音采样参数
-    WAVEFORMATEX waveformat;
-    waveformat.wFormatTag=WAVE_FORMAT_PCM; // 指定录音格式
-    waveformat.nChannels=1;
-    waveformat.nSamplesPerSec=8000;
-    waveformat.nBlockAlign=1;
-    waveformat.wBitsPerSample=8;
-    waveformat.cbSize=0;
-    waveformat.nAvgBytesPerSec=waveformat.nChannels*waveformat.nSamplesPerSec*waveformat.wBitsPerSample/8;
-
-    sprintf(lpTemp,"WAVEFORMATEX size = %lu", sizeof(WAVEFORMATEX));
-    MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
-
-    HWAVEIN m_hWaveIn;
-    if ( !waveInGetNumDevs() )
-    {
-        MessageBox(NULL,CString("没有可以使用的 WaveIn 通道"),CString("提示"),MB_OK);
-        return 0;
-    }
-
-    // 打开录音设备
-    int res = waveInOpen(&amp;m_hWaveIn,WAVE_MAPPER, &amp;waveformat, (DWORD)NULL,0L,CALLBACK_WINDOW); 
-    if ( res != MMSYSERR_NOERROR )
-    {
-       sprintf(lpTemp, "打开 waveIn 通道失败，Error_Code = 0x%x", res );
-       MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
-       return 0;
-    }
-
-    WAVEHDR m_pWaveHdr;
-    m_pWaveHdr.lpData = (char *)GlobalLock( GlobalAlloc(GMEM_MOVEABLE|GMEM_SHARE, datasize) );
-    memset(m_pWaveHdr.lpData, 0, datasize );
-    m_pWaveHdr.dwBufferLength = datasize;
-    m_pWaveHdr.dwBytesRecorded = 0;
-    m_pWaveHdr.dwUser = 0;
-    m_pWaveHdr.dwFlags = 0;
-    m_pWaveHdr.dwLoops = 0;
-    sprintf( lpTemp, "WAVEHDR size = %lu", sizeof(WAVEHDR) );
-    MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
-
-    // 准备内存块录音
-    int resPrepare = waveInPrepareHeader( m_hWaveIn, &amp;m_pWaveHdr, sizeof(WAVEHDR) ); 
-    if ( resPrepare != MMSYSERR_NOERROR) 
-    {
-        sprintf(lpTemp, "不能开辟录音头文件，Error_Code = 0x%03X", resPrepare );
-        MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
-        return 0;
-    }
-
-    resPrepare = waveInAddBuffer( m_hWaveIn, &amp;m_pWaveHdr, sizeof(WAVEHDR) );
-    if ( resPrepare != MMSYSERR_NOERROR) 
-    {
-        sprintf(lpTemp, "不能开辟录音用缓冲，Error_Code = 0x%03X", resPrepare );
-        MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
-        return 0;
-    }
-
-    if (! waveInStart(m_hWaveIn) ) 
-    {
-        MessageBox(NULL,CString("开始录音"),CString("提示"),MB_OK);
-    }
-    else 
-    {
-        MessageBox(NULL,CString("开始录音失败"),CString("提示"),MB_OK);
-        return 0;
-    }
-    Sleep(30000);
-
-    MMTIME mmt;
-    mmt.wType = TIME_BYTES;
-    sprintf( lpTemp, "sizeof(MMTIME) = %d, sizeof(UINT) = %d", sizeof(MMTIME), sizeof(UINT) );
-    MessageBox(NULL,CString(lpTemp),CString("提示"),MB_OK);
-
-    if (! waveInGetPosition(m_hWaveIn, &amp;mmt, sizeof(MMTIME)) )
-    {
-        MessageBox(NULL,CString("取得现在音频位置"),CString("提示"),MB_OK);
-    }
-    else 
-    {
-        MessageBox(NULL,CString("不能取得音频长度"),CString("提示"),MB_OK);
-        return 0;
-    }
-
-    if (mmt.wType != TIME_BYTES) 
-    {
-        MessageBox(NULL,CString("指定的 TIME_BYTES 格式音频长度不支持"),CString("提示"),MB_OK);
-        return 0;
-    }
-
-    if (! waveInStop(m_hWaveIn) ) 
-    {
-        MessageBox(NULL,CString("停止录音"),CString("提示"),MB_OK);
-    }
-    else  
-    {
-        MessageBox(NULL,CString("停止录音失败"),CString("提示"),MB_OK);
-    }
-
-    if ( waveInReset(m_hWaveIn) ) 
-    {
-        MessageBox(NULL,CString("重置内存区失败"),CString("提示"),MB_OK);
-        return 0;
-    }
-
-    m_pWaveHdr.dwBytesRecorded = mmt.u.cb;
-    DWORD NumToWrite=0;
-    DWORD dwNumber = 0;
-    HANDLE FileHandle = CreateFile( CString("myTest.wav"), GENERIC_WRITE, 
-        FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-
-    // memset(m_pWaveHdr.lpData, 0, datasize);
-    dwNumber = FCC("RIFF");
-    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
-    dwNumber = m_pWaveHdr.dwBytesRecorded + 18 + 20;
-    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
-    dwNumber = FCC("WAVE");
-    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
-    dwNumber = FCC("fmt ");
-    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
-    dwNumber = 18L;
-    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
-    WriteFile(FileHandle, &amp;waveformat, sizeof(WAVEFORMATEX), &amp;NumToWrite, NULL);
-    dwNumber = FCC("data");
-    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
-    dwNumber = m_pWaveHdr.dwBytesRecorded;
-    WriteFile(FileHandle, &amp;dwNumber, 4, &amp;NumToWrite, NULL);
-    WriteFile(FileHandle, m_pWaveHdr.lpData, m_pWaveHdr.dwBytesRecorded, &amp;NumToWrite, NULL);
-    SetEndOfFile(FileHandle);
-    CloseHandle( FileHandle );  
-    FileHandle = INVALID_HANDLE_VALUE; // 收尾关闭句柄
-    MessageBox(NULL,CString("应该已生成 myTest.wav 文件"),CString("提示"),MB_OK);
-
-    if ( waveInUnprepareHeader(m_hWaveIn, &amp;m_pWaveHdr, sizeof(WAVEHDR)) ) 
-    {
-        MessageBox(NULL,CString("Un_Prepare Header 失败"),CString("提示"),MB_OK);
-    }
-    else 
-    {
-        MessageBox(NULL,CString("Un_Prepare Header 成功"),CString("提示"),MB_OK);
-        return 0;
-    }
-
-    if ( GlobalFree(GlobalHandle( m_pWaveHdr.lpData )) ) 
-    {
-        MessageBox(NULL,CString("Global Free 失败"),CString("提示"),MB_OK);
-    }
-    else 
-    {
-        MessageBox(NULL,CString("Global Free 成功"),CString("提示"),MB_OK);
-        return 0;
-    }
-
-    if (res == MMSYSERR_NOERROR ) // 关闭录音设备
-    {
-        if (waveInClose(m_hWaveIn)==MMSYSERR_NOERROR)
-        {
-            MessageBox(NULL,CString("正常关闭录音设备"),CString("提示"),MB_OK);
-        }
-        else
-        {
-            MessageBox(NULL,CString("非正常关闭录音设备"),CString("提示"),MB_OK);
-            return 0;
-        }
-    }
-
-    return 0;
-}
-// ******************* End of File ************************
-</code></pre>
-
-
-
-<p>这里提供的代码有点杂乱，现已整理成一个小的接口，并提供了一个简单的示例，放在GitHub上：https://github.com/ibillxia/Demo/tree/master/DemoSpeechRecord</p>
-
-
-
-
-<p>参考：</br>
-[1]MSDN: http://msdn.microsoft.com/en-us/library/windows/desktop/dd743586(v=vs.85).aspx</br>
-[2]基于API的录音机程序: http://www.vckbase.com/index.php/wv/664
-</p>
-
-</div>
-<div id="copyleft" class="well" >
-	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api/</a></br>
-	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
-</div>
-
-
-  <footer>
-    <p class="meta">
-      
-<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
-
-      
-
-
-
-
-
-
-
-
-
-<time datetime="2013-06-04T23:59:00+08:00" pubdate data-updated="true"></time>
-		
-		
-		
-		  <span class="categories">Posted in <a class='category' href='/blog/categories/assp/'>ASSP</a>, <a class='category' href='/blog/categories/program/'>Program</a></span>
-		
-		
-		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/speech/'>Speech</a>, <a class='tag' href='/blog/tags/wave/'>wave</a>, <a class='tag' href='/blog/tags/xin-hao-chu-li/'>信号处理</a></span>
-		
-    </p>
-    
-      
-         <div class="sharing">
-  
-  
-  
-</div>
-
-      
-    
-	</br>
-	 <ul class="pager">
-      
-      <li class="previous"><a class="basic-alignment left"
-        href="/blog/2013/05/29/audio-signal-processing-time-domain-pitch-tracking-and-python-realization/" title="Previous Post:
-        语音信号处理之时域分析-音高追踪及其Python实现">&laquo; 语音信号处理之时域分析-音高追踪及其Python实现</a></li>
-      
-      <li><a href="/blog/archives/">Blog Archives</a></li>
-      
-      <li class="next"><a class="basic-alignment right" href="/blog/2013/06/28/swimming-tutorial-with-gif-images/"
-        title="Next Post: 蛙泳、自由泳、仰泳、蝶泳图解动画教你游泳">蛙泳、自由泳、仰泳、蝶泳图解动画教你游泳
-        &raquo;</a></li>
-      
-    </ul>
-    
-    <section>
-      <h1>Comments</h1>
-      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-    </section>
-    
-   
-  </footer>
-</article>
-
-<aside class="sidebar-nav span3">
-  
-    
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo" class="page-footer">
-<hr>
-<p>
-  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'ibillxia';
-      
-        
-        // var disqus_developer = 1;
-        var disqus_identifier = 'https://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api/';
-        var disqus_url = 'https://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api/';
-        var disqus_script = 'embed.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-
-
-
-
-
-
-
-
-
-</body>
-</html>
+<!doctype html><html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f7"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1b1b1e"><meta name="viewport" content="width=device-width, user-scalable=no initial-scale=1, shrink-to-fit=no, viewport-fit=cover" ><meta name="generator" content="Jekyll v4.4.1" /><meta property="og:title" content="用Windows API实现一个简单的录音程序" /><meta property="og:locale" content="zh_CN" /><meta name="description" content="本文介绍如何使用Windows API来录制语音信号兵保存到wave文件中，主要用到三个结构体和几个wave开头的API函数（在Winmm.lib文件中）。其中三个结构体是WAVEFORMATEX、WAVEHDR、MMTIME，其详细定义都在MMSystem.h中定义， 可以转到定义看其详细内容及每一项的英文注释。用到的API函数的详细用法可以参见MSDN： http://msdn.microsoft.com/en-us/library/windows/desktop/dd743847(v=vs.85).aspx 详细的使用过程请看下文的源代码，这是一个Win32 Application，需要手动添加Winmm.lib的依赖。" /><meta name="twitter:description" property="og:description" content="本文介绍如何使用Windows API来录制语音信号兵保存到wave文件中，主要用到三个结构体和几个wave开头的API函数（在Winmm.lib文件中）。其中三个结构体是WAVEFORMATEX、WAVEHDR、MMTIME，其详细定义都在MMSystem.h中定义， 可以转到定义看其详细内容及每一项的英文注释。用到的API函数的详细用法可以参见MSDN： http://msdn.microsoft.com/en-us/library/windows/desktop/dd743847(v=vs.85).aspx 详细的使用过程请看下文的源代码，这是一个Win32 Application，需要手动添加Winmm.lib的依赖。" /><link rel="canonical" href="https://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api/" /><meta property="og:url" content="https://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api/" /><meta property="og:site_name" content="Bill’s Blog" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2013-06-04T23:59:00+08:00" /><meta property="article:modified_time" content="2013-06-04T23:59:00+08:00" /><meta property="og:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:card" content="summary_large_image" /><meta property="twitter:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:title" content="用Windows API实现一个简单的录音程序" /><meta name="twitter:site" content="@ibillxia" /><meta name="msvalidate.01" content="1538BC1807507674B6BD4942F25493B2" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2013-06-04T23:59:00+08:00","datePublished":"2013-06-04T23:59:00+08:00","description":"本文介绍如何使用Windows API来录制语音信号兵保存到wave文件中，主要用到三个结构体和几个wave开头的API函数（在Winmm.lib文件中）。其中三个结构体是WAVEFORMATEX、WAVEHDR、MMTIME，其详细定义都在MMSystem.h中定义， 可以转到定义看其详细内容及每一项的英文注释。用到的API函数的详细用法可以参见MSDN： http://msdn.microsoft.com/en-us/library/windows/desktop/dd743847(v=vs.85).aspx 详细的使用过程请看下文的源代码，这是一个Win32 Application，需要手动添加Winmm.lib的依赖。","headline":"用Windows API实现一个简单的录音程序","mainEntityOfPage":{"@type":"WebPage","@id":"https://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api/"},"url":"https://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api/"}</script><title>用Windows API实现一个简单的录音程序 | Bill's Blog</title><link rel="icon" type="image/png" href="/assets/img/favicons/favicon-96x96.png" sizes="96x96"><link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico"><link rel="shortcut icon" href="/assets/img/favicon.ico"><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="stylesheet" href="/assets/css/jekyll-theme-chirpy.css"><link rel="stylesheet" href="/assets/lib/fonts/main.css"><link rel="stylesheet" href="/assets/lib/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="/assets/lib/tocbot/tocbot.min.css"><link rel="stylesheet" href="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.min.css"><link rel="stylesheet" href="/assets/lib/glightbox/glightbox.min.css"> <script src="/assets/js/dist/theme.min.js"></script> <script defer src="/assets/lib/simple-jekyll-search/simple-jekyll-search.min.js"></script> <script defer src="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.umd.min.js"></script> <script defer src="/assets/lib/glightbox/glightbox.min.js"></script> <script defer src="/assets/lib/clipboard/clipboard.min.js"></script> <script defer src="/assets/lib/dayjs/dayjs.min.js"></script> <script defer src="/assets/lib/dayjs/locale/en.js"></script> <script defer src="/assets/lib/dayjs/plugin/relativeTime.js"></script> <script defer src="/assets/lib/dayjs/plugin/localizedFormat.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script defer src="/app.min.js?baseurl=&register=true" ></script> <script defer src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script> <script> document.addEventListener('DOMContentLoaded', () => { window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-34DJ0T23LB'); }); </script><body><aside aria-label="Sidebar" id="sidebar" class="d-flex flex-column align-items-end"><header class="profile-wrapper"> <a href="/" id="avatar" class="rounded-circle"><img src="/assets/img/rock_coder.png" width="112" height="112" alt="avatar" onerror="this.style.display='none'"></a> <a class="site-title d-block" href="/">Bill's Blog</a><p class="site-subtitle fst-italic mb-0">Program Hard, Play Hard, Live Crazy!</p></header><nav class="flex-column flex-grow-1 w-100 ps-0"><ul class="nav"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home"></i> <span>首页</span> </a><li class="nav-item"> <a href="/blog/archives/" class="nav-link"> <i class="fa-fw fas fa-archive"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/blog/categories/" class="nav-link"> <i class="fa-fw fas fa-stream"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/blog/tags/" class="nav-link"> <i class="fa-fw fas fa-tags"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle"></i> <span>关于</span> </a></ul></nav><div class="sidebar-bottom d-flex flex-wrap align-items-center w-100"><div class="btn-group dropup"> <button type="button" class="btn btn-link nav-link" aria-label="Switch Mode" id="mode-toggle" data-bs-toggle="dropdown" ><i class="fa-regular fa-sun" data-theme-mode="light"></i><i class="fa-regular fa-moon" data-theme-mode="dark"></i><i class="fa-solid fa-display" data-theme-mode="system"></i></button><ul class="dropdown-menu rounded-3 mb-1 p-1"><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="light"><i class="fa-regular fa-sun" data-theme-mode="light"></i>浅色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="dark"><i class="fa-regular fa-moon" data-theme-mode="dark"></i>深色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="system"><i class="fa-solid fa-display" data-theme-mode="system"></i>跟随系统</button></ul></div><span class="icon-border"></span> <a href="https://github.com/ibillxia" aria-label="github" target="_blank" rel="noopener noreferrer" > <i class="fab fa-github"></i> </a> <a href="https://x.com/ibillxia" aria-label="x" target="_blank" rel="noopener noreferrer" > <i class="fa-brands fa-x-twitter"></i> </a> <a href="javascript:void(location.href = 'mailto:' + ['ibillxia','gmail.com'].join('@'))" aria-label="email" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" > <i class="fas fa-rss"></i> </a> <a href="https://stackoverflow.com/users/1602285/bill-xia" aria-label="stack-overflow" target="_blank" rel="noopener noreferrer" > <i class="fab fa-stack-overflow"></i> </a> <a href="https://weibo.com/ibillxia" aria-label="weibo" target="_blank" rel="noopener noreferrer" > <i class="fab fa-weibo"></i> </a></div></aside><div id="main-wrapper" class="d-flex justify-content-center"><div class="container d-flex flex-column px-xxl-5"><header id="topbar-wrapper" class="flex-shrink-0" aria-label="Top Bar"><div id="topbar" class="d-flex align-items-center justify-content-between px-lg-3 h-100" ><nav id="breadcrumb" aria-label="Breadcrumb"> <span> <a href="/">首页</a> </span> <span>用Windows API实现一个简单的录音程序</span></nav><button type="button" id="sidebar-trigger" class="btn btn-link" aria-label="Sidebar"> <i class="fas fa-bars fa-fw"></i> </button><div id="topbar-title"> 文章</div><button type="button" id="search-trigger" class="btn btn-link" aria-label="Search"> <i class="fas fa-search fa-fw"></i> </button> <search id="search" class="align-items-center ms-3 ms-lg-0"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="搜索..." > </search> <button type="button" class="btn btn-link text-decoration-none" id="search-cancel">取消</button></div></header><div class="row flex-grow-1"><main aria-label="Main Content" class="col-12 col-lg-11 col-xl-9 px-md-4"><article class="px-1" data-toc="false"><header><h1 data-toc-skip>用Windows API实现一个简单的录音程序</h1><div class="post-meta text-muted"> <span> 发表于 <time data-ts="1370361540" data-df="YYYY/MM/DD" data-bs-toggle="tooltip" data-bs-placement="bottom" > 2013/06/04 </time> </span><div class="d-flex justify-content-between"> <span> 作者 <em> <a href="https://github.com/ibillxia">Bill Xia</a> </em> </span><div> <span class="readtime" data-bs-toggle="tooltip" data-bs-placement="bottom" title="1118 字" > <em>6 分钟</em>阅读</span></div></div></div></header><div class="content"><p>本文介绍如何使用Windows API来录制语音信号兵保存到wave文件中，主要用到三个结构体和几个wave开头的API函数（在Winmm.lib文件中）。其中三个结构体是WAVEFORMATEX、WAVEHDR、MMTIME，其详细定义都在MMSystem.h中定义， 可以转到定义看其详细内容及每一项的英文注释。用到的API函数的详细用法可以参见MSDN： http://msdn.microsoft.com/en-us/library/windows/desktop/dd743847(v=vs.85).aspx 详细的使用过程请看下文的源代码，这是一个Win32 Application，需要手动添加Winmm.lib的依赖。</p><p>实例程序</p><div class="language-c highlighter-rouge"><div class="code-header"> <span data-label-text="C"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+</pre><td class="rouge-code"><pre><span class="c1">// ******************* FileName: WinMain.cpp *****************************</span>
+<span class="c1">// 该源程序需要加入到 VC6 的 Win32 Application 的 empty Project 中</span>
+<span class="c1">// 对于工程的 Link 选项，至少要包含以下库: msvcrt.lib Winmm.lib</span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;atlstr.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;windows.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;Mmsystem.h&gt;</span><span class="cp">
+</span>
+<span class="cp">#pragma comment(lib,"Winmm.lib")
+</span>
+<span class="kt">char</span> <span class="n">lpTemp</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
+
+<span class="n">DWORD</span> <span class="nf">FCC</span><span class="p">(</span><span class="n">LPSTR</span> <span class="n">lpStr</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">DWORD</span> <span class="n">Number</span> <span class="o">=</span> <span class="n">lpStr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">lpStr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span><span class="mh">0x100</span> <span class="o">+</span> <span class="n">lpStr</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span><span class="mh">0x10000</span> <span class="o">+</span> <span class="n">lpStr</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span><span class="mh">0x1000000</span> <span class="p">;</span>
+	<span class="k">return</span> <span class="n">Number</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">WINAPI</span> <span class="nf">WinMain</span><span class="p">(</span> <span class="n">HINSTANCE</span> <span class="n">hInstance</span><span class="p">,</span> <span class="n">HINSTANCE</span> <span class="n">hPrevInstance</span><span class="p">,</span> <span class="n">LPSTR</span> <span class="n">lpCmdLine</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nCmdShow</span> <span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">DWORD</span> <span class="n">datasize</span> <span class="o">=</span> <span class="mi">48000</span><span class="p">;</span>
+	  
+	<span class="c1">// 设置录音采样参数</span>
+	<span class="n">WAVEFORMATEX</span> <span class="n">waveformat</span><span class="p">;</span>
+	<span class="n">waveformat</span><span class="p">.</span><span class="n">wFormatTag</span><span class="o">=</span><span class="n">WAVE_FORMAT_PCM</span><span class="p">;</span> <span class="c1">// 指定录音格式</span>
+	<span class="n">waveformat</span><span class="p">.</span><span class="n">nChannels</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+	<span class="n">waveformat</span><span class="p">.</span><span class="n">nSamplesPerSec</span><span class="o">=</span><span class="mi">8000</span><span class="p">;</span>
+	<span class="n">waveformat</span><span class="p">.</span><span class="n">nBlockAlign</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+	<span class="n">waveformat</span><span class="p">.</span><span class="n">wBitsPerSample</span><span class="o">=</span><span class="mi">8</span><span class="p">;</span>
+	<span class="n">waveformat</span><span class="p">.</span><span class="n">cbSize</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+	<span class="n">waveformat</span><span class="p">.</span><span class="n">nAvgBytesPerSec</span><span class="o">=</span><span class="n">waveformat</span><span class="p">.</span><span class="n">nChannels</span><span class="o">*</span><span class="n">waveformat</span><span class="p">.</span><span class="n">nSamplesPerSec</span><span class="o">*</span><span class="n">waveformat</span><span class="p">.</span><span class="n">wBitsPerSample</span><span class="o">/</span><span class="mi">8</span><span class="p">;</span>
+	
+	<span class="n">sprintf</span><span class="p">(</span><span class="n">lpTemp</span><span class="p">,</span><span class="s">"WAVEFORMATEX size = %lu"</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">WAVEFORMATEX</span><span class="p">));</span>
+	<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="n">lpTemp</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+
+	<span class="n">HWAVEIN</span> <span class="n">m_hWaveIn</span><span class="p">;</span>
+	<span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="n">waveInGetNumDevs</span><span class="p">()</span> <span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="s">"没有可以使用的 WaveIn 通道"</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 打开录音设备</span>
+	<span class="kt">int</span> <span class="n">res</span> <span class="o">=</span> <span class="n">waveInOpen</span><span class="p">(</span><span class="o">&amp;</span><span class="n">m_hWaveIn</span><span class="p">,</span><span class="n">WAVE_MAPPER</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">waveformat</span><span class="p">,</span> <span class="p">(</span><span class="n">DWORD</span><span class="p">)</span><span class="nb">NULL</span><span class="p">,</span><span class="mi">0L</span><span class="p">,</span><span class="n">CALLBACK_WINDOW</span><span class="p">);</span> 
+	<span class="k">if</span> <span class="p">(</span> <span class="n">res</span> <span class="o">!=</span> <span class="n">MMSYSERR_NOERROR</span> <span class="p">)</span>
+	<span class="p">{</span>
+	   <span class="n">sprintf</span><span class="p">(</span><span class="n">lpTemp</span><span class="p">,</span> <span class="s">"打开 waveIn 通道失败，Error_Code = 0x%x"</span><span class="p">,</span> <span class="n">res</span> <span class="p">);</span>
+	   <span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="n">lpTemp</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+	   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="p">}</span>
+	
+	<span class="n">WAVEHDR</span> <span class="n">m_pWaveHdr</span><span class="p">;</span>
+	<span class="n">m_pWaveHdr</span><span class="p">.</span><span class="n">lpData</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="n">GlobalLock</span><span class="p">(</span> <span class="n">GlobalAlloc</span><span class="p">(</span><span class="n">GMEM_MOVEABLE</span><span class="o">|</span><span class="n">GMEM_SHARE</span><span class="p">,</span> <span class="n">datasize</span><span class="p">)</span> <span class="p">);</span>
+	<span class="n">memset</span><span class="p">(</span><span class="n">m_pWaveHdr</span><span class="p">.</span><span class="n">lpData</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">datasize</span> <span class="p">);</span>
+	<span class="n">m_pWaveHdr</span><span class="p">.</span><span class="n">dwBufferLength</span> <span class="o">=</span> <span class="n">datasize</span><span class="p">;</span>
+	<span class="n">m_pWaveHdr</span><span class="p">.</span><span class="n">dwBytesRecorded</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="n">m_pWaveHdr</span><span class="p">.</span><span class="n">dwUser</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="n">m_pWaveHdr</span><span class="p">.</span><span class="n">dwFlags</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="n">m_pWaveHdr</span><span class="p">.</span><span class="n">dwLoops</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="n">sprintf</span><span class="p">(</span> <span class="n">lpTemp</span><span class="p">,</span> <span class="s">"WAVEHDR size = %lu"</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">WAVEHDR</span><span class="p">)</span> <span class="p">);</span>
+	<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="n">lpTemp</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+
+	<span class="c1">// 准备内存块录音</span>
+	<span class="kt">int</span> <span class="n">resPrepare</span> <span class="o">=</span> <span class="n">waveInPrepareHeader</span><span class="p">(</span> <span class="n">m_hWaveIn</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">m_pWaveHdr</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">WAVEHDR</span><span class="p">)</span> <span class="p">);</span> 
+	<span class="k">if</span> <span class="p">(</span> <span class="n">resPrepare</span> <span class="o">!=</span> <span class="n">MMSYSERR_NOERROR</span><span class="p">)</span> 
+	<span class="p">{</span>
+		<span class="n">sprintf</span><span class="p">(</span><span class="n">lpTemp</span><span class="p">,</span> <span class="s">"不能开辟录音头文件，Error_Code = 0x%03X"</span><span class="p">,</span> <span class="n">resPrepare</span> <span class="p">);</span>
+		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="n">lpTemp</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="n">resPrepare</span> <span class="o">=</span> <span class="n">waveInAddBuffer</span><span class="p">(</span> <span class="n">m_hWaveIn</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">m_pWaveHdr</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">WAVEHDR</span><span class="p">)</span> <span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span> <span class="n">resPrepare</span> <span class="o">!=</span> <span class="n">MMSYSERR_NOERROR</span><span class="p">)</span> 
+	<span class="p">{</span>
+		<span class="n">sprintf</span><span class="p">(</span><span class="n">lpTemp</span><span class="p">,</span> <span class="s">"不能开辟录音用缓冲，Error_Code = 0x%03X"</span><span class="p">,</span> <span class="n">resPrepare</span> <span class="p">);</span>
+		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="n">lpTemp</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="p">}</span>
+ 
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="n">waveInStart</span><span class="p">(</span><span class="n">m_hWaveIn</span><span class="p">)</span> <span class="p">)</span> 
+	<span class="p">{</span>
+		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="s">"开始录音"</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="k">else</span> 
+	<span class="p">{</span>
+		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="s">"开始录音失败"</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="n">Sleep</span><span class="p">(</span><span class="mi">30000</span><span class="p">);</span>
+
+	<span class="n">MMTIME</span> <span class="n">mmt</span><span class="p">;</span>
+	<span class="n">mmt</span><span class="p">.</span><span class="n">wType</span> <span class="o">=</span> <span class="n">TIME_BYTES</span><span class="p">;</span>
+	<span class="n">sprintf</span><span class="p">(</span> <span class="n">lpTemp</span><span class="p">,</span> <span class="s">"sizeof(MMTIME) = %d, sizeof(UINT) = %d"</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">MMTIME</span><span class="p">),</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">UINT</span><span class="p">)</span> <span class="p">);</span>
+	<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="n">lpTemp</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="n">waveInGetPosition</span><span class="p">(</span><span class="n">m_hWaveIn</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mmt</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">MMTIME</span><span class="p">))</span> <span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="s">"取得现在音频位置"</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="k">else</span> 
+	<span class="p">{</span>
+		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="s">"不能取得音频长度"</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">mmt</span><span class="p">.</span><span class="n">wType</span> <span class="o">!=</span> <span class="n">TIME_BYTES</span><span class="p">)</span> 
+	<span class="p">{</span>
+		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="s">"指定的 TIME_BYTES 格式音频长度不支持"</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="n">waveInStop</span><span class="p">(</span><span class="n">m_hWaveIn</span><span class="p">)</span> <span class="p">)</span> 
+	<span class="p">{</span>
+		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="s">"停止录音"</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="k">else</span>  
+	<span class="p">{</span>
+		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="s">"停止录音失败"</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+	<span class="p">}</span>
+	
+	<span class="k">if</span> <span class="p">(</span> <span class="n">waveInReset</span><span class="p">(</span><span class="n">m_hWaveIn</span><span class="p">)</span> <span class="p">)</span> 
+	<span class="p">{</span>
+		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="s">"重置内存区失败"</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="n">m_pWaveHdr</span><span class="p">.</span><span class="n">dwBytesRecorded</span> <span class="o">=</span> <span class="n">mmt</span><span class="p">.</span><span class="n">u</span><span class="p">.</span><span class="n">cb</span><span class="p">;</span>
+	<span class="n">DWORD</span> <span class="n">NumToWrite</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+	<span class="n">DWORD</span> <span class="n">dwNumber</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="n">HANDLE</span> <span class="n">FileHandle</span> <span class="o">=</span> <span class="n">CreateFile</span><span class="p">(</span> <span class="n">CString</span><span class="p">(</span><span class="s">"myTest.wav"</span><span class="p">),</span> <span class="n">GENERIC_WRITE</span><span class="p">,</span> 
+		<span class="n">FILE_SHARE_READ</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">CREATE_ALWAYS</span><span class="p">,</span> <span class="n">FILE_ATTRIBUTE_NORMAL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+
+	<span class="c1">// memset(m_pWaveHdr.lpData, 0, datasize);</span>
+	<span class="n">dwNumber</span> <span class="o">=</span> <span class="n">FCC</span><span class="p">(</span><span class="s">"RIFF"</span><span class="p">);</span>
+	<span class="n">WriteFile</span><span class="p">(</span><span class="n">FileHandle</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">dwNumber</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">NumToWrite</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+	<span class="n">dwNumber</span> <span class="o">=</span> <span class="n">m_pWaveHdr</span><span class="p">.</span><span class="n">dwBytesRecorded</span> <span class="o">+</span> <span class="mi">18</span> <span class="o">+</span> <span class="mi">20</span><span class="p">;</span>
+	<span class="n">WriteFile</span><span class="p">(</span><span class="n">FileHandle</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">dwNumber</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">NumToWrite</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+	<span class="n">dwNumber</span> <span class="o">=</span> <span class="n">FCC</span><span class="p">(</span><span class="s">"WAVE"</span><span class="p">);</span>
+	<span class="n">WriteFile</span><span class="p">(</span><span class="n">FileHandle</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">dwNumber</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">NumToWrite</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+	<span class="n">dwNumber</span> <span class="o">=</span> <span class="n">FCC</span><span class="p">(</span><span class="s">"fmt "</span><span class="p">);</span>
+	<span class="n">WriteFile</span><span class="p">(</span><span class="n">FileHandle</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">dwNumber</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">NumToWrite</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+	<span class="n">dwNumber</span> <span class="o">=</span> <span class="mi">18L</span><span class="p">;</span>
+	<span class="n">WriteFile</span><span class="p">(</span><span class="n">FileHandle</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">dwNumber</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">NumToWrite</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+	<span class="n">WriteFile</span><span class="p">(</span><span class="n">FileHandle</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">waveformat</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">WAVEFORMATEX</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">NumToWrite</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+	<span class="n">dwNumber</span> <span class="o">=</span> <span class="n">FCC</span><span class="p">(</span><span class="s">"data"</span><span class="p">);</span>
+	<span class="n">WriteFile</span><span class="p">(</span><span class="n">FileHandle</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">dwNumber</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">NumToWrite</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+	<span class="n">dwNumber</span> <span class="o">=</span> <span class="n">m_pWaveHdr</span><span class="p">.</span><span class="n">dwBytesRecorded</span><span class="p">;</span>
+	<span class="n">WriteFile</span><span class="p">(</span><span class="n">FileHandle</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">dwNumber</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">NumToWrite</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+	<span class="n">WriteFile</span><span class="p">(</span><span class="n">FileHandle</span><span class="p">,</span> <span class="n">m_pWaveHdr</span><span class="p">.</span><span class="n">lpData</span><span class="p">,</span> <span class="n">m_pWaveHdr</span><span class="p">.</span><span class="n">dwBytesRecorded</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">NumToWrite</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+	<span class="n">SetEndOfFile</span><span class="p">(</span><span class="n">FileHandle</span><span class="p">);</span>
+	<span class="n">CloseHandle</span><span class="p">(</span> <span class="n">FileHandle</span> <span class="p">);</span>  
+	<span class="n">FileHandle</span> <span class="o">=</span> <span class="n">INVALID_HANDLE_VALUE</span><span class="p">;</span> <span class="c1">// 收尾关闭句柄</span>
+	<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="s">"应该已生成 myTest.wav 文件"</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+
+	<span class="k">if</span> <span class="p">(</span> <span class="n">waveInUnprepareHeader</span><span class="p">(</span><span class="n">m_hWaveIn</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">m_pWaveHdr</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">WAVEHDR</span><span class="p">))</span> <span class="p">)</span> 
+	<span class="p">{</span>
+		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="s">"Un_Prepare Header 失败"</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="k">else</span> 
+	<span class="p">{</span>
+		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="s">"Un_Prepare Header 成功"</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="p">(</span> <span class="n">GlobalFree</span><span class="p">(</span><span class="n">GlobalHandle</span><span class="p">(</span> <span class="n">m_pWaveHdr</span><span class="p">.</span><span class="n">lpData</span> <span class="p">))</span> <span class="p">)</span> 
+	<span class="p">{</span>
+		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="s">"Global Free 失败"</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="k">else</span> 
+	<span class="p">{</span>
+		<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="s">"Global Free 成功"</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">res</span> <span class="o">==</span> <span class="n">MMSYSERR_NOERROR</span> <span class="p">)</span> <span class="c1">// 关闭录音设备</span>
+	<span class="p">{</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">waveInClose</span><span class="p">(</span><span class="n">m_hWaveIn</span><span class="p">)</span><span class="o">==</span><span class="n">MMSYSERR_NOERROR</span><span class="p">)</span>
+		<span class="p">{</span>
+			<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="s">"正常关闭录音设备"</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+		<span class="p">}</span>
+		<span class="k">else</span>
+		<span class="p">{</span>
+			<span class="n">MessageBox</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">CString</span><span class="p">(</span><span class="s">"非正常关闭录音设备"</span><span class="p">),</span><span class="n">CString</span><span class="p">(</span><span class="s">"提示"</span><span class="p">),</span><span class="n">MB_OK</span><span class="p">);</span>
+			<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">// ******************* End of File ************************</span>
+</pre></table></code></div></div><p>这里提供的代码有点杂乱，现已整理成一个小的接口，并提供了一个简单的示例，放在GitHub上：https://github.com/ibillxia/Demo/tree/master/DemoSpeechRecord</p><p>参考：&lt;/br&gt; [1]MSDN: http://msdn.microsoft.com/en-us/library/windows/desktop/dd743586(v=vs.85).aspx&lt;/br&gt; [2]基于API的录音机程序: http://www.vckbase.com/index.php/wv/664</p></div><div class="post-tail-wrapper text-muted"><div class="d-flex justify-content-between align-items-center gap-3 mb-3"><div class="post-meta"> <i class="far fa-folder-open fa-fw me-1"></i> <a href="/blog/categories/assp/">ASSP</a></div></div><div class="post-tags"> <i class="fa fa-tags fa-fw me-1"></i> <a href="/blog/tags/speech/" class="post-tag no-text-decoration" >Speech</a> <a href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/" class="post-tag no-text-decoration" >信号处理</a> <a href="/blog/tags/wave/" class="post-tag no-text-decoration" >wave</a></div><div class=" post-tail-bottom d-flex justify-content-between align-items-center mt-5 pb-2 " ><div class="license-wrapper"> 本文由作者按照 <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> 进行授权</div><div class="share-wrapper d-flex align-items-center"> <span class="share-label text-muted">分享</span> <span class="share-icons"> <a href="https://x.com/intent/tweet?text=%E7%94%A8Windows%20API%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E5%BD%95%E9%9F%B3%E7%A8%8B%E5%BA%8F%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2013%2F06%2F04%2Fa-simple-code-for-wave-recording-using-windows-api%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Twitter" aria-label="Twitter"> <i class="fa-fw fa-brands fa-square-x-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=%E7%94%A8Windows%20API%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E5%BD%95%E9%9F%B3%E7%A8%8B%E5%BA%8F%20-%20Bill's%20Blog&u=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2013%2F06%2F04%2Fa-simple-code-for-wave-recording-using-windows-api%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Facebook" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://t.me/share/url?url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2013%2F06%2F04%2Fa-simple-code-for-wave-recording-using-windows-api%2F&text=%E7%94%A8Windows%20API%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E5%BD%95%E9%9F%B3%E7%A8%8B%E5%BA%8F%20-%20Bill's%20Blog" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Telegram" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <a href="https://service.weibo.com/share/share.php?title=%E7%94%A8Windows%20API%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E5%BD%95%E9%9F%B3%E7%A8%8B%E5%BA%8F%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2013%2F06%2F04%2Fa-simple-code-for-wave-recording-using-windows-api%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Weibo" aria-label="Weibo"> <i class="fa-fw fab fa-weibo"></i> </a> <button id="copy-link" aria-label="Copy link" class="btn small" data-bs-toggle="tooltip" data-bs-placement="top" title="分享链接" data-title-succeed="链接已复制！" > <i class="fa-fw fas fa-link pe-none fs-6"></i> </button> </span></div></div></div></article></main><aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 text-muted"><div class="access"><section id="access-lastmod"><h2 class="panel-heading">最近更新</h2><ul class="content list-unstyled ps-0 pb-1 ms-1 mt-2"><li class="text-truncate lh-lg"> <a href="/blog/2026/11/16/anthropic-the-components-of-agent-memory/">【译】Anthropic：智能体记忆的组成部分</a><li class="text-truncate lh-lg"> <a href="/blog/2026/11/09/is-FDE-actually-established-in-China/">前鹅厂王津银：FDE 在中国，到底成立吗？</a><li class="text-truncate lh-lg"> <a href="/blog/2026/09/14/openai-data-agent-skills-interpretation/">OpenAI Data Agent的核心Skill解读：数据Agent如何把问题变成可信的决策</a><li class="text-truncate lh-lg"> <a href="/blog/2026/08/20/data-agent-servey-from-arch-to-practice/">Data Agent全景调研：从技术架构到产业实践</a><li class="text-truncate lh-lg"> <a href="/blog/2026/07/03/FDE-what-why-and-future/">什么是 FDE？从它的爆火看软件研发的职能大洗牌</a></ul></section><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div></aside></div><div class="row"><div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 px-md-4"><aside id="related-posts" aria-labelledby="related-label"><h3 class="mb-4" id="related-label">相关文章</h3><nav class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4"><article class="col"> <a href="/blog/2013/07/20/details-of-wave-format-and-reading-wave-files-in-C-language/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1374322020" data-df="YYYY/MM/DD" > 2013/07/20 </time><h4 class="pt-0 my-2">PCM WAVE格式详解及用C语言实现wave文件的读取</h4><div class="text-muted"><p>1.PCM Wave格式详解 WAVE文件格式是微软RIFF(Resource Interchange File Format,资源交换文件标准)的一种，是针对于多媒体文件存储的一种文件格式和标准。 一般而言，RIFF文件由文件头和数据两部分组成，一个WAVE文件由一个“WAVE”数据块组成，这个“WAVE”块又由一个"fmt"子数据块和一个“data”子 数据块组成，也称这种格式为“Can...</p></div></div></a></article><article class="col"> <a href="/blog/2013/05/16/audio-signal-processing-time-domain-pitch-python-realization/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1368717000" data-df="YYYY/MM/DD" > 2013/05/16 </time><h4 class="pt-0 my-2">语音信号处理之时域分析-音高及其Python实现</h4><div class="text-muted"><p>音高（Pitch） 概念：音高（Pitch）是语音信号的一个很重要的特征，直觉上而言它表示声音频率的高低，这个频率是指基本频率（基频），也即基本周期的倒数。 若直接观察语音的波形，只要语音信号稳定，我们可以很容易的看出基本周期的存在。例如我们取一个包含256个采样点的帧，单独绘制波形图，就可以明显的 看到它的基本周期。如下图所示： 其中最上面的波形为|a|的发音，中间的为上图中红色双竖线（...</p></div></div></a></article><article class="col"> <a href="/blog/2013/05/15/audio-signal-processing-time-domain-ZeroCR-python-realization/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1368625440" data-df="YYYY/MM/DD" > 2013/05/15 </time><h4 class="pt-0 my-2">语音信号处理之时域分析-过零率及其Python实现</h4><div class="text-muted"><p>过零率（Zero Crossing Rate） 概念：过零率（Zero Crossing Rate，ZCR）是指在每帧中，语音信号通过零点（从正变为负或从负变为正）的次数。 这个特征已在语音识别和音乐信息检索领域得到广泛使用，是对敲击的声音的分类的关键特征。 ZCR的数学形式化定义为： $zcr = \frac{1}{T-1}\sum_{t=1}^{T-1}\pi\{s_{t}s_{t-1...</p></div></div></a></article></nav></aside><nav class="post-navigation d-flex justify-content-between" aria-label="Post Navigation"> <a href="/blog/2013/05/29/audio-signal-processing-time-domain-pitch-tracking-and-python-realization/" class="btn btn-outline-primary" aria-label="上一篇" ><p>语音信号处理之时域分析-音高追踪及其Python实现</p></a> <a href="/blog/2013/06/28/swimming-tutorial-with-gif-images/" class="btn btn-outline-primary" aria-label="下一篇" ><p>蛙泳、自由泳、仰泳、蝶泳图解动画教你游泳</p></a></nav><footer aria-label="Site Info" class=" d-flex flex-column justify-content-center text-muted flex-lg-row justify-content-lg-between align-items-lg-center pb-lg-3 " ><p>© <time>2026</time> <a href="https://github.com/ibillxia">Bill Xia</a>. <span data-bs-toggle="tooltip" data-bs-placement="top" title="除非另有说明，本网站上的博客文章均由作者按照知识共享署名 4.0 国际 (CC BY 4.0) 许可协议进行授权。" >保留部分权利。</span></p><p>本站采用 <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> 主题 <a data-bs-toggle="tooltip" data-bs-placement="top" title="v7.6.0" href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener" >Chirpy</a></p></footer></div></div><div id="search-result-wrapper" class="d-flex justify-content-center d-none"><div class="col-11 content"><div id="search-hints"><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><aside aria-label="Scroll to Top"> <button id="back-to-top" type="button" class="btn btn-lg btn-box-shadow"> <i class="fas fa-angle-up"></i> </button></aside></div><div id="mask" class="d-none position-fixed w-100 h-100 z-1"></div><aside id="notification" class="toast w-auto rounded-5 text-nowrap" role="alert" aria-live="assertive" aria-atomic="true" data-bs-animation="true" data-bs-autohide="false" ><div class="d-flex align-items-center"><div class="toast-body ps-3">发现新内容</div><button type="button" class="btn btn-primary btn-sm rounded-2 py-0" aria-label="Update" >更新</button> <button type="button" class="btn-close mx-3 ms-2" data-bs-dismiss="toast" aria-label="Close" ></button></div></aside><script> var disqus_config = function () { this.page.url = 'https://ibillxia.github.io/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api/'; this.page.identifier = '/blog/2013/06/04/a-simple-code-for-wave-recording-using-windows-api/'; }; function addDisqus() { let disqusThread = document.createElement('div'); let paragraph = document.createElement('p'); disqusThread.id = 'disqus_thread'; paragraph.className = 'text-center text-muted small'; paragraph.innerHTML = 'Comments powered by <a href="https://disqus.com/">Disqus</a>.'; disqusThread.appendChild(paragraph); const footer = document.querySelector('footer'); footer.insertAdjacentElement("beforebegin", disqusThread); }function reloadDisqus(event) { if (event.source === window && event.data && event.data.id === Theme.eventId) {if (typeof DISQUS === 'undefined') { return; } if (document.readyState == 'complete') { DISQUS.reset({ reload: true, config: disqus_config }); } } } addDisqus(); if (Theme.isToggleable) { addEventListener('message', reloadDisqus); }var disqusObserver = new IntersectionObserver( function (entries) { if (entries[0].isIntersecting) { var d = document, s = d.createElement('script'); s.src = 'https://ibillxia.disqus.com/embed.js'; s.setAttribute('data-timestamp', +new Date()); (d.head || d.body).appendChild(s); disqusObserver.disconnect(); } }, { threshold: [0] } ); disqusObserver.observe(document.getElementById('disqus_thread')); </script> <script> document.addEventListener('DOMContentLoaded', () => { SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<article class="px-1 px-sm-2 px-lg-4 px-xl-0"><header><h2><a href="{url}">{title}</a></h2><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div></header><p>{content}</p></article>', noResultsText: '<p class="mt-5">搜索结果为空</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="me-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); }); </script>

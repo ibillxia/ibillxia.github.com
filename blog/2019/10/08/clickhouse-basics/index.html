@@ -1,419 +1,55 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>ClickHouse基础知识与实践 - Bill's Blog</title>
-  <meta name="author" content="Bill Xia">
-
-  
-  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="https://ibillxia.github.io/blog/2019/10/08/clickhouse-basics/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <style type="text/css">
-    body {
-      padding-bottom: 0px;
-    }
-    h1 {
-      margin-bottom: 15px;
-    }
-    img {
-      max-width: 100%;
-    }
-    .sharing, .meta, .pager {
-      margin: 20px 0px 20px 0px;
-    }
-    .page-footer p {
-      text-align: center;
-    }
-  </style>
-  <script src="/javascripts/libs/jquery.js"></script>
-  <script src="/javascripts/libs/modernizr-2.0.js"></script>
-  <script src="/javascripts/libs/bootstrap.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-34DJ0T23LB');
-  </script>
-  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
-  <script type="text/javascript">
-function addBlankTargetForLinks () {
-  $('a[href^="http"]').each(function(){
-      $(this).attr('target', '_blank');
-  });
-}
-
-$(function () {
-  addBlankTargetForLinks();
-  if (typeof MutationObserver !== 'undefined') {
-    new MutationObserver(function () {
-      addBlankTargetForLinks();
-    }).observe(document.body, { childList: true, subtree: true });
-  }
-});
-</script>
-<!-- MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = 'https://ssl.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
-</head>
-
-<body   >
-  <nav role="navigation"><div class="navbar navbar-inverse">
-  <div class="navbar-inner">
-    <div class="container">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-
-      <a class="brand" href="/">Bill's Blog</a>
-
-      <div class="nav-collapse">
-        <ul class="nav">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives/">Archives</a></li>
-  <li><a href="/blog/categories/">Categories</a></li>
-  <li><a href="/blog/tags/">Tags</a></li>
-  <li><a href="/about/">About</a></li>
-</ul>
-
-
-        <ul class="nav pull-right" data-subscription="rss">
-          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-          
-        </ul>
-
-        
-          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
-            <fieldset role="search">
-              <input type="hidden" name="q" value="site:ibillxia.github.io" />
-              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
-            </fieldset>
-          </form>
-        
-      </div>
-    </div>
-  </div>
-</div>
-</nav>
-  <div class="container">
-    <div class="row-fluid">
-      
-<article class="hentry span9" role="article">
-
-  
-  <header class="page-header">
-    
-      <h1 class="entry-title">ClickHouse基础知识与实践</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2019-10-08T16:27:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><center><img src="/images/2019/IMAG2019100801.png"></center>
-
-
-<p><br></p>
-
-<h1>一、简介</h1>
-
-<p>Clickhouse是一个用于联机分析处理（OLAP）的列式数据库管理系统（columnar DBMS）。</p>
-
-<p>传统数据库在数据大小比较小，索引大小适合内存，数据缓存命中率足够高的情形下能正常提供服务。但残酷的是，这种理想情形最终会随着业务的增长走到尽头，查询会变得越来越慢。你可能通过增加更多的内存，订购更快的磁盘等等来解决问题（纵向扩展），但这只是拖延解决本质问题。如果你的需求是解决怎样快速查询出结果，那么ClickHouse也许可以解决你的问题。</p>
-
-<!--more-->
-
-
-<h2>应用场景</h2>
-
-<p>1.绝大多数请求都是用于读访问的</p>
-
-<p>2.数据需要以大批次（大于1000行）进行更新，而不是单行更新；或者根本没有更新操作</p>
-
-<p>3.数据只是添加到数据库，没有必要修改</p>
-
-<p>4.读取数据时，会从数据库中提取出大量的行，但只用到一小部分列</p>
-
-<p>5.表很“宽”，即表中包含大量的列</p>
-
-<p>6.查询频率相对较低（通常每台服务器每秒查询数百次或更少）</p>
-
-<p>7.对于简单查询，允许大约50毫秒的延迟</p>
-
-<p>8.列的值是比较小的数值和短字符串（例如，每个URL只有60个字节）</p>
-
-<p>9.在处理单个查询时需要高吞吐量（每台服务器每秒高达数十亿行）</p>
-
-<p>10.不需要事务</p>
-
-<p>11.数据一致性要求较低</p>
-
-<p>12.每次查询中只会查询一个大表。除了一个大表，其余都是小表</p>
-
-<p>13.查询结果显著小于数据源。即数据有过滤或聚合。返回结果不超过单个服务器内存大小</p>
-
-<h2>使用限制</h2>
-
-<p>1.不支持真正的删除/更新支持 不支持事务（期待后续版本支持）</p>
-
-<p>2.不支持二级索引</p>
-
-<p>3.有限的SQL支持，join实现与众不同</p>
-
-<p>4.不支持窗口功能</p>
-
-<p>5.元数据管理需要人工干预维护</p>
-
-<h1>二、基础用法</h1>
-
-<h2>常用SQL语法</h2>
-
-<ul>
-<li>列出数据库列表 show databases;</li>
-<li>列出数据库中表列表 show tables;</li>
-<li>创建数据库 create database test;</li>
-<li>删除一个表 drop table if exists test.t1;</li>
-<li>创建第一个表 create /<em>temporary</em>/ table /<em>if not exists</em>/ test.m1 ( id UInt16,name String) ENGINE = Memory;</li>
-<li>插入测试数据 insert into test.m1 (id, name) values (1, 'abc'), (2, 'bbbb');</li>
-<li>查询 select * from test.m1;</li>
-</ul>
-
-
-<h2>默认值</h2>
-
-<p>默认值 的处理方面， ClickHouse 中，默认值总是有的，如果没有显示式指定的话，会按字段类型处理：</p>
-
-<p>数字类型， 0</p>
-
-<p>字符串，空字符串</p>
-
-<p>数组，空数组</p>
-
-<p>日期， 0000-00-00</p>
-
-<p>时间， 0000-00-00 00:00:00</p>
-
-<p>注：NULLs 是不支持的</p>
-
-<h2>数据类型</h2>
-
-<p>1.整型：UInt8,UInt16,UInt32,UInt64,Int8,Int16,Int32,Int64</p>
-
-<p>范围U开头-2N/2~2N-1;非U开头0～2<sup>N</sup>-1</p>
-
-<p>2.枚举类型：Enum8,Enum16</p>
-
-<p>Enum('hello'=1,'test'=-1),Enum是有符号的整型映射的，因此负数也是可以的</p>
-
-<p>3.字符串型：FixedString(N),String</p>
-
-<p>N是最大字节数，不是字符长度，如果是UTF8字符串，那么就会占3个字节，GBK会占2字节;String可以用来替换VARCHAR,BLOB,CLOB等数据类型</p>
-
-<p>4.时间类型：Date</p>
-
-<p>5.数组类型：Array(T)</p>
-
-<p>T是一个基本类型，包括arry在内，官方不建议使用多维数组</p>
-
-<p>6.元组：Tuple</p>
-
-<p>7.结构：Nested(name1 Type1,name2 Type2,...)</p>
-
-<p>一种类似map的结结构</p>
-
-<h2>物化列</h2>
-
-<p>指定 MATERIALIZED 表达式，即将一个列作为物化列处理了，这意味着这个列的值不能从insert 语句获取，只能是自己计算出来的。同时，</p>
-
-<p>物化列也不会出现在 select * 的结果中：</p>
-
-<pre><code>drop table if exists test.m2;
+<!doctype html><html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f7"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1b1b1e"><meta name="viewport" content="width=device-width, user-scalable=no initial-scale=1, shrink-to-fit=no, viewport-fit=cover" ><meta name="generator" content="Jekyll v4.4.1" /><meta property="og:title" content="ClickHouse基础知识与实践" /><meta property="og:locale" content="zh_CN" /><meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it’s called the Present！" /><meta name="twitter:description" property="og:description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it’s called the Present！" /><link rel="canonical" href="https://ibillxia.github.io/blog/2019/10/08/clickhouse-basics/" /><meta property="og:url" content="https://ibillxia.github.io/blog/2019/10/08/clickhouse-basics/" /><meta property="og:site_name" content="Bill’s Blog" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2019-10-08T16:27:00+08:00" /><meta property="article:modified_time" content="2019-10-08T16:27:00+08:00" /><meta property="og:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:card" content="summary_large_image" /><meta property="twitter:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:title" content="ClickHouse基础知识与实践" /><meta name="twitter:site" content="@ibillxia" /><meta name="msvalidate.01" content="1538BC1807507674B6BD4942F25493B2" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2019-10-08T16:27:00+08:00","datePublished":"2019-10-08T16:27:00+08:00","description":"Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it’s called the Present！","headline":"ClickHouse基础知识与实践","mainEntityOfPage":{"@type":"WebPage","@id":"https://ibillxia.github.io/blog/2019/10/08/clickhouse-basics/"},"url":"https://ibillxia.github.io/blog/2019/10/08/clickhouse-basics/"}</script><title>ClickHouse基础知识与实践 | Bill's Blog</title><link rel="icon" type="image/png" href="/assets/img/favicons/favicon-96x96.png" sizes="96x96"><link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico"><link rel="shortcut icon" href="/assets/img/favicon.ico"><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="stylesheet" href="/assets/css/jekyll-theme-chirpy.css"><link rel="stylesheet" href="/assets/lib/fonts/main.css"><link rel="stylesheet" href="/assets/lib/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="/assets/lib/tocbot/tocbot.min.css"><link rel="stylesheet" href="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.min.css"><link rel="stylesheet" href="/assets/lib/glightbox/glightbox.min.css"> <script src="/assets/js/dist/theme.min.js"></script> <script defer src="/assets/lib/simple-jekyll-search/simple-jekyll-search.min.js"></script> <script defer src="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.umd.min.js"></script> <script defer src="/assets/lib/glightbox/glightbox.min.js"></script> <script defer src="/assets/lib/clipboard/clipboard.min.js"></script> <script defer src="/assets/lib/dayjs/dayjs.min.js"></script> <script defer src="/assets/lib/dayjs/locale/en.js"></script> <script defer src="/assets/lib/dayjs/plugin/relativeTime.js"></script> <script defer src="/assets/lib/dayjs/plugin/localizedFormat.js"></script> <script defer src="/assets/lib/tocbot/tocbot.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script defer src="/app.min.js?baseurl=&register=true" ></script> <script defer src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script> <script> document.addEventListener('DOMContentLoaded', () => { window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-34DJ0T23LB'); }); </script><body><aside aria-label="Sidebar" id="sidebar" class="d-flex flex-column align-items-end"><header class="profile-wrapper"> <a href="/" id="avatar" class="rounded-circle"><img src="/assets/img/rock_coder.png" width="112" height="112" alt="avatar" onerror="this.style.display='none'"></a> <a class="site-title d-block" href="/">Bill's Blog</a><p class="site-subtitle fst-italic mb-0">Program Hard, Play Hard, Live Crazy!</p></header><nav class="flex-column flex-grow-1 w-100 ps-0"><ul class="nav"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home"></i> <span>首页</span> </a><li class="nav-item"> <a href="/blog/archives/" class="nav-link"> <i class="fa-fw fas fa-archive"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/blog/categories/" class="nav-link"> <i class="fa-fw fas fa-stream"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/blog/tags/" class="nav-link"> <i class="fa-fw fas fa-tags"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle"></i> <span>关于</span> </a></ul></nav><div class="sidebar-bottom d-flex flex-wrap align-items-center w-100"><div class="btn-group dropup"> <button type="button" class="btn btn-link nav-link" aria-label="Switch Mode" id="mode-toggle" data-bs-toggle="dropdown" ><i class="fa-regular fa-sun" data-theme-mode="light"></i><i class="fa-regular fa-moon" data-theme-mode="dark"></i><i class="fa-solid fa-display" data-theme-mode="system"></i></button><ul class="dropdown-menu rounded-3 mb-1 p-1"><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="light"><i class="fa-regular fa-sun" data-theme-mode="light"></i>浅色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="dark"><i class="fa-regular fa-moon" data-theme-mode="dark"></i>深色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="system"><i class="fa-solid fa-display" data-theme-mode="system"></i>跟随系统</button></ul></div><span class="icon-border"></span> <a href="https://github.com/ibillxia" aria-label="github" target="_blank" rel="noopener noreferrer" > <i class="fab fa-github"></i> </a> <a href="https://x.com/ibillxia" aria-label="x" target="_blank" rel="noopener noreferrer" > <i class="fa-brands fa-x-twitter"></i> </a> <a href="javascript:void(location.href = 'mailto:' + ['ibillxia','gmail.com'].join('@'))" aria-label="email" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" > <i class="fas fa-rss"></i> </a> <a href="https://stackoverflow.com/users/1602285/bill-xia" aria-label="stack-overflow" target="_blank" rel="noopener noreferrer" > <i class="fab fa-stack-overflow"></i> </a> <a href="https://weibo.com/ibillxia" aria-label="weibo" target="_blank" rel="noopener noreferrer" > <i class="fab fa-weibo"></i> </a></div></aside><div id="main-wrapper" class="d-flex justify-content-center"><div class="container d-flex flex-column px-xxl-5"><header id="topbar-wrapper" class="flex-shrink-0" aria-label="Top Bar"><div id="topbar" class="d-flex align-items-center justify-content-between px-lg-3 h-100" ><nav id="breadcrumb" aria-label="Breadcrumb"> <span> <a href="/">首页</a> </span> <span>ClickHouse基础知识与实践</span></nav><button type="button" id="sidebar-trigger" class="btn btn-link" aria-label="Sidebar"> <i class="fas fa-bars fa-fw"></i> </button><div id="topbar-title"> 文章</div><button type="button" id="search-trigger" class="btn btn-link" aria-label="Search"> <i class="fas fa-search fa-fw"></i> </button> <search id="search" class="align-items-center ms-3 ms-lg-0"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="搜索..." > </search> <button type="button" class="btn btn-link text-decoration-none" id="search-cancel">取消</button></div></header><div class="row flex-grow-1"><main aria-label="Main Content" class="col-12 col-lg-11 col-xl-9 px-md-4"><article class="px-1" data-toc="true"><header><h1 data-toc-skip>ClickHouse基础知识与实践</h1><div class="post-meta text-muted"> <span> 发表于 <time data-ts="1570523220" data-df="YYYY/MM/DD" data-bs-toggle="tooltip" data-bs-placement="bottom" > 2019/10/08 </time> </span><div class="d-flex justify-content-between"> <span> 作者 <em> <a href="https://github.com/ibillxia">Bill Xia</a> </em> </span><div> <span class="readtime" data-bs-toggle="tooltip" data-bs-placement="bottom" title="5182 字" > <em>28 分钟</em>阅读</span></div></div></div></header><div id="toc-bar" class="d-flex align-items-center justify-content-between invisible"> <span class="label text-truncate">ClickHouse基础知识与实践</span> <button type="button" class="toc-trigger btn me-1"> <i class="fa-solid fa-list-ul fa-fw"></i> </button></div><button id="toc-solo-trigger" type="button" class="toc-trigger btn btn-outline-secondary btn-sm"> <span class="label ps-2 pe-1">文章内容</span> <i class="fa-solid fa-angle-right fa-fw"></i> </button> <dialog id="toc-popup" class="p-0"><div class="header d-flex flex-row align-items-center justify-content-between"><div class="label text-truncate py-2 ms-4">ClickHouse基础知识与实践</div><button id="toc-popup-close" type="button" class="btn-close btn-sm mx-3" aria-label="Close"></button></div><div id="toc-popup-content" class="px-4 py-3 pb-4"></div></dialog><div class="content"> <center><a href="/images/2019/IMAG2019100801.png" class="popup img-link shimmer"><img src="/images/2019/IMAG2019100801.png" alt="" loading="lazy"></a></center><p><br /></p><h1 id="一简介">一、简介</h1><p>Clickhouse是一个用于联机分析处理（OLAP）的列式数据库管理系统（columnar DBMS）。</p><p>传统数据库在数据大小比较小，索引大小适合内存，数据缓存命中率足够高的情形下能正常提供服务。但残酷的是，这种理想情形最终会随着业务的增长走到尽头，查询会变得越来越慢。你可能通过增加更多的内存，订购更快的磁盘等等来解决问题（纵向扩展），但这只是拖延解决本质问题。如果你的需求是解决怎样快速查询出结果，那么ClickHouse也许可以解决你的问题。</p><h2 id="应用场景"><span class="me-2">应用场景</span><a href="#应用场景" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>1.绝大多数请求都是用于读访问的</p><p>2.数据需要以大批次（大于1000行）进行更新，而不是单行更新；或者根本没有更新操作</p><p>3.数据只是添加到数据库，没有必要修改</p><p>4.读取数据时，会从数据库中提取出大量的行，但只用到一小部分列</p><p>5.表很“宽”，即表中包含大量的列</p><p>6.查询频率相对较低（通常每台服务器每秒查询数百次或更少）</p><p>7.对于简单查询，允许大约50毫秒的延迟</p><p>8.列的值是比较小的数值和短字符串（例如，每个URL只有60个字节）</p><p>9.在处理单个查询时需要高吞吐量（每台服务器每秒高达数十亿行）</p><p>10.不需要事务</p><p>11.数据一致性要求较低</p><p>12.每次查询中只会查询一个大表。除了一个大表，其余都是小表</p><p>13.查询结果显著小于数据源。即数据有过滤或聚合。返回结果不超过单个服务器内存大小</p><h2 id="使用限制"><span class="me-2">使用限制</span><a href="#使用限制" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>1.不支持真正的删除/更新支持 不支持事务（期待后续版本支持）</p><p>2.不支持二级索引</p><p>3.有限的SQL支持，join实现与众不同</p><p>4.不支持窗口功能</p><p>5.元数据管理需要人工干预维护</p><h1 id="二基础用法">二、基础用法</h1><h2 id="常用sql语法"><span class="me-2">常用SQL语法</span><a href="#常用sql语法" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><ul><li>列出数据库列表 show databases;<li>列出数据库中表列表 show tables;<li>创建数据库 create database test;<li>删除一个表 drop table if exists test.t1;<li>创建第一个表 create /<em>temporary</em>/ table /<em>if not exists</em>/ test.m1 ( id UInt16,name String) ENGINE = Memory;<li>插入测试数据 insert into test.m1 (id, name) values (1, ‘abc’), (2, ‘bbbb’);<li>查询 select * from test.m1;</ul><h2 id="默认值"><span class="me-2">默认值</span><a href="#默认值" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>默认值 的处理方面， ClickHouse 中，默认值总是有的，如果没有显示式指定的话，会按字段类型处理：</p><p>数字类型， 0</p><p>字符串，空字符串</p><p>数组，空数组</p><p>日期， 0000-00-00</p><p>时间， 0000-00-00 00:00:00</p><p>注：NULLs 是不支持的</p><h2 id="数据类型"><span class="me-2">数据类型</span><a href="#数据类型" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>1.整型：UInt8,UInt16,UInt32,UInt64,Int8,Int16,Int32,Int64</p><p>范围U开头-2N/2~2N-1;非U开头0～2^N-1</p><p>2.枚举类型：Enum8,Enum16</p><p>Enum(‘hello’=1,’test’=-1),Enum是有符号的整型映射的，因此负数也是可以的</p><p>3.字符串型：FixedString(N),String</p><p>N是最大字节数，不是字符长度，如果是UTF8字符串，那么就会占3个字节，GBK会占2字节;String可以用来替换VARCHAR,BLOB,CLOB等数据类型</p><p>4.时间类型：Date</p><p>5.数组类型：Array(T)</p><p>T是一个基本类型，包括arry在内，官方不建议使用多维数组</p><p>6.元组：Tuple</p><p>7.结构：Nested(name1 Type1,name2 Type2,…)</p><p>一种类似map的结结构</p><h2 id="物化列"><span class="me-2">物化列</span><a href="#物化列" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>指定 MATERIALIZED 表达式，即将一个列作为物化列处理了，这意味着这个列的值不能从insert 语句获取，只能是自己计算出来的。同时，</p><p>物化列也不会出现在 select * 的结果中：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre>drop table if exists test.m2;
 create table test.m2 ( a MATERIALIZED (b+1),b UInt16) ENGINE = Memory;
 insert into test.m2 (b) values (1);
 select * from test.m2;select a, b from test.m2;
-</code></pre>
-
-<h2>表达式列</h2>
-
-<p>ALIAS 表达式列某方面跟物化列相同，就是它的值不能从 insert 语句获取。不同的是， 物化列 是会真正保存数据（这样查询时不需要再计算），</p>
-
-<p>而表达式列不会保存数据（这样查询时总是需要计算），只是在查询时返回表达式的结果。</p>
-
-<pre><code>create table test.m3 (a ALIAS (b+1), b UInt16) ENGINE = Memory;
+</pre></table></code></div></div><h2 id="表达式列"><span class="me-2">表达式列</span><a href="#表达式列" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>ALIAS 表达式列某方面跟物化列相同，就是它的值不能从 insert 语句获取。不同的是， 物化列 是会真正保存数据（这样查询时不需要再计算），</p><p>而表达式列不会保存数据（这样查询时总是需要计算），只是在查询时返回表达式的结果。</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre>create table test.m3 (a ALIAS (b+1), b UInt16) ENGINE = Memory;
 insert into test.m3(b) values (1);
 select * from test.m3;
 select a, b from test.m3;
-</code></pre>
-
-<h1>三、引擎/engine</h1>
-
-<p>引擎是clickhouse设计的精华部分</p>
-
-<h2>3.1 TinyLog</h2>
-
-<p>最简单的一种引擎，每一列保存为一个文件，里面的内容是压缩过的，不支持索引</p>
-
-<p>这种引擎没有并发控制，所以，当你需要在读，又在写时，读会出错。并发写，内容都会坏掉。</p>
-
-<p>应用场景:</p>
-
-<ol type="a">
-<li><p>基本上就是那种只写一次</p></li>
-<li><p>然后就是只读的场景。</p></li>
-<li><p>不适用于处理量大的数据，官方推荐，使用这种引擎的表最多 100 万行的数据</p></li>
-</ol>
-
-
-<pre><code>drop table if exists test.tinylog;
+</pre></table></code></div></div><h1 id="三引擎engine">三、引擎/engine</h1><p>引擎是clickhouse设计的精华部分</p><h2 id="31-tinylog"><span class="me-2">3.1 TinyLog</span><a href="#31-tinylog" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>最简单的一种引擎，每一列保存为一个文件，里面的内容是压缩过的，不支持索引</p><p>这种引擎没有并发控制，所以，当你需要在读，又在写时，读会出错。并发写，内容都会坏掉。</p><p>应用场景:</p><p>a. 基本上就是那种只写一次</p><p>b. 然后就是只读的场景。</p><p>c. 不适用于处理量大的数据，官方推荐，使用这种引擎的表最多 100 万行的数据</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre>drop table if exists test.tinylog;
 create table test.tinylog (a UInt16, b UInt16) ENGINE = TinyLog;
 insert into test.tinylog(a,b) values (7,13);
-</code></pre>
-
-<p>此时/var/lib/clickhouse/data/test/tinylog保存数据的目录结构：</p>
-
-<pre><code>├── a.bin   
+</pre></table></code></div></div><p>此时/var/lib/clickhouse/data/test/tinylog保存数据的目录结构：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre>├── a.bin   
 ├── b.bin   
 └── sizes.json  
-</code></pre>
-
-<p>a.bin 和 b.bin 是压缩过的对应的列的数据， sizes.json 中记录了每个 *.bin 文件的大小</p>
-
-<h2>3.2 Log</h2>
-
-<p>这种引擎跟 TinyLog 基本一致</p>
-
-<p>它的改进点，是加了一个 __marks.mrk 文件，里面记录了每个数据块的偏移</p>
-
-<p>这样做的一个用处，就是可以准确地切分读的范围，从而使用并发读取成为可能</p>
-
-<p>但是，它是不能支持并发写的，一个写操作会阻塞其它读写操作</p>
-
-<p>Log 不支持索引，同时因为有一个 __marks.mrk 的冗余数据，所以在写入数据时，一旦出现问题，这个表就废了</p>
-
-<p>应用场景:</p>
-
-<p>同 TinyLog 差不多，它适用的场景也是那种写一次之后，后面就是只读的场景，临时数据用它保存也可以</p>
-
-<pre><code>drop table if exists test.log;
+</pre></table></code></div></div><p>a.bin 和 b.bin 是压缩过的对应的列的数据， sizes.json 中记录了每个 *.bin 文件的大小</p><h2 id="32-log"><span class="me-2">3.2 Log</span><a href="#32-log" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>这种引擎跟 TinyLog 基本一致</p><p>它的改进点，是加了一个 __marks.mrk 文件，里面记录了每个数据块的偏移</p><p>这样做的一个用处，就是可以准确地切分读的范围，从而使用并发读取成为可能</p><p>但是，它是不能支持并发写的，一个写操作会阻塞其它读写操作</p><p>Log 不支持索引，同时因为有一个 __marks.mrk 的冗余数据，所以在写入数据时，一旦出现问题，这个表就废了</p><p>应用场景:</p><p>同 TinyLog 差不多，它适用的场景也是那种写一次之后，后面就是只读的场景，临时数据用它保存也可以</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre>drop table if exists test.log;
 create table test.log (a UInt16, b UInt16) ENGINE = Log;
 insert into test.log(a,b) values (7,13);
-</code></pre>
-
-<p>此时/var/lib/clickhouse/data/test/log保存数据的目录结构：</p>
-
-<pre><code>├── __marks.mrk
+</pre></table></code></div></div><p>此时/var/lib/clickhouse/data/test/log保存数据的目录结构：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre>├── __marks.mrk
 ├── a.bin
 ├── b.bin
 └── sizes.json
-</code></pre>
-
-<h2>3.3 Memory</h2>
-
-<p>内存引擎，数据以未压缩的原始形式直接保存在内存当中，服务器重启数据就会消失</p>
-
-<p>可以并行读，读写互斥锁的时间也非常短</p>
-
-<p>不支持索引，简单查询下有非常非常高的性能表现</p>
-
-<p>应用场景:</p>
-
-<ol type="a">
-<li><p>进行测试</p></li>
-<li><p>在需要非常高的性能，同时数据量又不太大（上限大概 1 亿行）的场景</p></li>
-</ol>
-
-
-<h2>3.4 Merge</h2>
-
-<p>一个工具引擎，本身不保存数据，只用于把指定库中的指定多个表链在一起。</p>
-
-<p>这样，读取操作可以并发执行，同时也可以利用原表的索引，但是，此引擎不支持写操作</p>
-
-<p>指定引擎的同时，需要指定要链接的库及表，库名可以使用一个表达式，表名可以使用正则表达式指定</p>
-
-<pre><code>create table test.tinylog1 (id UInt16, name String) ENGINE=TinyLog;
+</pre></table></code></div></div><h2 id="33-memory"><span class="me-2">3.3 Memory</span><a href="#33-memory" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>内存引擎，数据以未压缩的原始形式直接保存在内存当中，服务器重启数据就会消失</p><p>可以并行读，读写互斥锁的时间也非常短</p><p>不支持索引，简单查询下有非常非常高的性能表现</p><p>应用场景:</p><p>a. 进行测试</p><p>b. 在需要非常高的性能，同时数据量又不太大（上限大概 1 亿行）的场景</p><h2 id="34-merge"><span class="me-2">3.4 Merge</span><a href="#34-merge" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>一个工具引擎，本身不保存数据，只用于把指定库中的指定多个表链在一起。</p><p>这样，读取操作可以并发执行，同时也可以利用原表的索引，但是，此引擎不支持写操作</p><p>指定引擎的同时，需要指定要链接的库及表，库名可以使用一个表达式，表名可以使用正则表达式指定</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre>create table test.tinylog1 (id UInt16, name String) ENGINE=TinyLog;
 create table test.tinylog2 (id UInt16, name String) ENGINE=TinyLog;
 create table test.tinylog3 (id UInt16, name String) ENGINE=TinyLog;
 insert into test.tinylog1(id, name) values (1, 'tinylog1');
@@ -422,44 +58,37 @@ insert into test.tinylog3(id, name) values (3, 'tinylog3');
 use test;
 create table test.merge (id UInt16, name String) ENGINE=Merge(currentDatabase(), '^tinylog[0-9]+');
 select _table,* from test.merge order by id desc
-</code></pre>
-
-
-
-<pre><code>┌─_table───┬─id─┬─name─────┐
+</pre></table></code></div></div><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre>┌─_table───┬─id─┬─name─────┐
 │ tinylog3 │ 3 │ tinylog3 │
 │ tinylog2 │ 2 │ tinylog2 │
 │ tinylog1 │ 1 │ tinylog1 │
 └──────────┴────┴──────────┘
-</code></pre>
-
-<p>注：_table 这个列，是因为使用了 Merge 多出来的一个的一个虚拟列</p>
-
-<ol type="a">
-<li><p>它表示原始数据的来源表，它不会出现在 show table 的结果当中</p></li>
-<li><p>select * 不会包含它</p></li>
-</ol>
-
-
-<h2>3.5 Distributed</h2>
-
-<p>与 Merge 类似， Distributed 也是通过一个逻辑表，去访问各个物理表，设置引擎时的样子是：</p>
-
-<p><code>Distributed(remote_group, database, table [, sharding_key])</code></p>
-
-<p>其中：</p>
-
-<p>remote_group 是/etc/clickhouse-server/config.xml中remote_servers参数</p>
-
-<p>database 是各服务器中的库名</p>
-
-<p>table 是表名</p>
-
-<p>sharding_key 是一个寻址表达式，可以是一个列名，也可以是像 rand() 之类的函数调用，它与 remote_servers 中的 weight 共同作用，决定在 写 时往哪个 shard 写</p>
-
-<p>配置文件中的 remote_servers</p>
-
-<pre><code>&lt;remote_servers&gt;
+</pre></table></code></div></div><p>注：_table 这个列，是因为使用了 Merge 多出来的一个的一个虚拟列</p><p>a. 它表示原始数据的来源表，它不会出现在 show table 的结果当中</p><p>b. select * 不会包含它</p><h2 id="35-distributed"><span class="me-2">3.5 Distributed</span><a href="#35-distributed" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>与 Merge 类似， Distributed 也是通过一个逻辑表，去访问各个物理表，设置引擎时的样子是：</p><p><code class="language-plaintext highlighter-rouge">Distributed(remote_group, database, table [, sharding_key])</code></p><p>其中：</p><p>remote_group 是/etc/clickhouse-server/config.xml中remote_servers参数</p><p>database 是各服务器中的库名</p><p>table 是表名</p><p>sharding_key 是一个寻址表达式，可以是一个列名，也可以是像 rand() 之类的函数调用，它与 remote_servers 中的 weight 共同作用，决定在 写 时往哪个 shard 写</p><p>配置文件中的 remote_servers</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+</pre><td class="rouge-code"><pre>&lt;remote_servers&gt;
     &lt;log&gt;
         &lt;shard&gt;
             &lt;weight&gt;1&lt;weight&gt;
@@ -479,80 +108,32 @@ select _table,* from test.merge order by id desc
         &lt;shard&gt;
     &lt;log&gt;
 &lt;remote_servers&gt;
-</code></pre>
-
-<ul>
-<li><p>log 是某个 shard 组的名字，就是上面的 remote_group 的值</p></li>
-<li><p>shard 是固定标签</p></li>
-<li><p>weight 是权重，前面说的 sharding_key 与这个有关。</p></li>
-</ul>
-
-
-<p>简单来说，上面的配置，理论上来看:</p>
-
-<p>第一个 shard “被选中”的概率是 1 / (1 + 2) ，第二个是 2 / (1 + 2) ，这很容易理解。但是， sharding_key 的工作情况，是按实际数字的“命中区间”算的，即第一个的区间是 [0, 1) 的周期，第二个区间是 [1, 1+2) 的周期。比如把 sharding_key 设置成 id ，当 id=0 或 id=3 时，一定是写入到第一个 shard 中，如果把 sharding_key 设置成 rand() ，那系统会对应地自己作一般化转换吧，这种时候就是一种概率场景了。</p>
-
-<ul>
-<li>internal_replication 是定义针对多个 replica 时的写入行为的。</li>
-</ul>
-
-
-<p>如果为 false ，则会往所有的 replica 中写入数据，但是并不保证数据写入的一致性，所以这种情况时间一长，各 replica 的数据很可能出现差异。如果为 true ，则只会往第一个可写的 replica 中写入数据（剩下的事“物理表”自己处理）。</p>
-
-<ul>
-<li>replica 就是定义各个冗余副本的，选项有 host ， port ， user ， password 等</li>
-</ul>
-
-
-<p>看一个实际的例子，我们先在两台机器上创建好物理表并插入一些测试数据：</p>
-
-<pre><code>create table test.tinylog_d1(id UInt16, name String) ENGINE=TinyLog;
+</pre></table></code></div></div><ul><li><p>log 是某个 shard 组的名字，就是上面的 remote_group 的值</p><li><p>shard 是固定标签</p><li><p>weight 是权重，前面说的 sharding_key 与这个有关。</p></ul><p>简单来说，上面的配置，理论上来看:</p><p>第一个 shard “被选中”的概率是 1 / (1 + 2) ，第二个是 2 / (1 + 2) ，这很容易理解。但是， sharding_key 的工作情况，是按实际数字的“命中区间”算的，即第一个的区间是 [0, 1) 的周期，第二个区间是 [1, 1+2) 的周期。比如把 sharding_key 设置成 id ，当 id=0 或 id=3 时，一定是写入到第一个 shard 中，如果把 sharding_key 设置成 rand() ，那系统会对应地自己作一般化转换吧，这种时候就是一种概率场景了。</p><ul><li>internal_replication 是定义针对多个 replica 时的写入行为的。</ul><p>如果为 false ，则会往所有的 replica 中写入数据，但是并不保证数据写入的一致性，所以这种情况时间一长，各 replica 的数据很可能出现差异。如果为 true ，则只会往第一个可写的 replica 中写入数据（剩下的事“物理表”自己处理）。</p><ul><li>replica 就是定义各个冗余副本的，选项有 host ， port ， user ， password 等</ul><p>看一个实际的例子，我们先在两台机器上创建好物理表并插入一些测试数据：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre>create table test.tinylog_d1(id UInt16, name String) ENGINE=TinyLog;
 insert into test.tinylog_d1(id, name) values (1, 'Distributed record 1');
 insert into test.tinylog_d1(id, name) values (2, 'Distributed record 2');
-</code></pre>
-
-<p>在其中一台创建逻辑表：</p>
-
-<pre><code>create table test.tinylog_d (id UInt16, name String) ENGINE=Distributed(log, test,tinylog_d1 , id);-- 插入数据到逻辑表，观察数据分发情况
+</pre></table></code></div></div><p>在其中一台创建逻辑表：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre>create table test.tinylog_d (id UInt16, name String) ENGINE=Distributed(log, test,tinylog_d1 , id);-- 插入数据到逻辑表，观察数据分发情况
 insert into test.tinylog_d(id, name) values (0, 'main');
 insert into test.tinylog_d(id, name) values (1, 'main');
 insert into test.tinylog_d(id, name) values (2, 'main');
 select name,sum(id),count(id) from test.tinylog_d group by name;
-</code></pre>
-
-<p>注：逻辑表中的写入操作是异步的，会先缓存在本机的文件系统上，并且，对于物理表的不可访问状态，并没有严格控制，所以写入失败丢数据的情况是可能发生的</p>
-
-<h2>3.6 Null</h2>
-
-<p>空引擎，写入的任何数据都会被忽略，读取的结果一定是空。</p>
-
-<p>但是注意，虽然数据本身不会被存储，但是结构上的和数据格式上的约束还是跟普通表一样是存在的，同时，你也可以在这个引擎上创建视图</p>
-
-<h2>3.7 Buffer</h2>
-
-<p>1.Buffer 引擎，像是Memory 存储的一个上层应用似的（磁盘上也是没有相应目录的）</p>
-
-<p>2.它的行为是一个缓冲区，写入的数据先被放在缓冲区，达到一个阈值后，这些数据会自动被写到指定的另一个表中</p>
-
-<p>3.和Memory 一样，有很多的限制，比如没有索引</p>
-
-<p>4.Buffer 是接在其它表前面的一层，对它的读操作，也会自动应用到后面表，但是因为前面说到的限制的原因，一般我们读数据，就直接从源表读就好了，缓冲区的这点数据延迟，只要配置得当，影响不大的</p>
-
-<p>5.Buffer 后面也可以不接任何表，这样的话，当数据达到阈值，就会被丢弃掉</p>
-
-<p>一些特点：</p>
-
-<ul>
-<li><p>如果一次写入的数据太大或太多，超过了 max 条件，则会直接写入源表。</p></li>
-<li><p>删源表或改源表的时候，建议 Buffer 表删了重建。</p></li>
-<li><p>“友好重启”时， Buffer 数据会先落到源表，“暴力重启”， Buffer 表中的数据会丢失。</p></li>
-<li><p>即使使用了 Buffer ，多次的小数据写入，对比一次大数据写入，也 慢得多 （几千行与百万行的差距）</p></li>
-</ul>
-
-
-<p>-- 创建源表</p>
-
-<pre><code>create table test.mergetree (sdt  Date, id UInt16, name String, point UInt16) ENGINE=MergeTree(sdt, (id, name), 10);
+</pre></table></code></div></div><p>注：逻辑表中的写入操作是异步的，会先缓存在本机的文件系统上，并且，对于物理表的不可访问状态，并没有严格控制，所以写入失败丢数据的情况是可能发生的</p><h2 id="36-null"><span class="me-2">3.6 Null</span><a href="#36-null" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>空引擎，写入的任何数据都会被忽略，读取的结果一定是空。</p><p>但是注意，虽然数据本身不会被存储，但是结构上的和数据格式上的约束还是跟普通表一样是存在的，同时，你也可以在这个引擎上创建视图</p><h2 id="37-buffer"><span class="me-2">3.7 Buffer</span><a href="#37-buffer" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>1.Buffer 引擎，像是Memory 存储的一个上层应用似的（磁盘上也是没有相应目录的）</p><p>2.它的行为是一个缓冲区，写入的数据先被放在缓冲区，达到一个阈值后，这些数据会自动被写到指定的另一个表中</p><p>3.和Memory 一样，有很多的限制，比如没有索引</p><p>4.Buffer 是接在其它表前面的一层，对它的读操作，也会自动应用到后面表，但是因为前面说到的限制的原因，一般我们读数据，就直接从源表读就好了，缓冲区的这点数据延迟，只要配置得当，影响不大的</p><p>5.Buffer 后面也可以不接任何表，这样的话，当数据达到阈值，就会被丢弃掉</p><p>一些特点：</p><ul><li><p>如果一次写入的数据太大或太多，超过了 max 条件，则会直接写入源表。</p><li><p>删源表或改源表的时候，建议 Buffer 表删了重建。</p><li><p>“友好重启”时， Buffer 数据会先落到源表，“暴力重启”， Buffer 表中的数据会丢失。</p><li><p>即使使用了 Buffer ，多次的小数据写入，对比一次大数据写入，也 慢得多 （几千行与百万行的差距）</p></ul><p>– 创建源表</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre>create table test.mergetree (sdt  Date, id UInt16, name String, point UInt16) ENGINE=MergeTree(sdt, (id, name), 10);
 -- 创建 Buffer表-- 
 Buffer(database, table, num_layers, min_time, max_time, min_rows, max_rows, min_bytes, max_bytes)
 create table test.mergetree_buffer as test.mergetree ENGINE=Buffer(test, mergetree, 16, 3, 20, 2, 10, 1, 10000);
@@ -561,57 +142,46 @@ insert into test.mergetree_buffer (sdt, id, name, point) values ('2017-07-10', 1
 select * from test.mergetree;
 select '------';
 select * from test.mergetree_buffer;
-</code></pre>
-
-<p>database 数据库</p>
-
-<p>table 源表，这里除了字符串常量，也可以使用变量的。</p>
-
-<p>num_layers 是类似“分区”的概念，每个分区的后面的 min / max 是独立计算的，官方推荐的值是 16 。</p>
-
-<p>min / max 这组配置荐，就是设置阈值的，分别是 时间（秒），行数，空间（字节）。</p>
-
-<p>阈值的规则: 是“所有的 min 条件都满足， 或 至少一个 max 条件满足”。</p>
-
-<p>如果按上面我们的建表来说，所有的 min 条件就是：过了 3秒，2条数据，1 Byte。一个 max 条件是：20秒，或 10 条数据，或有 10K</p>
-
-<h2>3.8 Set</h2>
-
-<p>Set 这个引擎有点特殊，因为它只用在 IN 操作符右侧，你不能对它 select</p>
-
-<pre><code>create table test.set(id UInt16, name String) ENGINE=Set;
+</pre></table></code></div></div><p>database 数据库</p><p>table 源表，这里除了字符串常量，也可以使用变量的。</p><p>num_layers 是类似“分区”的概念，每个分区的后面的 min / max 是独立计算的，官方推荐的值是 16 。</p><p>min / max 这组配置荐，就是设置阈值的，分别是 时间（秒），行数，空间（字节）。</p><p>阈值的规则: 是“所有的 min 条件都满足， 或 至少一个 max 条件满足”。</p><p>如果按上面我们的建表来说，所有的 min 条件就是：过了 3秒，2条数据，1 Byte。一个 max 条件是：20秒，或 10 条数据，或有 10K</p><h2 id="38-set"><span class="me-2">3.8 Set</span><a href="#38-set" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Set 这个引擎有点特殊，因为它只用在 IN 操作符右侧，你不能对它 select</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre>create table test.set(id UInt16, name String) ENGINE=Set;
 insert into test.set(id, name) values (1, 'hello');
 -- select 1 where (1, 'hello') in test.set; -- 默认UInt8 需要手动进行类型转换
 select 1 where (toUInt16(1), 'hello') in test.set;
-</code></pre>
-
-<p>注: Set 引擎表，是全内存运行的，但是相关数据会落到磁盘上保存，启动时会加载到内存中。所以，意外中断或暴力重启，是可能产生数据丢失问题的</p>
-
-<h2>3.9 MergeTree</h2>
-
-<p><strong>这个引擎是 ClickHouse 的重头戏</strong>，它支持一个日期和一组主键的两层式索引，还可以实时更新数据。同时，索引的粒度可以自定义，外加直接支持采样功能</p>
-
-<p>MergeTree(EventDate, (CounterID, EventDate), 8192)MergeTree(EventDate, intHash32(UserID), (CounterID, EventDate, intHash32(UserID)), 8192)</p>
-
-<p>EventDate 一个日期的列名</p>
-
-<p>intHash32(UserID) 采样表达式</p>
-
-<p>(CounterID, EventDate) 主键组（里面除了列名，也支持表达式），也可以是一个表达式</p>
-
-<p>8192 主键索引的粒度</p>
-
-<pre><code>drop table if exists test.mergetree1;
+</pre></table></code></div></div><p>注: Set 引擎表，是全内存运行的，但是相关数据会落到磁盘上保存，启动时会加载到内存中。所以，意外中断或暴力重启，是可能产生数据丢失问题的</p><h2 id="39-mergetree"><span class="me-2">3.9 MergeTree</span><a href="#39-mergetree" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p><strong>这个引擎是 ClickHouse 的重头戏</strong>，它支持一个日期和一组主键的两层式索引，还可以实时更新数据。同时，索引的粒度可以自定义，外加直接支持采样功能</p><p>MergeTree(EventDate, (CounterID, EventDate), 8192)MergeTree(EventDate, intHash32(UserID), (CounterID, EventDate, intHash32(UserID)), 8192)</p><p>EventDate 一个日期的列名</p><p>intHash32(UserID) 采样表达式</p><p>(CounterID, EventDate) 主键组（里面除了列名，也支持表达式），也可以是一个表达式</p><p>8192 主键索引的粒度</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre>drop table if exists test.mergetree1;
 create table test.mergetree1 (sdt  Date, id UInt16, name String, cnt UInt16) ENGINE=MergeTree(sdt, (id, name), 10);
 -- 日期的格式，好像必须是 yyyy-mm-dd
 insert into test.mergetree1(sdt, id, name, cnt) values ('2018-06-01', 1, 'aaa', 10);
 insert into test.mergetree1(sdt, id, name, cnt) values ('2018-06-02', 4, 'bbb', 10);
 insert into test.mergetree1(sdt, id, name, cnt) values ('2018-06-03', 5, 'ccc', 11);
-</code></pre>
-
-<p>此时/var/lib/clickhouse/data/test/mergetree1的目录结构：</p>
-
-<pre><code>├── 20180601_20180601_1_1_0│   
+</pre></table></code></div></div><p>此时/var/lib/clickhouse/data/test/mergetree1的目录结构：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre><td class="rouge-code"><pre>├── 20180601_20180601_1_1_0│   
 ├── checksums.txt│   
 ├── columns.txt│   
 ├── id.bin│   
@@ -630,17 +200,16 @@ insert into test.mergetree1(sdt, id, name, cnt) values ('2018-06-03', 5, 'ccc', 
 └── ...
 ├── format_version.txt
 └── detached
-</code></pre>
-
-<h2>3.10 ReplacingMergeTree</h2>
-
-<p>1.在 MergeTree 的基础上，添加了“处理重复数据”的功能=>实时数据场景</p>
-
-<p>2.相比 MergeTree ,ReplacingMergeTree 在最后加一个"版本列",它跟时间列配合一起，用以区分哪条数据是"新的"，并把旧的丢掉(这个过程是在 merge 时处理，不是数据写入时就处理了的，平时重复的数据还是保存着的，并且查也是跟平常一样会查出来的)</p>
-
-<p>3.主键列组用于区分重复的行</p>
-
-<pre><code>-- 版本列 允许的类型是， UInt 一族的整数，或 Date 或 DateTime
+</pre></table></code></div></div><h2 id="310-replacingmergetree"><span class="me-2">3.10 ReplacingMergeTree</span><a href="#310-replacingmergetree" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>1.在 MergeTree 的基础上，添加了“处理重复数据”的功能=&gt;实时数据场景</p><p>2.相比 MergeTree ,ReplacingMergeTree 在最后加一个”版本列”,它跟时间列配合一起，用以区分哪条数据是”新的”，并把旧的丢掉(这个过程是在 merge 时处理，不是数据写入时就处理了的，平时重复的数据还是保存着的，并且查也是跟平常一样会查出来的)</p><p>3.主键列组用于区分重复的行</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre>-- 版本列 允许的类型是， UInt 一族的整数，或 Date 或 DateTime
 create table test.replacingmergetree (sdt  Date, id UInt16, name String, cnt UInt16) ENGINE=ReplacingMergeTree(sdt, (name), 10, cnt);
 insert into test.replacingmergetree (sdt, id, name, cnt) values ('2018-06-10', 1, 'a', 20);
 insert into test.replacingmergetree (sdt, id, name, cnt) values ('2018-06-10', 1, 'a', 30);
@@ -649,22 +218,22 @@ insert into test.replacingmergetree (sdt, id, name, cnt) values ('2018-06-11', 1
 insert into test.replacingmergetree (sdt, id, name, cnt) values ('2018-06-11', 1, 'a', 10);
 select * from test.replacingmergetree;-- 如果记录未执行merge，可以手动触发一下 merge 行为
 optimize table test.replacingmergetree;
-</code></pre>
-
-
-
-<pre><code>┌────────sdt─┬─id─┬─name─┬─cnt─┐
+</pre></table></code></div></div><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre>┌────────sdt─┬─id─┬─name─┬─cnt─┐
 │ 2018-06-11 │ 1 │ a │ 30 │
 └────────────┴────┴──────┴─────┘
-</code></pre>
-
-<h2>3.11 SummingMergeTree</h2>
-
-<p>1.SummingMergeTree 就是在 merge 阶段把数据sum求和</p>
-
-<p>2.sum求和的列可以指定，不可加的未指定列，会取一个最先出现的值</p>
-
-<pre><code>create table test.summingmergetree (sdt Date, name String, a UInt16, b UInt16) ENGINE=SummingMergeTree(sdt, (sdt, name), 8192, (a));
+</pre></table></code></div></div><h2 id="311-summingmergetree"><span class="me-2">3.11 SummingMergeTree</span><a href="#311-summingmergetree" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>1.SummingMergeTree 就是在 merge 阶段把数据sum求和</p><p>2.sum求和的列可以指定，不可加的未指定列，会取一个最先出现的值</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre>create table test.summingmergetree (sdt Date, name String, a UInt16, b UInt16) ENGINE=SummingMergeTree(sdt, (sdt, name), 8192, (a));
 insert into test.summingmergetree (sdt, name, a, b) values ('2018-06-10', 'a', 1, 20);
 insert into test.summingmergetree (sdt, name, a, b) values ('2018-06-10', 'b', 2, 11);
 insert into test.summingmergetree (sdt, name, a, b) values ('2018-06-11', 'b', 3, 18);
@@ -673,196 +242,44 @@ insert into test.summingmergetree (sdt, name, a, b) values ('2018-06-11', 'a', 3
 insert into test.summingmergetree (sdt, name, a, b) values ('2018-06-12', 'c', 1, 35);-- 手动触发一下 merge 行为
 optimize table test.summingmergetree;
 select * from test.summingmergetree;
-</code></pre>
-
-
-
-<pre><code>┌────────sdt─┬─name─┬─a─┬──b─┐
+</pre></table></code></div></div><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre>┌────────sdt─┬─name─┬─a─┬──b─┐
 │ 2018-06-10 │ a │ 1 │ 20 │
 │ 2018-06-10 │ b │ 2 │ 11 │
 │ 2018-06-11 │ a │ 3 │ 11 │
 │ 2018-06-11 │ b │ 6 │ 18 │
 │ 2018-06-12 │ c │ 1 │ 35 │
 └────────────┴──────┴───┴────┘
-</code></pre>
-
-<p>注: 可加列不能是主键中的列，并且如果某行数据可加列都是 null ，则这行会被删除</p>
-
-<h2>3.13 AggregatingMergeTree</h2>
-
-<p>AggregatingMergeTree 是在 MergeTree 基础之上，针对聚合函数结果，作增量计算优化的一个设计，它会在 merge 时，针对主键预处理聚合的数据</p>
-
-<p>应用于AggregatingMergeTree 上的聚合函数除了普通的 sum, uniq等，还有 sumState , uniqState ，及 sumMerge ， uniqMerge 这两组</p>
-
-<p>1.聚合数据的预计算</p>
-
-<p>是一种“空间换时间”的权衡，并且是以减少维度为代价的</p>
-
-<table>
-<thead>
-<tr>
-<th> dim1 </th>
-<th> dim2 </th>
-<th> dim3 </th>
-<th> measure1 </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td> aaaa </td>
-<td> a </td>
-<td> 1 </td>
-<td> 1 </td>
-</tr>
-<tr>
-<td> aaaa </td>
-<td> b </td>
-<td> 2 </td>
-<td> 1 </td>
-</tr>
-<tr>
-<td> bbbb </td>
-<td> b </td>
-<td> 3 </td>
-<td> 1 </td>
-</tr>
-<tr>
-<td> cccc </td>
-<td> b </td>
-<td> 2 </td>
-<td> 1 </td>
-</tr>
-<tr>
-<td> cccc </td>
-<td> c </td>
-<td> 1 </td>
-<td> 1 </td>
-</tr>
-<tr>
-<td> dddd </td>
-<td> c </td>
-<td> 2 </td>
-<td> 1 </td>
-</tr>
-<tr>
-<td> dddd </td>
-<td> a </td>
-<td> 1 </td>
-<td> 1 </td>
-</tr>
-</tbody>
-</table>
-
-
-<p>假设原始有三个维度，一个需要 count 的指标</p>
-
-<table>
-<thead>
-<tr>
-<th> dim1 </th>
-<th> dim2 </th>
-<th> dim3 </th>
-<th> measure1 </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td> aaaa </td>
-<td> a </td>
-<td> 1 </td>
-<td> 1 </td>
-</tr>
-<tr>
-<td> aaaa </td>
-<td> b </td>
-<td> 2 </td>
-<td> 1 </td>
-</tr>
-<tr>
-<td> bbbb </td>
-<td> b </td>
-<td> 3 </td>
-<td> 1 </td>
-</tr>
-<tr>
-<td> cccc </td>
-<td> b </td>
-<td> 2 </td>
-<td> 1 </td>
-</tr>
-<tr>
-<td> cccc </td>
-<td> c </td>
-<td> 1 </td>
-<td> 1 </td>
-</tr>
-<tr>
-<td> dddd </td>
-<td> c </td>
-<td> 2 </td>
-<td> 1 </td>
-</tr>
-<tr>
-<td> dddd </td>
-<td> a </td>
-<td> 1 </td>
-<td> 1 </td>
-</tr>
-</tbody>
-</table>
-
-
-<p>通过减少一个维度的方式，来以 count 函数聚合一次 M</p>
-
-<table>
-<thead>
-<tr>
-<th> dim2 </th>
-<th> dim3 </th>
-<th> count(measure1) </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td> a </td>
-<td> 1 </td>
-<td> 3 </td>
-</tr>
-<tr>
-<td> b </td>
-<td> 2 </td>
-<td> 2 </td>
-</tr>
-<tr>
-<td> b </td>
-<td> 3 </td>
-<td> 1 </td>
-</tr>
-<tr>
-<td> c </td>
-<td> 1 </td>
-<td> 1 </td>
-</tr>
-<tr>
-<td> c </td>
-<td> 2 </td>
-<td> 1 </td>
-</tr>
-</tbody>
-</table>
-
-
-<p>2.聚合数据的增量计算</p>
-
-<p>对于 AggregatingMergeTree 引擎的表，不能使用普通的 INSERT 去添加数据，可以用：</p>
-
-<ol type="a">
-<li><p>INSERT SELECT 来插入数据</p></li>
-<li><p>更常用的，是可以创建一个物化视图</p></li>
-</ol>
-
-
-<pre><code>drop table if exists test.aggregatingmergetree;
+</pre></table></code></div></div><p>注: 可加列不能是主键中的列，并且如果某行数据可加列都是 null ，则这行会被删除</p><h2 id="313-aggregatingmergetree"><span class="me-2">3.13 AggregatingMergeTree</span><a href="#313-aggregatingmergetree" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>AggregatingMergeTree 是在 MergeTree 基础之上，针对聚合函数结果，作增量计算优化的一个设计，它会在 merge 时，针对主键预处理聚合的数据</p><p>应用于AggregatingMergeTree 上的聚合函数除了普通的 sum, uniq等，还有 sumState , uniqState ，及 sumMerge ， uniqMerge 这两组</p><p>1.聚合数据的预计算</p><p>是一种“空间换时间”的权衡，并且是以减少维度为代价的</p><div class="table-wrapper"><table><thead><tr><th>dim1<th>dim2<th>dim3<th>measure1<tbody><tr><td>aaaa<td>a<td>1<td>1<tr><td>aaaa<td>b<td>2<td>1<tr><td>bbbb<td>b<td>3<td>1<tr><td>cccc<td>b<td>2<td>1<tr><td>cccc<td>c<td>1<td>1<tr><td>dddd<td>c<td>2<td>1<tr><td>dddd<td>a<td>1<td>1</table></div><p>假设原始有三个维度，一个需要 count 的指标</p><div class="table-wrapper"><table><thead><tr><th>dim1<th>dim2<th>dim3<th>measure1<tbody><tr><td>aaaa<td>a<td>1<td>1<tr><td>aaaa<td>b<td>2<td>1<tr><td>bbbb<td>b<td>3<td>1<tr><td>cccc<td>b<td>2<td>1<tr><td>cccc<td>c<td>1<td>1<tr><td>dddd<td>c<td>2<td>1<tr><td>dddd<td>a<td>1<td>1</table></div><p>通过减少一个维度的方式，来以 count 函数聚合一次 M</p><div class="table-wrapper"><table><thead><tr><th>dim2<th>dim3<th>count(measure1)<tbody><tr><td>a<td>1<td>3<tr><td>b<td>2<td>2<tr><td>b<td>3<td>1<tr><td>c<td>1<td>1<tr><td>c<td>2<td>1</table></div><p>2.聚合数据的增量计算</p><p>对于 AggregatingMergeTree 引擎的表，不能使用普通的 INSERT 去添加数据，可以用：</p><p>a. INSERT SELECT 来插入数据</p><p>b. 更常用的，是可以创建一个物化视图</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+</pre><td class="rouge-code"><pre>drop table if exists test.aggregatingmergetree;
 create table test.aggregatingmergetree(sdt Date, dim1 String, dim2 String, dim3 String, measure1 UInt64) ENGINE=MergeTree(sdt, (sdt, dim1, dim2, dim3), 8192);
 -- 创建一个物化视图，使用 AggregatingMergeTree
 drop table if exists test.aggregatingmergetree_view;
@@ -885,129 +302,6 @@ OPTIMIZE TABLE test.aggregatingmergetree_view;
 select * from test.aggregatingmergetree_view;
 -- 查 dim2 的 uv
 select dim2, uniqMerge(uv) from test.aggregatingmergetree_view group by dim2 order by dim2;
-</code></pre>
-
-<h2>3.14 CollapsingMergeTree</h2>
-
-<p>是专门为 OLAP 场景下，一种“变通”存数做法而设计的，在数据是不能改，更不能删的前提下，通过“运算”的方式，去抹掉旧数据的影响，把旧数据“减”去即可，从而解决"最终状态"类的问题，比如 当前有多少人在线？</p>
-
-<p>“以加代删”的增量存储方式，带来了聚合计算方便的好处，代价却是存储空间的翻倍，并且，对于只关心最新状态的场景，中间数据都是无用的</p>
-
-<p>CollapsingMergeTree 在创建时与 MergeTree 基本一样，除了最后多了一个参数，需要指定 Sign 位（必须是 Int8 类型）</p>
-
-<pre><code>create table test.collapsingmergetree(sign Int8, sdt Date, name String, cnt UInt16) ENGINE=CollapsingMergeTree(sdt, (sdt, name), 8192, sign);
-</code></pre>
-</div>
-<div id="copyleft" class="well" >
-	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2019/10/08/clickhouse-basics/</a></br>
-	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
-</div>
-
-
-  <footer>
-    <p class="meta">
-      
-<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
-
-      
-
-
-
-
-
-
-
-
-
-<time datetime="2019-10-08T16:27:00+08:00" pubdate data-updated="true"></time>
-		
-		
-		
-		  <span class="categories">Posted in <a class='category' href='/blog/categories/bigdata/'>BigData</a></span>
-		
-		
-		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/clickhouse/'>ClickHouse</a>, <a class='tag' href='/blog/tags/olap/'>OLAP</a>, <a class='tag' href='/blog/tags/lie-shi-cun-chu/'>列式存储</a>, <a class='tag' href='/blog/tags/da-shu-ju/'>大数据</a></span>
-		
-    </p>
-    
-      
-         <div class="sharing">
-  
-  
-  
-</div>
-
-      
-    
-	</br>
-	 <ul class="pager">
-      
-      <li class="previous"><a class="basic-alignment left"
-        href="/blog/2019/09/17/spark-rdd-dataframe-dataset/" title="Previous Post:
-        Apache Spark的API三剑客：RDD、DataFrame和Dataset">&laquo; Apache Spark的API三剑客：RDD、DataFrame和Dataset</a></li>
-      
-      <li><a href="/blog/archives/">Blog Archives</a></li>
-      
-      <li class="next"><a class="basic-alignment right" href="/blog/2020/02/21/tree-ensemble-models-comparison/"
-        title="Next Post: 集成树模型详解：RandomForest、GBDT、XGBoost与LightGBM">集成树模型详解：RandomForest、GBDT、XGBoost与LightGBM
-        &raquo;</a></li>
-      
-    </ul>
-    
-    <section>
-      <h1>Comments</h1>
-      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-    </section>
-    
-   
-  </footer>
-</article>
-
-<aside class="sidebar-nav span3">
-  
-    
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo" class="page-footer">
-<hr>
-<p>
-  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'ibillxia';
-      
-        
-        // var disqus_developer = 1;
-        var disqus_identifier = 'https://ibillxia.github.io/blog/2019/10/08/clickhouse-basics/';
-        var disqus_url = 'https://ibillxia.github.io/blog/2019/10/08/clickhouse-basics/';
-        var disqus_script = 'embed.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-
-
-
-
-
-
-
-
-
-</body>
-</html>
+</pre></table></code></div></div><h2 id="314-collapsingmergetree"><span class="me-2">3.14 CollapsingMergeTree</span><a href="#314-collapsingmergetree" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>是专门为 OLAP 场景下，一种“变通”存数做法而设计的，在数据是不能改，更不能删的前提下，通过“运算”的方式，去抹掉旧数据的影响，把旧数据“减”去即可，从而解决”最终状态”类的问题，比如 当前有多少人在线？</p><p>“以加代删”的增量存储方式，带来了聚合计算方便的好处，代价却是存储空间的翻倍，并且，对于只关心最新状态的场景，中间数据都是无用的</p><p>CollapsingMergeTree 在创建时与 MergeTree 基本一样，除了最后多了一个参数，需要指定 Sign 位（必须是 Int8 类型）</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>create table test.collapsingmergetree(sign Int8, sdt Date, name String, cnt UInt16) ENGINE=CollapsingMergeTree(sdt, (sdt, name), 8192, sign);
+</pre></table></code></div></div></div><div class="post-tail-wrapper text-muted"><div class="d-flex justify-content-between align-items-center gap-3 mb-3"><div class="post-meta"> <i class="far fa-folder-open fa-fw me-1"></i> <a href="/blog/categories/bigdata/">BigData</a></div></div><div class="post-tags"> <i class="fa fa-tags fa-fw me-1"></i> <a href="/blog/tags/clickhouse/" class="post-tag no-text-decoration" >ClickHouse</a> <a href="/blog/tags/olap/" class="post-tag no-text-decoration" >OLAP</a> <a href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/" class="post-tag no-text-decoration" >大数据</a> <a href="/blog/tags/%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8/" class="post-tag no-text-decoration" >列式存储</a></div><div class=" post-tail-bottom d-flex justify-content-between align-items-center mt-5 pb-2 " ><div class="license-wrapper"> 本文由作者按照 <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> 进行授权</div><div class="share-wrapper d-flex align-items-center"> <span class="share-label text-muted">分享</span> <span class="share-icons"> <a href="https://x.com/intent/tweet?text=ClickHouse%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B8%8E%E5%AE%9E%E8%B7%B5%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2019%2F10%2F08%2Fclickhouse-basics%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Twitter" aria-label="Twitter"> <i class="fa-fw fa-brands fa-square-x-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=ClickHouse%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B8%8E%E5%AE%9E%E8%B7%B5%20-%20Bill's%20Blog&u=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2019%2F10%2F08%2Fclickhouse-basics%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Facebook" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://t.me/share/url?url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2019%2F10%2F08%2Fclickhouse-basics%2F&text=ClickHouse%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B8%8E%E5%AE%9E%E8%B7%B5%20-%20Bill's%20Blog" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Telegram" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <a href="https://service.weibo.com/share/share.php?title=ClickHouse%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B8%8E%E5%AE%9E%E8%B7%B5%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2019%2F10%2F08%2Fclickhouse-basics%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Weibo" aria-label="Weibo"> <i class="fa-fw fab fa-weibo"></i> </a> <button id="copy-link" aria-label="Copy link" class="btn small" data-bs-toggle="tooltip" data-bs-placement="top" title="分享链接" data-title-succeed="链接已复制！" > <i class="fa-fw fas fa-link pe-none fs-6"></i> </button> </span></div></div></div></article></main><aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 text-muted"><div class="access"><section id="access-lastmod"><h2 class="panel-heading">最近更新</h2><ul class="content list-unstyled ps-0 pb-1 ms-1 mt-2"><li class="text-truncate lh-lg"> <a href="/blog/2026/11/16/anthropic-the-components-of-agent-memory/">【译】Anthropic：智能体记忆的组成部分</a><li class="text-truncate lh-lg"> <a href="/blog/2026/11/09/is-FDE-actually-established-in-China/">前鹅厂王津银：FDE 在中国，到底成立吗？</a><li class="text-truncate lh-lg"> <a href="/blog/2026/09/14/openai-data-agent-skills-interpretation/">OpenAI Data Agent的核心Skill解读：数据Agent如何把问题变成可信的决策</a><li class="text-truncate lh-lg"> <a href="/blog/2026/08/20/data-agent-servey-from-arch-to-practice/">Data Agent全景调研：从技术架构到产业实践</a><li class="text-truncate lh-lg"> <a href="/blog/2026/07/03/FDE-what-why-and-future/">什么是 FDE？从它的爆火看软件研发的职能大洗牌</a></ul></section><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div><div class="toc-border-cover z-3"></div><section id="toc-wrapper" class="invisible position-sticky ps-0 pe-4 pb-4"><h2 class="panel-heading ps-3 pb-2 mb-0">文章内容</h2><nav id="toc"></nav></section></aside></div><div class="row"><div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 px-md-4"><aside id="related-posts" aria-labelledby="related-label"><h3 class="mb-4" id="related-label">相关文章</h3><nav class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4"><article class="col"> <a href="/blog/2016/11/15/sensors-analytics-architecture/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1479215820" data-df="YYYY/MM/DD" > 2016/11/15 </time><h4 class="pt-0 my-2">神策分析的技术选型与架构实现</h4><div class="text-muted"><p>很多朋友很想知道神策分析（Sensors Analytics）是如何实现在每天十亿级别数据的情况下可以做到秒级导入和秒级查询，是如何做到不需要预先指定指标和维度就能实现多维查询的。今天正好在这篇文章里面，和大家交流一下我们的技术选型与具体的架构实现，希望能够对大家有所启发。 当然，脱离客户需求谈产品设计，不太现实；而脱离产品设计，纯粹谈技术选型与架构实现，也不现实。因此，我们首先会跟大家探...</p></div></div></a></article><article class="col"> <a href="/blog/2019/06/14/apache-kylin-guide/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1560505620" data-df="YYYY/MM/DD" > 2019/06/14 </time><h4 class="pt-0 my-2">Apache Kylin入门、指南与实践</h4><div class="text-muted"><p>一、Apache Kylin 简介 Apache Kylin 是一个开源的分布式分析引擎，提供 Hadoop/Spark 之上的 SQL 查询接口及多维分析（OLAP）能力以支持超大规模数据，最初由 eBay Inc. 开发并贡献至开源社区，它能在亚秒内查询巨大的 Hive 表。 1.1 Apache Kylin 的特性： 可扩展的超快 OLAP 引擎: Kylin...</p></div></div></a></article><article class="col"> <a href="/blog/2019/06/05/druid-based-kylin-storage/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1559739240" data-df="YYYY/MM/DD" > 2019/06/05 </time><h4 class="pt-0 my-2">【美团】基于Druid的Kylin存储引擎实践</h4><div class="text-muted"><p>作者: 康凯森 8月11日，由 Kyligence 主办、美团点评协办的 Apache Kylin Meetup@北京，在美团公司总部圆满落幕。本文整理自当天美团大数据工程师、Apache Kylin Committer康凯森的演讲实录，全文共6600字，阅读时间大约15分钟。或点击视频，观看Meetup现场实录。 本次分享的内容主要分为3部分，首先我会介绍下Kylin On HBase...</p></div></div></a></article></nav></aside><nav class="post-navigation d-flex justify-content-between" aria-label="Post Navigation"> <a href="/blog/2019/09/17/spark-rdd-dataframe-dataset/" class="btn btn-outline-primary" aria-label="上一篇" ><p>Apache Spark的API三剑客：RDD、DataFrame和Dataset</p></a> <a href="/blog/2020/02/21/tree-ensemble-models-comparison/" class="btn btn-outline-primary" aria-label="下一篇" ><p>集成树模型详解：RandomForest、GBDT、XGBoost与LightGBM</p></a></nav><footer aria-label="Site Info" class=" d-flex flex-column justify-content-center text-muted flex-lg-row justify-content-lg-between align-items-lg-center pb-lg-3 " ><p>© <time>2026</time> <a href="https://github.com/ibillxia">Bill Xia</a>. <span data-bs-toggle="tooltip" data-bs-placement="top" title="除非另有说明，本网站上的博客文章均由作者按照知识共享署名 4.0 国际 (CC BY 4.0) 许可协议进行授权。" >保留部分权利。</span></p><p>本站采用 <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> 主题 <a data-bs-toggle="tooltip" data-bs-placement="top" title="v7.6.0" href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener" >Chirpy</a></p></footer></div></div><div id="search-result-wrapper" class="d-flex justify-content-center d-none"><div class="col-11 content"><div id="search-hints"><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><aside aria-label="Scroll to Top"> <button id="back-to-top" type="button" class="btn btn-lg btn-box-shadow"> <i class="fas fa-angle-up"></i> </button></aside></div><div id="mask" class="d-none position-fixed w-100 h-100 z-1"></div><aside id="notification" class="toast w-auto rounded-5 text-nowrap" role="alert" aria-live="assertive" aria-atomic="true" data-bs-animation="true" data-bs-autohide="false" ><div class="d-flex align-items-center"><div class="toast-body ps-3">发现新内容</div><button type="button" class="btn btn-primary btn-sm rounded-2 py-0" aria-label="Update" >更新</button> <button type="button" class="btn-close mx-3 ms-2" data-bs-dismiss="toast" aria-label="Close" ></button></div></aside><script> var disqus_config = function () { this.page.url = 'https://ibillxia.github.io/blog/2019/10/08/clickhouse-basics/'; this.page.identifier = '/blog/2019/10/08/clickhouse-basics/'; }; function addDisqus() { let disqusThread = document.createElement('div'); let paragraph = document.createElement('p'); disqusThread.id = 'disqus_thread'; paragraph.className = 'text-center text-muted small'; paragraph.innerHTML = 'Comments powered by <a href="https://disqus.com/">Disqus</a>.'; disqusThread.appendChild(paragraph); const footer = document.querySelector('footer'); footer.insertAdjacentElement("beforebegin", disqusThread); }function reloadDisqus(event) { if (event.source === window && event.data && event.data.id === Theme.eventId) {if (typeof DISQUS === 'undefined') { return; } if (document.readyState == 'complete') { DISQUS.reset({ reload: true, config: disqus_config }); } } } addDisqus(); if (Theme.isToggleable) { addEventListener('message', reloadDisqus); }var disqusObserver = new IntersectionObserver( function (entries) { if (entries[0].isIntersecting) { var d = document, s = d.createElement('script'); s.src = 'https://ibillxia.disqus.com/embed.js'; s.setAttribute('data-timestamp', +new Date()); (d.head || d.body).appendChild(s); disqusObserver.disconnect(); } }, { threshold: [0] } ); disqusObserver.observe(document.getElementById('disqus_thread')); </script> <script> document.addEventListener('DOMContentLoaded', () => { SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<article class="px-1 px-sm-2 px-lg-4 px-xl-0"><header><h2><a href="{url}">{title}</a></h2><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div></header><p>{content}</p></article>', noResultsText: '<p class="mt-5">搜索结果为空</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="me-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); }); </script>

@@ -1,451 +1,161 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>PHP函数`call_user_func`和`call_user_func_array`详解 - Bill's Blog</title>
-  <meta name="author" content="Bill Xia">
-
-  
-  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="https://ibillxia.github.io/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <style type="text/css">
-    body {
-      padding-bottom: 0px;
-    }
-    h1 {
-      margin-bottom: 15px;
-    }
-    img {
-      max-width: 100%;
-    }
-    .sharing, .meta, .pager {
-      margin: 20px 0px 20px 0px;
-    }
-    .page-footer p {
-      text-align: center;
-    }
-  </style>
-  <script src="/javascripts/libs/jquery.js"></script>
-  <script src="/javascripts/libs/modernizr-2.0.js"></script>
-  <script src="/javascripts/libs/bootstrap.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-34DJ0T23LB');
-  </script>
-  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
-  <script type="text/javascript">
-function addBlankTargetForLinks () {
-  $('a[href^="http"]').each(function(){
-      $(this).attr('target', '_blank');
-  });
-}
-
-$(function () {
-  addBlankTargetForLinks();
-  if (typeof MutationObserver !== 'undefined') {
-    new MutationObserver(function () {
-      addBlankTargetForLinks();
-    }).observe(document.body, { childList: true, subtree: true });
-  }
-});
-</script>
-<!-- MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = 'https://ssl.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
-</head>
-
-<body   >
-  <nav role="navigation"><div class="navbar navbar-inverse">
-  <div class="navbar-inner">
-    <div class="container">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-
-      <a class="brand" href="/">Bill's Blog</a>
-
-      <div class="nav-collapse">
-        <ul class="nav">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives/">Archives</a></li>
-  <li><a href="/blog/categories/">Categories</a></li>
-  <li><a href="/blog/tags/">Tags</a></li>
-  <li><a href="/about/">About</a></li>
-</ul>
-
-
-        <ul class="nav pull-right" data-subscription="rss">
-          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-          
-        </ul>
-
-        
-          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
-            <fieldset role="search">
-              <input type="hidden" name="q" value="site:ibillxia.github.io" />
-              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
-            </fieldset>
-          </form>
-        
-      </div>
-    </div>
-  </div>
-</div>
-</nav>
-  <div class="container">
-    <div class="row-fluid">
-      
-<article class="hentry span9" role="article">
-
-  
-  <header class="page-header">
-    
-      <h1 class="entry-title">PHP函数`call_user_func`和`call_user_func_array`详解</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2010-08-04T21:38:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><p>`call_user_func`函数类似于一种特别的调用函数的方法，使用方法如下：</p>
-
-
-
-
-<pre><code class="php">function a($b,$c) 
-{
-    echo $b;
-    echo $c;
-}
-call_user_func('a', "111","222");
-call_user_func('a', "333","444");
-//显示 111 222 333 444
-</code></pre>
-
-
-
-<!--more-->
-
-
-<p>调用类内部的方法比较奇怪，居然用的是array，不知道开发者是如何考虑的，当然省去了new，也是满有新意的:</p>
-
-
-
-
-<pre><code class="php">class a {
-    function b($c) 
-    {
-        echo $c;
-    }
-}
-call_user_func(array("a", "b"),"111");
-//显示 111
-</code></pre>
-
-
-
-<p>`call_user_func_array`函数和`call_user_func`很相似，只不过是换了一种方式传递了参数，让参数的结构更清晰:</p>
-
-
-
-
-<pre><code class="php">unction a($b, $c) 
-{
-    echo $b;
-    echo $c;
-}
-call_user_func_array('a', array("111", "222"));
-//显示 111 222
-</code></pre>
-
-
-
-<p>`call_user_func_array`函数也可以调用类内部的方法的</p>
-
-
-
-
-<pre><code class="php">Class ClassA {
-    function bc($b, $c) {
-        $bc = $b + $c;
-        echo $bc;
-    }
-}
-call_user_func_array(array('ClassA','bc'), array("111", "222"));
-//显示 333
-</code></pre>
-
-
-
-<p>`call_user_func`函数和`call_user_func_array`函数都支持引用，这让他们和普通的函数调用更趋于功能一致:</p>
-
-
-
-
-<pre><code class="php">function a(&amp;$b)
-{
-    $b++;
-}
-$c = 0;
-call_user_func('a', &amp;$c);
-echo $c;//显示 1
-call_user_func_array('a', array(&amp;$c));
-echo $c;//显示 2
-</code></pre>
-
-
-
-<p>一个可以用于调试输出的例子：</p>
-
-
-
-
-<pre><code class="php">function debug($var, $val) 
-{
-    echo "***DEBUGGING\nVARIABLE: $var\nVALUE:";
-    if (is_array($val) || is_object($val) || is_resource($val)) {
-        print_r($val);
-    } else {
-        echo "\n$val\n";
-    }
-    echo "***\n";
-}
-
-$c = mysql_connect();
-$host = $_SERVER["SERVER_NAME"];
-
-call_user_func_array('debug', array("host", $host));
-call_user_func_array('debug', array("c", $c));
-call_user_func_array('debug', array("_POST", $_POST));
-</code></pre>
-
-
-
-<p>另外，如果和伪重载结合，还可以这样用：</p>
-
-
-
-
-<pre><code class="php">function otest1 ($a)
-{
-    echo( '一个参数' );
-}
-
-function otest2 ( $a, $b)
-{
-    echo( '二个参数' );
-}
-
-function otest3 ( $a ,$b,$c)
-{
-    echo( '三个啦' );
-}
-
-function otest ()
-{
-    $args = func_get_args();
-    $num = func_num_args();
-    call_user_func_array( 'otest'.$num, $args );
-}
-
-otest(1,2);  //调用第一个函数，输出：一个参数
-</code></pre>
-</div>
-<div id="copyleft" class="well" >
-	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/</a></br>
-	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
-</div>
-
-
-  <footer>
-    <p class="meta">
-      
-<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
-
-      
-
-
-
-
-
-
-
-
-
-<time datetime="2010-08-04T21:38:00+08:00" pubdate data-updated="true"></time>
-		
-		
-		
-		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
-		
-		
-		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/php/'>PHP</a>, <a class='tag' href='/blog/tags/ku-han-shu/'>库函数</a></span>
-		
-    </p>
-    
-      
-         <div class="sharing">
-  
-  
-  
-</div>
-
-      
-    
-	</br>
-	 <ul class="pager">
-      
-      <li class="previous"><a class="basic-alignment left"
-        href="/blog/2010/07/21/php-send-email/" title="Previous Post:
-        PHP发送邮件">&laquo; PHP发送邮件</a></li>
-      
-      <li><a href="/blog/archives/">Blog Archives</a></li>
-      
-      <li class="next"><a class="basic-alignment right" href="/blog/2010/08/10/php-connecting-tool-snoopy-introduction-and-application/"
-        title="Next Post: PHP采集利器snoopy应用详解">PHP采集利器snoopy应用详解
-        &raquo;</a></li>
-      
-    </ul>
-    
-    <section>
-      <h1>Comments</h1>
-      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-    </section>
-    
-   
-  </footer>
-</article>
-
-<aside class="sidebar-nav span3">
-  
-    
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo" class="page-footer">
-<hr>
-<p>
-  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'ibillxia';
-      
-        
-        // var disqus_developer = 1;
-        var disqus_identifier = 'https://ibillxia.github.io/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/';
-        var disqus_url = 'https://ibillxia.github.io/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/';
-        var disqus_script = 'embed.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-
-
-
-
-
-
-
-
-
-</body>
-</html>
+<!doctype html><html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f7"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1b1b1e"><meta name="viewport" content="width=device-width, user-scalable=no initial-scale=1, shrink-to-fit=no, viewport-fit=cover" ><meta name="generator" content="Jekyll v4.4.1" /><meta property="og:title" content="PHP函数call_user_func和call_user_func_array详解" /><meta property="og:locale" content="zh_CN" /><meta name="description" content="`call_user_func`函数类似于一种特别的调用函数的方法，使用方法如下：" /><meta name="twitter:description" property="og:description" content="`call_user_func`函数类似于一种特别的调用函数的方法，使用方法如下：" /><link rel="canonical" href="https://ibillxia.github.io/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/" /><meta property="og:url" content="https://ibillxia.github.io/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/" /><meta property="og:site_name" content="Bill’s Blog" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2010-08-04T21:38:00+08:00" /><meta property="article:modified_time" content="2010-08-04T21:38:00+08:00" /><meta property="og:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:card" content="summary_large_image" /><meta property="twitter:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:title" content="PHP函数call_user_func和call_user_func_array详解" /><meta name="twitter:site" content="@ibillxia" /><meta name="msvalidate.01" content="1538BC1807507674B6BD4942F25493B2" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2010-08-04T21:38:00+08:00","datePublished":"2010-08-04T21:38:00+08:00","description":"`call_user_func`函数类似于一种特别的调用函数的方法，使用方法如下：","headline":"PHP函数call_user_func和call_user_func_array详解","mainEntityOfPage":{"@type":"WebPage","@id":"https://ibillxia.github.io/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/"},"url":"https://ibillxia.github.io/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/"}</script><title>PHP函数`call_user_func`和`call_user_func_array`详解 | Bill's Blog</title><link rel="icon" type="image/png" href="/assets/img/favicons/favicon-96x96.png" sizes="96x96"><link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico"><link rel="shortcut icon" href="/assets/img/favicon.ico"><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="stylesheet" href="/assets/css/jekyll-theme-chirpy.css"><link rel="stylesheet" href="/assets/lib/fonts/main.css"><link rel="stylesheet" href="/assets/lib/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="/assets/lib/tocbot/tocbot.min.css"><link rel="stylesheet" href="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.min.css"><link rel="stylesheet" href="/assets/lib/glightbox/glightbox.min.css"> <script src="/assets/js/dist/theme.min.js"></script> <script defer src="/assets/lib/simple-jekyll-search/simple-jekyll-search.min.js"></script> <script defer src="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.umd.min.js"></script> <script defer src="/assets/lib/glightbox/glightbox.min.js"></script> <script defer src="/assets/lib/clipboard/clipboard.min.js"></script> <script defer src="/assets/lib/dayjs/dayjs.min.js"></script> <script defer src="/assets/lib/dayjs/locale/en.js"></script> <script defer src="/assets/lib/dayjs/plugin/relativeTime.js"></script> <script defer src="/assets/lib/dayjs/plugin/localizedFormat.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script defer src="/app.min.js?baseurl=&register=true" ></script> <script defer src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script> <script> document.addEventListener('DOMContentLoaded', () => { window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-34DJ0T23LB'); }); </script><body><aside aria-label="Sidebar" id="sidebar" class="d-flex flex-column align-items-end"><header class="profile-wrapper"> <a href="/" id="avatar" class="rounded-circle"><img src="/assets/img/rock_coder.png" width="112" height="112" alt="avatar" onerror="this.style.display='none'"></a> <a class="site-title d-block" href="/">Bill's Blog</a><p class="site-subtitle fst-italic mb-0">Program Hard, Play Hard, Live Crazy!</p></header><nav class="flex-column flex-grow-1 w-100 ps-0"><ul class="nav"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home"></i> <span>首页</span> </a><li class="nav-item"> <a href="/blog/archives/" class="nav-link"> <i class="fa-fw fas fa-archive"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/blog/categories/" class="nav-link"> <i class="fa-fw fas fa-stream"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/blog/tags/" class="nav-link"> <i class="fa-fw fas fa-tags"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle"></i> <span>关于</span> </a></ul></nav><div class="sidebar-bottom d-flex flex-wrap align-items-center w-100"><div class="btn-group dropup"> <button type="button" class="btn btn-link nav-link" aria-label="Switch Mode" id="mode-toggle" data-bs-toggle="dropdown" ><i class="fa-regular fa-sun" data-theme-mode="light"></i><i class="fa-regular fa-moon" data-theme-mode="dark"></i><i class="fa-solid fa-display" data-theme-mode="system"></i></button><ul class="dropdown-menu rounded-3 mb-1 p-1"><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="light"><i class="fa-regular fa-sun" data-theme-mode="light"></i>浅色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="dark"><i class="fa-regular fa-moon" data-theme-mode="dark"></i>深色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="system"><i class="fa-solid fa-display" data-theme-mode="system"></i>跟随系统</button></ul></div><span class="icon-border"></span> <a href="https://github.com/ibillxia" aria-label="github" target="_blank" rel="noopener noreferrer" > <i class="fab fa-github"></i> </a> <a href="https://x.com/ibillxia" aria-label="x" target="_blank" rel="noopener noreferrer" > <i class="fa-brands fa-x-twitter"></i> </a> <a href="javascript:void(location.href = 'mailto:' + ['ibillxia','gmail.com'].join('@'))" aria-label="email" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" > <i class="fas fa-rss"></i> </a> <a href="https://stackoverflow.com/users/1602285/bill-xia" aria-label="stack-overflow" target="_blank" rel="noopener noreferrer" > <i class="fab fa-stack-overflow"></i> </a> <a href="https://weibo.com/ibillxia" aria-label="weibo" target="_blank" rel="noopener noreferrer" > <i class="fab fa-weibo"></i> </a></div></aside><div id="main-wrapper" class="d-flex justify-content-center"><div class="container d-flex flex-column px-xxl-5"><header id="topbar-wrapper" class="flex-shrink-0" aria-label="Top Bar"><div id="topbar" class="d-flex align-items-center justify-content-between px-lg-3 h-100" ><nav id="breadcrumb" aria-label="Breadcrumb"> <span> <a href="/">首页</a> </span> <span>PHP函数`call_user_func`和`call_user_func_array`详解</span></nav><button type="button" id="sidebar-trigger" class="btn btn-link" aria-label="Sidebar"> <i class="fas fa-bars fa-fw"></i> </button><div id="topbar-title"> 文章</div><button type="button" id="search-trigger" class="btn btn-link" aria-label="Search"> <i class="fas fa-search fa-fw"></i> </button> <search id="search" class="align-items-center ms-3 ms-lg-0"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="搜索..." > </search> <button type="button" class="btn btn-link text-decoration-none" id="search-cancel">取消</button></div></header><div class="row flex-grow-1"><main aria-label="Main Content" class="col-12 col-lg-11 col-xl-9 px-md-4"><article class="px-1" data-toc="false"><header><h1 data-toc-skip>PHP函数`call_user_func`和`call_user_func_array`详解</h1><div class="post-meta text-muted"> <span> 发表于 <time data-ts="1280929080" data-df="YYYY/MM/DD" data-bs-toggle="tooltip" data-bs-placement="bottom" > 2010/08/04 </time> </span><div class="d-flex justify-content-between"> <span> 作者 <em> <a href="https://github.com/ibillxia">Bill Xia</a> </em> </span><div> <span class="readtime" data-bs-toggle="tooltip" data-bs-placement="bottom" title="478 字" > <em>2 分钟</em>阅读</span></div></div></div></header><div class="content"><p>`call_user_func`函数类似于一种特别的调用函数的方法，使用方法如下：</p><div class="language-php highlighter-rouge"><div class="code-header"> <span data-label-text="PHP"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre><td class="rouge-code"><pre><span class="k">function</span> <span class="n">a</span><span class="p">(</span><span class="nv">$b</span><span class="p">,</span><span class="nv">$c</span><span class="p">)</span> 
+<span class="p">{</span>
+	<span class="k">echo</span> <span class="nv">$b</span><span class="p">;</span>
+	<span class="k">echo</span> <span class="nv">$c</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nb">call_user_func</span><span class="p">(</span><span class="s1">'a'</span><span class="p">,</span> <span class="s2">"111"</span><span class="p">,</span><span class="s2">"222"</span><span class="p">);</span>
+<span class="nb">call_user_func</span><span class="p">(</span><span class="s1">'a'</span><span class="p">,</span> <span class="s2">"333"</span><span class="p">,</span><span class="s2">"444"</span><span class="p">);</span>
+<span class="c1">//显示 111 222 333 444</span>
+</pre></table></code></div></div><p>调用类内部的方法比较奇怪，居然用的是array，不知道开发者是如何考虑的，当然省去了new，也是满有新意的:</p><div class="language-php highlighter-rouge"><div class="code-header"> <span data-label-text="PHP"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre><td class="rouge-code"><pre><span class="kd">class</span> <span class="nc">a</span> <span class="p">{</span>
+	<span class="k">function</span> <span class="n">b</span><span class="p">(</span><span class="nv">$c</span><span class="p">)</span> 
+	<span class="p">{</span>
+		<span class="k">echo</span> <span class="nv">$c</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+<span class="nb">call_user_func</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s2">"a"</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">),</span><span class="s2">"111"</span><span class="p">);</span>
+<span class="c1">//显示 111</span>
+</pre></table></code></div></div><p>`call_user_func_array`函数和`call_user_func`很相似，只不过是换了一种方式传递了参数，让参数的结构更清晰:</p><div class="language-php highlighter-rouge"><div class="code-header"> <span data-label-text="PHP"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre><span class="n">unction</span> <span class="nf">a</span><span class="p">(</span><span class="nv">$b</span><span class="p">,</span> <span class="nv">$c</span><span class="p">)</span> 
+<span class="p">{</span>
+	<span class="k">echo</span> <span class="nv">$b</span><span class="p">;</span>
+	<span class="k">echo</span> <span class="nv">$c</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nb">call_user_func_array</span><span class="p">(</span><span class="s1">'a'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s2">"111"</span><span class="p">,</span> <span class="s2">"222"</span><span class="p">));</span>
+<span class="c1">//显示 111 222</span>
+</pre></table></code></div></div><p>`call_user_func_array`函数也可以调用类内部的方法的</p><div class="language-php highlighter-rouge"><div class="code-header"> <span data-label-text="PHP"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre><td class="rouge-code"><pre><span class="kd">Class</span> <span class="nc">ClassA</span> <span class="p">{</span>
+	<span class="k">function</span> <span class="n">bc</span><span class="p">(</span><span class="nv">$b</span><span class="p">,</span> <span class="nv">$c</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nv">$bc</span> <span class="o">=</span> <span class="nv">$b</span> <span class="o">+</span> <span class="nv">$c</span><span class="p">;</span>
+		<span class="k">echo</span> <span class="nv">$bc</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+<span class="nb">call_user_func_array</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">'ClassA'</span><span class="p">,</span><span class="s1">'bc'</span><span class="p">),</span> <span class="k">array</span><span class="p">(</span><span class="s2">"111"</span><span class="p">,</span> <span class="s2">"222"</span><span class="p">));</span>
+<span class="c1">//显示 333</span>
+</pre></table></code></div></div><p>`call_user_func`函数和`call_user_func_array`函数都支持引用，这让他们和普通的函数调用更趋于功能一致:</p><div class="language-php highlighter-rouge"><div class="code-header"> <span data-label-text="PHP"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre><span class="k">function</span> <span class="n">a</span><span class="p">(</span><span class="o">&amp;</span><span class="nv">$b</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="nv">$b</span><span class="o">++</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nv">$c</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="nb">call_user_func</span><span class="p">(</span><span class="s1">'a'</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$c</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nv">$c</span><span class="p">;</span><span class="c1">//显示 1</span>
+<span class="nb">call_user_func_array</span><span class="p">(</span><span class="s1">'a'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="o">&amp;</span><span class="nv">$c</span><span class="p">));</span>
+<span class="k">echo</span> <span class="nv">$c</span><span class="p">;</span><span class="c1">//显示 2</span>
+</pre></table></code></div></div><p>一个可以用于调试输出的例子：</p><div class="language-php highlighter-rouge"><div class="code-header"> <span data-label-text="PHP"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre><td class="rouge-code"><pre><span class="k">function</span> <span class="n">debug</span><span class="p">(</span><span class="nv">$var</span><span class="p">,</span> <span class="nv">$val</span><span class="p">)</span> 
+<span class="p">{</span>
+    <span class="k">echo</span> <span class="s2">"***DEBUGGING</span><span class="se">\n</span><span class="s2">VARIABLE: </span><span class="nv">$var</span><span class="se">\n</span><span class="s2">VALUE:"</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">is_array</span><span class="p">(</span><span class="nv">$val</span><span class="p">)</span> <span class="o">||</span> <span class="nb">is_object</span><span class="p">(</span><span class="nv">$val</span><span class="p">)</span> <span class="o">||</span> <span class="nb">is_resource</span><span class="p">(</span><span class="nv">$val</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nb">print_r</span><span class="p">(</span><span class="nv">$val</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">echo</span> <span class="s2">"</span><span class="se">\n</span><span class="nv">$val</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">echo</span> <span class="s2">"***</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nv">$c</span> <span class="o">=</span> <span class="nb">mysql_connect</span><span class="p">();</span>
+<span class="nv">$host</span> <span class="o">=</span> <span class="nv">$_SERVER</span><span class="p">[</span><span class="s2">"SERVER_NAME"</span><span class="p">];</span>
+
+<span class="nb">call_user_func_array</span><span class="p">(</span><span class="s1">'debug'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s2">"host"</span><span class="p">,</span> <span class="nv">$host</span><span class="p">));</span>
+<span class="nb">call_user_func_array</span><span class="p">(</span><span class="s1">'debug'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s2">"c"</span><span class="p">,</span> <span class="nv">$c</span><span class="p">));</span>
+<span class="nb">call_user_func_array</span><span class="p">(</span><span class="s1">'debug'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s2">"_POST"</span><span class="p">,</span> <span class="nv">$_POST</span><span class="p">));</span>
+</pre></table></code></div></div><p>另外，如果和伪重载结合，还可以这样用：</p><div class="language-php highlighter-rouge"><div class="code-header"> <span data-label-text="PHP"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+</pre><td class="rouge-code"><pre><span class="k">function</span> <span class="n">otest1</span> <span class="p">(</span><span class="nv">$a</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">echo</span><span class="p">(</span> <span class="s1">'一个参数'</span> <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">function</span> <span class="n">otest2</span> <span class="p">(</span> <span class="nv">$a</span><span class="p">,</span> <span class="nv">$b</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">echo</span><span class="p">(</span> <span class="s1">'二个参数'</span> <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">function</span> <span class="n">otest3</span> <span class="p">(</span> <span class="nv">$a</span> <span class="p">,</span><span class="nv">$b</span><span class="p">,</span><span class="nv">$c</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">echo</span><span class="p">(</span> <span class="s1">'三个啦'</span> <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">function</span> <span class="n">otest</span> <span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$args</span> <span class="o">=</span> <span class="nb">func_get_args</span><span class="p">();</span>
+    <span class="nv">$num</span> <span class="o">=</span> <span class="nb">func_num_args</span><span class="p">();</span>
+    <span class="nb">call_user_func_array</span><span class="p">(</span> <span class="s1">'otest'</span><span class="mf">.</span><span class="nv">$num</span><span class="p">,</span> <span class="nv">$args</span> <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nf">otest</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>  <span class="c1">//调用第一个函数，输出：一个参数</span>
+</pre></table></code></div></div></div><div class="post-tail-wrapper text-muted"><div class="d-flex justify-content-between align-items-center gap-3 mb-3"><div class="post-meta"> <i class="far fa-folder-open fa-fw me-1"></i> <a href="/blog/categories/program/">Program</a></div></div><div class="post-tags"> <i class="fa fa-tags fa-fw me-1"></i> <a href="/blog/tags/php/" class="post-tag no-text-decoration" >PHP</a> <a href="/blog/tags/%E5%BA%93%E5%87%BD%E6%95%B0/" class="post-tag no-text-decoration" >库函数</a></div><div class=" post-tail-bottom d-flex justify-content-between align-items-center mt-5 pb-2 " ><div class="license-wrapper"> 本文由作者按照 <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> 进行授权</div><div class="share-wrapper d-flex align-items-center"> <span class="share-label text-muted">分享</span> <span class="share-icons"> <a href="https://x.com/intent/tweet?text=PHP%E5%87%BD%E6%95%B0%60call_user_func%60%E5%92%8C%60call_user_func_array%60%E8%AF%A6%E8%A7%A3%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2010%2F08%2F04%2Fexplain-php-function-call_user_func-and-call_user_func_array-in-detail%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Twitter" aria-label="Twitter"> <i class="fa-fw fa-brands fa-square-x-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=PHP%E5%87%BD%E6%95%B0%60call_user_func%60%E5%92%8C%60call_user_func_array%60%E8%AF%A6%E8%A7%A3%20-%20Bill's%20Blog&u=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2010%2F08%2F04%2Fexplain-php-function-call_user_func-and-call_user_func_array-in-detail%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Facebook" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://t.me/share/url?url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2010%2F08%2F04%2Fexplain-php-function-call_user_func-and-call_user_func_array-in-detail%2F&text=PHP%E5%87%BD%E6%95%B0%60call_user_func%60%E5%92%8C%60call_user_func_array%60%E8%AF%A6%E8%A7%A3%20-%20Bill's%20Blog" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Telegram" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <a href="https://service.weibo.com/share/share.php?title=PHP%E5%87%BD%E6%95%B0%60call_user_func%60%E5%92%8C%60call_user_func_array%60%E8%AF%A6%E8%A7%A3%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2010%2F08%2F04%2Fexplain-php-function-call_user_func-and-call_user_func_array-in-detail%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Weibo" aria-label="Weibo"> <i class="fa-fw fab fa-weibo"></i> </a> <button id="copy-link" aria-label="Copy link" class="btn small" data-bs-toggle="tooltip" data-bs-placement="top" title="分享链接" data-title-succeed="链接已复制！" > <i class="fa-fw fas fa-link pe-none fs-6"></i> </button> </span></div></div></div></article></main><aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 text-muted"><div class="access"><section id="access-lastmod"><h2 class="panel-heading">最近更新</h2><ul class="content list-unstyled ps-0 pb-1 ms-1 mt-2"><li class="text-truncate lh-lg"> <a href="/blog/2026/11/16/anthropic-the-components-of-agent-memory/">【译】Anthropic：智能体记忆的组成部分</a><li class="text-truncate lh-lg"> <a href="/blog/2026/11/09/is-FDE-actually-established-in-China/">前鹅厂王津银：FDE 在中国，到底成立吗？</a><li class="text-truncate lh-lg"> <a href="/blog/2026/09/14/openai-data-agent-skills-interpretation/">OpenAI Data Agent的核心Skill解读：数据Agent如何把问题变成可信的决策</a><li class="text-truncate lh-lg"> <a href="/blog/2026/08/20/data-agent-servey-from-arch-to-practice/">Data Agent全景调研：从技术架构到产业实践</a><li class="text-truncate lh-lg"> <a href="/blog/2026/07/03/FDE-what-why-and-future/">什么是 FDE？从它的爆火看软件研发的职能大洗牌</a></ul></section><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div></aside></div><div class="row"><div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 px-md-4"><aside id="related-posts" aria-labelledby="related-label"><h3 class="mb-4" id="related-label">相关文章</h3><nav class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4"><article class="col"> <a href="/blog/2010/09/24/PHP-string-filter-methods-for-safety/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1285306080" data-df="YYYY/MM/DD" > 2010/09/24 </time><h4 class="pt-0 my-2">PHP字符串安全过滤全攻略</h4><div class="text-muted"><p>php安全过滤是防止注入的第一道防线，不得大意。提到PHP的安全过滤，不得不提的两个东西是`set_magic_quotes_runtime` 和 `magic_quotes_gpc`。 `set_magic_quotes_runtime()` 可以让程序员在代码中动态开启或关闭 `magic_quotes_runtime`，`set_magic_quotes_runtime(1)` 表示...</p></div></div></a></article><article class="col"> <a href="/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1282999740" data-df="YYYY/MM/DD" > 2010/08/28 </time><h4 class="pt-0 my-2">超好的HTML解析工具PHP Simple HTML DOM Parser</h4><div class="text-muted"><p>采用PHP5+ 开发的一个简单的 PHP HTML DOM 分析，支持 invalid HTML 并提供非常简单的方式来操作 HTML 元素。在 HMTL 页面 上查找标签所使用的语法与 jQuery （一个轻量级，实用的 javascript 框架） 相似，从页面中抽取内容只需要一行代码。开源代码： http://sourceforge.net/projects/simplehtmldom...</p></div></div></a></article><article class="col"> <a href="/blog/2010/08/25/php-print-in-format-very-useful-in-debuging/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1282702080" data-df="YYYY/MM/DD" > 2010/08/25 </time><h4 class="pt-0 my-2">PHP格式化打印数组，调试有用</h4><div class="text-muted"><p>以下是从FleaPHP上挖来的，感谢FleaPHP的开发者们。 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 /** * 输出变量的内容，通常用于调试 * * @package Core * * @param mixed $vars 要输出的变量 * @param string $label * @par...</p></div></div></a></article></nav></aside><nav class="post-navigation d-flex justify-content-between" aria-label="Post Navigation"> <a href="/blog/2010/07/21/php-send-email/" class="btn btn-outline-primary" aria-label="上一篇" ><p>PHP发送邮件</p></a> <a href="/blog/2010/08/10/php-connecting-tool-snoopy-introduction-and-application/" class="btn btn-outline-primary" aria-label="下一篇" ><p>PHP采集利器snoopy应用详解</p></a></nav><footer aria-label="Site Info" class=" d-flex flex-column justify-content-center text-muted flex-lg-row justify-content-lg-between align-items-lg-center pb-lg-3 " ><p>© <time>2026</time> <a href="https://github.com/ibillxia">Bill Xia</a>. <span data-bs-toggle="tooltip" data-bs-placement="top" title="除非另有说明，本网站上的博客文章均由作者按照知识共享署名 4.0 国际 (CC BY 4.0) 许可协议进行授权。" >保留部分权利。</span></p><p>本站采用 <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> 主题 <a data-bs-toggle="tooltip" data-bs-placement="top" title="v7.6.0" href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener" >Chirpy</a></p></footer></div></div><div id="search-result-wrapper" class="d-flex justify-content-center d-none"><div class="col-11 content"><div id="search-hints"><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><aside aria-label="Scroll to Top"> <button id="back-to-top" type="button" class="btn btn-lg btn-box-shadow"> <i class="fas fa-angle-up"></i> </button></aside></div><div id="mask" class="d-none position-fixed w-100 h-100 z-1"></div><aside id="notification" class="toast w-auto rounded-5 text-nowrap" role="alert" aria-live="assertive" aria-atomic="true" data-bs-animation="true" data-bs-autohide="false" ><div class="d-flex align-items-center"><div class="toast-body ps-3">发现新内容</div><button type="button" class="btn btn-primary btn-sm rounded-2 py-0" aria-label="Update" >更新</button> <button type="button" class="btn-close mx-3 ms-2" data-bs-dismiss="toast" aria-label="Close" ></button></div></aside><script> var disqus_config = function () { this.page.url = 'https://ibillxia.github.io/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/'; this.page.identifier = '/blog/2010/08/04/explain-php-function-call_user_func-and-call_user_func_array-in-detail/'; }; function addDisqus() { let disqusThread = document.createElement('div'); let paragraph = document.createElement('p'); disqusThread.id = 'disqus_thread'; paragraph.className = 'text-center text-muted small'; paragraph.innerHTML = 'Comments powered by <a href="https://disqus.com/">Disqus</a>.'; disqusThread.appendChild(paragraph); const footer = document.querySelector('footer'); footer.insertAdjacentElement("beforebegin", disqusThread); }function reloadDisqus(event) { if (event.source === window && event.data && event.data.id === Theme.eventId) {if (typeof DISQUS === 'undefined') { return; } if (document.readyState == 'complete') { DISQUS.reset({ reload: true, config: disqus_config }); } } } addDisqus(); if (Theme.isToggleable) { addEventListener('message', reloadDisqus); }var disqusObserver = new IntersectionObserver( function (entries) { if (entries[0].isIntersecting) { var d = document, s = d.createElement('script'); s.src = 'https://ibillxia.disqus.com/embed.js'; s.setAttribute('data-timestamp', +new Date()); (d.head || d.body).appendChild(s); disqusObserver.disconnect(); } }, { threshold: [0] } ); disqusObserver.observe(document.getElementById('disqus_thread')); </script> <script> document.addEventListener('DOMContentLoaded', () => { SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<article class="px-1 px-sm-2 px-lg-4 px-xl-0"><header><h2><a href="{url}">{title}</a></h2><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div></header><p>{content}</p></article>', noResultsText: '<p class="mt-5">搜索结果为空</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="me-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); }); </script>

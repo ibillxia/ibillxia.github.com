@@ -1,451 +1,205 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>深入理解STL源码(3.4) 序列式容器之heap和priority queue - Bill's Blog</title>
-  <meta name="author" content="Bill Xia">
-
-  
-  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="https://ibillxia.github.io/blog/2014/07/27/stl-source-insight-3-sequential-containers-4-heap-and-priority-queue/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <style type="text/css">
-    body {
-      padding-bottom: 0px;
-    }
-    h1 {
-      margin-bottom: 15px;
-    }
-    img {
-      max-width: 100%;
-    }
-    .sharing, .meta, .pager {
-      margin: 20px 0px 20px 0px;
-    }
-    .page-footer p {
-      text-align: center;
-    }
-  </style>
-  <script src="/javascripts/libs/jquery.js"></script>
-  <script src="/javascripts/libs/modernizr-2.0.js"></script>
-  <script src="/javascripts/libs/bootstrap.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-34DJ0T23LB');
-  </script>
-  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
-  <script type="text/javascript">
-function addBlankTargetForLinks () {
-  $('a[href^="http"]').each(function(){
-      $(this).attr('target', '_blank');
-  });
-}
-
-$(function () {
-  addBlankTargetForLinks();
-  if (typeof MutationObserver !== 'undefined') {
-    new MutationObserver(function () {
-      addBlankTargetForLinks();
-    }).observe(document.body, { childList: true, subtree: true });
-  }
-});
-</script>
-<!-- MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = 'https://ssl.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
-</head>
-
-<body   >
-  <nav role="navigation"><div class="navbar navbar-inverse">
-  <div class="navbar-inner">
-    <div class="container">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-
-      <a class="brand" href="/">Bill's Blog</a>
-
-      <div class="nav-collapse">
-        <ul class="nav">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives/">Archives</a></li>
-  <li><a href="/blog/categories/">Categories</a></li>
-  <li><a href="/blog/tags/">Tags</a></li>
-  <li><a href="/about/">About</a></li>
-</ul>
-
-
-        <ul class="nav pull-right" data-subscription="rss">
-          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-          
-        </ul>
-
-        
-          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
-            <fieldset role="search">
-              <input type="hidden" name="q" value="site:ibillxia.github.io" />
-              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
-            </fieldset>
-          </form>
-        
-      </div>
-    </div>
-  </div>
-</div>
-</nav>
-  <div class="container">
-    <div class="row-fluid">
-      
-<article class="hentry span9" role="article">
-
-  
-  <header class="page-header">
-    
-      <h1 class="entry-title">深入理解STL源码(3.4) 序列式容器之heap和priority Queue</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-07-27T21:31:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><p>本文涉及到 SGI STL 源码的文件有<code>heap</code>、<code>stl_heap.h</code>、<code>heap.h</code>、<code>stl_queue.h</code>、<code>queue</code> 等几个文件。</p>
-
-<h2>1. 概述</h2>
-
-<p>前面分别介绍了三种各具特色的序列式容器 —— vector、list和deque，他们几乎可以涵盖所有类型的序列式容器了，但本文要介绍的heap则是一种比较特殊的容器。其实，在STL中heap并没有被定义为一个容器，而只是一组算法，提供给priority queue（优先队列）。故名思议，priority queue 允许用户以任何次序将元素放入容器内，但取出时一定是从优先权最高的元素开始取，binary max heap（二元大根堆）即具有这样的特性，因此如果学过max-heap再看STL中heap的算法和priority queue 的实现就会比较简单。</p>
-
-<h2>2. priority queue 的数据结构</h2>
-
-<p>要实现priority queue的功能，binary search tree（BST）也可以作为其底层机制，但这样的话元素的插入就需要O(logN)的平均复杂度，而且要求元素的大小比较随机，才能使树比较平衡。而binary heap是一种完全二叉树的结构，而且可以使用vector来存储：<br/>
-<code>cpp
-template &lt;class _Tp, class _Sequence __STL_DEPENDENT_DEFAULT_TMPL(vector&lt;_Tp&gt;),
-            class _Compare __STL_DEPENDENT_DEFAULT_TMPL(less&lt;typename _Sequence::value_type&gt;) &gt;
-class priority_queue { // in stl_queue.h 文件中
-protected:
-  _Sequence c; // 使用vector作为数据存储的容器
-  _Compare comp;
-};
-</code><br/>
-另外只需要提供一组heap算法，即元素插入和删除、获取堆顶元素等操作即可。</p>
-
-<!-- more -->
-
-
-<h2>3. push heap 算法</h2>
-
-<p>为了满足完全二叉树的特性，新加入的元素一定要放在vector的最后面；又为了满足max-heap的条件（每个节点的键值不小于其叶子节点的键值），还需要执行上溯过程，将新插入的元素与其父节点进行比较，直到不大于父节点：<br/>
-<code>cpp
-template &lt;class _RandomAccessIterator, class _Distance, class _Tp&gt;
-void __push_heap(_RandomAccessIterator __first, _Distance __holeIndex, _Distance __topIndex, _Tp __value){
-  _Distance __parent = (__holeIndex - 1) / 2; //  新节点的父节点
-  while (__holeIndex &gt; __topIndex &amp;&amp; *(__first + __parent) &lt; __value) { // 插入时的堆调整过程：当尚未到达顶端且父节点小于新值时，需要将新值往上（前）调整
-    *(__first + __holeIndex) = *(__first + __parent); // 父节点下移
-    __holeIndex = __parent;
-    __parent = (__holeIndex - 1) / 2;
-  }    
-  *(__first + __holeIndex) = __value; // 找到新值应当存储的位置
-}
-template &lt;class _RandomAccessIterator, class _Distance, class _Tp&gt;
-inline void __push_heap_aux(_RandomAccessIterator __first, _RandomAccessIterator __last, _Distance*, _Tp*) {
-  __push_heap(__first, _Distance((__last - __first) - 1), _Distance(0), _Tp(*(__last - 1)));
-}
-template &lt;class _RandomAccessIterator&gt;
-inline void push_heap(_RandomAccessIterator __first, _RandomAccessIterator __last) { // 真正的对外接口，在调用之前，元素已经放在了vector的最后面了（见priority queue的push_back）
-  __STL_REQUIRES(_RandomAccessIterator, _Mutable_RandomAccessIterator);
-  __STL_REQUIRES(typename iterator_traits&lt;_RandomAccessIterator&gt;::value_type, _LessThanComparable);
-  __push_heap_aux(__first, __last, __DISTANCE_TYPE(__first), __VALUE_TYPE(__first)); // 直接调用 __push_heap_aux
-}
-</code></p>
-
-<h2>4. pop heap 算法</h2>
-
-<p>对heap进行pop操作就是取顶部的元素，取走后要对heap进行调整，是之满足max-heap的特性。调整的策略是，首先将最末尾的元素放到堆顶，然后进行下溯操作，将对顶元素下移到适当的位置：<br/>
-<code>cpp
-template &lt;class _RandomAccessIterator, class _Distance, class _Tp&gt;
-void __adjust_heap(_RandomAccessIterator __first, _Distance __holeIndex, _Distance __len, _Tp __value) { // 调整堆
-  _Distance __topIndex = __holeIndex; // 堆顶
-  _Distance __secondChild = 2 * __holeIndex + 2;
-  while (__secondChild &lt; __len) {
-    if (*(__first + __secondChild) &lt; *(__first + (__secondChild - 1))) __secondChild--; // secondChild 为左右两个子节点中较大者
-    *(__first + __holeIndex) = *(__first + __secondChild); // 节点的值上移
-    __holeIndex = __secondChild;
-    __secondChild = 2 * (__secondChild + 1); // 下移一层
-  }
-  if (__secondChild == __len) { // 最后一个元素
-    *(__first + __holeIndex) = *(__first + (__secondChild - 1));
-    __holeIndex = __secondChild - 1;
-  }
-  __push_heap(__first, __holeIndex, __topIndex, __value);
-}
-template &lt;class _RandomAccessIterator, class _Tp, class _Distance&gt;
-inline void __pop_heap(_RandomAccessIterator __first, _RandomAccessIterator __last, _RandomAccessIterator __result, _Tp __value, _Distance*) {
-  *__result = *__first; // 获取堆顶元素，并赋给堆尾的last-1
-  __adjust_heap(__first, _Distance(0), _Distance(__last - __first), __value); // 调整堆
-}
-template &lt;class _RandomAccessIterator, class _Tp&gt;
-inline void __pop_heap_aux(_RandomAccessIterator __first, _RandomAccessIterator __last, _Tp*) {
-  __pop_heap(__first, __last - 1, __last - 1, _Tp(*(__last - 1)), __DISTANCE_TYPE(__first)); // 对 [first,last-1)进行pop，并将first赋给last-1
-}
-template &lt;class _RandomAccessIterator&gt;
-inline void pop_heap(_RandomAccessIterator __first, _RandomAccessIterator __last) { // 对外提供的接口，最后堆顶元素在堆的末尾，而[first,last-1) 区间为新堆，该接口调用完后再进行pop操作移除最后的元素
-  __STL_REQUIRES(_RandomAccessIterator, _Mutable_RandomAccessIterator);
-  __STL_REQUIRES(typename iterator_traits&lt;_RandomAccessIterator&gt;::value_type, _LessThanComparable);
-  __pop_heap_aux(__first, __last, __VALUE_TYPE(__first));
-}
-</code></p>
-
-<h2>5. make heap 算法</h2>
-
-<p>最后，我们来看看如何从一个初始序列来创建一个heap，有了前面的 <code>adjust_heap</code> ，创建heap也就很简单了，只需要从最后一个非叶子节点开始，不断调用堆调整函数，即可使得整个序列称为一个heap：<br/>
-<code>cpp
-template &lt;class _RandomAccessIterator, class _Compare, class _Tp, class _Distance&gt;
-void __make_heap(_RandomAccessIterator __first, _RandomAccessIterator __last, _Compare __comp, _Tp*, _Distance*) {
-  if (__last - __first &lt; 2) return;
-  _Distance __len = __last - __first;
-  _Distance __parent = (__len - 2)/2; // 定位到最后一个非叶子节点
-  while (true) { // 对每个非叶子节点为根的子树进行堆调整
-    __adjust_heap(__first, __parent, __len, _Tp(*(__first + __parent)), __comp);
-    if (__parent == 0) return;
-    __parent--;
-  }
-}
-template &lt;class _RandomAccessIterator, class _Compare&gt;
-inline void make_heap(_RandomAccessIterator __first, _RandomAccessIterator __last, _Compare __comp) { // 对外提供的接口
-  __STL_REQUIRES(_RandomAccessIterator, _Mutable_RandomAccessIterator);
-  __make_heap(__first, __last, __comp, __VALUE_TYPE(__first), __DISTANCE_TYPE(__first));
-}
-</code></p>
-
-<h2>6. 基于 heap 的 priority queue</h2>
-
-<p>上一篇文章中讲到stack和queue都是基于deque实现的，这里的priority queue是基于vector和heap来实现的，默认使用vector作为容器，而使用heap的算法来维持其priority的特性，因此priority queue也被归类为container adapter。其具体实现的主要代码如下:<br/>
-<code>cpp
-template &lt;class _Tp, class _Sequence __STL_DEPENDENT_DEFAULT_TMPL(vector&lt;_Tp&gt;), class _Compare __STL_DEPENDENT_DEFAULT_TMPL(less&lt;typename _Sequence::value_type&gt;) &gt;
-class priority_queue {
-protected:
-  _Sequence c;
-  _Compare comp;
-public:
-  priority_queue() : c() {}
-  explicit priority_queue(const _Compare&amp; __x) :  c(), comp(__x) {}
-  priority_queue(const _Compare&amp; __x, const _Sequence&amp; __s) : c(__s), comp(__x)
-    { make_heap(c.begin(), c.end(), comp); }
-  bool empty() const { return c.empty(); }
-  size_type size() const { return c.size(); }
-  const_reference top() const { return c.front(); }
-  void push(const value_type&amp; __x) {
-    __STL_TRY {
-      c.push_back(__x); // 在push_heap之前先将x放在vector c的最后面
-      push_heap(c.begin(), c.end(), comp);
-    }
-    __STL_UNWIND(c.clear());
-  }
-  void pop() {
-    __STL_TRY {
-      pop_heap(c.begin(), c.end(), comp);
-      c.pop_back(); // 在调用pop_heap之后才将最后一个元素剔除出vector c
-    }
-    __STL_UNWIND(c.clear());
-  }
-};
-</code>
-值得一提的是，priority queue也没有迭代器，不能对其进行遍历等操作，因为它只能在顶部取和删除元素，而插入元素的位置也是确定的，而不能有用户指定。<br/>
-关于heap和priority queue的内容就介绍到这里了，而序列式容器的介绍也到此结束了。</p>
-</div>
-<div id="copyleft" class="well" >
-	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2014/07/27/stl-source-insight-3-sequential-containers-4-heap-and-priority-queue/</a></br>
-	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
-</div>
-
-
-  <footer>
-    <p class="meta">
-      
-<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
-
-      
-
-
-
-
-
-
-
-
-
-<time datetime="2014-07-27T21:31:00+08:00" pubdate data-updated="true"></time>
-		
-		
-		
-		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
-		
-		
-		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/c-plus-plus/'>C++</a>, <a class='tag' href='/blog/tags/stl/'>STL</a>, <a class='tag' href='/blog/tags/dui/'>堆</a>, <a class='tag' href='/blog/tags/rong-qi/'>容器</a></span>
-		
-    </p>
-    
-      
-         <div class="sharing">
-  
-  
-  
-</div>
-
-      
-    
-	</br>
-	 <ul class="pager">
-      
-      <li class="previous"><a class="basic-alignment left"
-        href="/blog/2014/07/13/stl-source-insight-3-sequential-containers-3-deque-and-stack-queue/" title="Previous Post:
-        深入理解STL源码(3.3) 序列式容器之deque和stack、queue">&laquo; 深入理解STL源码(3.3) 序列式容器之deque和stack、queue</a></li>
-      
-      <li><a href="/blog/archives/">Blog Archives</a></li>
-      
-      <li class="next"><a class="basic-alignment right" href="/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/"
-        title="Next Post: 深入理解STL源码(4.1) 关联式容器之红黑树">深入理解STL源码(4.1) 关联式容器之红黑树
-        &raquo;</a></li>
-      
-    </ul>
-    
-    <section>
-      <h1>Comments</h1>
-      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-    </section>
-    
-   
-  </footer>
-</article>
-
-<aside class="sidebar-nav span3">
-  
-    
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo" class="page-footer">
-<hr>
-<p>
-  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'ibillxia';
-      
-        
-        // var disqus_developer = 1;
-        var disqus_identifier = 'https://ibillxia.github.io/blog/2014/07/27/stl-source-insight-3-sequential-containers-4-heap-and-priority-queue/';
-        var disqus_url = 'https://ibillxia.github.io/blog/2014/07/27/stl-source-insight-3-sequential-containers-4-heap-and-priority-queue/';
-        var disqus_script = 'embed.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-
-
-
-
-
-
-
-
-
-</body>
-</html>
+<!doctype html><html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f7"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1b1b1e"><meta name="viewport" content="width=device-width, user-scalable=no initial-scale=1, shrink-to-fit=no, viewport-fit=cover" ><meta name="generator" content="Jekyll v4.4.1" /><meta property="og:title" content="深入理解STL源码(3.4) 序列式容器之heap和priority queue" /><meta property="og:locale" content="zh_CN" /><meta name="description" content="本文涉及到 SGI STL 源码的文件有heap、stl_heap.h、heap.h、stl_queue.h、queue 等几个文件。 1. 概述 前面分别介绍了三种各具特色的序列式容器 —— vector、list和deque，他们几乎可以涵盖所有类型的序列式容器了，但本文要介绍的heap则是一种比较特殊的容器。其实，在STL中heap并没有被定义为一个容器，而只是一组算法，提供给priority queue（优先队列）。故名思议，priority queue 允许用户以任何次序将元素放入容器内，但取出时一定是从优先权最高的元素开始取，binary max heap（二元大根堆）即具有这样的特性，因此如果学过max-heap再看STL中heap的算法和priority queue 的实现就会比较简单。 2. priority queue 的数据结构 要实现priority queue的功能，binary search tree（BST）也可以作为其底层机制，但这样的话元素的插入就需要O(logN)的平均复杂度，而且要求元素的大小比较随机，才能使树比较平衡。而binary heap是一种完全二叉树的结构，而且可以使用vector来存储： 1 2 3 4 5 6 7 template &lt;class _Tp, class _Sequence __STL_DEPENDENT_DEFAULT_TMPL(vector&lt;_Tp&gt;), class _Compare __STL_DEPENDENT_DEFAULT_TMPL(less&lt;typename _Sequence::value_type&gt;) &gt; class priority_queue { // in stl_queue.h 文件中 protected: _Sequence c; // 使用vector作为数据存储的容器 _Compare comp; }; 另外只需要提供一组heap算法，即元素插入和删除、获取堆顶元素等操作即可。 3. push heap 算法 为了满足完全二叉树的特性，新加入的元素一定要放在vector的最后面；又为了满足max-heap的条件（每个节点的键值不小于其叶子节点的键值），还需要执行上溯过程，将新插入的元素与其父节点进行比较，直到不大于父节点： 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 template &lt;class _RandomAccessIterator, class _Distance, class _Tp&gt; void __push_heap(_RandomAccessIterator __first, _Distance __holeIndex, _Distance __topIndex, _Tp…" /><meta name="twitter:description" property="og:description" content="本文涉及到 SGI STL 源码的文件有heap、stl_heap.h、heap.h、stl_queue.h、queue 等几个文件。 1. 概述 前面分别介绍了三种各具特色的序列式容器 —— vector、list和deque，他们几乎可以涵盖所有类型的序列式容器了，但本文要介绍的heap则是一种比较特殊的容器。其实，在STL中heap并没有被定义为一个容器，而只是一组算法，提供给priority queue（优先队列）。故名思议，priority queue 允许用户以任何次序将元素放入容器内，但取出时一定是从优先权最高的元素开始取，binary max heap（二元大根堆）即具有这样的特性，因此如果学过max-heap再看STL中heap的算法和priority queue 的实现就会比较简单。 2. priority queue 的数据结构 要实现priority queue的功能，binary search tree（BST）也可以作为其底层机制，但这样的话元素的插入就需要O(logN)的平均复杂度，而且要求元素的大小比较随机，才能使树比较平衡。而binary heap是一种完全二叉树的结构，而且可以使用vector来存储： 1 2 3 4 5 6 7 template &lt;class _Tp, class _Sequence __STL_DEPENDENT_DEFAULT_TMPL(vector&lt;_Tp&gt;), class _Compare __STL_DEPENDENT_DEFAULT_TMPL(less&lt;typename _Sequence::value_type&gt;) &gt; class priority_queue { // in stl_queue.h 文件中 protected: _Sequence c; // 使用vector作为数据存储的容器 _Compare comp; }; 另外只需要提供一组heap算法，即元素插入和删除、获取堆顶元素等操作即可。 3. push heap 算法 为了满足完全二叉树的特性，新加入的元素一定要放在vector的最后面；又为了满足max-heap的条件（每个节点的键值不小于其叶子节点的键值），还需要执行上溯过程，将新插入的元素与其父节点进行比较，直到不大于父节点： 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 template &lt;class _RandomAccessIterator, class _Distance, class _Tp&gt; void __push_heap(_RandomAccessIterator __first, _Distance __holeIndex, _Distance __topIndex, _Tp…" /><link rel="canonical" href="https://ibillxia.github.io/blog/2014/07/27/stl-source-insight-3-sequential-containers-4-heap-and-priority-queue/" /><meta property="og:url" content="https://ibillxia.github.io/blog/2014/07/27/stl-source-insight-3-sequential-containers-4-heap-and-priority-queue/" /><meta property="og:site_name" content="Bill’s Blog" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2014-07-27T21:31:00+08:00" /><meta property="article:modified_time" content="2014-07-27T21:31:00+08:00" /><meta property="og:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:card" content="summary_large_image" /><meta property="twitter:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:title" content="深入理解STL源码(3.4) 序列式容器之heap和priority queue" /><meta name="twitter:site" content="@ibillxia" /><meta name="msvalidate.01" content="1538BC1807507674B6BD4942F25493B2" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2014-07-27T21:31:00+08:00","datePublished":"2014-07-27T21:31:00+08:00","description":"本文涉及到 SGI STL 源码的文件有heap、stl_heap.h、heap.h、stl_queue.h、queue 等几个文件。 1. 概述 前面分别介绍了三种各具特色的序列式容器 —— vector、list和deque，他们几乎可以涵盖所有类型的序列式容器了，但本文要介绍的heap则是一种比较特殊的容器。其实，在STL中heap并没有被定义为一个容器，而只是一组算法，提供给priority queue（优先队列）。故名思议，priority queue 允许用户以任何次序将元素放入容器内，但取出时一定是从优先权最高的元素开始取，binary max heap（二元大根堆）即具有这样的特性，因此如果学过max-heap再看STL中heap的算法和priority queue 的实现就会比较简单。 2. priority queue 的数据结构 要实现priority queue的功能，binary search tree（BST）也可以作为其底层机制，但这样的话元素的插入就需要O(logN)的平均复杂度，而且要求元素的大小比较随机，才能使树比较平衡。而binary heap是一种完全二叉树的结构，而且可以使用vector来存储： 1 2 3 4 5 6 7 template \u0026lt;class _Tp, class _Sequence __STL_DEPENDENT_DEFAULT_TMPL(vector\u0026lt;_Tp\u0026gt;), class _Compare __STL_DEPENDENT_DEFAULT_TMPL(less\u0026lt;typename _Sequence::value_type\u0026gt;) \u0026gt; class priority_queue { // in stl_queue.h 文件中 protected: _Sequence c; // 使用vector作为数据存储的容器 _Compare comp; }; 另外只需要提供一组heap算法，即元素插入和删除、获取堆顶元素等操作即可。 3. push heap 算法 为了满足完全二叉树的特性，新加入的元素一定要放在vector的最后面；又为了满足max-heap的条件（每个节点的键值不小于其叶子节点的键值），还需要执行上溯过程，将新插入的元素与其父节点进行比较，直到不大于父节点： 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 template \u0026lt;class _RandomAccessIterator, class _Distance, class _Tp\u0026gt; void __push_heap(_RandomAccessIterator __first, _Distance __holeIndex, _Distance __topIndex, _Tp…","headline":"深入理解STL源码(3.4) 序列式容器之heap和priority queue","mainEntityOfPage":{"@type":"WebPage","@id":"https://ibillxia.github.io/blog/2014/07/27/stl-source-insight-3-sequential-containers-4-heap-and-priority-queue/"},"url":"https://ibillxia.github.io/blog/2014/07/27/stl-source-insight-3-sequential-containers-4-heap-and-priority-queue/"}</script><title>深入理解STL源码(3.4) 序列式容器之heap和priority queue | Bill's Blog</title><link rel="icon" type="image/png" href="/assets/img/favicons/favicon-96x96.png" sizes="96x96"><link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico"><link rel="shortcut icon" href="/assets/img/favicon.ico"><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="stylesheet" href="/assets/css/jekyll-theme-chirpy.css"><link rel="stylesheet" href="/assets/lib/fonts/main.css"><link rel="stylesheet" href="/assets/lib/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="/assets/lib/tocbot/tocbot.min.css"><link rel="stylesheet" href="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.min.css"><link rel="stylesheet" href="/assets/lib/glightbox/glightbox.min.css"> <script src="/assets/js/dist/theme.min.js"></script> <script defer src="/assets/lib/simple-jekyll-search/simple-jekyll-search.min.js"></script> <script defer src="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.umd.min.js"></script> <script defer src="/assets/lib/glightbox/glightbox.min.js"></script> <script defer src="/assets/lib/clipboard/clipboard.min.js"></script> <script defer src="/assets/lib/dayjs/dayjs.min.js"></script> <script defer src="/assets/lib/dayjs/locale/en.js"></script> <script defer src="/assets/lib/dayjs/plugin/relativeTime.js"></script> <script defer src="/assets/lib/dayjs/plugin/localizedFormat.js"></script> <script defer src="/assets/lib/tocbot/tocbot.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script defer src="/app.min.js?baseurl=&register=true" ></script> <script defer src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script> <script> document.addEventListener('DOMContentLoaded', () => { window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-34DJ0T23LB'); }); </script><body><aside aria-label="Sidebar" id="sidebar" class="d-flex flex-column align-items-end"><header class="profile-wrapper"> <a href="/" id="avatar" class="rounded-circle"><img src="/assets/img/rock_coder.png" width="112" height="112" alt="avatar" onerror="this.style.display='none'"></a> <a class="site-title d-block" href="/">Bill's Blog</a><p class="site-subtitle fst-italic mb-0">Program Hard, Play Hard, Live Crazy!</p></header><nav class="flex-column flex-grow-1 w-100 ps-0"><ul class="nav"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home"></i> <span>首页</span> </a><li class="nav-item"> <a href="/blog/archives/" class="nav-link"> <i class="fa-fw fas fa-archive"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/blog/categories/" class="nav-link"> <i class="fa-fw fas fa-stream"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/blog/tags/" class="nav-link"> <i class="fa-fw fas fa-tags"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle"></i> <span>关于</span> </a></ul></nav><div class="sidebar-bottom d-flex flex-wrap align-items-center w-100"><div class="btn-group dropup"> <button type="button" class="btn btn-link nav-link" aria-label="Switch Mode" id="mode-toggle" data-bs-toggle="dropdown" ><i class="fa-regular fa-sun" data-theme-mode="light"></i><i class="fa-regular fa-moon" data-theme-mode="dark"></i><i class="fa-solid fa-display" data-theme-mode="system"></i></button><ul class="dropdown-menu rounded-3 mb-1 p-1"><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="light"><i class="fa-regular fa-sun" data-theme-mode="light"></i>浅色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="dark"><i class="fa-regular fa-moon" data-theme-mode="dark"></i>深色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="system"><i class="fa-solid fa-display" data-theme-mode="system"></i>跟随系统</button></ul></div><span class="icon-border"></span> <a href="https://github.com/ibillxia" aria-label="github" target="_blank" rel="noopener noreferrer" > <i class="fab fa-github"></i> </a> <a href="https://x.com/ibillxia" aria-label="x" target="_blank" rel="noopener noreferrer" > <i class="fa-brands fa-x-twitter"></i> </a> <a href="javascript:void(location.href = 'mailto:' + ['ibillxia','gmail.com'].join('@'))" aria-label="email" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" > <i class="fas fa-rss"></i> </a> <a href="https://stackoverflow.com/users/1602285/bill-xia" aria-label="stack-overflow" target="_blank" rel="noopener noreferrer" > <i class="fab fa-stack-overflow"></i> </a> <a href="https://weibo.com/ibillxia" aria-label="weibo" target="_blank" rel="noopener noreferrer" > <i class="fab fa-weibo"></i> </a></div></aside><div id="main-wrapper" class="d-flex justify-content-center"><div class="container d-flex flex-column px-xxl-5"><header id="topbar-wrapper" class="flex-shrink-0" aria-label="Top Bar"><div id="topbar" class="d-flex align-items-center justify-content-between px-lg-3 h-100" ><nav id="breadcrumb" aria-label="Breadcrumb"> <span> <a href="/">首页</a> </span> <span>深入理解STL源码(3.4) 序列式容器之heap和priority queue</span></nav><button type="button" id="sidebar-trigger" class="btn btn-link" aria-label="Sidebar"> <i class="fas fa-bars fa-fw"></i> </button><div id="topbar-title"> 文章</div><button type="button" id="search-trigger" class="btn btn-link" aria-label="Search"> <i class="fas fa-search fa-fw"></i> </button> <search id="search" class="align-items-center ms-3 ms-lg-0"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="搜索..." > </search> <button type="button" class="btn btn-link text-decoration-none" id="search-cancel">取消</button></div></header><div class="row flex-grow-1"><main aria-label="Main Content" class="col-12 col-lg-11 col-xl-9 px-md-4"><article class="px-1" data-toc="true"><header><h1 data-toc-skip>深入理解STL源码(3.4) 序列式容器之heap和priority queue</h1><div class="post-meta text-muted"> <span> 发表于 <time data-ts="1406467860" data-df="YYYY/MM/DD" data-bs-toggle="tooltip" data-bs-placement="bottom" > 2014/07/27 </time> </span><div class="d-flex justify-content-between"> <span> 作者 <em> <a href="https://github.com/ibillxia">Bill Xia</a> </em> </span><div> <span class="readtime" data-bs-toggle="tooltip" data-bs-placement="bottom" title="1688 字" > <em>9 分钟</em>阅读</span></div></div></div></header><div id="toc-bar" class="d-flex align-items-center justify-content-between invisible"> <span class="label text-truncate">深入理解STL源码(3.4) 序列式容器之heap和priority queue</span> <button type="button" class="toc-trigger btn me-1"> <i class="fa-solid fa-list-ul fa-fw"></i> </button></div><button id="toc-solo-trigger" type="button" class="toc-trigger btn btn-outline-secondary btn-sm"> <span class="label ps-2 pe-1">文章内容</span> <i class="fa-solid fa-angle-right fa-fw"></i> </button> <dialog id="toc-popup" class="p-0"><div class="header d-flex flex-row align-items-center justify-content-between"><div class="label text-truncate py-2 ms-4">深入理解STL源码(3.4) 序列式容器之heap和priority queue</div><button id="toc-popup-close" type="button" class="btn-close btn-sm mx-3" aria-label="Close"></button></div><div id="toc-popup-content" class="px-4 py-3 pb-4"></div></dialog><div class="content"><p>本文涉及到 SGI STL 源码的文件有<code class="language-plaintext highlighter-rouge">heap</code>、<code class="language-plaintext highlighter-rouge">stl_heap.h</code>、<code class="language-plaintext highlighter-rouge">heap.h</code>、<code class="language-plaintext highlighter-rouge">stl_queue.h</code>、<code class="language-plaintext highlighter-rouge">queue</code> 等几个文件。</p><h2 id="1-概述"><span class="me-2">1. 概述</span><a href="#1-概述" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>前面分别介绍了三种各具特色的序列式容器 —— vector、list和deque，他们几乎可以涵盖所有类型的序列式容器了，但本文要介绍的heap则是一种比较特殊的容器。其实，在STL中heap并没有被定义为一个容器，而只是一组算法，提供给priority queue（优先队列）。故名思议，priority queue 允许用户以任何次序将元素放入容器内，但取出时一定是从优先权最高的元素开始取，binary max heap（二元大根堆）即具有这样的特性，因此如果学过max-heap再看STL中heap的算法和priority queue 的实现就会比较简单。</p><h2 id="2-priority-queue-的数据结构"><span class="me-2">2. priority queue 的数据结构</span><a href="#2-priority-queue-的数据结构" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>要实现priority queue的功能，binary search tree（BST）也可以作为其底层机制，但这样的话元素的插入就需要O(logN)的平均复杂度，而且要求元素的大小比较随机，才能使树比较平衡。而binary heap是一种完全二叉树的结构，而且可以使用vector来存储：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Sequence</span> <span class="n">__STL_DEPENDENT_DEFAULT_TMPL</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="p">&gt;),</span> 
+			<span class="k">class</span> <span class="nc">_Compare</span> <span class="n">__STL_DEPENDENT_DEFAULT_TMPL</span><span class="p">(</span><span class="n">less</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">_Sequence</span><span class="o">::</span><span class="n">value_type</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">priority_queue</span> <span class="p">{</span> <span class="c1">// in stl_queue.h 文件中</span>
+<span class="nl">protected:</span>
+  <span class="n">_Sequence</span> <span class="n">c</span><span class="p">;</span> <span class="c1">// 使用vector作为数据存储的容器</span>
+  <span class="n">_Compare</span> <span class="n">comp</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></table></code></div></div><p>另外只需要提供一组heap算法，即元素插入和删除、获取堆顶元素等操作即可。<br /></p><h2 id="3-push-heap-算法"><span class="me-2">3. push heap 算法</span><a href="#3-push-heap-算法" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>为了满足完全二叉树的特性，新加入的元素一定要放在vector的最后面；又为了满足max-heap的条件（每个节点的键值不小于其叶子节点的键值），还需要执行上溯过程，将新插入的元素与其父节点进行比较，直到不大于父节点：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+</pre><td class="rouge-code"><pre><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_RandomAccessIterator</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Distance</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Tp</span><span class="p">&gt;</span>
+<span class="kt">void</span> <span class="nf">__push_heap</span><span class="p">(</span><span class="n">_RandomAccessIterator</span> <span class="n">__first</span><span class="p">,</span> <span class="n">_Distance</span> <span class="n">__holeIndex</span><span class="p">,</span> <span class="n">_Distance</span> <span class="n">__topIndex</span><span class="p">,</span> <span class="n">_Tp</span> <span class="n">__value</span><span class="p">){</span>
+  <span class="n">_Distance</span> <span class="n">__parent</span> <span class="o">=</span> <span class="p">(</span><span class="n">__holeIndex</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span> <span class="c1">//  新节点的父节点</span>
+  <span class="k">while</span> <span class="p">(</span><span class="n">__holeIndex</span> <span class="o">&gt;</span> <span class="n">__topIndex</span> <span class="o">&amp;&amp;</span> <span class="o">*</span><span class="p">(</span><span class="n">__first</span> <span class="o">+</span> <span class="n">__parent</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">__value</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 插入时的堆调整过程：当尚未到达顶端且父节点小于新值时，需要将新值往上（前）调整</span>
+    <span class="o">*</span><span class="p">(</span><span class="n">__first</span> <span class="o">+</span> <span class="n">__holeIndex</span><span class="p">)</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">__first</span> <span class="o">+</span> <span class="n">__parent</span><span class="p">);</span> <span class="c1">// 父节点下移</span>
+    <span class="n">__holeIndex</span> <span class="o">=</span> <span class="n">__parent</span><span class="p">;</span>
+    <span class="n">__parent</span> <span class="o">=</span> <span class="p">(</span><span class="n">__holeIndex</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="p">}</span>    
+  <span class="o">*</span><span class="p">(</span><span class="n">__first</span> <span class="o">+</span> <span class="n">__holeIndex</span><span class="p">)</span> <span class="o">=</span> <span class="n">__value</span><span class="p">;</span> <span class="c1">// 找到新值应当存储的位置</span>
+<span class="p">}</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_RandomAccessIterator</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Distance</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Tp</span><span class="p">&gt;</span>
+<span class="kr">inline</span> <span class="kt">void</span> <span class="nf">__push_heap_aux</span><span class="p">(</span><span class="n">_RandomAccessIterator</span> <span class="n">__first</span><span class="p">,</span> <span class="n">_RandomAccessIterator</span> <span class="n">__last</span><span class="p">,</span> <span class="n">_Distance</span><span class="o">*</span><span class="p">,</span> <span class="n">_Tp</span><span class="o">*</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">__push_heap</span><span class="p">(</span><span class="n">__first</span><span class="p">,</span> <span class="n">_Distance</span><span class="p">((</span><span class="n">__last</span> <span class="o">-</span> <span class="n">__first</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">_Distance</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">_Tp</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">__last</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)));</span> 
+<span class="p">}</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_RandomAccessIterator</span><span class="p">&gt;</span>
+<span class="kr">inline</span> <span class="kt">void</span> <span class="nf">push_heap</span><span class="p">(</span><span class="n">_RandomAccessIterator</span> <span class="n">__first</span><span class="p">,</span> <span class="n">_RandomAccessIterator</span> <span class="n">__last</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 真正的对外接口，在调用之前，元素已经放在了vector的最后面了（见priority queue的push_back）</span>
+  <span class="n">__STL_REQUIRES</span><span class="p">(</span><span class="n">_RandomAccessIterator</span><span class="p">,</span> <span class="n">_Mutable_RandomAccessIterator</span><span class="p">);</span>
+  <span class="n">__STL_REQUIRES</span><span class="p">(</span><span class="k">typename</span> <span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">_RandomAccessIterator</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="p">,</span> <span class="n">_LessThanComparable</span><span class="p">);</span>
+  <span class="n">__push_heap_aux</span><span class="p">(</span><span class="n">__first</span><span class="p">,</span> <span class="n">__last</span><span class="p">,</span> <span class="n">__DISTANCE_TYPE</span><span class="p">(</span><span class="n">__first</span><span class="p">),</span> <span class="n">__VALUE_TYPE</span><span class="p">(</span><span class="n">__first</span><span class="p">));</span> <span class="c1">// 直接调用 __push_heap_aux</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h2 id="4-pop-heap-算法"><span class="me-2">4. pop heap 算法</span><a href="#4-pop-heap-算法" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>对heap进行pop操作就是取顶部的元素，取走后要对heap进行调整，是之满足max-heap的特性。调整的策略是，首先将最末尾的元素放到堆顶，然后进行下溯操作，将对顶元素下移到适当的位置：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+</pre><td class="rouge-code"><pre><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_RandomAccessIterator</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Distance</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Tp</span><span class="p">&gt;</span>
+<span class="kt">void</span> <span class="nf">__adjust_heap</span><span class="p">(</span><span class="n">_RandomAccessIterator</span> <span class="n">__first</span><span class="p">,</span> <span class="n">_Distance</span> <span class="n">__holeIndex</span><span class="p">,</span> <span class="n">_Distance</span> <span class="n">__len</span><span class="p">,</span> <span class="n">_Tp</span> <span class="n">__value</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 调整堆</span>
+  <span class="n">_Distance</span> <span class="n">__topIndex</span> <span class="o">=</span> <span class="n">__holeIndex</span><span class="p">;</span> <span class="c1">// 堆顶</span>
+  <span class="n">_Distance</span> <span class="n">__secondChild</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">__holeIndex</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="k">while</span> <span class="p">(</span><span class="n">__secondChild</span> <span class="o">&lt;</span> <span class="n">__len</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">__first</span> <span class="o">+</span> <span class="n">__secondChild</span><span class="p">)</span> <span class="o">&lt;</span> <span class="o">*</span><span class="p">(</span><span class="n">__first</span> <span class="o">+</span> <span class="p">(</span><span class="n">__secondChild</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)))</span> <span class="n">__secondChild</span><span class="o">--</span><span class="p">;</span> <span class="c1">// secondChild 为左右两个子节点中较大者</span>
+    <span class="o">*</span><span class="p">(</span><span class="n">__first</span> <span class="o">+</span> <span class="n">__holeIndex</span><span class="p">)</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">__first</span> <span class="o">+</span> <span class="n">__secondChild</span><span class="p">);</span> <span class="c1">// 节点的值上移</span>
+    <span class="n">__holeIndex</span> <span class="o">=</span> <span class="n">__secondChild</span><span class="p">;</span>
+    <span class="n">__secondChild</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">__secondChild</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">// 下移一层</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">__secondChild</span> <span class="o">==</span> <span class="n">__len</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 最后一个元素</span>
+    <span class="o">*</span><span class="p">(</span><span class="n">__first</span> <span class="o">+</span> <span class="n">__holeIndex</span><span class="p">)</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">__first</span> <span class="o">+</span> <span class="p">(</span><span class="n">__secondChild</span> <span class="o">-</span> <span class="mi">1</span><span class="p">));</span>
+    <span class="n">__holeIndex</span> <span class="o">=</span> <span class="n">__secondChild</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="n">__push_heap</span><span class="p">(</span><span class="n">__first</span><span class="p">,</span> <span class="n">__holeIndex</span><span class="p">,</span> <span class="n">__topIndex</span><span class="p">,</span> <span class="n">__value</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_RandomAccessIterator</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Tp</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Distance</span><span class="p">&gt;</span>
+<span class="kr">inline</span> <span class="kt">void</span> <span class="nf">__pop_heap</span><span class="p">(</span><span class="n">_RandomAccessIterator</span> <span class="n">__first</span><span class="p">,</span> <span class="n">_RandomAccessIterator</span> <span class="n">__last</span><span class="p">,</span> <span class="n">_RandomAccessIterator</span> <span class="n">__result</span><span class="p">,</span> <span class="n">_Tp</span> <span class="n">__value</span><span class="p">,</span> <span class="n">_Distance</span><span class="o">*</span><span class="p">)</span> <span class="p">{</span>
+  <span class="o">*</span><span class="n">__result</span> <span class="o">=</span> <span class="o">*</span><span class="n">__first</span><span class="p">;</span> <span class="c1">// 获取堆顶元素，并赋给堆尾的last-1</span>
+  <span class="n">__adjust_heap</span><span class="p">(</span><span class="n">__first</span><span class="p">,</span> <span class="n">_Distance</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">_Distance</span><span class="p">(</span><span class="n">__last</span> <span class="o">-</span> <span class="n">__first</span><span class="p">),</span> <span class="n">__value</span><span class="p">);</span> <span class="c1">// 调整堆</span>
+<span class="p">}</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_RandomAccessIterator</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Tp</span><span class="p">&gt;</span>
+<span class="kr">inline</span> <span class="kt">void</span> <span class="nf">__pop_heap_aux</span><span class="p">(</span><span class="n">_RandomAccessIterator</span> <span class="n">__first</span><span class="p">,</span> <span class="n">_RandomAccessIterator</span> <span class="n">__last</span><span class="p">,</span> <span class="n">_Tp</span><span class="o">*</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">__pop_heap</span><span class="p">(</span><span class="n">__first</span><span class="p">,</span> <span class="n">__last</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">__last</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">_Tp</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">__last</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">__DISTANCE_TYPE</span><span class="p">(</span><span class="n">__first</span><span class="p">));</span> <span class="c1">// 对 [first,last-1)进行pop，并将first赋给last-1</span>
+<span class="p">}</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_RandomAccessIterator</span><span class="p">&gt;</span>
+<span class="kr">inline</span> <span class="kt">void</span> <span class="nf">pop_heap</span><span class="p">(</span><span class="n">_RandomAccessIterator</span> <span class="n">__first</span><span class="p">,</span> <span class="n">_RandomAccessIterator</span> <span class="n">__last</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 对外提供的接口，最后堆顶元素在堆的末尾，而[first,last-1) 区间为新堆，该接口调用完后再进行pop操作移除最后的元素</span>
+  <span class="n">__STL_REQUIRES</span><span class="p">(</span><span class="n">_RandomAccessIterator</span><span class="p">,</span> <span class="n">_Mutable_RandomAccessIterator</span><span class="p">);</span>
+  <span class="n">__STL_REQUIRES</span><span class="p">(</span><span class="k">typename</span> <span class="n">iterator_traits</span><span class="o">&lt;</span><span class="n">_RandomAccessIterator</span><span class="o">&gt;::</span><span class="n">value_type</span><span class="p">,</span> <span class="n">_LessThanComparable</span><span class="p">);</span>
+  <span class="n">__pop_heap_aux</span><span class="p">(</span><span class="n">__first</span><span class="p">,</span> <span class="n">__last</span><span class="p">,</span> <span class="n">__VALUE_TYPE</span><span class="p">(</span><span class="n">__first</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h2 id="5-make-heap-算法"><span class="me-2">5. make heap 算法</span><a href="#5-make-heap-算法" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>最后，我们来看看如何从一个初始序列来创建一个heap，有了前面的 <code class="language-plaintext highlighter-rouge">adjust_heap</code> ，创建heap也就很简单了，只需要从最后一个非叶子节点开始，不断调用堆调整函数，即可使得整个序列称为一个heap：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre><td class="rouge-code"><pre><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_RandomAccessIterator</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Compare</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Tp</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Distance</span><span class="p">&gt;</span>
+<span class="kt">void</span> <span class="nf">__make_heap</span><span class="p">(</span><span class="n">_RandomAccessIterator</span> <span class="n">__first</span><span class="p">,</span> <span class="n">_RandomAccessIterator</span> <span class="n">__last</span><span class="p">,</span> <span class="n">_Compare</span> <span class="n">__comp</span><span class="p">,</span> <span class="n">_Tp</span><span class="o">*</span><span class="p">,</span> <span class="n">_Distance</span><span class="o">*</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">__last</span> <span class="o">-</span> <span class="n">__first</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+  <span class="n">_Distance</span> <span class="n">__len</span> <span class="o">=</span> <span class="n">__last</span> <span class="o">-</span> <span class="n">__first</span><span class="p">;</span>
+  <span class="n">_Distance</span> <span class="n">__parent</span> <span class="o">=</span> <span class="p">(</span><span class="n">__len</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span> <span class="c1">// 定位到最后一个非叶子节点</span>
+  <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 对每个非叶子节点为根的子树进行堆调整</span>
+    <span class="n">__adjust_heap</span><span class="p">(</span><span class="n">__first</span><span class="p">,</span> <span class="n">__parent</span><span class="p">,</span> <span class="n">__len</span><span class="p">,</span> <span class="n">_Tp</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">__first</span> <span class="o">+</span> <span class="n">__parent</span><span class="p">)),</span> <span class="n">__comp</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">__parent</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+    <span class="n">__parent</span><span class="o">--</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_RandomAccessIterator</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Compare</span><span class="p">&gt;</span>
+<span class="kr">inline</span> <span class="kt">void</span> <span class="nf">make_heap</span><span class="p">(</span><span class="n">_RandomAccessIterator</span> <span class="n">__first</span><span class="p">,</span> <span class="n">_RandomAccessIterator</span> <span class="n">__last</span><span class="p">,</span> <span class="n">_Compare</span> <span class="n">__comp</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 对外提供的接口</span>
+  <span class="n">__STL_REQUIRES</span><span class="p">(</span><span class="n">_RandomAccessIterator</span><span class="p">,</span> <span class="n">_Mutable_RandomAccessIterator</span><span class="p">);</span>
+  <span class="n">__make_heap</span><span class="p">(</span><span class="n">__first</span><span class="p">,</span> <span class="n">__last</span><span class="p">,</span> <span class="n">__comp</span><span class="p">,</span> <span class="n">__VALUE_TYPE</span><span class="p">(</span><span class="n">__first</span><span class="p">),</span> <span class="n">__DISTANCE_TYPE</span><span class="p">(</span><span class="n">__first</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h2 id="6-基于-heap-的-priority-queue"><span class="me-2">6. 基于 heap 的 priority queue</span><a href="#6-基于-heap-的-priority-queue" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>上一篇文章中讲到stack和queue都是基于deque实现的，这里的priority queue是基于vector和heap来实现的，默认使用vector作为容器，而使用heap的算法来维持其priority的特性，因此priority queue也被归类为container adapter。其具体实现的主要代码如下:</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+</pre><td class="rouge-code"><pre><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Sequence</span> <span class="n">__STL_DEPENDENT_DEFAULT_TMPL</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="p">&gt;),</span> <span class="k">class</span> <span class="nc">_Compare</span> <span class="n">__STL_DEPENDENT_DEFAULT_TMPL</span><span class="p">(</span><span class="n">less</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">_Sequence</span><span class="o">::</span><span class="n">value_type</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">priority_queue</span> <span class="p">{</span>
+<span class="nl">protected:</span>
+  <span class="n">_Sequence</span> <span class="n">c</span><span class="p">;</span>
+  <span class="n">_Compare</span> <span class="n">comp</span><span class="p">;</span>
+<span class="nl">public:</span>
+  <span class="n">priority_queue</span><span class="p">()</span> <span class="o">:</span> <span class="n">c</span><span class="p">()</span> <span class="p">{}</span>
+  <span class="k">explicit</span> <span class="nf">priority_queue</span><span class="p">(</span><span class="k">const</span> <span class="n">_Compare</span><span class="o">&amp;</span> <span class="n">__x</span><span class="p">)</span> <span class="o">:</span>  <span class="n">c</span><span class="p">(),</span> <span class="n">comp</span><span class="p">(</span><span class="n">__x</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="n">priority_queue</span><span class="p">(</span><span class="k">const</span> <span class="n">_Compare</span><span class="o">&amp;</span> <span class="n">__x</span><span class="p">,</span> <span class="k">const</span> <span class="n">_Sequence</span><span class="o">&amp;</span> <span class="n">__s</span><span class="p">)</span> <span class="o">:</span> <span class="n">c</span><span class="p">(</span><span class="n">__s</span><span class="p">),</span> <span class="n">comp</span><span class="p">(</span><span class="n">__x</span><span class="p">)</span> 
+    <span class="p">{</span> <span class="n">make_heap</span><span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">c</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">comp</span><span class="p">);</span> <span class="p">}</span>
+  <span class="kt">bool</span> <span class="nf">empty</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">c</span><span class="p">.</span><span class="n">empty</span><span class="p">();</span> <span class="p">}</span>
+  <span class="n">size_type</span> <span class="nf">size</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">c</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="p">}</span>
+  <span class="n">const_reference</span> <span class="nf">top</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">c</span><span class="p">.</span><span class="n">front</span><span class="p">();</span> <span class="p">}</span>
+  <span class="kt">void</span> <span class="nf">push</span><span class="p">(</span><span class="k">const</span> <span class="n">value_type</span><span class="o">&amp;</span> <span class="n">__x</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">__STL_TRY</span> <span class="p">{</span>
+      <span class="n">c</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">__x</span><span class="p">);</span> <span class="c1">// 在push_heap之前先将x放在vector c的最后面</span>
+      <span class="n">push_heap</span><span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">c</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">comp</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">__STL_UNWIND</span><span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">clear</span><span class="p">());</span>
+  <span class="p">}</span>
+  <span class="kt">void</span> <span class="nf">pop</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">__STL_TRY</span> <span class="p">{</span>
+      <span class="n">pop_heap</span><span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">c</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">comp</span><span class="p">);</span>
+      <span class="n">c</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span> <span class="c1">// 在调用pop_heap之后才将最后一个元素剔除出vector c</span>
+    <span class="p">}</span>
+    <span class="n">__STL_UNWIND</span><span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">clear</span><span class="p">());</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+</pre></table></code></div></div><p>值得一提的是，priority queue也没有迭代器，不能对其进行遍历等操作，因为它只能在顶部取和删除元素，而插入元素的位置也是确定的，而不能有用户指定。<br /> 关于heap和priority queue的内容就介绍到这里了，而序列式容器的介绍也到此结束了。</p></div><div class="post-tail-wrapper text-muted"><div class="d-flex justify-content-between align-items-center gap-3 mb-3"><div class="post-meta"> <i class="far fa-folder-open fa-fw me-1"></i> <a href="/blog/categories/program/">Program</a></div></div><div class="post-tags"> <i class="fa fa-tags fa-fw me-1"></i> <a href="/blog/tags/c/" class="post-tag no-text-decoration" >C++</a> <a href="/blog/tags/stl/" class="post-tag no-text-decoration" >STL</a> <a href="/blog/tags/%E5%AE%B9%E5%99%A8/" class="post-tag no-text-decoration" >容器</a> <a href="/blog/tags/%E5%A0%86/" class="post-tag no-text-decoration" >堆</a></div><div class=" post-tail-bottom d-flex justify-content-between align-items-center mt-5 pb-2 " ><div class="license-wrapper"> 本文由作者按照 <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> 进行授权</div><div class="share-wrapper d-flex align-items-center"> <span class="share-label text-muted">分享</span> <span class="share-icons"> <a href="https://x.com/intent/tweet?text=%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3STL%E6%BA%90%E7%A0%81(3.4)%20%E5%BA%8F%E5%88%97%E5%BC%8F%E5%AE%B9%E5%99%A8%E4%B9%8Bheap%E5%92%8Cpriority%20queue%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F07%2F27%2Fstl-source-insight-3-sequential-containers-4-heap-and-priority-queue%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Twitter" aria-label="Twitter"> <i class="fa-fw fa-brands fa-square-x-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3STL%E6%BA%90%E7%A0%81(3.4)%20%E5%BA%8F%E5%88%97%E5%BC%8F%E5%AE%B9%E5%99%A8%E4%B9%8Bheap%E5%92%8Cpriority%20queue%20-%20Bill's%20Blog&u=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F07%2F27%2Fstl-source-insight-3-sequential-containers-4-heap-and-priority-queue%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Facebook" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://t.me/share/url?url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F07%2F27%2Fstl-source-insight-3-sequential-containers-4-heap-and-priority-queue%2F&text=%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3STL%E6%BA%90%E7%A0%81(3.4)%20%E5%BA%8F%E5%88%97%E5%BC%8F%E5%AE%B9%E5%99%A8%E4%B9%8Bheap%E5%92%8Cpriority%20queue%20-%20Bill's%20Blog" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Telegram" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <a href="https://service.weibo.com/share/share.php?title=%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3STL%E6%BA%90%E7%A0%81(3.4)%20%E5%BA%8F%E5%88%97%E5%BC%8F%E5%AE%B9%E5%99%A8%E4%B9%8Bheap%E5%92%8Cpriority%20queue%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F07%2F27%2Fstl-source-insight-3-sequential-containers-4-heap-and-priority-queue%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Weibo" aria-label="Weibo"> <i class="fa-fw fab fa-weibo"></i> </a> <button id="copy-link" aria-label="Copy link" class="btn small" data-bs-toggle="tooltip" data-bs-placement="top" title="分享链接" data-title-succeed="链接已复制！" > <i class="fa-fw fas fa-link pe-none fs-6"></i> </button> </span></div></div></div></article></main><aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 text-muted"><div class="access"><section id="access-lastmod"><h2 class="panel-heading">最近更新</h2><ul class="content list-unstyled ps-0 pb-1 ms-1 mt-2"><li class="text-truncate lh-lg"> <a href="/blog/2026/11/16/anthropic-the-components-of-agent-memory/">【译】Anthropic：智能体记忆的组成部分</a><li class="text-truncate lh-lg"> <a href="/blog/2026/11/09/is-FDE-actually-established-in-China/">前鹅厂王津银：FDE 在中国，到底成立吗？</a><li class="text-truncate lh-lg"> <a href="/blog/2026/09/14/openai-data-agent-skills-interpretation/">OpenAI Data Agent的核心Skill解读：数据Agent如何把问题变成可信的决策</a><li class="text-truncate lh-lg"> <a href="/blog/2026/08/20/data-agent-servey-from-arch-to-practice/">Data Agent全景调研：从技术架构到产业实践</a><li class="text-truncate lh-lg"> <a href="/blog/2026/07/03/FDE-what-why-and-future/">什么是 FDE？从它的爆火看软件研发的职能大洗牌</a></ul></section><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div><div class="toc-border-cover z-3"></div><section id="toc-wrapper" class="invisible position-sticky ps-0 pe-4 pb-4"><h2 class="panel-heading ps-3 pb-2 mb-0">文章内容</h2><nav id="toc"></nav></section></aside></div><div class="row"><div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 px-md-4"><aside id="related-posts" aria-labelledby="related-label"><h3 class="mb-4" id="related-label">相关文章</h3><nav class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4"><article class="col"> <a href="/blog/2014/11/01/insight-into-stl-5-algorithm-4-relative-complexity-algorithms/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1414809180" data-df="YYYY/MM/DD" > 2014/11/01 </time><h4 class="pt-0 my-2">深入理解STL源码(5.4) 算法之复杂算法algorithm</h4><div class="text-muted"><p>本文主要介绍STL中的稍微复杂的算法，主要涉及到的源码文件有 stl_algo.h 等。 在文件 stl_algo.h 中有很多常用的算法，包括查找、计数、旋转、删除、排序、合并、集合的交并等运算、求极值、排列组合等等，本文将按源码中各算法的实现顺序来介绍其具体实现细节。由于本文涉及到的算法和相关代码太多，在文中就尽量不贴出代码了，详细的代码及相关注释请参见 stl_algo.h。 1....</p></div></div></a></article><article class="col"> <a href="/blog/2014/09/27/insight-into-stl-4-associative-containers-5-hashset-and-hashmap/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1411824600" data-df="YYYY/MM/DD" > 2014/09/27 </time><h4 class="pt-0 my-2">深入理解STL源码(4.5) 关联式容器之hashset和hashmap</h4><div class="text-muted"><p>本文涉及到 SGI STL 源码的文件主要是 stl_hash_set.h、stl_hash_map.h 等文件。 1. hashset 和 hash_multi_set 需要说明的是，STL 标准只规范了复杂度与接口，并没有规范实现方法，但 STL 实现的版本中 set 大多以 RB-tree 为底层机制，SGI STL 在实现了以 RB-tree 为底层机制的 set 外，还实现了以 ...</p></div></div></a></article><article class="col"> <a href="/blog/2014/09/13/insight-into-stl-4-associative-containers-4-hashtable/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1410615000" data-df="YYYY/MM/DD" > 2014/09/13 </time><h4 class="pt-0 my-2">深入理解STL源码(4.4) 关联式容器之hashtable</h4><div class="text-muted"><p>本文涉及到 SGI STL 源码的文件主要是 stl_hashtable.h、stl_hash_fun.h 等文件。 1. hashtable 简介 在数据结构中我们知道，有种数据结构的插入、删除、查找等操作的性能是常数时间，但需要比元素个数更多的空间，这种数据结构就是哈希表。哈希表的基本思想是，将数据存储在与其数值大小相关的地方，比如对该数取模，然后存储在以余数为下表的数组中。但这样会出...</p></div></div></a></article></nav></aside><nav class="post-navigation d-flex justify-content-between" aria-label="Post Navigation"> <a href="/blog/2014/07/13/stl-source-insight-3-sequential-containers-3-deque-and-stack-queue/" class="btn btn-outline-primary" aria-label="上一篇" ><p>深入理解STL源码(3.3) 序列式容器之deque和stack、queue</p></a> <a href="/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/" class="btn btn-outline-primary" aria-label="下一篇" ><p>深入理解STL源码(4.1) 关联式容器之红黑树</p></a></nav><footer aria-label="Site Info" class=" d-flex flex-column justify-content-center text-muted flex-lg-row justify-content-lg-between align-items-lg-center pb-lg-3 " ><p>© <time>2026</time> <a href="https://github.com/ibillxia">Bill Xia</a>. <span data-bs-toggle="tooltip" data-bs-placement="top" title="除非另有说明，本网站上的博客文章均由作者按照知识共享署名 4.0 国际 (CC BY 4.0) 许可协议进行授权。" >保留部分权利。</span></p><p>本站采用 <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> 主题 <a data-bs-toggle="tooltip" data-bs-placement="top" title="v7.6.0" href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener" >Chirpy</a></p></footer></div></div><div id="search-result-wrapper" class="d-flex justify-content-center d-none"><div class="col-11 content"><div id="search-hints"><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><aside aria-label="Scroll to Top"> <button id="back-to-top" type="button" class="btn btn-lg btn-box-shadow"> <i class="fas fa-angle-up"></i> </button></aside></div><div id="mask" class="d-none position-fixed w-100 h-100 z-1"></div><aside id="notification" class="toast w-auto rounded-5 text-nowrap" role="alert" aria-live="assertive" aria-atomic="true" data-bs-animation="true" data-bs-autohide="false" ><div class="d-flex align-items-center"><div class="toast-body ps-3">发现新内容</div><button type="button" class="btn btn-primary btn-sm rounded-2 py-0" aria-label="Update" >更新</button> <button type="button" class="btn-close mx-3 ms-2" data-bs-dismiss="toast" aria-label="Close" ></button></div></aside><script> var disqus_config = function () { this.page.url = 'https://ibillxia.github.io/blog/2014/07/27/stl-source-insight-3-sequential-containers-4-heap-and-priority-queue/'; this.page.identifier = '/blog/2014/07/27/stl-source-insight-3-sequential-containers-4-heap-and-priority-queue/'; }; function addDisqus() { let disqusThread = document.createElement('div'); let paragraph = document.createElement('p'); disqusThread.id = 'disqus_thread'; paragraph.className = 'text-center text-muted small'; paragraph.innerHTML = 'Comments powered by <a href="https://disqus.com/">Disqus</a>.'; disqusThread.appendChild(paragraph); const footer = document.querySelector('footer'); footer.insertAdjacentElement("beforebegin", disqusThread); }function reloadDisqus(event) { if (event.source === window && event.data && event.data.id === Theme.eventId) {if (typeof DISQUS === 'undefined') { return; } if (document.readyState == 'complete') { DISQUS.reset({ reload: true, config: disqus_config }); } } } addDisqus(); if (Theme.isToggleable) { addEventListener('message', reloadDisqus); }var disqusObserver = new IntersectionObserver( function (entries) { if (entries[0].isIntersecting) { var d = document, s = d.createElement('script'); s.src = 'https://ibillxia.disqus.com/embed.js'; s.setAttribute('data-timestamp', +new Date()); (d.head || d.body).appendChild(s); disqusObserver.disconnect(); } }, { threshold: [0] } ); disqusObserver.observe(document.getElementById('disqus_thread')); </script> <script> document.addEventListener('DOMContentLoaded', () => { SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<article class="px-1 px-sm-2 px-lg-4 px-xl-0"><header><h2><a href="{url}">{title}</a></h2><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div></header><p>{content}</p></article>', noResultsText: '<p class="mt-5">搜索结果为空</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="me-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); }); </script>

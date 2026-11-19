@@ -1,453 +1,107 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>Ubuntu 下 Android NDK 开发入门 - Bill's Blog</title>
-  <meta name="author" content="Bill Xia">
-
-  
-  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="https://ibillxia.github.io/blog/2014/05/04/android-ndk-development/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <style type="text/css">
-    body {
-      padding-bottom: 0px;
-    }
-    h1 {
-      margin-bottom: 15px;
-    }
-    img {
-      max-width: 100%;
-    }
-    .sharing, .meta, .pager {
-      margin: 20px 0px 20px 0px;
-    }
-    .page-footer p {
-      text-align: center;
-    }
-  </style>
-  <script src="/javascripts/libs/jquery.js"></script>
-  <script src="/javascripts/libs/modernizr-2.0.js"></script>
-  <script src="/javascripts/libs/bootstrap.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-34DJ0T23LB');
-  </script>
-  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
-  <script type="text/javascript">
-function addBlankTargetForLinks () {
-  $('a[href^="http"]').each(function(){
-      $(this).attr('target', '_blank');
-  });
-}
-
-$(function () {
-  addBlankTargetForLinks();
-  if (typeof MutationObserver !== 'undefined') {
-    new MutationObserver(function () {
-      addBlankTargetForLinks();
-    }).observe(document.body, { childList: true, subtree: true });
-  }
-});
-</script>
-<!-- MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = 'https://ssl.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
-</head>
-
-<body   >
-  <nav role="navigation"><div class="navbar navbar-inverse">
-  <div class="navbar-inner">
-    <div class="container">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-
-      <a class="brand" href="/">Bill's Blog</a>
-
-      <div class="nav-collapse">
-        <ul class="nav">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives/">Archives</a></li>
-  <li><a href="/blog/categories/">Categories</a></li>
-  <li><a href="/blog/tags/">Tags</a></li>
-  <li><a href="/about/">About</a></li>
-</ul>
-
-
-        <ul class="nav pull-right" data-subscription="rss">
-          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-          
-        </ul>
-
-        
-          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
-            <fieldset role="search">
-              <input type="hidden" name="q" value="site:ibillxia.github.io" />
-              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
-            </fieldset>
-          </form>
-        
-      </div>
-    </div>
-  </div>
-</div>
-</nav>
-  <div class="container">
-    <div class="row-fluid">
-      
-<article class="hentry span9" role="article">
-
-  
-  <header class="page-header">
-    
-      <h1 class="entry-title">Ubuntu 下 Android NDK 开发入门</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-05-04T23:53:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><p>本文首先介绍一下在 Ubuntu 下如何配置 Android NDK 开发环境，然后用一个简单的 hello-jni 项目来介绍 NDK 开发流程，本文的全部代码下载链接：<a href="https://ibillxia.github.io/upload/code/20140504-HelloJni.tar.gz">HelloJni.tar.gz</a>，也可以在我的 <a href="https://github.com/ibillxia/Demo/tree/master/HelloJni">GitHub</a> 上下载。</p>
-
-<h2>1. 简介</h2>
-
-<p>什么是 Android NDK 呢？ NDK(Native Development Kit) 是一个允许开发者用一些本地语言(C/C++)编写 Android App 的部分功能的工具集。对于一些特定的 App，NDK 非常有利于我们直接使用现成的用 C/C++ 编写的代码库（但对于大多数 App 来说，NDK 是没有必要的）。使用 NDK 进行 C/C++ Android 开发的基本结构和流程如下图（来自<a href="http://shihongzhi.com/ndk/">shihongzhi博客</a> ）：</p>
-
-<center> <img src="/images/2014/IMAG2014050401.jpg"> </center>
-
-
-<p>在开始之前，这里要提醒大家：NDK 对大多数 App 而言是不会有太多的好处的，在 Android 上使用原生 C/C++ 代码并不会很明显的提升应用的性能，但却增加了你开发应用的复杂度。所以，仅仅在需要使用 NDK 时才使用它 —— 不要因为你更喜欢用 C/C++。典型的 NDK 应用场景是一些 CPU 操作密集而不需要太多内存的场合，如信号处理、物理模拟等等，很多这些处理过程都已经封装到了 Android 系统内部，所以当你不确定是否要使用本地 C/C++ 代码时，先看看你的需求，以及 Android 框架中的 API 是否已经提供你需要的功能。</p>
-
-<!-- more -->
-
-
-<h2>2.开发环境配置</h2>
-
-<p>由于 NDK 开发过程中涉及到将 C/C++ 程序编译为动态库(.so文件)，所以首先系统中需要安装 C/C++ 的编译工具 gcc/g++，还要有 make 工具，一般情况下 Linux 系统会默认安装，如果没有安装请先安装这几个工具。然后是 Java 和 Android 开发相关环境的配置。首先需要安装 JDK，并配置 Java 的环境变量，然后是集成开发环境如 Eclipse 的安装和配置，这些也不是本文的重点，如果你没有安装，请自行 google 并安装配置好。</p>
-
-<p>下面重点讲讲 Android 相关 SDK 的安装和配置，主要涉及到 Android SDK，ADT，NDK等。要进行 Android 开发，首先需要安装 Android SDK，要在 Eclipse 中进行开发的话，还需在 Eclipse 中安装 ADT(Android Develop Tools)，在 Android 官网上提供了 SDK 和 包含 ADT 的 Eclipse 的集成开发包，可以一起下载：<a href="http://dl.google.com/android/adt/22.6.2/adt-bundle-linux-x86-20140321.zip">adt-bundle-linux-x86-20140321.zip</a>。另外，还需要安装 NDK，下载地址：<a href="http://dl.google.com/android/ndk/android-ndk-r9d-linux-x86.tar.bz2">android-ndk-r9d-linux-x86.tar.bz2</a>。下载完这两个压缩包后解压并移动到 /usr/local 目录下：</p>
-
-<pre><code>sudo mv Downloads/adt-bundle-x86-20140321/ /usr/local/adt-x86-20140321 
+<!doctype html><html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f7"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1b1b1e"><meta name="viewport" content="width=device-width, user-scalable=no initial-scale=1, shrink-to-fit=no, viewport-fit=cover" ><meta name="generator" content="Jekyll v4.4.1" /><meta property="og:title" content="Ubuntu 下 Android NDK 开发入门" /><meta property="og:locale" content="zh_CN" /><meta name="description" content="本文首先介绍一下在 Ubuntu 下如何配置 Android NDK 开发环境，然后用一个简单的 hello-jni 项目来介绍 NDK 开发流程，本文的全部代码下载链接：HelloJni.tar.gz，也可以在我的 GitHub 上下载。" /><meta name="twitter:description" property="og:description" content="本文首先介绍一下在 Ubuntu 下如何配置 Android NDK 开发环境，然后用一个简单的 hello-jni 项目来介绍 NDK 开发流程，本文的全部代码下载链接：HelloJni.tar.gz，也可以在我的 GitHub 上下载。" /><link rel="canonical" href="https://ibillxia.github.io/blog/2014/05/04/android-ndk-development/" /><meta property="og:url" content="https://ibillxia.github.io/blog/2014/05/04/android-ndk-development/" /><meta property="og:site_name" content="Bill’s Blog" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2014-05-04T23:53:00+08:00" /><meta property="article:modified_time" content="2014-05-04T23:53:00+08:00" /><meta property="og:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:card" content="summary_large_image" /><meta property="twitter:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:title" content="Ubuntu 下 Android NDK 开发入门" /><meta name="twitter:site" content="@ibillxia" /><meta name="msvalidate.01" content="1538BC1807507674B6BD4942F25493B2" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2014-05-04T23:53:00+08:00","datePublished":"2014-05-04T23:53:00+08:00","description":"本文首先介绍一下在 Ubuntu 下如何配置 Android NDK 开发环境，然后用一个简单的 hello-jni 项目来介绍 NDK 开发流程，本文的全部代码下载链接：HelloJni.tar.gz，也可以在我的 GitHub 上下载。","headline":"Ubuntu 下 Android NDK 开发入门","mainEntityOfPage":{"@type":"WebPage","@id":"https://ibillxia.github.io/blog/2014/05/04/android-ndk-development/"},"url":"https://ibillxia.github.io/blog/2014/05/04/android-ndk-development/"}</script><title>Ubuntu 下 Android NDK 开发入门 | Bill's Blog</title><link rel="icon" type="image/png" href="/assets/img/favicons/favicon-96x96.png" sizes="96x96"><link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico"><link rel="shortcut icon" href="/assets/img/favicon.ico"><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="stylesheet" href="/assets/css/jekyll-theme-chirpy.css"><link rel="stylesheet" href="/assets/lib/fonts/main.css"><link rel="stylesheet" href="/assets/lib/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="/assets/lib/tocbot/tocbot.min.css"><link rel="stylesheet" href="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.min.css"><link rel="stylesheet" href="/assets/lib/glightbox/glightbox.min.css"> <script src="/assets/js/dist/theme.min.js"></script> <script defer src="/assets/lib/simple-jekyll-search/simple-jekyll-search.min.js"></script> <script defer src="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.umd.min.js"></script> <script defer src="/assets/lib/glightbox/glightbox.min.js"></script> <script defer src="/assets/lib/clipboard/clipboard.min.js"></script> <script defer src="/assets/lib/dayjs/dayjs.min.js"></script> <script defer src="/assets/lib/dayjs/locale/en.js"></script> <script defer src="/assets/lib/dayjs/plugin/relativeTime.js"></script> <script defer src="/assets/lib/dayjs/plugin/localizedFormat.js"></script> <script defer src="/assets/lib/tocbot/tocbot.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script defer src="/app.min.js?baseurl=&register=true" ></script> <script defer src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script> <script> document.addEventListener('DOMContentLoaded', () => { window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-34DJ0T23LB'); }); </script><body><aside aria-label="Sidebar" id="sidebar" class="d-flex flex-column align-items-end"><header class="profile-wrapper"> <a href="/" id="avatar" class="rounded-circle"><img src="/assets/img/rock_coder.png" width="112" height="112" alt="avatar" onerror="this.style.display='none'"></a> <a class="site-title d-block" href="/">Bill's Blog</a><p class="site-subtitle fst-italic mb-0">Program Hard, Play Hard, Live Crazy!</p></header><nav class="flex-column flex-grow-1 w-100 ps-0"><ul class="nav"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home"></i> <span>首页</span> </a><li class="nav-item"> <a href="/blog/archives/" class="nav-link"> <i class="fa-fw fas fa-archive"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/blog/categories/" class="nav-link"> <i class="fa-fw fas fa-stream"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/blog/tags/" class="nav-link"> <i class="fa-fw fas fa-tags"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle"></i> <span>关于</span> </a></ul></nav><div class="sidebar-bottom d-flex flex-wrap align-items-center w-100"><div class="btn-group dropup"> <button type="button" class="btn btn-link nav-link" aria-label="Switch Mode" id="mode-toggle" data-bs-toggle="dropdown" ><i class="fa-regular fa-sun" data-theme-mode="light"></i><i class="fa-regular fa-moon" data-theme-mode="dark"></i><i class="fa-solid fa-display" data-theme-mode="system"></i></button><ul class="dropdown-menu rounded-3 mb-1 p-1"><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="light"><i class="fa-regular fa-sun" data-theme-mode="light"></i>浅色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="dark"><i class="fa-regular fa-moon" data-theme-mode="dark"></i>深色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="system"><i class="fa-solid fa-display" data-theme-mode="system"></i>跟随系统</button></ul></div><span class="icon-border"></span> <a href="https://github.com/ibillxia" aria-label="github" target="_blank" rel="noopener noreferrer" > <i class="fab fa-github"></i> </a> <a href="https://x.com/ibillxia" aria-label="x" target="_blank" rel="noopener noreferrer" > <i class="fa-brands fa-x-twitter"></i> </a> <a href="javascript:void(location.href = 'mailto:' + ['ibillxia','gmail.com'].join('@'))" aria-label="email" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" > <i class="fas fa-rss"></i> </a> <a href="https://stackoverflow.com/users/1602285/bill-xia" aria-label="stack-overflow" target="_blank" rel="noopener noreferrer" > <i class="fab fa-stack-overflow"></i> </a> <a href="https://weibo.com/ibillxia" aria-label="weibo" target="_blank" rel="noopener noreferrer" > <i class="fab fa-weibo"></i> </a></div></aside><div id="main-wrapper" class="d-flex justify-content-center"><div class="container d-flex flex-column px-xxl-5"><header id="topbar-wrapper" class="flex-shrink-0" aria-label="Top Bar"><div id="topbar" class="d-flex align-items-center justify-content-between px-lg-3 h-100" ><nav id="breadcrumb" aria-label="Breadcrumb"> <span> <a href="/">首页</a> </span> <span>Ubuntu 下 Android NDK 开发入门</span></nav><button type="button" id="sidebar-trigger" class="btn btn-link" aria-label="Sidebar"> <i class="fas fa-bars fa-fw"></i> </button><div id="topbar-title"> 文章</div><button type="button" id="search-trigger" class="btn btn-link" aria-label="Search"> <i class="fas fa-search fa-fw"></i> </button> <search id="search" class="align-items-center ms-3 ms-lg-0"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="搜索..." > </search> <button type="button" class="btn btn-link text-decoration-none" id="search-cancel">取消</button></div></header><div class="row flex-grow-1"><main aria-label="Main Content" class="col-12 col-lg-11 col-xl-9 px-md-4"><article class="px-1" data-toc="true"><header><h1 data-toc-skip>Ubuntu 下 Android NDK 开发入门</h1><div class="post-meta text-muted"> <span> 发表于 <time data-ts="1399218780" data-df="YYYY/MM/DD" data-bs-toggle="tooltip" data-bs-placement="bottom" > 2014/05/04 </time> </span><div class="d-flex justify-content-between"> <span> 作者 <em> <a href="https://github.com/ibillxia">Bill Xia</a> </em> </span><div> <span class="readtime" data-bs-toggle="tooltip" data-bs-placement="bottom" title="2287 字" > <em>12 分钟</em>阅读</span></div></div></div></header><div id="toc-bar" class="d-flex align-items-center justify-content-between invisible"> <span class="label text-truncate">Ubuntu 下 Android NDK 开发入门</span> <button type="button" class="toc-trigger btn me-1"> <i class="fa-solid fa-list-ul fa-fw"></i> </button></div><button id="toc-solo-trigger" type="button" class="toc-trigger btn btn-outline-secondary btn-sm"> <span class="label ps-2 pe-1">文章内容</span> <i class="fa-solid fa-angle-right fa-fw"></i> </button> <dialog id="toc-popup" class="p-0"><div class="header d-flex flex-row align-items-center justify-content-between"><div class="label text-truncate py-2 ms-4">Ubuntu 下 Android NDK 开发入门</div><button id="toc-popup-close" type="button" class="btn-close btn-sm mx-3" aria-label="Close"></button></div><div id="toc-popup-content" class="px-4 py-3 pb-4"></div></dialog><div class="content"><p>本文首先介绍一下在 Ubuntu 下如何配置 Android NDK 开发环境，然后用一个简单的 hello-jni 项目来介绍 NDK 开发流程，本文的全部代码下载链接：<a href="https://ibillxia.github.io/upload/code/20140504-HelloJni.tar.gz">HelloJni.tar.gz</a>，也可以在我的 <a href="https://github.com/ibillxia/Demo/tree/master/HelloJni">GitHub</a> 上下载。</p><h2 id="1-简介"><span class="me-2">1. 简介</span><a href="#1-简介" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>什么是 Android NDK 呢？ NDK(Native Development Kit) 是一个允许开发者用一些本地语言(C/C++)编写 Android App 的部分功能的工具集。对于一些特定的 App，NDK 非常有利于我们直接使用现成的用 C/C++ 编写的代码库（但对于大多数 App 来说，NDK 是没有必要的）。使用 NDK 进行 C/C++ Android 开发的基本结构和流程如下图（来自<a href="http://shihongzhi.com/ndk/">shihongzhi博客</a> ）：</p><center> <a href="/images/2014/IMAG2014050401.jpg" class="popup img-link shimmer"><img src="/images/2014/IMAG2014050401.jpg" alt="" loading="lazy"></a> </center><p>在开始之前，这里要提醒大家：NDK 对大多数 App 而言是不会有太多的好处的，在 Android 上使用原生 C/C++ 代码并不会很明显的提升应用的性能，但却增加了你开发应用的复杂度。所以，仅仅在需要使用 NDK 时才使用它 —— 不要因为你更喜欢用 C/C++。典型的 NDK 应用场景是一些 CPU 操作密集而不需要太多内存的场合，如信号处理、物理模拟等等，很多这些处理过程都已经封装到了 Android 系统内部，所以当你不确定是否要使用本地 C/C++ 代码时，先看看你的需求，以及 Android 框架中的 API 是否已经提供你需要的功能。</p><h2 id="2开发环境配置"><span class="me-2">2.开发环境配置</span><a href="#2开发环境配置" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>由于 NDK 开发过程中涉及到将 C/C++ 程序编译为动态库(.so文件)，所以首先系统中需要安装 C/C++ 的编译工具 gcc/g++，还要有 make 工具，一般情况下 Linux 系统会默认安装，如果没有安装请先安装这几个工具。然后是 Java 和 Android 开发相关环境的配置。首先需要安装 JDK，并配置 Java 的环境变量，然后是集成开发环境如 Eclipse 的安装和配置，这些也不是本文的重点，如果你没有安装，请自行 google 并安装配置好。</p><p>下面重点讲讲 Android 相关 SDK 的安装和配置，主要涉及到 Android SDK，ADT，NDK等。要进行 Android 开发，首先需要安装 Android SDK，要在 Eclipse 中进行开发的话，还需在 Eclipse 中安装 ADT(Android Develop Tools)，在 Android 官网上提供了 SDK 和 包含 ADT 的 Eclipse 的集成开发包，可以一起下载：<a href="http://dl.google.com/android/adt/22.6.2/adt-bundle-linux-x86-20140321.zip">adt-bundle-linux-x86-20140321.zip</a>。另外，还需要安装 NDK，下载地址：<a href="http://dl.google.com/android/ndk/android-ndk-r9d-linux-x86.tar.bz2">android-ndk-r9d-linux-x86.tar.bz2</a>。下载完这两个压缩包后解压并移动到 /usr/local 目录下：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre>sudo mv Downloads/adt-bundle-x86-20140321/ /usr/local/adt-x86-20140321 
 mv Downloads/android-ndk-r9d/ /usr/local/adt-x86-20140321/ndk-r9d 
-</code></pre>
-
-<p>然后配置环境变量：</p>
-
-<pre><code>sudo vim /etc/profile 
-</code></pre>
-
-<p>在 /etc/profile 最后添加如下两行：</p>
-
-<pre><code>export PATH=/usr/local/adt-x86-20140321/sdk/tools:/usr/local/adt-x86-20140321/sdk/platform-tools:$PATH 
+</pre></table></code></div></div><p>然后配置环境变量：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>sudo vim /etc/profile 
+</pre></table></code></div></div><p>在 /etc/profile 最后添加如下两行：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre>export PATH=/usr/local/adt-x86-20140321/sdk/tools:/usr/local/adt-x86-20140321/sdk/platform-tools:$PATH 
 export PATH=/usr/local/adt-x86-20140321/ndk-r9d:$PATH 
-</code></pre>
-
-<p>保存并退出，并用如下命令使设置生效：</p>
-
-<pre><code>source /etc/profile 
-</code></pre>
-
-<p>完了可以执行如下命令看看设置是否生效：</p>
-
-<pre><code>echo $PATH 
+</pre></table></code></div></div><p>保存并退出，并用如下命令使设置生效：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>source /etc/profile 
+</pre></table></code></div></div><p>完了可以执行如下命令看看设置是否生效：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre>echo $PATH 
 adb --version 
 emulator -version 
 ndk-build --version 
-</code></pre>
+</pre></table></code></div></div><p>至此，开发环境已经配置完成了，接下来我们看一个 hello-jni 的例子。</p><h2 id="3ndk-开发实例-hello-jni"><span class="me-2">3.NDK 开发实例 hello-jni</span><a href="#3ndk-开发实例-hello-jni" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><h4 id="31-jni-简介"><span class="me-2">3.1 JNI 简介</span><a href="#31-jni-简介" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4><p>首先我们了解一下什么是JNI。JNI(Java Native Interface)是一种在Java虚拟机控制下执行代码的标准机制。 代码被编写成汇编程序或者C/C++程序，并组装为动态库，从而提供了一个在Java平台上调用C/C++的一种途径。 JNI主要的竞争优势在于：它在设计之初就确保了二进制的兼容性，JNI编写的应用程序兼容性以及在某些具体平台上的Java虚拟机兼容性（当谈及JNI，这里并不特别针对Dalvik；JNI由Oracle开发，适用于所有Java虚拟机）。 关于JNI的更多内容可以参见该文：<a href="http://www.importnew.com/8038.html">Android NDK介绍</a>。</p><h4 id="32-eclipse-配置"><span class="me-2">3.2 Eclipse 配置</span><a href="#32-eclipse-配置" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4><p>下面以参考 Android NDK 自带的 hello-jni 示例程序改写的我自己的 hello-jni 来介绍开发流程。首先打开 Eclipse 并配置 Android SDK 和 NDK 的路径。 选择 Eclipse 的如下菜单：Window =&gt; Preferences =&gt; Android，点击浏览按钮设置 SDK 路径；Window =&gt; Preferences =&gt; Android =&gt; NDK，点击浏览按钮设置 NDK 路径。接下来按照简介中的开发流程图来一步一步介绍 NDK 开发步骤。</p><h4 id="33-创建-android-app-并添加-native-support"><span class="me-2">3.3 创建 Android App 并添加 Native Support</span><a href="#33-创建-android-app-并添加-native-support" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4><p>首先用Eclipse 创建一个空的 Android App，命名为 HelloJni。在项目上点击右键，选择 Android Tools =&gt; Add Native Support… ，在弹出的对话框中填入 HelloJni 并确定，会发现项目中多了一个 jni 目录，并自动生成了 HelloJni.cpp 和 Android.mk 文件，分别是我们需要封装的native C++ 代码和编译它的 Makefile 文件。</p><h4 id="34-编写-java-api"><span class="me-2">3.4 编写 java API</span><a href="#34-编写-java-api" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4><p>原本按照图一中的流程我们需要先编写一些 C/C++ 原生的代码，但实际中，为了简便起见，我们可以使用 jdk 的 javah 工具（如果没有， <code class="language-plaintext highlighter-rouge">sudo apt-get update</code> 一下）来根据 java 调用 C/C++ API 的接口类来自动生成 jni 的头文件。因此，我们需要先做第3步的内容，这里编写的 Java API 接口 HelloCal 类（在 <code class="language-plaintext highlighter-rouge">src/io.ibillxia.hellojni</code> 路径下）如下：</p><div class="language-java highlighter-rouge"><div class="code-header"> <span data-label-text="Java"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre><td class="rouge-code"><pre><span class="c1">//HelloCal.java</span>
+<span class="kn">package</span> <span class="nn">io.ibillxia.hellojni</span><span class="o">;</span> 
 
-<p>至此，开发环境已经配置完成了，接下来我们看一个 hello-jni 的例子。</p>
-
-<h2>3.NDK 开发实例 hello-jni</h2>
-
-<h4>3.1 JNI 简介</h4>
-
-<p>首先我们了解一下什么是JNI。JNI(Java Native Interface)是一种在Java虚拟机控制下执行代码的标准机制。 代码被编写成汇编程序或者C/C++程序，并组装为动态库，从而提供了一个在Java平台上调用C/C++的一种途径。 JNI主要的竞争优势在于：它在设计之初就确保了二进制的兼容性，JNI编写的应用程序兼容性以及在某些具体平台上的Java虚拟机兼容性（当谈及JNI，这里并不特别针对Dalvik；JNI由Oracle开发，适用于所有Java虚拟机）。 关于JNI的更多内容可以参见该文：<a href="http://www.importnew.com/8038.html">Android NDK介绍</a>。</p>
-
-<h4>3.2 Eclipse 配置</h4>
-
-<p>下面以参考 Android NDK 自带的 hello-jni 示例程序改写的我自己的 hello-jni 来介绍开发流程。首先打开 Eclipse 并配置 Android SDK 和 NDK 的路径。 选择 Eclipse 的如下菜单：Window =&gt; Preferences =&gt; Android，点击浏览按钮设置 SDK 路径；Window =&gt; Preferences =&gt; Android =&gt; NDK，点击浏览按钮设置 NDK 路径。接下来按照简介中的开发流程图来一步一步介绍 NDK 开发步骤。</p>
-
-<h4>3.3 创建 Android App 并添加 Native Support</h4>
-
-<p>首先用Eclipse 创建一个空的 Android App，命名为 HelloJni。在项目上点击右键，选择 Android Tools =&gt; Add Native Support... ，在弹出的对话框中填入 HelloJni 并确定，会发现项目中多了一个 jni 目录，并自动生成了 HelloJni.cpp 和 Android.mk 文件，分别是我们需要封装的native C++ 代码和编译它的 Makefile 文件。</p>
-
-<h4>3.4 编写 java API</h4>
-
-<p>原本按照图一中的流程我们需要先编写一些 C/C++ 原生的代码，但实际中，为了简便起见，我们可以使用 jdk 的 javah 工具（如果没有， <code>sudo apt-get update</code> 一下）来根据 java 调用 C/C++ API 的接口类来自动生成 jni 的头文件。因此，我们需要先做第3步的内容，这里编写的 Java API 接口 HelloCal 类（在 <code>src/io.ibillxia.hellojni</code> 路径下）如下：</p>
-
-<pre><code class="java">//HelloCal.java
-package io.ibillxia.hellojni; 
-
-public class HelloCal { 
-    static { 
-        System.loadLibrary("HelloJni"); // 加载 jni 动态库 
-    } 
-
-    public native String helloSay(); // 返回字符串 
-    public native int helloAdd(int a,int b); // 两个整数相加 
-    public native int helloSub(int a,int b); // 两个整数相减 
-    public native int helloMul(int a,int b); // 两个整数相乘 
-    public native int helloDiv(int a,int b); // 两个整数相除 
-} 
-</code></pre>
-
-<h4>3.5 使用 javah 生成 jni 格式的 C/C++ API</h4>
-
-<p>编写完 java API 后在 Eclipse 中 build 一下生成对应 .class 文件，然后使用 javah 工具根据该 class 文件自动生成 jni API 的头文件。在 HelloJni App 根目录下执行如下命令：</p>
-
-<pre><code>javah -classpath ./bin/classes -d jni io.ibillxia.hellojni.HelloCal 
-</code></pre>
-
-<p>其中 <code>-classpath ./bin/classes</code> 表示类的路径，<code>-d jni</code> 表示生成的头文件存放的目录， <code>io.ibillxia.hellojni.HelloCal</code> 则是完整类名，如果不出意外，在 <code>~/workspace/HelloJni/jni</code> 目录下生成了 <code>io_ibillxia_hellojni_HelloCal.h</code> 。然后根据这个头文件的内容，编写 <code>HelloCal.cpp</code> 文件实现头文件中声明的接口，具体的头文件和 cpp 源文件内容见源码压缩包。值得一提的是，在 cpp 源文件中，对数据运算后可能产生溢出进行了判断，对于溢出异常这里处理的办法是，如果上溢则返回最大值，下溢则返回最小值。实际中，这样做可能还不是很合理，比较好的做法是，在 cpp 中处理并返回异常值，并在相应的 Java API 中针对返回的异常值进行不同的处理，即在 cpp 中只检查异常，而真正处理异常则由 Java API 来处理。</p>
-
-<p>注意，这里需要添加一下 C/C++ 的包含目录，否则会报错。选中 jni文件夹，右键选择 Properties =&gt; C/C++ General =&gt; Paths and Symbols =&gt; Includes，点击 Add 一个一个添加如下依赖库：</p>
-
-<blockquote><p>/usr/include<br/>
-/usr/include/c++/4.8<br/>
-/usr/include/c++/4.8/backward<br/>
-/usr/include/i386-linux-gnu<br/>
-/usr/include/i386-linux-gnu/c++/4.8<br/>
-/usr/lib/gcc/i686-linux-gnu/4.8/include<br/>
-/usr/lib/gcc/i686-linux-gnu/4.8/include-fixed<br/>
-/usr/local/include<br/>
-/usr/local/adt-x86-20140321/ndk-r9d/platforms/android-19/arch-arm/usr/include</p></blockquote>
-
-<p>添加完后 build 一下，看看是否有错误，如果不出意外，应该在 <code>HelloJni/libs/armeabi/</code> 目录下生成了 <code>libHelloJni.so</code> 文件。</p>
-
-<h4>3.6 编写 Android App</h4>
-
-<p>最后是编写 Android App，并在 App 中调用 Jni 接口函数。在 <code>io.ibillxia.hellojni</code> 包中新建一个 Java 类 HelloJni ，编写如下代码（import 内容省略，具体见源码压缩包）：</p>
-
-<pre><code class="java">//HelloJni.java
-public class HelloJni extends Activity {
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.hello_jni);
-
-        Button btn = (Button)findViewById(R.id.btn_cal);
-        btn.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                TextView tv1 = (TextView) findViewById(R.id.textView1);
-                TextView tv2 = (TextView) findViewById(R.id.textView2);
-                TextView tv3 = (TextView) findViewById(R.id.textView3);
-
-                int a = Integer.parseInt(tv1.getText().toString());
-                int b = Integer.parseInt(tv2.getText().toString());
-                HelloCal cal = new HelloCal();
-                int c = cal.helloAdd(a,b);
-                String str = cal.helloSay();  
-                tv3.setText(str + Integer.toString(c));
-            }
-        });
-    }
-}
-</code></pre>
-
-<p>另外，还需要设计对应的 layout xml 文件，具体见源码压缩包。 最后上一张运行效果截图：
-<img src="/images/2014/IMAG2014050402.png">
-图中输入的两个数的和超过了 int 能表示的最大值，出现上溢，但返回的是最大值。如果输入的两个数本身就超出范围将出现
-<code>Unfortunately, HelloJni has stopped.</code> 的异常的对话框。实际过程中，究竟在哪一步检测并处理异常，还是一个值得商讨的问题。如果是引用第三方的库，可能需要对相应的接口提供充分的测试，对于可以并且方便在 native code 层面解决的异常就在 native code 层面上处理掉，实在不行也要在 Java API 层面上解决掉，比如这里需要在 Java 中判断输入参数本身的合法性。</p>
-</div>
-<div id="copyleft" class="well" >
-	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2014/05/04/android-ndk-development/</a></br>
-	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
-</div>
-
-
-  <footer>
-    <p class="meta">
-      
-<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
-
-      
-
-
-
-
-
-
-
-
-
-<time datetime="2014-05-04T23:53:00+08:00" pubdate data-updated="true"></time>
-		
-		
-		
-		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
-		
-		
-		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/android/'>Android</a>, <a class='tag' href='/blog/tags/jni/'>JNI</a>, <a class='tag' href='/blog/tags/ndk/'>NDK</a></span>
-		
-    </p>
-    
-      
-         <div class="sharing">
-  
-  
-  
-</div>
-
-      
-    
-	</br>
-	 <ul class="pager">
-      
-      <li class="previous"><a class="basic-alignment left"
-        href="/blog/2014/04/28/configure-twitter-bootstrap-theme-in-octopress/" title="Previous Post:
-        给Octopress博客配置Twitter Bootstrap主题">&laquo; 给Octopress博客配置Twitter Bootstrap主题</a></li>
-      
-      <li><a href="/blog/archives/">Blog Archives</a></li>
-      
-      <li class="next"><a class="basic-alignment right" href="/blog/2014/05/11/cpp-program-optimization-new-delete-operator/"
-        title="Next Post: C++ 应用程序性能优化之 new/delete 操作符">C++ 应用程序性能优化之 new/delete 操作符
-        &raquo;</a></li>
-      
-    </ul>
-    
-    <section>
-      <h1>Comments</h1>
-      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-    </section>
-    
-   
-  </footer>
-</article>
-
-<aside class="sidebar-nav span3">
-  
-    
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo" class="page-footer">
-<hr>
-<p>
-  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'ibillxia';
-      
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloCal</span> <span class="o">{</span> 
+	<span class="kd">static</span> <span class="o">{</span> 
+		<span class="nc">System</span><span class="o">.</span><span class="na">loadLibrary</span><span class="o">(</span><span class="s">"HelloJni"</span><span class="o">);</span> <span class="c1">// 加载 jni 动态库 </span>
+	<span class="o">}</span> 
+	
+	<span class="kd">public</span> <span class="kd">native</span> <span class="nc">String</span> <span class="nf">helloSay</span><span class="o">();</span> <span class="c1">// 返回字符串 </span>
+	<span class="kd">public</span> <span class="kd">native</span> <span class="kt">int</span> <span class="nf">helloAdd</span><span class="o">(</span><span class="kt">int</span> <span class="n">a</span><span class="o">,</span><span class="kt">int</span> <span class="n">b</span><span class="o">);</span> <span class="c1">// 两个整数相加 </span>
+	<span class="kd">public</span> <span class="kd">native</span> <span class="kt">int</span> <span class="nf">helloSub</span><span class="o">(</span><span class="kt">int</span> <span class="n">a</span><span class="o">,</span><span class="kt">int</span> <span class="n">b</span><span class="o">);</span> <span class="c1">// 两个整数相减 </span>
+	<span class="kd">public</span> <span class="kd">native</span> <span class="kt">int</span> <span class="nf">helloMul</span><span class="o">(</span><span class="kt">int</span> <span class="n">a</span><span class="o">,</span><span class="kt">int</span> <span class="n">b</span><span class="o">);</span> <span class="c1">// 两个整数相乘 </span>
+	<span class="kd">public</span> <span class="kd">native</span> <span class="kt">int</span> <span class="nf">helloDiv</span><span class="o">(</span><span class="kt">int</span> <span class="n">a</span><span class="o">,</span><span class="kt">int</span> <span class="n">b</span><span class="o">);</span> <span class="c1">// 两个整数相除 </span>
+<span class="o">}</span> 
+</pre></table></code></div></div><h4 id="35-使用-javah-生成-jni-格式的-cc-api"><span class="me-2">3.5 使用 javah 生成 jni 格式的 C/C++ API</span><a href="#35-使用-javah-生成-jni-格式的-cc-api" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4><p>编写完 java API 后在 Eclipse 中 build 一下生成对应 .class 文件，然后使用 javah 工具根据该 class 文件自动生成 jni API 的头文件。在 HelloJni App 根目录下执行如下命令：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>javah -classpath ./bin/classes -d jni io.ibillxia.hellojni.HelloCal 
+</pre></table></code></div></div><p>其中 <code class="language-plaintext highlighter-rouge">-classpath ./bin/classes</code> 表示类的路径，<code class="language-plaintext highlighter-rouge">-d jni</code> 表示生成的头文件存放的目录， <code class="language-plaintext highlighter-rouge">io.ibillxia.hellojni.HelloCal</code> 则是完整类名，如果不出意外，在 <code class="language-plaintext highlighter-rouge">~/workspace/HelloJni/jni</code> 目录下生成了 <code class="language-plaintext highlighter-rouge">io_ibillxia_hellojni_HelloCal.h</code> 。然后根据这个头文件的内容，编写 <code class="language-plaintext highlighter-rouge">HelloCal.cpp</code> 文件实现头文件中声明的接口，具体的头文件和 cpp 源文件内容见源码压缩包。值得一提的是，在 cpp 源文件中，对数据运算后可能产生溢出进行了判断，对于溢出异常这里处理的办法是，如果上溢则返回最大值，下溢则返回最小值。实际中，这样做可能还不是很合理，比较好的做法是，在 cpp 中处理并返回异常值，并在相应的 Java API 中针对返回的异常值进行不同的处理，即在 cpp 中只检查异常，而真正处理异常则由 Java API 来处理。</p><p>注意，这里需要添加一下 C/C++ 的包含目录，否则会报错。选中 jni文件夹，右键选择 Properties =&gt; C/C++ General =&gt; Paths and Symbols =&gt; Includes，点击 Add 一个一个添加如下依赖库：</p><blockquote><p>/usr/include<br /> /usr/include/c++/4.8<br /> /usr/include/c++/4.8/backward<br /> /usr/include/i386-linux-gnu<br /> /usr/include/i386-linux-gnu/c++/4.8<br /> /usr/lib/gcc/i686-linux-gnu/4.8/include<br /> /usr/lib/gcc/i686-linux-gnu/4.8/include-fixed<br /> /usr/local/include<br /> /usr/local/adt-x86-20140321/ndk-r9d/platforms/android-19/arch-arm/usr/include</p></blockquote><p>添加完后 build 一下，看看是否有错误，如果不出意外，应该在 <code class="language-plaintext highlighter-rouge">HelloJni/libs/armeabi/</code> 目录下生成了 <code class="language-plaintext highlighter-rouge">libHelloJni.so</code> 文件。</p><h4 id="36-编写-android-app"><span class="me-2">3.6 编写 Android App</span><a href="#36-编写-android-app" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4><p>最后是编写 Android App，并在 App 中调用 Jni 接口函数。在 <code class="language-plaintext highlighter-rouge">io.ibillxia.hellojni</code> 包中新建一个 Java 类 HelloJni ，编写如下代码（import 内容省略，具体见源码压缩包）：</p><div class="language-java highlighter-rouge"><div class="code-header"> <span data-label-text="Java"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+</pre><td class="rouge-code"><pre><span class="c1">//HelloJni.java</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloJni</span> <span class="kd">extends</span> <span class="nc">Activity</span> <span class="o">{</span>
+    <span class="cm">/** Called when the activity is first created. */</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="nc">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span>
+    <span class="o">{</span>
+        <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+        <span class="n">setContentView</span><span class="o">(</span><span class="no">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">hello_jni</span><span class="o">);</span>
         
-        // var disqus_developer = 1;
-        var disqus_identifier = 'https://ibillxia.github.io/blog/2014/05/04/android-ndk-development/';
-        var disqus_url = 'https://ibillxia.github.io/blog/2014/05/04/android-ndk-development/';
-        var disqus_script = 'embed.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
+        <span class="nc">Button</span> <span class="n">btn</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Button</span><span class="o">)</span><span class="n">findViewById</span><span class="o">(</span><span class="no">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">btn_cal</span><span class="o">);</span>
+        <span class="n">btn</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="k">new</span> <span class="nc">Button</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+			<span class="nd">@Override</span>
+			<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="nc">View</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+				<span class="c1">// TODO Auto-generated method stub</span>
+				<span class="nc">TextView</span> <span class="n">tv1</span> <span class="o">=</span> <span class="o">(</span><span class="nc">TextView</span><span class="o">)</span> <span class="n">findViewById</span><span class="o">(</span><span class="no">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">textView1</span><span class="o">);</span>
+				<span class="nc">TextView</span> <span class="n">tv2</span> <span class="o">=</span> <span class="o">(</span><span class="nc">TextView</span><span class="o">)</span> <span class="n">findViewById</span><span class="o">(</span><span class="no">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">textView2</span><span class="o">);</span>
+				<span class="nc">TextView</span> <span class="n">tv3</span> <span class="o">=</span> <span class="o">(</span><span class="nc">TextView</span><span class="o">)</span> <span class="n">findViewById</span><span class="o">(</span><span class="no">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">textView3</span><span class="o">);</span>
 
-
-
-
-
-
-
-
-
-
-
-</body>
-</html>
+				<span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="nc">Integer</span><span class="o">.</span><span class="na">parseInt</span><span class="o">(</span><span class="n">tv1</span><span class="o">.</span><span class="na">getText</span><span class="o">().</span><span class="na">toString</span><span class="o">());</span>
+				<span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="nc">Integer</span><span class="o">.</span><span class="na">parseInt</span><span class="o">(</span><span class="n">tv2</span><span class="o">.</span><span class="na">getText</span><span class="o">().</span><span class="na">toString</span><span class="o">());</span>
+				<span class="nc">HelloCal</span> <span class="n">cal</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HelloCal</span><span class="o">();</span>
+				<span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="n">cal</span><span class="o">.</span><span class="na">helloAdd</span><span class="o">(</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="o">);</span>
+				<span class="nc">String</span> <span class="n">str</span> <span class="o">=</span> <span class="n">cal</span><span class="o">.</span><span class="na">helloSay</span><span class="o">();</span>  
+				<span class="n">tv3</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">str</span> <span class="o">+</span> <span class="nc">Integer</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">c</span><span class="o">));</span>
+			<span class="o">}</span>
+        <span class="o">});</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></table></code></div></div><p>另外，还需要设计对应的 layout xml 文件，具体见源码压缩包。 最后上一张运行效果截图： <a href="/images/2014/IMAG2014050402.png" class="popup img-link shimmer"><img src="/images/2014/IMAG2014050402.png" alt="" loading="lazy"></a> 图中输入的两个数的和超过了 int 能表示的最大值，出现上溢，但返回的是最大值。如果输入的两个数本身就超出范围将出现 <code class="language-plaintext highlighter-rouge">Unfortunately, HelloJni has stopped.</code> 的异常的对话框。实际过程中，究竟在哪一步检测并处理异常，还是一个值得商讨的问题。如果是引用第三方的库，可能需要对相应的接口提供充分的测试，对于可以并且方便在 native code 层面解决的异常就在 native code 层面上处理掉，实在不行也要在 Java API 层面上解决掉，比如这里需要在 Java 中判断输入参数本身的合法性。</p></div><div class="post-tail-wrapper text-muted"><div class="d-flex justify-content-between align-items-center gap-3 mb-3"><div class="post-meta"> <i class="far fa-folder-open fa-fw me-1"></i> <a href="/blog/categories/program/">Program</a></div></div><div class="post-tags"> <i class="fa fa-tags fa-fw me-1"></i> <a href="/blog/tags/android/" class="post-tag no-text-decoration" >Android</a> <a href="/blog/tags/ndk/" class="post-tag no-text-decoration" >NDK</a> <a href="/blog/tags/jni/" class="post-tag no-text-decoration" >JNI</a></div><div class=" post-tail-bottom d-flex justify-content-between align-items-center mt-5 pb-2 " ><div class="license-wrapper"> 本文由作者按照 <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> 进行授权</div><div class="share-wrapper d-flex align-items-center"> <span class="share-label text-muted">分享</span> <span class="share-icons"> <a href="https://x.com/intent/tweet?text=Ubuntu%20%E4%B8%8B%20Android%20NDK%20%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F05%2F04%2Fandroid-ndk-development%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Twitter" aria-label="Twitter"> <i class="fa-fw fa-brands fa-square-x-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=Ubuntu%20%E4%B8%8B%20Android%20NDK%20%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%20-%20Bill's%20Blog&u=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F05%2F04%2Fandroid-ndk-development%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Facebook" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://t.me/share/url?url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F05%2F04%2Fandroid-ndk-development%2F&text=Ubuntu%20%E4%B8%8B%20Android%20NDK%20%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%20-%20Bill's%20Blog" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Telegram" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <a href="https://service.weibo.com/share/share.php?title=Ubuntu%20%E4%B8%8B%20Android%20NDK%20%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F05%2F04%2Fandroid-ndk-development%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Weibo" aria-label="Weibo"> <i class="fa-fw fab fa-weibo"></i> </a> <button id="copy-link" aria-label="Copy link" class="btn small" data-bs-toggle="tooltip" data-bs-placement="top" title="分享链接" data-title-succeed="链接已复制！" > <i class="fa-fw fas fa-link pe-none fs-6"></i> </button> </span></div></div></div></article></main><aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 text-muted"><div class="access"><section id="access-lastmod"><h2 class="panel-heading">最近更新</h2><ul class="content list-unstyled ps-0 pb-1 ms-1 mt-2"><li class="text-truncate lh-lg"> <a href="/blog/2026/11/16/anthropic-the-components-of-agent-memory/">【译】Anthropic：智能体记忆的组成部分</a><li class="text-truncate lh-lg"> <a href="/blog/2026/11/09/is-FDE-actually-established-in-China/">前鹅厂王津银：FDE 在中国，到底成立吗？</a><li class="text-truncate lh-lg"> <a href="/blog/2026/09/14/openai-data-agent-skills-interpretation/">OpenAI Data Agent的核心Skill解读：数据Agent如何把问题变成可信的决策</a><li class="text-truncate lh-lg"> <a href="/blog/2026/08/20/data-agent-servey-from-arch-to-practice/">Data Agent全景调研：从技术架构到产业实践</a><li class="text-truncate lh-lg"> <a href="/blog/2026/07/03/FDE-what-why-and-future/">什么是 FDE？从它的爆火看软件研发的职能大洗牌</a></ul></section><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div><div class="toc-border-cover z-3"></div><section id="toc-wrapper" class="invisible position-sticky ps-0 pe-4 pb-4"><h2 class="panel-heading ps-3 pb-2 mb-0">文章内容</h2><nav id="toc"></nav></section></aside></div><div class="row"><div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 px-md-4"><aside id="related-posts" aria-labelledby="related-label"><h3 class="mb-4" id="related-label">相关文章</h3><nav class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4"><article class="col"> <a href="/blog/2011/04/21/about-variable-parameters-in-c-language/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1303375800" data-df="YYYY/MM/DD" > 2011/04/21 </time><h4 class="pt-0 my-2">浅谈C语言的可变参数</h4><div class="text-muted"><p>1.问题引入 C语言中有些函数使用可变参数，比如常见的 `int printf( const char *format [, argument]... );`， 第一个参数format是固定的，其余的参数的个数和类型都不固定。例如： printf("Enjoy yourself everyday!/n"); printf("The value is %d!/n", value); 这...</p></div></div></a></article><article class="col"> <a href="/blog/2010/09/24/PHP-string-filter-methods-for-safety/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1285306080" data-df="YYYY/MM/DD" > 2010/09/24 </time><h4 class="pt-0 my-2">PHP字符串安全过滤全攻略</h4><div class="text-muted"><p>php安全过滤是防止注入的第一道防线，不得大意。提到PHP的安全过滤，不得不提的两个东西是`set_magic_quotes_runtime` 和 `magic_quotes_gpc`。 `set_magic_quotes_runtime()` 可以让程序员在代码中动态开启或关闭 `magic_quotes_runtime`，`set_magic_quotes_runtime(1)` 表示...</p></div></div></a></article><article class="col"> <a href="/blog/2010/08/28/a-php-html-parser-PHPSimpleHTMLDOMParser/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1282999740" data-df="YYYY/MM/DD" > 2010/08/28 </time><h4 class="pt-0 my-2">超好的HTML解析工具PHP Simple HTML DOM Parser</h4><div class="text-muted"><p>采用PHP5+ 开发的一个简单的 PHP HTML DOM 分析，支持 invalid HTML 并提供非常简单的方式来操作 HTML 元素。在 HMTL 页面 上查找标签所使用的语法与 jQuery （一个轻量级，实用的 javascript 框架） 相似，从页面中抽取内容只需要一行代码。开源代码： http://sourceforge.net/projects/simplehtmldom...</p></div></div></a></article></nav></aside><nav class="post-navigation d-flex justify-content-between" aria-label="Post Navigation"> <a href="/blog/2014/04/28/configure-twitter-bootstrap-theme-in-octopress/" class="btn btn-outline-primary" aria-label="上一篇" ><p>给Octopress博客配置Twitter Bootstrap主题</p></a> <a href="/blog/2014/05/11/cpp-program-optimization-new-delete-operator/" class="btn btn-outline-primary" aria-label="下一篇" ><p>C++ 应用程序性能优化之 new/delete 操作符</p></a></nav><footer aria-label="Site Info" class=" d-flex flex-column justify-content-center text-muted flex-lg-row justify-content-lg-between align-items-lg-center pb-lg-3 " ><p>© <time>2026</time> <a href="https://github.com/ibillxia">Bill Xia</a>. <span data-bs-toggle="tooltip" data-bs-placement="top" title="除非另有说明，本网站上的博客文章均由作者按照知识共享署名 4.0 国际 (CC BY 4.0) 许可协议进行授权。" >保留部分权利。</span></p><p>本站采用 <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> 主题 <a data-bs-toggle="tooltip" data-bs-placement="top" title="v7.6.0" href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener" >Chirpy</a></p></footer></div></div><div id="search-result-wrapper" class="d-flex justify-content-center d-none"><div class="col-11 content"><div id="search-hints"><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><aside aria-label="Scroll to Top"> <button id="back-to-top" type="button" class="btn btn-lg btn-box-shadow"> <i class="fas fa-angle-up"></i> </button></aside></div><div id="mask" class="d-none position-fixed w-100 h-100 z-1"></div><aside id="notification" class="toast w-auto rounded-5 text-nowrap" role="alert" aria-live="assertive" aria-atomic="true" data-bs-animation="true" data-bs-autohide="false" ><div class="d-flex align-items-center"><div class="toast-body ps-3">发现新内容</div><button type="button" class="btn btn-primary btn-sm rounded-2 py-0" aria-label="Update" >更新</button> <button type="button" class="btn-close mx-3 ms-2" data-bs-dismiss="toast" aria-label="Close" ></button></div></aside><script> var disqus_config = function () { this.page.url = 'https://ibillxia.github.io/blog/2014/05/04/android-ndk-development/'; this.page.identifier = '/blog/2014/05/04/android-ndk-development/'; }; function addDisqus() { let disqusThread = document.createElement('div'); let paragraph = document.createElement('p'); disqusThread.id = 'disqus_thread'; paragraph.className = 'text-center text-muted small'; paragraph.innerHTML = 'Comments powered by <a href="https://disqus.com/">Disqus</a>.'; disqusThread.appendChild(paragraph); const footer = document.querySelector('footer'); footer.insertAdjacentElement("beforebegin", disqusThread); }function reloadDisqus(event) { if (event.source === window && event.data && event.data.id === Theme.eventId) {if (typeof DISQUS === 'undefined') { return; } if (document.readyState == 'complete') { DISQUS.reset({ reload: true, config: disqus_config }); } } } addDisqus(); if (Theme.isToggleable) { addEventListener('message', reloadDisqus); }var disqusObserver = new IntersectionObserver( function (entries) { if (entries[0].isIntersecting) { var d = document, s = d.createElement('script'); s.src = 'https://ibillxia.disqus.com/embed.js'; s.setAttribute('data-timestamp', +new Date()); (d.head || d.body).appendChild(s); disqusObserver.disconnect(); } }, { threshold: [0] } ); disqusObserver.observe(document.getElementById('disqus_thread')); </script> <script> document.addEventListener('DOMContentLoaded', () => { SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<article class="px-1 px-sm-2 px-lg-4 px-xl-0"><header><h2><a href="{url}">{title}</a></h2><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div></header><p>{content}</p></article>', noResultsText: '<p class="mt-5">搜索结果为空</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="me-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); }); </script>

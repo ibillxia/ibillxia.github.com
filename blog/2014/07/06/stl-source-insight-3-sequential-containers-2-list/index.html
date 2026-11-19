@@ -1,464 +1,211 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>深入理解STL源码(3.2) 序列式容器之list - Bill's Blog</title>
-  <meta name="author" content="Bill Xia">
-
-  
-  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="https://ibillxia.github.io/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <style type="text/css">
-    body {
-      padding-bottom: 0px;
-    }
-    h1 {
-      margin-bottom: 15px;
-    }
-    img {
-      max-width: 100%;
-    }
-    .sharing, .meta, .pager {
-      margin: 20px 0px 20px 0px;
-    }
-    .page-footer p {
-      text-align: center;
-    }
-  </style>
-  <script src="/javascripts/libs/jquery.js"></script>
-  <script src="/javascripts/libs/modernizr-2.0.js"></script>
-  <script src="/javascripts/libs/bootstrap.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-34DJ0T23LB');
-  </script>
-  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
-  <script type="text/javascript">
-function addBlankTargetForLinks () {
-  $('a[href^="http"]').each(function(){
-      $(this).attr('target', '_blank');
-  });
-}
-
-$(function () {
-  addBlankTargetForLinks();
-  if (typeof MutationObserver !== 'undefined') {
-    new MutationObserver(function () {
-      addBlankTargetForLinks();
-    }).observe(document.body, { childList: true, subtree: true });
-  }
-});
-</script>
-<!-- MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = 'https://ssl.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
-</head>
-
-<body   >
-  <nav role="navigation"><div class="navbar navbar-inverse">
-  <div class="navbar-inner">
-    <div class="container">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-
-      <a class="brand" href="/">Bill's Blog</a>
-
-      <div class="nav-collapse">
-        <ul class="nav">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives/">Archives</a></li>
-  <li><a href="/blog/categories/">Categories</a></li>
-  <li><a href="/blog/tags/">Tags</a></li>
-  <li><a href="/about/">About</a></li>
-</ul>
-
-
-        <ul class="nav pull-right" data-subscription="rss">
-          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-          
-        </ul>
-
-        
-          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
-            <fieldset role="search">
-              <input type="hidden" name="q" value="site:ibillxia.github.io" />
-              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
-            </fieldset>
-          </form>
-        
-      </div>
-    </div>
-  </div>
-</div>
-</nav>
-  <div class="container">
-    <div class="row-fluid">
-      
-<article class="hentry span9" role="article">
-
-  
-  <header class="page-header">
-    
-      <h1 class="entry-title">深入理解STL源码(3.2) 序列式容器之list</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-07-06T22:03:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><p>本文涉及到 SGI STL 源码的文件有<code>list</code>、<code>stl_list.h</code>、<code>list.h</code> 等几个文件。</p>
-
-<h2>1. list 和 slist</h2>
-
-<p>STL中也实现了链表这种数据结构，list是STL标准的双向链表，而slit是SGI的单链表。相比于vector的连续线性空间而言，list即有有点也有缺点：优点是空间分配更灵活，对任何位置的插入删除操作都是常数时间；缺点是排序不方便。list和vector是比较常用的线性容器，那么什么时候用哪一种容器呢，需要视元素的多少、元素构造的复杂度（是否为POD数据）以及元素存取行为的特性而定。限于篇幅，本文主要介绍list的内容，关于单链表slist可以参见源码和侯捷的书。</p>
-
-<h2>2. list 的数据结构</h2>
-
-<p>在数据结构中，我们知道链表的节点node和链表list本身是不同的数据结构，以下分别是node和list的数据结构：<br/>
-<code>cpp
-struct _List_node_base {
-  _List_node_base* _M_next;
-  _List_node_base* _M_prev;
-};
-template &lt;class _Tp&gt;
-struct _List_node : public _List_node_base {  // node 的定义
-  _Tp _M_data;
-};
-template &lt;class _Tp, class _Alloc&gt;
-class _List_base {
-protected:
-  _List_node&lt;_Tp&gt;* _M_node; // 只要一个指针就可以表示整个双向链表
-};
-template &lt;class _Tp, class _Alloc = __STL_DEFAULT_ALLOCATOR(_Tp) &gt;
-class list : protected _List_base&lt;_Tp, _Alloc&gt; {
-public:
-  typedef _List_node&lt;_Tp&gt; _Node;
-};
-</code></p>
-
-<!-- more -->
-
-
-<p>在list中的 <code>_M_node</code> 其实指向一个空白节点，该空白节点的 <code>_M_data</code> 成员是没有被初始化的，实际上该节点是链表的尾部，后面将list的迭代器还会提到这样做的好处。</p>
-
-<h2>3. list 的配置器</h2>
-
-<p>list缺省使用 alloc （即 <code>__STL_DEFAULT_ALLOCATOR</code>） 作为空间配置器，并据此定义了另外一个 <code>list_node_allocator</code> ，并定义了<code>_M_get_node</code>和<code>_M_put_node</code>  两个函数，分别用于分配和释放空间，为的是更方便的以节点大小为配置单位。除此之外，还定义了两个<code>_M_create_node</code> 函数，在分配空间的同时调用元素的构建函数对其进行初始化：<br/>
-<code>cpp
-template &lt;class _Tp, class _Alloc&gt;
-class _List_base {
-protected:
-  typedef simple_alloc&lt;_List_node&lt;_Tp&gt;, _Alloc&gt; _Alloc_type; // 专属配置器，每次配置一个节点
-  _List_node&lt;_Tp&gt;* _M_get_node() { return _Alloc_type::allocate(1); } // 分配一个节点
-  void _M_put_node(_List_node&lt;_Tp&gt;* __p) { _Alloc_type::deallocate(__p, 1); }  // 释放一个节点
-};
-template &lt;class _Tp, class _Alloc = __STL_DEFAULT_ALLOCATOR(_Tp) &gt; // 缺省使用 __STL_DEFAULT_ALLOCATOR 配置器
-class list : protected _List_base&lt;_Tp, _Alloc&gt; {
-protected:
-  _Node* _M_create_node(const _Tp&amp; __x){ // 分配空间并初始化
-    _Node* __p = _M_get_node();
-    __STL_TRY {  _Construct(&amp;__p-&gt;_M_data, __x);  }
-    __STL_UNWIND(_M_put_node(__p));
-    return __p;
-  }
-  _Node* _M_create_node(){
-    _Node* __p = _M_get_node();
-    __STL_TRY {  _Construct(&amp;__p-&gt;_M_data);  }
-    __STL_UNWIND(_M_put_node(__p));
-    return __p;
-  }
-};
-</code>
-在list的构造和析构函数、插入、删除等操作中设计到空间的配置。由于list不涉及同时分配多个连续元素的空间，因此用不到SGI的第二层配置器。</p>
-
-<h2>4. list 的迭代器</h2>
-
-<p>由于list的节点在内存中不一定连续存储，其迭代器不能像vector那样使用普通指针了，由于list是双向的链表，迭代器必须具备前移、后移的能力，所以它的迭代器是BidirectionalIterators，即双向的可增可减的，以下是list的迭代器的设计：<br/>
-<code>cpp
-struct _List_iterator_base {
-  typedef bidirectional_iterator_tag iterator_category;
-  _List_node_base* _M_node;
-  _List_iterator_base(_List_node_base* __x) : _M_node(__x) {}
-  _List_iterator_base() {}
-  void _M_incr() { _M_node = _M_node-&gt;_M_next; }
-  void _M_decr() { _M_node = _M_node-&gt;_M_prev; }
-};
-template&lt;class _Tp, class _Ref, class _Ptr&gt;
-struct _List_iterator : public _List_iterator_base {
-  _Self&amp; operator++() { this-&gt;_M_incr(); return *this; }
-  _Self operator++(int) { _Self __tmp = *this; this-&gt;_M_incr(); return __tmp; }
-  _Self&amp; operator--() { this-&gt;_M_decr(); return *this; }
-  _Self operator--(int) { _Self __tmp = *this; this-&gt;_M_decr(); return __tmp; }
-};
-</code>
-list有一个重要性质，插入操作（insert）和接合操作（splice）都不会造成原有list迭代器失效，而list的删除操作（erase）也只对“指向被删除元素”的那个迭代器失效，其他迭代器不受任何影响。</p>
-
-<h2>5. list 的常用操作</h2>
-
-<p>list的常用操作有很多，例如最基本的<code>push_front</code>、<code>push_back</code>、<code>pop_front</code>、<code>pop_back</code> 等，这里主要介绍一下<code>clear</code>、<code>remove</code>、<code>unique</code>、<code>transfer</code> 这几个。<br/>
-<strong>（1）clear</strong><br/>
-clear 函数的作用是清楚整个list的所有节点。<br/>
-<code>cpp
-void clear() { _Base::clear(); }
-void _List_base&lt;_Tp,_Alloc&gt;::clear() {
-  _List_node&lt;_Tp&gt;* __cur = (_List_node&lt;_Tp&gt;*) _M_node-&gt;_M_next;
-  while (__cur != _M_node) {
-    _List_node&lt;_Tp&gt;* __tmp = __cur;
-    __cur = (_List_node&lt;_Tp&gt;*) __cur-&gt;_M_next; // 后移
-    _Destroy(&amp;__tmp-&gt;_M_data); // 析构当前节点的对象
-    _M_put_node(__tmp); // 释放当前节点的空间
-  }
-  _M_node-&gt;_M_next = _M_node; // 置为空list
-  _M_node-&gt;_M_prev = _M_node;
-}
-</code>
-<strong>（2）remove</strong><br/>
-remove 函数的作用是将数值为value的所有元素移除。<br/>
-<code>cpp
-void list&lt;_Tp, _Alloc&gt;::remove(const _Tp&amp; __value) {
-  iterator __first = begin();
-  iterator __last = end();
-  while (__first != __last) { // 遍历list
-    iterator __next = __first;
-    ++__next;
-    if (*__first == __value) erase(__first); // 值与 value 相等就移除
-    __first = __next;
-  }
-}
-</code>
-<strong>（3）unique</strong><br/>
-unique函数的作用是移除相同的<strong>连续</strong>元素，只有“连续而且相同”的元素，才回被移除到只剩一个。<br/>
-<code>cpp
-void list&lt;_Tp, _Alloc&gt;::unique() {
-  iterator __first = begin();
-  iterator __last = end();
-  if (__first == __last) return;
-  iterator __next = __first;
-  while (++__next != __last) {
-    if (*__first == *__next) // 连续连个节点的值相同
-      erase(__next);
-    else
-      __first = __next;
-    __next = __first;
-  }
-}
-</code>
-<strong>（4）transfer</strong><br/>
-transfer的作用是将 [first, last) 内的所有元素移动到 position 之前。它是一个私有函数，它为其他常用操作如 splice、sort、merge 等的实现提供了便利。<br/>
-<code>cpp
-protected:
-  void transfer(iterator __position, iterator __first, iterator __last) {
-    if (__position != __last) {
-      // Remove [first, last) from its old position.
-      __last._M_node-&gt;_M_prev-&gt;_M_next     = __position._M_node;
-      __first._M_node-&gt;_M_prev-&gt;_M_next    = __last._M_node;
-      __position._M_node-&gt;_M_prev-&gt;_M_next = __first._M_node;
-      // Splice [first, last) into its new position.
-      _List_node_base* __tmp      = __position._M_node-&gt;_M_prev;
-      __position._M_node-&gt;_M_prev = __last._M_node-&gt;_M_prev;
-      __last._M_node-&gt;_M_prev     = __first._M_node-&gt;_M_prev;
-      __first._M_node-&gt;_M_prev    = __tmp;
-    }
-  }
-</code>
-关于list的内容就介绍到这里了。</p>
-</div>
-<div id="copyleft" class="well" >
-	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/</a></br>
-	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
-</div>
-
-
-  <footer>
-    <p class="meta">
-      
-<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
-
-      
-
-
-
-
-
-
-
-
-
-<time datetime="2014-07-06T22:03:00+08:00" pubdate data-updated="true"></time>
-		
-		
-		
-		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
-		
-		
-		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/c-plus-plus/'>C++</a>, <a class='tag' href='/blog/tags/stl/'>STL</a>, <a class='tag' href='/blog/tags/list/'>list</a>, <a class='tag' href='/blog/tags/rong-qi/'>容器</a></span>
-		
-    </p>
-    
-      
-         <div class="sharing">
-  
-  
-  
-</div>
-
-      
-    
-	</br>
-	 <ul class="pager">
-      
-      <li class="previous"><a class="basic-alignment left"
-        href="/blog/2014/06/29/stl-source-insight-3-sequential-containers-1-vector/" title="Previous Post:
-        深入理解STL源码(3.1) 序列式容器之vector">&laquo; 深入理解STL源码(3.1) 序列式容器之vector</a></li>
-      
-      <li><a href="/blog/archives/">Blog Archives</a></li>
-      
-      <li class="next"><a class="basic-alignment right" href="/blog/2014/07/13/stl-source-insight-3-sequential-containers-3-deque-and-stack-queue/"
-        title="Next Post: 深入理解STL源码(3.3) 序列式容器之deque和stack、queue">深入理解STL源码(3.3) 序列式容器之deque和stack、queue
-        &raquo;</a></li>
-      
-    </ul>
-    
-    <section>
-      <h1>Comments</h1>
-      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-    </section>
-    
-   
-  </footer>
-</article>
-
-<aside class="sidebar-nav span3">
-  
-    
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo" class="page-footer">
-<hr>
-<p>
-  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'ibillxia';
-      
-        
-        // var disqus_developer = 1;
-        var disqus_identifier = 'https://ibillxia.github.io/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/';
-        var disqus_url = 'https://ibillxia.github.io/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/';
-        var disqus_script = 'embed.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-
-
-
-
-
-
-
-
-
-</body>
-</html>
+<!doctype html><html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f7"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1b1b1e"><meta name="viewport" content="width=device-width, user-scalable=no initial-scale=1, shrink-to-fit=no, viewport-fit=cover" ><meta name="generator" content="Jekyll v4.4.1" /><meta property="og:title" content="深入理解STL源码(3.2) 序列式容器之list" /><meta property="og:locale" content="zh_CN" /><meta name="description" content="本文涉及到 SGI STL 源码的文件有list、stl_list.h、list.h 等几个文件。" /><meta name="twitter:description" property="og:description" content="本文涉及到 SGI STL 源码的文件有list、stl_list.h、list.h 等几个文件。" /><link rel="canonical" href="https://ibillxia.github.io/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/" /><meta property="og:url" content="https://ibillxia.github.io/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/" /><meta property="og:site_name" content="Bill’s Blog" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2014-07-06T22:03:00+08:00" /><meta property="article:modified_time" content="2014-07-06T22:03:00+08:00" /><meta property="og:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:card" content="summary_large_image" /><meta property="twitter:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:title" content="深入理解STL源码(3.2) 序列式容器之list" /><meta name="twitter:site" content="@ibillxia" /><meta name="msvalidate.01" content="1538BC1807507674B6BD4942F25493B2" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2014-07-06T22:03:00+08:00","datePublished":"2014-07-06T22:03:00+08:00","description":"本文涉及到 SGI STL 源码的文件有list、stl_list.h、list.h 等几个文件。","headline":"深入理解STL源码(3.2) 序列式容器之list","mainEntityOfPage":{"@type":"WebPage","@id":"https://ibillxia.github.io/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/"},"url":"https://ibillxia.github.io/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/"}</script><title>深入理解STL源码(3.2) 序列式容器之list | Bill's Blog</title><link rel="icon" type="image/png" href="/assets/img/favicons/favicon-96x96.png" sizes="96x96"><link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico"><link rel="shortcut icon" href="/assets/img/favicon.ico"><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="stylesheet" href="/assets/css/jekyll-theme-chirpy.css"><link rel="stylesheet" href="/assets/lib/fonts/main.css"><link rel="stylesheet" href="/assets/lib/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="/assets/lib/tocbot/tocbot.min.css"><link rel="stylesheet" href="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.min.css"><link rel="stylesheet" href="/assets/lib/glightbox/glightbox.min.css"> <script src="/assets/js/dist/theme.min.js"></script> <script defer src="/assets/lib/simple-jekyll-search/simple-jekyll-search.min.js"></script> <script defer src="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.umd.min.js"></script> <script defer src="/assets/lib/glightbox/glightbox.min.js"></script> <script defer src="/assets/lib/clipboard/clipboard.min.js"></script> <script defer src="/assets/lib/dayjs/dayjs.min.js"></script> <script defer src="/assets/lib/dayjs/locale/en.js"></script> <script defer src="/assets/lib/dayjs/plugin/relativeTime.js"></script> <script defer src="/assets/lib/dayjs/plugin/localizedFormat.js"></script> <script defer src="/assets/lib/tocbot/tocbot.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script defer src="/app.min.js?baseurl=&register=true" ></script> <script defer src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script> <script> document.addEventListener('DOMContentLoaded', () => { window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-34DJ0T23LB'); }); </script><body><aside aria-label="Sidebar" id="sidebar" class="d-flex flex-column align-items-end"><header class="profile-wrapper"> <a href="/" id="avatar" class="rounded-circle"><img src="/assets/img/rock_coder.png" width="112" height="112" alt="avatar" onerror="this.style.display='none'"></a> <a class="site-title d-block" href="/">Bill's Blog</a><p class="site-subtitle fst-italic mb-0">Program Hard, Play Hard, Live Crazy!</p></header><nav class="flex-column flex-grow-1 w-100 ps-0"><ul class="nav"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home"></i> <span>首页</span> </a><li class="nav-item"> <a href="/blog/archives/" class="nav-link"> <i class="fa-fw fas fa-archive"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/blog/categories/" class="nav-link"> <i class="fa-fw fas fa-stream"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/blog/tags/" class="nav-link"> <i class="fa-fw fas fa-tags"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle"></i> <span>关于</span> </a></ul></nav><div class="sidebar-bottom d-flex flex-wrap align-items-center w-100"><div class="btn-group dropup"> <button type="button" class="btn btn-link nav-link" aria-label="Switch Mode" id="mode-toggle" data-bs-toggle="dropdown" ><i class="fa-regular fa-sun" data-theme-mode="light"></i><i class="fa-regular fa-moon" data-theme-mode="dark"></i><i class="fa-solid fa-display" data-theme-mode="system"></i></button><ul class="dropdown-menu rounded-3 mb-1 p-1"><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="light"><i class="fa-regular fa-sun" data-theme-mode="light"></i>浅色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="dark"><i class="fa-regular fa-moon" data-theme-mode="dark"></i>深色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="system"><i class="fa-solid fa-display" data-theme-mode="system"></i>跟随系统</button></ul></div><span class="icon-border"></span> <a href="https://github.com/ibillxia" aria-label="github" target="_blank" rel="noopener noreferrer" > <i class="fab fa-github"></i> </a> <a href="https://x.com/ibillxia" aria-label="x" target="_blank" rel="noopener noreferrer" > <i class="fa-brands fa-x-twitter"></i> </a> <a href="javascript:void(location.href = 'mailto:' + ['ibillxia','gmail.com'].join('@'))" aria-label="email" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" > <i class="fas fa-rss"></i> </a> <a href="https://stackoverflow.com/users/1602285/bill-xia" aria-label="stack-overflow" target="_blank" rel="noopener noreferrer" > <i class="fab fa-stack-overflow"></i> </a> <a href="https://weibo.com/ibillxia" aria-label="weibo" target="_blank" rel="noopener noreferrer" > <i class="fab fa-weibo"></i> </a></div></aside><div id="main-wrapper" class="d-flex justify-content-center"><div class="container d-flex flex-column px-xxl-5"><header id="topbar-wrapper" class="flex-shrink-0" aria-label="Top Bar"><div id="topbar" class="d-flex align-items-center justify-content-between px-lg-3 h-100" ><nav id="breadcrumb" aria-label="Breadcrumb"> <span> <a href="/">首页</a> </span> <span>深入理解STL源码(3.2) 序列式容器之list</span></nav><button type="button" id="sidebar-trigger" class="btn btn-link" aria-label="Sidebar"> <i class="fas fa-bars fa-fw"></i> </button><div id="topbar-title"> 文章</div><button type="button" id="search-trigger" class="btn btn-link" aria-label="Search"> <i class="fas fa-search fa-fw"></i> </button> <search id="search" class="align-items-center ms-3 ms-lg-0"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="搜索..." > </search> <button type="button" class="btn btn-link text-decoration-none" id="search-cancel">取消</button></div></header><div class="row flex-grow-1"><main aria-label="Main Content" class="col-12 col-lg-11 col-xl-9 px-md-4"><article class="px-1" data-toc="true"><header><h1 data-toc-skip>深入理解STL源码(3.2) 序列式容器之list</h1><div class="post-meta text-muted"> <span> 发表于 <time data-ts="1404655380" data-df="YYYY/MM/DD" data-bs-toggle="tooltip" data-bs-placement="bottom" > 2014/07/06 </time> </span><div class="d-flex justify-content-between"> <span> 作者 <em> <a href="https://github.com/ibillxia">Bill Xia</a> </em> </span><div> <span class="readtime" data-bs-toggle="tooltip" data-bs-placement="bottom" title="1477 字" > <em>8 分钟</em>阅读</span></div></div></div></header><div id="toc-bar" class="d-flex align-items-center justify-content-between invisible"> <span class="label text-truncate">深入理解STL源码(3.2) 序列式容器之list</span> <button type="button" class="toc-trigger btn me-1"> <i class="fa-solid fa-list-ul fa-fw"></i> </button></div><button id="toc-solo-trigger" type="button" class="toc-trigger btn btn-outline-secondary btn-sm"> <span class="label ps-2 pe-1">文章内容</span> <i class="fa-solid fa-angle-right fa-fw"></i> </button> <dialog id="toc-popup" class="p-0"><div class="header d-flex flex-row align-items-center justify-content-between"><div class="label text-truncate py-2 ms-4">深入理解STL源码(3.2) 序列式容器之list</div><button id="toc-popup-close" type="button" class="btn-close btn-sm mx-3" aria-label="Close"></button></div><div id="toc-popup-content" class="px-4 py-3 pb-4"></div></dialog><div class="content"><p>本文涉及到 SGI STL 源码的文件有<code class="language-plaintext highlighter-rouge">list</code>、<code class="language-plaintext highlighter-rouge">stl_list.h</code>、<code class="language-plaintext highlighter-rouge">list.h</code> 等几个文件。</p><h2 id="1-list-和-slist"><span class="me-2">1. list 和 slist</span><a href="#1-list-和-slist" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>STL中也实现了链表这种数据结构，list是STL标准的双向链表，而slit是SGI的单链表。相比于vector的连续线性空间而言，list即有有点也有缺点：优点是空间分配更灵活，对任何位置的插入删除操作都是常数时间；缺点是排序不方便。list和vector是比较常用的线性容器，那么什么时候用哪一种容器呢，需要视元素的多少、元素构造的复杂度（是否为POD数据）以及元素存取行为的特性而定。限于篇幅，本文主要介绍list的内容，关于单链表slist可以参见源码和侯捷的书。</p><h2 id="2-list-的数据结构"><span class="me-2">2. list 的数据结构</span><a href="#2-list-的数据结构" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>在数据结构中，我们知道链表的节点node和链表list本身是不同的数据结构，以下分别是node和list的数据结构：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre><td class="rouge-code"><pre><span class="k">struct</span> <span class="nc">_List_node_base</span> <span class="p">{</span>
+  <span class="n">_List_node_base</span><span class="o">*</span> <span class="n">_M_next</span><span class="p">;</span>
+  <span class="n">_List_node_base</span><span class="o">*</span> <span class="n">_M_prev</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">_List_node</span> <span class="o">:</span> <span class="k">public</span> <span class="n">_List_node_base</span> <span class="p">{</span>  <span class="c1">// node 的定义</span>
+  <span class="n">_Tp</span> <span class="n">_M_data</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Alloc</span><span class="p">&gt;</span>
+<span class="k">class</span> <span class="nc">_List_base</span> <span class="p">{</span>
+<span class="nl">protected:</span>
+  <span class="n">_List_node</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;*</span> <span class="n">_M_node</span><span class="p">;</span> <span class="c1">// 只要一个指针就可以表示整个双向链表</span>
+<span class="p">};</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Alloc</span> <span class="o">=</span> <span class="n">__STL_DEFAULT_ALLOCATOR</span><span class="p">(</span><span class="n">_Tp</span><span class="p">)</span> <span class="p">&gt;</span>
+<span class="k">class</span> <span class="nc">list</span> <span class="o">:</span> <span class="k">protected</span> <span class="n">_List_base</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="p">,</span> <span class="n">_Alloc</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="nl">public:</span>
+  <span class="k">typedef</span> <span class="n">_List_node</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;</span> <span class="n">_Node</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></table></code></div></div><p>在list中的 <code class="language-plaintext highlighter-rouge">_M_node</code> 其实指向一个空白节点，该空白节点的 <code class="language-plaintext highlighter-rouge">_M_data</code> 成员是没有被初始化的，实际上该节点是链表的尾部，后面将list的迭代器还会提到这样做的好处。</p><h2 id="3-list-的配置器"><span class="me-2">3. list 的配置器</span><a href="#3-list-的配置器" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>list缺省使用 alloc （即 <code class="language-plaintext highlighter-rouge">__STL_DEFAULT_ALLOCATOR</code>） 作为空间配置器，并据此定义了另外一个 <code class="language-plaintext highlighter-rouge">list_node_allocator</code> ，并定义了<code class="language-plaintext highlighter-rouge">_M_get_node</code>和<code class="language-plaintext highlighter-rouge">_M_put_node</code> 两个函数，分别用于分配和释放空间，为的是更方便的以节点大小为配置单位。除此之外，还定义了两个<code class="language-plaintext highlighter-rouge">_M_create_node</code> 函数，在分配空间的同时调用元素的构建函数对其进行初始化：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+</pre><td class="rouge-code"><pre><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Alloc</span><span class="p">&gt;</span> 
+<span class="k">class</span> <span class="nc">_List_base</span> <span class="p">{</span>
+<span class="nl">protected:</span>
+  <span class="k">typedef</span> <span class="n">simple_alloc</span><span class="o">&lt;</span><span class="n">_List_node</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">_Alloc</span><span class="o">&gt;</span> <span class="n">_Alloc_type</span><span class="p">;</span> <span class="c1">// 专属配置器，每次配置一个节点</span>
+  <span class="n">_List_node</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;*</span> <span class="n">_M_get_node</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_Alloc_type</span><span class="o">::</span><span class="n">allocate</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="p">}</span> <span class="c1">// 分配一个节点</span>
+  <span class="kt">void</span> <span class="nf">_M_put_node</span><span class="p">(</span><span class="n">_List_node</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;*</span> <span class="n">__p</span><span class="p">)</span> <span class="p">{</span> <span class="n">_Alloc_type</span><span class="o">::</span><span class="n">deallocate</span><span class="p">(</span><span class="n">__p</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="p">}</span>  <span class="c1">// 释放一个节点</span>
+<span class="p">};</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Alloc</span> <span class="o">=</span> <span class="n">__STL_DEFAULT_ALLOCATOR</span><span class="p">(</span><span class="n">_Tp</span><span class="p">)</span> <span class="p">&gt;</span> <span class="c1">// 缺省使用 __STL_DEFAULT_ALLOCATOR 配置器</span>
+<span class="k">class</span> <span class="nc">list</span> <span class="o">:</span> <span class="k">protected</span> <span class="n">_List_base</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="p">,</span> <span class="n">_Alloc</span><span class="o">&gt;</span> <span class="p">{</span> 
+<span class="nl">protected:</span>
+  <span class="n">_Node</span><span class="o">*</span> <span class="n">_M_create_node</span><span class="p">(</span><span class="k">const</span> <span class="n">_Tp</span><span class="o">&amp;</span> <span class="n">__x</span><span class="p">){</span> <span class="c1">// 分配空间并初始化</span>
+    <span class="n">_Node</span><span class="o">*</span> <span class="n">__p</span> <span class="o">=</span> <span class="n">_M_get_node</span><span class="p">();</span>
+    <span class="n">__STL_TRY</span> <span class="p">{</span>  <span class="n">_Construct</span><span class="p">(</span><span class="o">&amp;</span><span class="n">__p</span><span class="o">-&gt;</span><span class="n">_M_data</span><span class="p">,</span> <span class="n">__x</span><span class="p">);</span>  <span class="p">}</span>
+    <span class="n">__STL_UNWIND</span><span class="p">(</span><span class="n">_M_put_node</span><span class="p">(</span><span class="n">__p</span><span class="p">));</span>
+    <span class="k">return</span> <span class="n">__p</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="n">_Node</span><span class="o">*</span> <span class="nf">_M_create_node</span><span class="p">(){</span>
+    <span class="n">_Node</span><span class="o">*</span> <span class="n">__p</span> <span class="o">=</span> <span class="n">_M_get_node</span><span class="p">();</span>
+    <span class="n">__STL_TRY</span> <span class="p">{</span>  <span class="n">_Construct</span><span class="p">(</span><span class="o">&amp;</span><span class="n">__p</span><span class="o">-&gt;</span><span class="n">_M_data</span><span class="p">);</span>  <span class="p">}</span>
+    <span class="n">__STL_UNWIND</span><span class="p">(</span><span class="n">_M_put_node</span><span class="p">(</span><span class="n">__p</span><span class="p">));</span>
+    <span class="k">return</span> <span class="n">__p</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+</pre></table></code></div></div><p>在list的构造和析构函数、插入、删除等操作中设计到空间的配置。由于list不涉及同时分配多个连续元素的空间，因此用不到SGI的第二层配置器。</p><h2 id="4-list-的迭代器"><span class="me-2">4. list 的迭代器</span><a href="#4-list-的迭代器" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>由于list的节点在内存中不一定连续存储，其迭代器不能像vector那样使用普通指针了，由于list是双向的链表，迭代器必须具备前移、后移的能力，所以它的迭代器是BidirectionalIterators，即双向的可增可减的，以下是list的迭代器的设计：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre><td class="rouge-code"><pre><span class="k">struct</span> <span class="nc">_List_iterator_base</span> <span class="p">{</span>
+  <span class="k">typedef</span> <span class="n">bidirectional_iterator_tag</span> <span class="n">iterator_category</span><span class="p">;</span>
+  <span class="n">_List_node_base</span><span class="o">*</span> <span class="n">_M_node</span><span class="p">;</span>
+  <span class="n">_List_iterator_base</span><span class="p">(</span><span class="n">_List_node_base</span><span class="o">*</span> <span class="n">__x</span><span class="p">)</span> <span class="o">:</span> <span class="n">_M_node</span><span class="p">(</span><span class="n">__x</span><span class="p">)</span> <span class="p">{}</span>
+  <span class="n">_List_iterator_base</span><span class="p">()</span> <span class="p">{}</span>
+  <span class="kt">void</span> <span class="nf">_M_incr</span><span class="p">()</span> <span class="p">{</span> <span class="n">_M_node</span> <span class="o">=</span> <span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_next</span><span class="p">;</span> <span class="p">}</span>
+  <span class="kt">void</span> <span class="nf">_M_decr</span><span class="p">()</span> <span class="p">{</span> <span class="n">_M_node</span> <span class="o">=</span> <span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_prev</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">};</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Ref</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Ptr</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">_List_iterator</span> <span class="o">:</span> <span class="k">public</span> <span class="n">_List_iterator_base</span> <span class="p">{</span>
+  <span class="n">_Self</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">++</span><span class="p">()</span> <span class="p">{</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_M_incr</span><span class="p">();</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+  <span class="n">_Self</span> <span class="k">operator</span><span class="o">++</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span> <span class="n">_Self</span> <span class="n">__tmp</span> <span class="o">=</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_M_incr</span><span class="p">();</span> <span class="k">return</span> <span class="n">__tmp</span><span class="p">;</span> <span class="p">}</span>
+  <span class="n">_Self</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">--</span><span class="p">()</span> <span class="p">{</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_M_decr</span><span class="p">();</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+  <span class="n">_Self</span> <span class="k">operator</span><span class="o">--</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span> <span class="n">_Self</span> <span class="n">__tmp</span> <span class="o">=</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">_M_decr</span><span class="p">();</span> <span class="k">return</span> <span class="n">__tmp</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">};</span>
+</pre></table></code></div></div><p>list有一个重要性质，插入操作（insert）和接合操作（splice）都不会造成原有list迭代器失效，而list的删除操作（erase）也只对“指向被删除元素”的那个迭代器失效，其他迭代器不受任何影响。</p><h2 id="5-list-的常用操作"><span class="me-2">5. list 的常用操作</span><a href="#5-list-的常用操作" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>list的常用操作有很多，例如最基本的<code class="language-plaintext highlighter-rouge">push_front</code>、<code class="language-plaintext highlighter-rouge">push_back</code>、<code class="language-plaintext highlighter-rouge">pop_front</code>、<code class="language-plaintext highlighter-rouge">pop_back</code> 等，这里主要介绍一下<code class="language-plaintext highlighter-rouge">clear</code>、<code class="language-plaintext highlighter-rouge">remove</code>、<code class="language-plaintext highlighter-rouge">unique</code>、<code class="language-plaintext highlighter-rouge">transfer</code> 这几个。<br /> <strong>（1）clear</strong><br /> clear 函数的作用是清楚整个list的所有节点。</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre><td class="rouge-code"><pre><span class="kt">void</span> <span class="nf">clear</span><span class="p">()</span> <span class="p">{</span> <span class="n">_Base</span><span class="o">::</span><span class="n">clear</span><span class="p">();</span> <span class="p">}</span>
+<span class="kt">void</span> <span class="n">_List_base</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="p">,</span><span class="n">_Alloc</span><span class="o">&gt;::</span><span class="n">clear</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">_List_node</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;*</span> <span class="n">__cur</span> <span class="o">=</span> <span class="p">(</span><span class="n">_List_node</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;*</span><span class="p">)</span> <span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_next</span><span class="p">;</span>
+  <span class="k">while</span> <span class="p">(</span><span class="n">__cur</span> <span class="o">!=</span> <span class="n">_M_node</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">_List_node</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;*</span> <span class="n">__tmp</span> <span class="o">=</span> <span class="n">__cur</span><span class="p">;</span>
+    <span class="n">__cur</span> <span class="o">=</span> <span class="p">(</span><span class="n">_List_node</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;*</span><span class="p">)</span> <span class="n">__cur</span><span class="o">-&gt;</span><span class="n">_M_next</span><span class="p">;</span> <span class="c1">// 后移</span>
+    <span class="n">_Destroy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">__tmp</span><span class="o">-&gt;</span><span class="n">_M_data</span><span class="p">);</span> <span class="c1">// 析构当前节点的对象</span>
+    <span class="n">_M_put_node</span><span class="p">(</span><span class="n">__tmp</span><span class="p">);</span> <span class="c1">// 释放当前节点的空间</span>
+  <span class="p">}</span>
+  <span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_next</span> <span class="o">=</span> <span class="n">_M_node</span><span class="p">;</span> <span class="c1">// 置为空list</span>
+  <span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_prev</span> <span class="o">=</span> <span class="n">_M_node</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p><strong>（2）remove</strong><br /> remove 函数的作用是将数值为value的所有元素移除。</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre><td class="rouge-code"><pre><span class="kt">void</span> <span class="n">list</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="p">,</span> <span class="n">_Alloc</span><span class="o">&gt;::</span><span class="n">remove</span><span class="p">(</span><span class="k">const</span> <span class="n">_Tp</span><span class="o">&amp;</span> <span class="n">__value</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">iterator</span> <span class="n">__first</span> <span class="o">=</span> <span class="n">begin</span><span class="p">();</span>
+  <span class="n">iterator</span> <span class="n">__last</span> <span class="o">=</span> <span class="n">end</span><span class="p">();</span>
+  <span class="k">while</span> <span class="p">(</span><span class="n">__first</span> <span class="o">!=</span> <span class="n">__last</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 遍历list</span>
+    <span class="n">iterator</span> <span class="n">__next</span> <span class="o">=</span> <span class="n">__first</span><span class="p">;</span>
+    <span class="o">++</span><span class="n">__next</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="n">__first</span> <span class="o">==</span> <span class="n">__value</span><span class="p">)</span> <span class="n">erase</span><span class="p">(</span><span class="n">__first</span><span class="p">);</span> <span class="c1">// 值与 value 相等就移除</span>
+    <span class="n">__first</span> <span class="o">=</span> <span class="n">__next</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p><strong>（3）unique</strong><br /> unique函数的作用是移除相同的<strong>连续</strong>元素，只有“连续而且相同”的元素，才回被移除到只剩一个。</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre><td class="rouge-code"><pre><span class="kt">void</span> <span class="n">list</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="p">,</span> <span class="n">_Alloc</span><span class="o">&gt;::</span><span class="n">unique</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">iterator</span> <span class="n">__first</span> <span class="o">=</span> <span class="n">begin</span><span class="p">();</span>
+  <span class="n">iterator</span> <span class="n">__last</span> <span class="o">=</span> <span class="n">end</span><span class="p">();</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">__first</span> <span class="o">==</span> <span class="n">__last</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+  <span class="n">iterator</span> <span class="n">__next</span> <span class="o">=</span> <span class="n">__first</span><span class="p">;</span>
+  <span class="k">while</span> <span class="p">(</span><span class="o">++</span><span class="n">__next</span> <span class="o">!=</span> <span class="n">__last</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="n">__first</span> <span class="o">==</span> <span class="o">*</span><span class="n">__next</span><span class="p">)</span> <span class="c1">// 连续连个节点的值相同</span>
+      <span class="n">erase</span><span class="p">(</span><span class="n">__next</span><span class="p">);</span>
+    <span class="k">else</span>
+      <span class="n">__first</span> <span class="o">=</span> <span class="n">__next</span><span class="p">;</span>
+    <span class="n">__next</span> <span class="o">=</span> <span class="n">__first</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p><strong>（4）transfer</strong><br /> transfer的作用是将 [first, last) 内的所有元素移动到 position 之前。它是一个私有函数，它为其他常用操作如 splice、sort、merge 等的实现提供了便利。</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre><td class="rouge-code"><pre><span class="nl">protected:</span>
+  <span class="kt">void</span> <span class="nf">transfer</span><span class="p">(</span><span class="n">iterator</span> <span class="n">__position</span><span class="p">,</span> <span class="n">iterator</span> <span class="n">__first</span><span class="p">,</span> <span class="n">iterator</span> <span class="n">__last</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">__position</span> <span class="o">!=</span> <span class="n">__last</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// Remove [first, last) from its old position.</span>
+      <span class="n">__last</span><span class="p">.</span><span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_prev</span><span class="o">-&gt;</span><span class="n">_M_next</span>     <span class="o">=</span> <span class="n">__position</span><span class="p">.</span><span class="n">_M_node</span><span class="p">;</span>
+      <span class="n">__first</span><span class="p">.</span><span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_prev</span><span class="o">-&gt;</span><span class="n">_M_next</span>    <span class="o">=</span> <span class="n">__last</span><span class="p">.</span><span class="n">_M_node</span><span class="p">;</span>
+      <span class="n">__position</span><span class="p">.</span><span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_prev</span><span class="o">-&gt;</span><span class="n">_M_next</span> <span class="o">=</span> <span class="n">__first</span><span class="p">.</span><span class="n">_M_node</span><span class="p">;</span> 
+      <span class="c1">// Splice [first, last) into its new position.</span>
+      <span class="n">_List_node_base</span><span class="o">*</span> <span class="n">__tmp</span>      <span class="o">=</span> <span class="n">__position</span><span class="p">.</span><span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_prev</span><span class="p">;</span>
+      <span class="n">__position</span><span class="p">.</span><span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_prev</span> <span class="o">=</span> <span class="n">__last</span><span class="p">.</span><span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_prev</span><span class="p">;</span>
+      <span class="n">__last</span><span class="p">.</span><span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_prev</span>     <span class="o">=</span> <span class="n">__first</span><span class="p">.</span><span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_prev</span><span class="p">;</span> 
+      <span class="n">__first</span><span class="p">.</span><span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_prev</span>    <span class="o">=</span> <span class="n">__tmp</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</pre></table></code></div></div><p>关于list的内容就介绍到这里了。</p></div><div class="post-tail-wrapper text-muted"><div class="d-flex justify-content-between align-items-center gap-3 mb-3"><div class="post-meta"> <i class="far fa-folder-open fa-fw me-1"></i> <a href="/blog/categories/program/">Program</a></div></div><div class="post-tags"> <i class="fa fa-tags fa-fw me-1"></i> <a href="/blog/tags/c/" class="post-tag no-text-decoration" >C++</a> <a href="/blog/tags/stl/" class="post-tag no-text-decoration" >STL</a> <a href="/blog/tags/%E5%AE%B9%E5%99%A8/" class="post-tag no-text-decoration" >容器</a> <a href="/blog/tags/list/" class="post-tag no-text-decoration" >list</a></div><div class=" post-tail-bottom d-flex justify-content-between align-items-center mt-5 pb-2 " ><div class="license-wrapper"> 本文由作者按照 <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> 进行授权</div><div class="share-wrapper d-flex align-items-center"> <span class="share-label text-muted">分享</span> <span class="share-icons"> <a href="https://x.com/intent/tweet?text=%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3STL%E6%BA%90%E7%A0%81(3.2)%20%E5%BA%8F%E5%88%97%E5%BC%8F%E5%AE%B9%E5%99%A8%E4%B9%8Blist%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F07%2F06%2Fstl-source-insight-3-sequential-containers-2-list%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Twitter" aria-label="Twitter"> <i class="fa-fw fa-brands fa-square-x-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3STL%E6%BA%90%E7%A0%81(3.2)%20%E5%BA%8F%E5%88%97%E5%BC%8F%E5%AE%B9%E5%99%A8%E4%B9%8Blist%20-%20Bill's%20Blog&u=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F07%2F06%2Fstl-source-insight-3-sequential-containers-2-list%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Facebook" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://t.me/share/url?url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F07%2F06%2Fstl-source-insight-3-sequential-containers-2-list%2F&text=%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3STL%E6%BA%90%E7%A0%81(3.2)%20%E5%BA%8F%E5%88%97%E5%BC%8F%E5%AE%B9%E5%99%A8%E4%B9%8Blist%20-%20Bill's%20Blog" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Telegram" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <a href="https://service.weibo.com/share/share.php?title=%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3STL%E6%BA%90%E7%A0%81(3.2)%20%E5%BA%8F%E5%88%97%E5%BC%8F%E5%AE%B9%E5%99%A8%E4%B9%8Blist%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F07%2F06%2Fstl-source-insight-3-sequential-containers-2-list%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Weibo" aria-label="Weibo"> <i class="fa-fw fab fa-weibo"></i> </a> <button id="copy-link" aria-label="Copy link" class="btn small" data-bs-toggle="tooltip" data-bs-placement="top" title="分享链接" data-title-succeed="链接已复制！" > <i class="fa-fw fas fa-link pe-none fs-6"></i> </button> </span></div></div></div></article></main><aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 text-muted"><div class="access"><section id="access-lastmod"><h2 class="panel-heading">最近更新</h2><ul class="content list-unstyled ps-0 pb-1 ms-1 mt-2"><li class="text-truncate lh-lg"> <a href="/blog/2026/11/16/anthropic-the-components-of-agent-memory/">【译】Anthropic：智能体记忆的组成部分</a><li class="text-truncate lh-lg"> <a href="/blog/2026/11/09/is-FDE-actually-established-in-China/">前鹅厂王津银：FDE 在中国，到底成立吗？</a><li class="text-truncate lh-lg"> <a href="/blog/2026/09/14/openai-data-agent-skills-interpretation/">OpenAI Data Agent的核心Skill解读：数据Agent如何把问题变成可信的决策</a><li class="text-truncate lh-lg"> <a href="/blog/2026/08/20/data-agent-servey-from-arch-to-practice/">Data Agent全景调研：从技术架构到产业实践</a><li class="text-truncate lh-lg"> <a href="/blog/2026/07/03/FDE-what-why-and-future/">什么是 FDE？从它的爆火看软件研发的职能大洗牌</a></ul></section><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div><div class="toc-border-cover z-3"></div><section id="toc-wrapper" class="invisible position-sticky ps-0 pe-4 pb-4"><h2 class="panel-heading ps-3 pb-2 mb-0">文章内容</h2><nav id="toc"></nav></section></aside></div><div class="row"><div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 px-md-4"><aside id="related-posts" aria-labelledby="related-label"><h3 class="mb-4" id="related-label">相关文章</h3><nav class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4"><article class="col"> <a href="/blog/2014/09/27/insight-into-stl-4-associative-containers-5-hashset-and-hashmap/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1411824600" data-df="YYYY/MM/DD" > 2014/09/27 </time><h4 class="pt-0 my-2">深入理解STL源码(4.5) 关联式容器之hashset和hashmap</h4><div class="text-muted"><p>本文涉及到 SGI STL 源码的文件主要是 stl_hash_set.h、stl_hash_map.h 等文件。 1. hashset 和 hash_multi_set 需要说明的是，STL 标准只规范了复杂度与接口，并没有规范实现方法，但 STL 实现的版本中 set 大多以 RB-tree 为底层机制，SGI STL 在实现了以 RB-tree 为底层机制的 set 外，还实现了以 ...</p></div></div></a></article><article class="col"> <a href="/blog/2014/09/13/insight-into-stl-4-associative-containers-4-hashtable/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1410615000" data-df="YYYY/MM/DD" > 2014/09/13 </time><h4 class="pt-0 my-2">深入理解STL源码(4.4) 关联式容器之hashtable</h4><div class="text-muted"><p>本文涉及到 SGI STL 源码的文件主要是 stl_hashtable.h、stl_hash_fun.h 等文件。 1. hashtable 简介 在数据结构中我们知道，有种数据结构的插入、删除、查找等操作的性能是常数时间，但需要比元素个数更多的空间，这种数据结构就是哈希表。哈希表的基本思想是，将数据存储在与其数值大小相关的地方，比如对该数取模，然后存储在以余数为下表的数组中。但这样会出...</p></div></div></a></article><article class="col"> <a href="/blog/2014/08/31/insight-into-stl-4-associative-containers-3-map-and-multimap/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1409491800" data-df="YYYY/MM/DD" > 2014/08/31 </time><h4 class="pt-0 my-2">深入理解STL源码(4.3) 关联式容器之map和multimap</h4><div class="text-muted"><p>本文涉及到 SGI STL 源码的文件主要是 stl_map.h、stl_multimap.h、stl_pair.h、map.h、 multimap.h、 map 等文件。 1. map 简介 map 的特性是，所有元素都是键值对，用一个 pair 表示，pair 的第一个元素是键值（key），第二个元素是实值（value），map 不允许两个元素的键值相同。 与 set 类似的，map...</p></div></div></a></article></nav></aside><nav class="post-navigation d-flex justify-content-between" aria-label="Post Navigation"> <a href="/blog/2014/06/29/stl-source-insight-3-sequential-containers-1-vector/" class="btn btn-outline-primary" aria-label="上一篇" ><p>深入理解STL源码(3.1) 序列式容器之vector</p></a> <a href="/blog/2014/07/13/stl-source-insight-3-sequential-containers-3-deque-and-stack-queue/" class="btn btn-outline-primary" aria-label="下一篇" ><p>深入理解STL源码(3.3) 序列式容器之deque和stack、queue</p></a></nav><footer aria-label="Site Info" class=" d-flex flex-column justify-content-center text-muted flex-lg-row justify-content-lg-between align-items-lg-center pb-lg-3 " ><p>© <time>2026</time> <a href="https://github.com/ibillxia">Bill Xia</a>. <span data-bs-toggle="tooltip" data-bs-placement="top" title="除非另有说明，本网站上的博客文章均由作者按照知识共享署名 4.0 国际 (CC BY 4.0) 许可协议进行授权。" >保留部分权利。</span></p><p>本站采用 <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> 主题 <a data-bs-toggle="tooltip" data-bs-placement="top" title="v7.6.0" href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener" >Chirpy</a></p></footer></div></div><div id="search-result-wrapper" class="d-flex justify-content-center d-none"><div class="col-11 content"><div id="search-hints"><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><aside aria-label="Scroll to Top"> <button id="back-to-top" type="button" class="btn btn-lg btn-box-shadow"> <i class="fas fa-angle-up"></i> </button></aside></div><div id="mask" class="d-none position-fixed w-100 h-100 z-1"></div><aside id="notification" class="toast w-auto rounded-5 text-nowrap" role="alert" aria-live="assertive" aria-atomic="true" data-bs-animation="true" data-bs-autohide="false" ><div class="d-flex align-items-center"><div class="toast-body ps-3">发现新内容</div><button type="button" class="btn btn-primary btn-sm rounded-2 py-0" aria-label="Update" >更新</button> <button type="button" class="btn-close mx-3 ms-2" data-bs-dismiss="toast" aria-label="Close" ></button></div></aside><script> var disqus_config = function () { this.page.url = 'https://ibillxia.github.io/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/'; this.page.identifier = '/blog/2014/07/06/stl-source-insight-3-sequential-containers-2-list/'; }; function addDisqus() { let disqusThread = document.createElement('div'); let paragraph = document.createElement('p'); disqusThread.id = 'disqus_thread'; paragraph.className = 'text-center text-muted small'; paragraph.innerHTML = 'Comments powered by <a href="https://disqus.com/">Disqus</a>.'; disqusThread.appendChild(paragraph); const footer = document.querySelector('footer'); footer.insertAdjacentElement("beforebegin", disqusThread); }function reloadDisqus(event) { if (event.source === window && event.data && event.data.id === Theme.eventId) {if (typeof DISQUS === 'undefined') { return; } if (document.readyState == 'complete') { DISQUS.reset({ reload: true, config: disqus_config }); } } } addDisqus(); if (Theme.isToggleable) { addEventListener('message', reloadDisqus); }var disqusObserver = new IntersectionObserver( function (entries) { if (entries[0].isIntersecting) { var d = document, s = d.createElement('script'); s.src = 'https://ibillxia.disqus.com/embed.js'; s.setAttribute('data-timestamp', +new Date()); (d.head || d.body).appendChild(s); disqusObserver.disconnect(); } }, { threshold: [0] } ); disqusObserver.observe(document.getElementById('disqus_thread')); </script> <script> document.addEventListener('DOMContentLoaded', () => { SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<article class="px-1 px-sm-2 px-lg-4 px-xl-0"><header><h2><a href="{url}">{title}</a></h2><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div></header><p>{content}</p></article>', noResultsText: '<p class="mt-5">搜索结果为空</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="me-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); }); </script>

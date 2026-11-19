@@ -1,551 +1,247 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>深入理解STL源码(1) 空间配置器(allocator) - Bill's Blog</title>
-  <meta name="author" content="Bill Xia">
-
-  
-  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="https://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <style type="text/css">
-    body {
-      padding-bottom: 0px;
-    }
-    h1 {
-      margin-bottom: 15px;
-    }
-    img {
-      max-width: 100%;
-    }
-    .sharing, .meta, .pager {
-      margin: 20px 0px 20px 0px;
-    }
-    .page-footer p {
-      text-align: center;
-    }
-  </style>
-  <script src="/javascripts/libs/jquery.js"></script>
-  <script src="/javascripts/libs/modernizr-2.0.js"></script>
-  <script src="/javascripts/libs/bootstrap.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-34DJ0T23LB');
-  </script>
-  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
-  <script type="text/javascript">
-function addBlankTargetForLinks () {
-  $('a[href^="http"]').each(function(){
-      $(this).attr('target', '_blank');
-  });
-}
-
-$(function () {
-  addBlankTargetForLinks();
-  if (typeof MutationObserver !== 'undefined') {
-    new MutationObserver(function () {
-      addBlankTargetForLinks();
-    }).observe(document.body, { childList: true, subtree: true });
-  }
-});
-</script>
-<!-- MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = 'https://ssl.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
-</head>
-
-<body   >
-  <nav role="navigation"><div class="navbar navbar-inverse">
-  <div class="navbar-inner">
-    <div class="container">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-
-      <a class="brand" href="/">Bill's Blog</a>
-
-      <div class="nav-collapse">
-        <ul class="nav">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives/">Archives</a></li>
-  <li><a href="/blog/categories/">Categories</a></li>
-  <li><a href="/blog/tags/">Tags</a></li>
-  <li><a href="/about/">About</a></li>
-</ul>
-
-
-        <ul class="nav pull-right" data-subscription="rss">
-          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-          
-        </ul>
-
-        
-          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
-            <fieldset role="search">
-              <input type="hidden" name="q" value="site:ibillxia.github.io" />
-              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
-            </fieldset>
-          </form>
-        
-      </div>
-    </div>
-  </div>
-</div>
-</nav>
-  <div class="container">
-    <div class="row-fluid">
-      
-<article class="hentry span9" role="article">
-
-  
-  <header class="page-header">
-    
-      <h1 class="entry-title">深入理解STL源码(1) 空间配置器(allocator)</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-06-13T22:04:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><p>在STL中，Memory Allocator 处于最底层的位置，为一切的 Container 提供存储服务，是一切其他组件的基石。对于一般使用 STL 的用户而言，Allocator 是不可见的，如果需要对 STL 进行扩展，如编写自定义的容器，就需要调用 Allocator 的内存分配函数进行空间配置。本文涉及到的 SGI STL 源代码文件有 <code>alloc.h</code>, <code>stl_config.h</code>, <code>stl_alloc.h</code>, <code>stl_threads.h</code> 这4个。</p>
-
-<p>在C++中，一个对象的内存配置和释放一般都包含两个步骤，对于内存的配置，首先是调用operator new来配置内存，然后调用对象的类的构造函数进行初始化；而对于内存释放，首先是调用析构函数，然后调用 operator delete进行释放。 如以下代码：
-<code>cpp
-class Foo { ... };
-Foo* pf = new Foo;
-...
-delete pf;
-</code>
-Allocator 的作用相当于operator new 和operator delete的功能，只是它考虑得更加细致周全。SGI STL 中考虑到了内存分配失败的异常处理，内置轻量级内存池（主要用于处理小块内存的分配，应对内存碎片问题）实现， 多线程中的内存分配处理（主要是针对内存池的互斥访问）等，本文就主要分析 SGI STL 中在这三个方面是如何处理的。在介绍着三个方面之前，我们先来看看 Allocator的标准接口。</p>
-
-<!-- more -->
-
-
-<h2>1. Allocator 的标准接口</h2>
-
-<p>在 SGI STL 中，Allocator的实现主要在文件<code>alloc.h</code> 和 <code>stl_alloc.h</code> 文件中。根据 STL 规范，Allocator 需提供如下的一些接口（见 <code>stl_alloc.h</code> 文件的第588行开始的class template allocator）：<br/>
-<code>cpp
-// 标识数据类型的成员变量，关于中间的6个变量的涵义见后续文章（关于Traits编程技巧）
-typedef alloc _Alloc;
-typedef size_t     size_type;
-typedef ptrdiff_t  difference_type;
-typedef _Tp*       pointer;
-typedef const _Tp* const_pointer;
-typedef _Tp&amp;       reference;
-typedef const _Tp&amp; const_reference;
-typedef _Tp        value_type;
-template &lt;class _Tp1&gt; struct rebind {
-    typedef allocator&lt;_Tp1&gt; other;
-}; // 一个嵌套的class template，仅包含一个成员变量 other
-// 成员函数
-allocator() __STL_NOTHROW {}  // 默认构造函数，其中__STL_NOTHROW 在 stl_config.h中定义，要么为空，要么为 throw()
-allocator(const allocator&amp;) __STL_NOTHROW {}  // 拷贝构造函数
-template &lt;class _Tp1&gt; allocator(const allocator&lt;_Tp1&gt;&amp;) __STL_NOTHROW {} // 泛化的拷贝构造函数
-~allocator() __STL_NOTHROW {} // 析构函数
-pointer address(reference __x) const { return &amp;__x; } // 返回对象的地址
-const_pointer address(const_reference __x) const { return &amp;__x; }  // 返回const对象的地址
-_Tp* allocate(size_type __n, const void* = 0) {
-    return __n != 0 ? static_cast&lt;_Tp*&gt;(_Alloc::allocate(__n * sizeof(_Tp))) : 0;
-    // 配置空间，如果申请的空间块数不为0，那么调用 _Alloc 也即 alloc 的 allocate 函数来分配内存，
-} //这里的 alloc 在 SGI STL 中默认使用的是__default_alloc_template&lt;__NODE_ALLOCATOR_THREADS, 0&gt;这个实现（见第402行）
-void deallocate(pointer __p, size_type __n) { _Alloc::deallocate(__p, __n * sizeof(_Tp)); } // 释放空间
-size_type max_size() const __STL_NOTHROW  // max_size() 函数，返回可成功配置的最大值
-    { return size_t(-1) / sizeof(_Tp); }  //这里没看懂，这里的size_t(-1)是什么意思？
-void construct(pointer __p, const _Tp&amp; __val) { new(__p) _Tp(__val); } // 调用 new 来给新变量分配空间并赋值
-void destroy(pointer __p) { __p-&gt;~_Tp(); } // 调用 _Tp 的析构函数来释放空间
-</code>
-在SGI STL中设计了如下几个空间分配的 class template：<br/>
-<code>cpp
-template &lt;int __inst&gt; class __malloc_alloc_template // Malloc-based allocator.  Typically slower than default alloc
-typedef __malloc_alloc_template&lt;0&gt; malloc_alloc
-template&lt;class _Tp, class _Alloc&gt; class simple_alloc
-template &lt;class _Alloc&gt; class debug_alloc
-template &lt;bool threads, int inst&gt; class __default_alloc_template // Default node allocator.
-typedef __default_alloc_template&lt;__NODE_ALLOCATOR_THREADS, 0&gt; alloc
-typedef __default_alloc_template&lt;false, 0&gt; single_client_alloc
-template &lt;class _Tp&gt;class allocator
-template&lt;&gt;class allocator&lt;void&gt;
-template &lt;class _Tp, class _Alloc&gt;struct __allocator
-template &lt;class _Alloc&gt;class __allocator&lt;void, _Alloc&gt;
-</code>
-其中<code>simple_alloc</code> , <code>debug_alloc</code> , <code>allocator</code> 和 <code>__allocator</code>  的实现都比较简单，都是对其他适配器的一个简单封装（因为实际上还是调用其他配置器的方法，如 <code>_Alloc::allocate</code> ）。而真正内容比较充实的是 <code>__malloc_alloc_template</code> 和 <code>__default_alloc_template</code> 这两个配置器，这两个配置器就是 SGI STL 配置器的精华所在。其中 <code>__malloc_alloc_template</code> 是SGI STL 的第一层配置器，只是对系统的 <code>malloc</code> , <code>realloc</code> 函数的一个简单封装，并考虑到了分配失败后的异常处理。而 <code>__default_alloc_template</code> 是SGI STL 的第二层配置器，在第一层配置器的基础上还考虑了内存碎片的问题，通过内置一个轻量级的内存池。下文将先介绍第一级配置器的异常处理机制，然后介绍第二级配置器的内存池实现，及在多线程环境下内存池互斥访问的机制。</p>
-
-<h2>2. SGI STL 内存分配失败的异常处理</h2>
-
-<p>内存分配失败一般是由于out-of-memory(oom)，SGI STL 本身并不会去处理oom问题，而只是提供一个 private 的函数指针成员和一个 public 的设置该函数指针的方法，让用户来自定义异常处理逻辑：
-``` cpp
-private:</p>
-
-<h1>ifndef __STL_STATIC_TEMPLATE_MEMBER_BUG</h1>
-
-<p>  static void (* __malloc_alloc_oom_handler)();  // 函数指针</p>
-
-<h1>endif</h1>
-
-<p>public:
-  static void (<em> __set_malloc_handler(void (</em><strong>f)()))() // 设置函数指针的public方法
-  {
-    void (* </strong>old)() = <strong>malloc_alloc_oom_handler;
-    </strong>malloc_alloc_oom_handler = <strong>f;
-    return(</strong>old);
-  }
-<code>
-如果用户没有调用该方法来设置异常处理函数，那么就不做任何异常处理，仅仅是想标准错误流输出一句out of memory并退出程序（对于使用new和C++特性的情况而言，则是抛出一个`std::bad_alloc()`异常）， 因为该函数指针的缺省值为0，此时对应的异常处理是 `__THROW_BAD_ALLOC`：
-</code> cpp
-// line 152 ~ 155</p>
-
-<h1>ifndef __STL_STATIC_TEMPLATE_MEMBER_BUG</h1>
-
-<p>template <int __inst>
-void (* <strong>malloc_alloc_template&lt;</strong>inst>::__malloc_alloc_oom_handler)() = 0;</p>
-
-<h1>endif</h1>
-
-<p>// in <em>S_oom_malloc and </em>S_oom_realloc
-<strong>my_malloc_handler = </strong>malloc_alloc_oom_handler;
-if (0 == <strong>my_malloc_handler) { </strong>THROW_BAD_ALLOC; }
-// in preprocess, line 41 ~ 50</p>
-
-<h1>ifndef __THROW_BAD_ALLOC</h1>
-
-<h1>if defined(<strong>STL_NO_BAD_ALLOC) || !defined(</strong>STL_USE_EXCEPTIONS)</h1>
-
-<h1>include <stdio.h></h1>
-
-<h1>include <stdlib.h></h1>
-
-<h1>define __THROW_BAD_ALLOC fprintf(stderr, "out of memory\n"); exit(1)</h1>
-
-<h1>else /<em> Standard conforming out-of-memory handling </em>/</h1>
-
-<h1>include <new></h1>
-
-<h1>define __THROW_BAD_ALLOC throw std::bad_alloc()</h1>
-
-<h1>endif</h1>
-
-<h1>endif</h1>
-
-<pre><code>SGI STL 内存配置失败的异常处理机制就是这样子了，提供一个默认的处理方法，也留有一个用户自定义处理异常的接口。
-
-## 3. SGI STL 内置轻量级内存池的实现
-第一级配置器 `__malloc_alloc_template` 仅仅只是对 `malloc` 的一层封装，没有考虑可能出现的内存碎片化问题。内存碎片化问题在大量申请小块内存是可能非常严重，最终导致碎片化的空闲内存无法充分利用。SGI 于是在第二级配置器 `__default_alloc_template` 中 内置了一个轻量级的内存池。 对于小内存块的申请，从内置的内存池中分配。然后维护一些空闲内存块的链表（简记为空闲链表，free list），小块内存使用完后都回收到空闲链表中，这样如果新来一个小内存块申请，如果对应的空闲链表不为空，就可以从空闲链表中分配空间给用户。具体而言SGI默认最大的小块内存大小为128bytes，并设置了128/8=16 个free list，每个list 分别维护大小为 8, 16, 24, ..., 128bytes 的空间内存块（均为8的整数倍），如果用户申请的空间大小不足8的倍数，则向上取整。
-
-SGI STL内置内存池的实现请看 `__default_alloc_template` 中被定义为 private 的这些成员变量和方法（去掉了部分预处理代码和互斥处理的代码）：
-</code></pre>
-
-<p>private:</p>
-
-<h1>if ! (defined(<strong>SUNPRO_CC) || defined(</strong>GNUC__))</h1>
-
-<pre><code>enum {_ALIGN = 8}; // 对齐大小
-enum {_MAX_BYTES = 128}; // 最大有内置内存池来分配的内存大小
-enum {_NFREELISTS = 16}; // _MAX_BYTES/_ALIGN  // 空闲链表个数
-</code></pre>
-
-<h1>endif</h1>
-
-<p>  static size_t  <em>S_round_up(size_t <strong>bytes) // 不是8的倍数，向上取整
-    { return (((</strong>bytes) + (size_t) </em>ALIGN-1) &amp; ~((size_t) <em>ALIGN - 1)); }
-__PRIVATE:
-  union </em>Obj { // 空闲链表的每个node的定义
-        union <em>Obj* </em>M_free_list_link;
-        char <em>M_client_data[1];   };
-  static </em>Obj<em> <strong>STL_VOLATILE <em>S_free_list[]; // 空闲链表数组
-  static size_t </em>S_freelist_index(size_t </strong>bytes) { // <strong>bytes 对应的free list的index
-        return (((</strong>bytes) + (size_t)<em>ALIGN-1)/(size_t)</em>ALIGN - 1);
-  }
-  static void</em> <em>S_refill(size_t __n); // 从内存池中申请空间并构建free list，然后从free list中分配空间给用户
-  static char* </em>S_chunk_alloc(size_t <strong>size, int&amp; </strong>nobjs); // 从内存池中分配空间
-  static char<em> _S_start_free;  // 内存池空闲部分的起始地址
-  static char</em> <em>S_end_free; // 内存池结束地址
-  static size_t </em>S_heap_size; // 内存池堆大小，主要用于配置内存池的大小
-<code>``
-其中</code><em>S_refill<code>和</code></em>S_chunk_alloc<code>这两个函数是该内存池机制的核心。</code><em>_default_alloc_template<code>对外提供的 public 的接口有</code>allocate<code>,</code>deallocate<code>和</code>reallocate<code>这三个，其中涉及内存分配的</code>allocate<code>和</code>reallocate<code>的逻辑思路是，首先看申请的size（已round up）对应的free list是否为空，如果为空，则调用</code></em>S_refill<code>来分配，否则直接从对应的free list中分配。而</code>deallocate` 的逻辑是直接将空间插入到相应free list的最前面。</p>
-
-<p>函数 <code>_S_refill</code> 的逻辑是，先调用 <code>_S_chunk_alloc</code> 从内存池中分配20块小内存（而不是用户申请的1块），将这20块中的第一块返回给用户，而将剩下的19块依次链接，构建一个free list。这样下次再申请同样大小的内存就不用再从内存池中取了。有了 <code>_S_refill</code> ，用户申请空间时，就不是直接从内存池中取了，而是从 free list 中取。因此 <code>allocate</code> 和 <code>reallocate</code> 在相应的free list为空时都只需直接调用 <code>_S_refill</code> 就行了。</p>
-
-<p>这里默认是依次申请20块，但如果内存池空间不足以分配20块时，会尽量分配足够多的块，这些处理都在 <code>_S_chunk_alloc</code> 函数中。该函数的处理逻辑如下（源代码这里就不贴了）：</p>
-
-<blockquote><p>1) 能够分配20块</p>
-
-<blockquote><p>从内存池分配20块出来，改变 <code>_S_start_free</code> 的值，返回分配出来的内存的起始地址</p></blockquote>
-
-<p>2) 不足以分配20块，但至少能分配一块</p>
-
-<blockquote><p>分配经量多的块数，改变 <code>_S_start_free</code> 的值，返回分配出来的内存的起始地址</p></blockquote>
-
-<p>3) 一块也分配不了</p>
-
-<blockquote><p>首先计算新内存池大小 <code>size_t __bytes_to_get = 2 * __total_bytes + _S_round_up(_S_heap_size &gt;&gt; 4)</code><br/>
-将现在内存池中剩余空间插入到适当的free list中<br/>
-调用 <code>malloc</code> 来获取一大片空间作为新的内存池：<br/>
--- 如果分配成功，则调整 <code>_S_end_free</code> 和 <code>_S_heap_size</code> 的值，并重新调用自身，从新的内存池中给用户分配空间；
--- 否则，分配失败，考虑从比当前申请的空间大的free list中分配空间，如果无法找不到这样的非空free list，则调用第一级配置器的allocate，看oom机制能否解决问题</p></blockquote></blockquote>
-
-<p>SGI STL的轻量级内存池的实现就是酱紫了，其实并不复杂。</p>
-
-<h2>4. SGI STL 内存池在多线程下的互斥访问</h2>
-
-<p>最后，我们来看看SGI STL中如何处理多线程下对内存池互斥访问的（实际上是对相应的free list进行互斥访问，这里访问是只需要对free list进行修改的访问操作）。在SGI的第二级配置器中与内存池互斥访问相关的就是 <code>_Lock</code> 这个类了，它仅仅只包含一个构造函数和一个析构函数，但这两个函数足够了。在构造函数中对内存池加锁，在析构函数中对内存池解锁：
-``` cpp
-//// in __default_alloc_template</p>
-
-<h1>ifdef __STL_THREADS</h1>
-
-<pre><code>static _STL_mutex_lock _S_node_allocator_lock; // 互斥锁变量
-</code></pre>
-
-<h1>endif</h1>
-
-<p>class <em>Lock {
-    public:
-        </em>Lock() { <strong>NODE_ALLOCATOR_LOCK; }
-        ~_Lock() { </strong>NODE_ALLOCATOR_UNLOCK; }
-};
-//// in preprocess</p>
-
-<h1>ifdef __STL_THREADS</h1>
-
-<h1>include <stl_threads.h> // stl 的线程，只是对linux或windows线程的一个封装</h1>
-
-<h1>define __NODE_ALLOCATOR_THREADS true</h1>
-
-<h1>ifdef __STL_SGI_THREADS</h1>
-
-<h1>define <strong>NODE_ALLOCATOR_LOCK if (threads &amp;&amp; </strong>us_rsthread_malloc) \</h1>
-
-<pre><code>            { _S_node_allocator_lock._M_acquire_lock(); }  // 获取锁
-</code></pre>
-
-<h1>define <strong>NODE_ALLOCATOR_UNLOCK if (threads &amp;&amp; </strong>us_rsthread_malloc) \</h1>
-
-<pre><code>            { _S_node_allocator_lock._M_release_lock(); }  // 释放锁
-</code></pre>
-
-<h1>else /<em> !__STL_SGI_THREADS </em>/</h1>
-
-<h1>define __NODE_ALLOCATOR_LOCK \</h1>
-
-<pre><code>    { if (threads) _S_node_allocator_lock._M_acquire_lock(); }
-</code></pre>
-
-<h1>define __NODE_ALLOCATOR_UNLOCK \</h1>
-
-<pre><code>    { if (threads) _S_node_allocator_lock._M_release_lock(); }
-</code></pre>
-
-<h1>endif</h1>
-
-<h1>else /<em> !__STL_THREADS </em>/</h1>
-
-<h1>define __NODE_ALLOCATOR_LOCK</h1>
-
-<h1>define __NODE_ALLOCATOR_UNLOCK</h1>
-
-<h1>define __NODE_ALLOCATOR_THREADS false</h1>
-
-<h1>endif</h1>
-
-<p>```</p>
-
-<p>由于在 <code>__default_alloc_template</code> 的对外接口中，只有 <code>allocate</code> 和 <code>deallocate</code> 中直接涉及到对free list进行修改的操作，所以在这两个函数中，在对free list进行修改之前，都要实例化一个 <code>_Lock</code> 的对象 <code>__lock_instance</code> ，此时调用构造函数进行加锁，当函数结束时，的对象 <code>__lock_instance</code> 自动析构，释放锁。这样，在多线程下，可以保证free list的一致性。</p>
-</div>
-<div id="copyleft" class="well" >
-	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/</a></br>
-	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
-</div>
-
-
-  <footer>
-    <p class="meta">
-      
-<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
-
-      
-
-
-
-
-
-
-
-
-
-<time datetime="2014-06-13T22:04:00+08:00" pubdate data-updated="true"></time>
-		
-		
-		
-		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
-		
-		
-		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/c-plus-plus/'>C++</a>, <a class='tag' href='/blog/tags/stl/'>STL</a>, <a class='tag' href='/blog/tags/nei-cun-guan-li/'>内存管理</a></span>
-		
-    </p>
-    
-      
-         <div class="sharing">
-  
-  
-  
-</div>
-
-      
-    
-	</br>
-	 <ul class="pager">
-      
-      <li class="previous"><a class="basic-alignment left"
-        href="/blog/2014/06/08/stl-source-insight-0-stl-overview/" title="Previous Post:
-        深入理解STL源码(0) STL简介">&laquo; 深入理解STL源码(0) STL简介</a></li>
-      
-      <li><a href="/blog/archives/">Blog Archives</a></li>
-      
-      <li class="next"><a class="basic-alignment right" href="/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/"
-        title="Next Post: 深入理解STL源码(2) 迭代器(Iterators)和Traits">深入理解STL源码(2) 迭代器(Iterators)和Traits
-        &raquo;</a></li>
-      
-    </ul>
-    
-    <section>
-      <h1>Comments</h1>
-      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-    </section>
-    
-   
-  </footer>
-</article>
-
-<aside class="sidebar-nav span3">
-  
-    
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo" class="page-footer">
-<hr>
-<p>
-  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'ibillxia';
-      
-        
-        // var disqus_developer = 1;
-        var disqus_identifier = 'https://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/';
-        var disqus_url = 'https://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/';
-        var disqus_script = 'embed.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-
-
-
-
-
-
-
-
-
-</body>
-</html>
+<!doctype html><html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f7"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1b1b1e"><meta name="viewport" content="width=device-width, user-scalable=no initial-scale=1, shrink-to-fit=no, viewport-fit=cover" ><meta name="generator" content="Jekyll v4.4.1" /><meta property="og:title" content="深入理解STL源码(1) 空间配置器(allocator)" /><meta property="og:locale" content="zh_CN" /><meta name="description" content="在STL中，Memory Allocator 处于最底层的位置，为一切的 Container 提供存储服务，是一切其他组件的基石。对于一般使用 STL 的用户而言，Allocator 是不可见的，如果需要对 STL 进行扩展，如编写自定义的容器，就需要调用 Allocator 的内存分配函数进行空间配置。本文涉及到的 SGI STL 源代码文件有 alloc.h, stl_config.h, stl_alloc.h, stl_threads.h 这4个。" /><meta name="twitter:description" property="og:description" content="在STL中，Memory Allocator 处于最底层的位置，为一切的 Container 提供存储服务，是一切其他组件的基石。对于一般使用 STL 的用户而言，Allocator 是不可见的，如果需要对 STL 进行扩展，如编写自定义的容器，就需要调用 Allocator 的内存分配函数进行空间配置。本文涉及到的 SGI STL 源代码文件有 alloc.h, stl_config.h, stl_alloc.h, stl_threads.h 这4个。" /><link rel="canonical" href="https://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/" /><meta property="og:url" content="https://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/" /><meta property="og:site_name" content="Bill’s Blog" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2014-06-13T22:04:00+08:00" /><meta property="article:modified_time" content="2014-06-13T22:04:00+08:00" /><meta property="og:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:card" content="summary_large_image" /><meta property="twitter:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:title" content="深入理解STL源码(1) 空间配置器(allocator)" /><meta name="twitter:site" content="@ibillxia" /><meta name="msvalidate.01" content="1538BC1807507674B6BD4942F25493B2" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2014-06-13T22:04:00+08:00","datePublished":"2014-06-13T22:04:00+08:00","description":"在STL中，Memory Allocator 处于最底层的位置，为一切的 Container 提供存储服务，是一切其他组件的基石。对于一般使用 STL 的用户而言，Allocator 是不可见的，如果需要对 STL 进行扩展，如编写自定义的容器，就需要调用 Allocator 的内存分配函数进行空间配置。本文涉及到的 SGI STL 源代码文件有 alloc.h, stl_config.h, stl_alloc.h, stl_threads.h 这4个。","headline":"深入理解STL源码(1) 空间配置器(allocator)","mainEntityOfPage":{"@type":"WebPage","@id":"https://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/"},"url":"https://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/"}</script><title>深入理解STL源码(1) 空间配置器(allocator) | Bill's Blog</title><link rel="icon" type="image/png" href="/assets/img/favicons/favicon-96x96.png" sizes="96x96"><link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico"><link rel="shortcut icon" href="/assets/img/favicon.ico"><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="stylesheet" href="/assets/css/jekyll-theme-chirpy.css"><link rel="stylesheet" href="/assets/lib/fonts/main.css"><link rel="stylesheet" href="/assets/lib/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="/assets/lib/tocbot/tocbot.min.css"><link rel="stylesheet" href="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.min.css"><link rel="stylesheet" href="/assets/lib/glightbox/glightbox.min.css"> <script src="/assets/js/dist/theme.min.js"></script> <script defer src="/assets/lib/simple-jekyll-search/simple-jekyll-search.min.js"></script> <script defer src="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.umd.min.js"></script> <script defer src="/assets/lib/glightbox/glightbox.min.js"></script> <script defer src="/assets/lib/clipboard/clipboard.min.js"></script> <script defer src="/assets/lib/dayjs/dayjs.min.js"></script> <script defer src="/assets/lib/dayjs/locale/en.js"></script> <script defer src="/assets/lib/dayjs/plugin/relativeTime.js"></script> <script defer src="/assets/lib/dayjs/plugin/localizedFormat.js"></script> <script defer src="/assets/lib/tocbot/tocbot.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script defer src="/app.min.js?baseurl=&register=true" ></script> <script defer src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script> <script> document.addEventListener('DOMContentLoaded', () => { window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-34DJ0T23LB'); }); </script><body><aside aria-label="Sidebar" id="sidebar" class="d-flex flex-column align-items-end"><header class="profile-wrapper"> <a href="/" id="avatar" class="rounded-circle"><img src="/assets/img/rock_coder.png" width="112" height="112" alt="avatar" onerror="this.style.display='none'"></a> <a class="site-title d-block" href="/">Bill's Blog</a><p class="site-subtitle fst-italic mb-0">Program Hard, Play Hard, Live Crazy!</p></header><nav class="flex-column flex-grow-1 w-100 ps-0"><ul class="nav"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home"></i> <span>首页</span> </a><li class="nav-item"> <a href="/blog/archives/" class="nav-link"> <i class="fa-fw fas fa-archive"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/blog/categories/" class="nav-link"> <i class="fa-fw fas fa-stream"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/blog/tags/" class="nav-link"> <i class="fa-fw fas fa-tags"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle"></i> <span>关于</span> </a></ul></nav><div class="sidebar-bottom d-flex flex-wrap align-items-center w-100"><div class="btn-group dropup"> <button type="button" class="btn btn-link nav-link" aria-label="Switch Mode" id="mode-toggle" data-bs-toggle="dropdown" ><i class="fa-regular fa-sun" data-theme-mode="light"></i><i class="fa-regular fa-moon" data-theme-mode="dark"></i><i class="fa-solid fa-display" data-theme-mode="system"></i></button><ul class="dropdown-menu rounded-3 mb-1 p-1"><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="light"><i class="fa-regular fa-sun" data-theme-mode="light"></i>浅色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="dark"><i class="fa-regular fa-moon" data-theme-mode="dark"></i>深色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="system"><i class="fa-solid fa-display" data-theme-mode="system"></i>跟随系统</button></ul></div><span class="icon-border"></span> <a href="https://github.com/ibillxia" aria-label="github" target="_blank" rel="noopener noreferrer" > <i class="fab fa-github"></i> </a> <a href="https://x.com/ibillxia" aria-label="x" target="_blank" rel="noopener noreferrer" > <i class="fa-brands fa-x-twitter"></i> </a> <a href="javascript:void(location.href = 'mailto:' + ['ibillxia','gmail.com'].join('@'))" aria-label="email" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" > <i class="fas fa-rss"></i> </a> <a href="https://stackoverflow.com/users/1602285/bill-xia" aria-label="stack-overflow" target="_blank" rel="noopener noreferrer" > <i class="fab fa-stack-overflow"></i> </a> <a href="https://weibo.com/ibillxia" aria-label="weibo" target="_blank" rel="noopener noreferrer" > <i class="fab fa-weibo"></i> </a></div></aside><div id="main-wrapper" class="d-flex justify-content-center"><div class="container d-flex flex-column px-xxl-5"><header id="topbar-wrapper" class="flex-shrink-0" aria-label="Top Bar"><div id="topbar" class="d-flex align-items-center justify-content-between px-lg-3 h-100" ><nav id="breadcrumb" aria-label="Breadcrumb"> <span> <a href="/">首页</a> </span> <span>深入理解STL源码(1) 空间配置器(allocator)</span></nav><button type="button" id="sidebar-trigger" class="btn btn-link" aria-label="Sidebar"> <i class="fas fa-bars fa-fw"></i> </button><div id="topbar-title"> 文章</div><button type="button" id="search-trigger" class="btn btn-link" aria-label="Search"> <i class="fas fa-search fa-fw"></i> </button> <search id="search" class="align-items-center ms-3 ms-lg-0"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="搜索..." > </search> <button type="button" class="btn btn-link text-decoration-none" id="search-cancel">取消</button></div></header><div class="row flex-grow-1"><main aria-label="Main Content" class="col-12 col-lg-11 col-xl-9 px-md-4"><article class="px-1" data-toc="true"><header><h1 data-toc-skip>深入理解STL源码(1) 空间配置器(allocator)</h1><div class="post-meta text-muted"> <span> 发表于 <time data-ts="1402668240" data-df="YYYY/MM/DD" data-bs-toggle="tooltip" data-bs-placement="bottom" > 2014/06/13 </time> </span><div class="d-flex justify-content-between"> <span> 作者 <em> <a href="https://github.com/ibillxia">Bill Xia</a> </em> </span><div> <span class="readtime" data-bs-toggle="tooltip" data-bs-placement="bottom" title="3287 字" > <em>18 分钟</em>阅读</span></div></div></div></header><div id="toc-bar" class="d-flex align-items-center justify-content-between invisible"> <span class="label text-truncate">深入理解STL源码(1) 空间配置器(allocator)</span> <button type="button" class="toc-trigger btn me-1"> <i class="fa-solid fa-list-ul fa-fw"></i> </button></div><button id="toc-solo-trigger" type="button" class="toc-trigger btn btn-outline-secondary btn-sm"> <span class="label ps-2 pe-1">文章内容</span> <i class="fa-solid fa-angle-right fa-fw"></i> </button> <dialog id="toc-popup" class="p-0"><div class="header d-flex flex-row align-items-center justify-content-between"><div class="label text-truncate py-2 ms-4">深入理解STL源码(1) 空间配置器(allocator)</div><button id="toc-popup-close" type="button" class="btn-close btn-sm mx-3" aria-label="Close"></button></div><div id="toc-popup-content" class="px-4 py-3 pb-4"></div></dialog><div class="content"><p>在STL中，Memory Allocator 处于最底层的位置，为一切的 Container 提供存储服务，是一切其他组件的基石。对于一般使用 STL 的用户而言，Allocator 是不可见的，如果需要对 STL 进行扩展，如编写自定义的容器，就需要调用 Allocator 的内存分配函数进行空间配置。本文涉及到的 SGI STL 源代码文件有 <code class="language-plaintext highlighter-rouge">alloc.h</code>, <code class="language-plaintext highlighter-rouge">stl_config.h</code>, <code class="language-plaintext highlighter-rouge">stl_alloc.h</code>, <code class="language-plaintext highlighter-rouge">stl_threads.h</code> 这4个。</p><p>在C++中，一个对象的内存配置和释放一般都包含两个步骤，对于内存的配置，首先是调用operator new来配置内存，然后调用对象的类的构造函数进行初始化；而对于内存释放，首先是调用析构函数，然后调用 operator delete进行释放。 如以下代码：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre><span class="k">class</span> <span class="nc">Foo</span> <span class="p">{</span> <span class="p">...</span> <span class="p">};</span>
+<span class="n">Foo</span><span class="o">*</span> <span class="n">pf</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Foo</span><span class="p">;</span>
+<span class="p">...</span>
+<span class="k">delete</span> <span class="n">pf</span><span class="p">;</span>
+</pre></table></code></div></div><p>Allocator 的作用相当于operator new 和operator delete的功能，只是它考虑得更加细致周全。SGI STL 中考虑到了内存分配失败的异常处理，内置轻量级内存池（主要用于处理小块内存的分配，应对内存碎片问题）实现， 多线程中的内存分配处理（主要是针对内存池的互斥访问）等，本文就主要分析 SGI STL 中在这三个方面是如何处理的。在介绍着三个方面之前，我们先来看看 Allocator的标准接口。</p><h2 id="1-allocator-的标准接口"><span class="me-2">1. Allocator 的标准接口</span><a href="#1-allocator-的标准接口" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>在 SGI STL 中，Allocator的实现主要在文件<code class="language-plaintext highlighter-rouge">alloc.h</code> 和 <code class="language-plaintext highlighter-rouge">stl_alloc.h</code> 文件中。根据 STL 规范，Allocator 需提供如下的一些接口（见 <code class="language-plaintext highlighter-rouge">stl_alloc.h</code> 文件的第588行开始的class template allocator）：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+</pre><td class="rouge-code"><pre><span class="c1">// 标识数据类型的成员变量，关于中间的6个变量的涵义见后续文章（关于Traits编程技巧）</span>
+<span class="k">typedef</span> <span class="n">alloc</span> <span class="n">_Alloc</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="kt">size_t</span>     <span class="n">size_type</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="kt">ptrdiff_t</span>  <span class="n">difference_type</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="n">_Tp</span><span class="o">*</span>       <span class="n">pointer</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="k">const</span> <span class="n">_Tp</span><span class="o">*</span> <span class="n">const_pointer</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="n">_Tp</span><span class="o">&amp;</span>       <span class="n">reference</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="k">const</span> <span class="n">_Tp</span><span class="o">&amp;</span> <span class="n">const_reference</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="n">_Tp</span>        <span class="n">value_type</span><span class="p">;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp1</span><span class="p">&gt;</span> <span class="k">struct</span> <span class="nc">rebind</span> <span class="p">{</span>
+	<span class="k">typedef</span> <span class="n">allocator</span><span class="o">&lt;</span><span class="n">_Tp1</span><span class="o">&gt;</span> <span class="n">other</span><span class="p">;</span>
+<span class="p">};</span> <span class="c1">// 一个嵌套的class template，仅包含一个成员变量 other</span>
+<span class="c1">// 成员函数</span>
+<span class="n">allocator</span><span class="p">()</span> <span class="n">__STL_NOTHROW</span> <span class="p">{}</span>  <span class="c1">// 默认构造函数，其中__STL_NOTHROW 在 stl_config.h中定义，要么为空，要么为 throw()</span>
+<span class="n">allocator</span><span class="p">(</span><span class="k">const</span> <span class="n">allocator</span><span class="o">&amp;</span><span class="p">)</span> <span class="n">__STL_NOTHROW</span> <span class="p">{}</span>  <span class="c1">// 拷贝构造函数</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp1</span><span class="p">&gt;</span> <span class="n">allocator</span><span class="p">(</span><span class="k">const</span> <span class="n">allocator</span><span class="o">&lt;</span><span class="n">_Tp1</span><span class="o">&gt;&amp;</span><span class="p">)</span> <span class="n">__STL_NOTHROW</span> <span class="p">{}</span> <span class="c1">// 泛化的拷贝构造函数</span>
+<span class="o">~</span><span class="n">allocator</span><span class="p">()</span> <span class="n">__STL_NOTHROW</span> <span class="p">{}</span> <span class="c1">// 析构函数</span>
+<span class="n">pointer</span> <span class="n">address</span><span class="p">(</span><span class="n">reference</span> <span class="n">__x</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="o">&amp;</span><span class="n">__x</span><span class="p">;</span> <span class="p">}</span> <span class="c1">// 返回对象的地址</span>
+<span class="n">const_pointer</span> <span class="n">address</span><span class="p">(</span><span class="n">const_reference</span> <span class="n">__x</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="o">&amp;</span><span class="n">__x</span><span class="p">;</span> <span class="p">}</span>  <span class="c1">// 返回const对象的地址</span>
+<span class="n">_Tp</span><span class="o">*</span> <span class="nf">allocate</span><span class="p">(</span><span class="n">size_type</span> <span class="n">__n</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span><span class="o">*</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="n">__n</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">?</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">_Alloc</span><span class="o">::</span><span class="n">allocate</span><span class="p">(</span><span class="n">__n</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">_Tp</span><span class="p">)))</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span> 
+	<span class="c1">// 配置空间，如果申请的空间块数不为0，那么调用 _Alloc 也即 alloc 的 allocate 函数来分配内存，</span>
+<span class="p">}</span> <span class="c1">//这里的 alloc 在 SGI STL 中默认使用的是__default_alloc_template&lt;__NODE_ALLOCATOR_THREADS, 0&gt;这个实现（见第402行）</span>
+<span class="kt">void</span> <span class="nf">deallocate</span><span class="p">(</span><span class="n">pointer</span> <span class="n">__p</span><span class="p">,</span> <span class="n">size_type</span> <span class="n">__n</span><span class="p">)</span> <span class="p">{</span> <span class="n">_Alloc</span><span class="o">::</span><span class="n">deallocate</span><span class="p">(</span><span class="n">__p</span><span class="p">,</span> <span class="n">__n</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">_Tp</span><span class="p">));</span> <span class="p">}</span> <span class="c1">// 释放空间</span>
+<span class="n">size_type</span> <span class="nf">max_size</span><span class="p">()</span> <span class="k">const</span> <span class="n">__STL_NOTHROW</span>  <span class="c1">// max_size() 函数，返回可成功配置的最大值</span>
+    <span class="p">{</span> <span class="k">return</span> <span class="kt">size_t</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">_Tp</span><span class="p">);</span> <span class="p">}</span>  <span class="c1">//这里没看懂，这里的size_t(-1)是什么意思？</span>
+<span class="kt">void</span> <span class="nf">construct</span><span class="p">(</span><span class="n">pointer</span> <span class="n">__p</span><span class="p">,</span> <span class="k">const</span> <span class="n">_Tp</span><span class="o">&amp;</span> <span class="n">__val</span><span class="p">)</span> <span class="p">{</span> <span class="k">new</span><span class="p">(</span><span class="n">__p</span><span class="p">)</span> <span class="n">_Tp</span><span class="p">(</span><span class="n">__val</span><span class="p">);</span> <span class="p">}</span> <span class="c1">// 调用 new 来给新变量分配空间并赋值</span>
+<span class="kt">void</span> <span class="nf">destroy</span><span class="p">(</span><span class="n">pointer</span> <span class="n">__p</span><span class="p">)</span> <span class="p">{</span> <span class="n">__p</span><span class="o">-&gt;~</span><span class="n">_Tp</span><span class="p">();</span> <span class="p">}</span> <span class="c1">// 调用 _Tp 的析构函数来释放空间</span>
+</pre></table></code></div></div><p>在SGI STL中设计了如下几个空间分配的 class template：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre><td class="rouge-code"><pre><span class="k">template</span> <span class="o">&lt;</span><span class="kt">int</span> <span class="n">__inst</span><span class="p">&gt;</span> <span class="k">class</span> <span class="nc">__malloc_alloc_template</span> <span class="c1">// Malloc-based allocator.  Typically slower than default alloc</span>
+<span class="k">typedef</span> <span class="n">__malloc_alloc_template</span><span class="o">&lt;</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">malloc_alloc</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Alloc</span><span class="p">&gt;</span> <span class="k">class</span> <span class="nc">simple_alloc</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Alloc</span><span class="p">&gt;</span> <span class="k">class</span> <span class="nc">debug_alloc</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="kt">bool</span> <span class="n">threads</span><span class="p">,</span> <span class="kt">int</span> <span class="n">inst</span><span class="p">&gt;</span> <span class="k">class</span> <span class="nc">__default_alloc_template</span> <span class="c1">// Default node allocator.</span>
+<span class="k">typedef</span> <span class="n">__default_alloc_template</span><span class="o">&lt;</span><span class="n">__NODE_ALLOCATOR_THREADS</span><span class="p">,</span> <span class="mi">0</span><span class="o">&gt;</span> <span class="n">alloc</span>
+<span class="k">typedef</span> <span class="n">__default_alloc_template</span><span class="o">&lt;</span><span class="nb">false</span><span class="p">,</span> <span class="mi">0</span><span class="o">&gt;</span> <span class="n">single_client_alloc</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp</span><span class="p">&gt;</span><span class="k">class</span> <span class="nc">allocator</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="p">&gt;</span><span class="k">class</span> <span class="nc">allocator</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Alloc</span><span class="p">&gt;</span><span class="k">struct</span> <span class="nc">__allocator</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Alloc</span><span class="p">&gt;</span><span class="k">class</span> <span class="nc">__allocator</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">,</span> <span class="n">_Alloc</span><span class="o">&gt;</span>
+</pre></table></code></div></div><p>其中<code class="language-plaintext highlighter-rouge">simple_alloc</code> , <code class="language-plaintext highlighter-rouge">debug_alloc</code> , <code class="language-plaintext highlighter-rouge">allocator</code> 和 <code class="language-plaintext highlighter-rouge">__allocator</code> 的实现都比较简单，都是对其他适配器的一个简单封装（因为实际上还是调用其他配置器的方法，如 <code class="language-plaintext highlighter-rouge">_Alloc::allocate</code> ）。而真正内容比较充实的是 <code class="language-plaintext highlighter-rouge">__malloc_alloc_template</code> 和 <code class="language-plaintext highlighter-rouge">__default_alloc_template</code> 这两个配置器，这两个配置器就是 SGI STL 配置器的精华所在。其中 <code class="language-plaintext highlighter-rouge">__malloc_alloc_template</code> 是SGI STL 的第一层配置器，只是对系统的 <code class="language-plaintext highlighter-rouge">malloc</code> , <code class="language-plaintext highlighter-rouge">realloc</code> 函数的一个简单封装，并考虑到了分配失败后的异常处理。而 <code class="language-plaintext highlighter-rouge">__default_alloc_template</code> 是SGI STL 的第二层配置器，在第一层配置器的基础上还考虑了内存碎片的问题，通过内置一个轻量级的内存池。下文将先介绍第一级配置器的异常处理机制，然后介绍第二级配置器的内存池实现，及在多线程环境下内存池互斥访问的机制。</p><h2 id="2-sgi-stl-内存分配失败的异常处理"><span class="me-2">2. SGI STL 内存分配失败的异常处理</span><a href="#2-sgi-stl-内存分配失败的异常处理" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>内存分配失败一般是由于out-of-memory(oom)，SGI STL 本身并不会去处理oom问题，而只是提供一个 private 的函数指针成员和一个 public 的设置该函数指针的方法，让用户来自定义异常处理逻辑：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre><td class="rouge-code"><pre><span class="nl">private:</span>
+<span class="cp">#ifndef __STL_STATIC_TEMPLATE_MEMBER_BUG
+</span>  <span class="k">static</span> <span class="nf">void</span> <span class="p">(</span><span class="o">*</span> <span class="n">__malloc_alloc_oom_handler</span><span class="p">)();</span>  <span class="c1">// 函数指针</span>
+<span class="cp">#endif
+</span><span class="k">public</span><span class="o">:</span>
+  <span class="k">static</span> <span class="nf">void</span> <span class="p">(</span><span class="o">*</span> <span class="n">__set_malloc_handler</span><span class="p">(</span><span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">__f</span><span class="p">)()))()</span> <span class="c1">// 设置函数指针的public方法</span>
+  <span class="p">{</span>
+    <span class="kt">void</span> <span class="p">(</span><span class="o">*</span> <span class="n">__old</span><span class="p">)()</span> <span class="o">=</span> <span class="n">__malloc_alloc_oom_handler</span><span class="p">;</span>
+    <span class="n">__malloc_alloc_oom_handler</span> <span class="o">=</span> <span class="n">__f</span><span class="p">;</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">__old</span><span class="p">);</span>
+  <span class="p">}</span>
+</pre></table></code></div></div><p>如果用户没有调用该方法来设置异常处理函数，那么就不做任何异常处理，仅仅是想标准错误流输出一句out of memory并退出程序（对于使用new和C++特性的情况而言，则是抛出一个<code class="language-plaintext highlighter-rouge">std::bad_alloc()</code>异常）， 因为该函数指针的缺省值为0，此时对应的异常处理是 <code class="language-plaintext highlighter-rouge">__THROW_BAD_ALLOC</code>：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre><td class="rouge-code"><pre><span class="c1">// line 152 ~ 155</span>
+<span class="cp">#ifndef __STL_STATIC_TEMPLATE_MEMBER_BUG
+</span><span class="k">template</span> <span class="o">&lt;</span><span class="kt">int</span> <span class="n">__inst</span><span class="p">&gt;</span>
+<span class="kt">void</span> <span class="p">(</span><span class="o">*</span> <span class="n">__malloc_alloc_template</span><span class="o">&lt;</span><span class="n">__inst</span><span class="o">&gt;::</span><span class="n">__malloc_alloc_oom_handler</span><span class="p">)()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="c1">// in _S_oom_malloc and _S_oom_realloc</span>
+<span class="n">__my_malloc_handler</span> <span class="o">=</span> <span class="n">__malloc_alloc_oom_handler</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="mi">0</span> <span class="o">==</span> <span class="n">__my_malloc_handler</span><span class="p">)</span> <span class="p">{</span> <span class="n">__THROW_BAD_ALLOC</span><span class="p">;</span> <span class="p">}</span>
+<span class="c1">// in preprocess, line 41 ~ 50</span>
+<span class="cp">#ifndef __THROW_BAD_ALLOC
+#  if defined(__STL_NO_BAD_ALLOC) || !defined(__STL_USE_EXCEPTIONS)
+#    include &lt;stdio.h&gt;
+#    include &lt;stdlib.h&gt;
+#    define __THROW_BAD_ALLOC fprintf(stderr, "out of memory\n"); exit(1)
+#  else </span><span class="cm">/* Standard conforming out-of-memory handling */</span><span class="cp">
+#    include &lt;new&gt;
+#    define __THROW_BAD_ALLOC throw std::bad_alloc()
+#  endif
+#endif
+</span></pre></table></code></div></div><p>SGI STL 内存配置失败的异常处理机制就是这样子了，提供一个默认的处理方法，也留有一个用户自定义处理异常的接口。</p><h2 id="3-sgi-stl-内置轻量级内存池的实现"><span class="me-2">3. SGI STL 内置轻量级内存池的实现</span><a href="#3-sgi-stl-内置轻量级内存池的实现" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>第一级配置器 <code class="language-plaintext highlighter-rouge">__malloc_alloc_template</code> 仅仅只是对 <code class="language-plaintext highlighter-rouge">malloc</code> 的一层封装，没有考虑可能出现的内存碎片化问题。内存碎片化问题在大量申请小块内存是可能非常严重，最终导致碎片化的空闲内存无法充分利用。SGI 于是在第二级配置器 <code class="language-plaintext highlighter-rouge">__default_alloc_template</code> 中 内置了一个轻量级的内存池。 对于小内存块的申请，从内置的内存池中分配。然后维护一些空闲内存块的链表（简记为空闲链表，free list），小块内存使用完后都回收到空闲链表中，这样如果新来一个小内存块申请，如果对应的空闲链表不为空，就可以从空闲链表中分配空间给用户。具体而言SGI默认最大的小块内存大小为128bytes，并设置了128/8=16 个free list，每个list 分别维护大小为 8, 16, 24, …, 128bytes 的空间内存块（均为8的整数倍），如果用户申请的空间大小不足8的倍数，则向上取整。</p><p>SGI STL内置内存池的实现请看 <code class="language-plaintext highlighter-rouge">__default_alloc_template</code> 中被定义为 private 的这些成员变量和方法（去掉了部分预处理代码和互斥处理的代码）：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+</pre><td class="rouge-code"><pre><span class="nl">private:</span>
+<span class="cp">#if ! (defined(__SUNPRO_CC) || defined(__GNUC__))
+</span>    <span class="k">enum</span> <span class="p">{</span><span class="n">_ALIGN</span> <span class="o">=</span> <span class="mi">8</span><span class="p">};</span> <span class="c1">// 对齐大小</span>
+    <span class="k">enum</span> <span class="p">{</span><span class="n">_MAX_BYTES</span> <span class="o">=</span> <span class="mi">128</span><span class="p">};</span> <span class="c1">// 最大有内置内存池来分配的内存大小</span>
+    <span class="k">enum</span> <span class="p">{</span><span class="n">_NFREELISTS</span> <span class="o">=</span> <span class="mi">16</span><span class="p">};</span> <span class="c1">// _MAX_BYTES/_ALIGN  // 空闲链表个数</span>
+<span class="cp"># endif
+</span>  <span class="k">static</span> <span class="kt">size_t</span>  <span class="nf">_S_round_up</span><span class="p">(</span><span class="kt">size_t</span> <span class="n">__bytes</span><span class="p">)</span> <span class="c1">// 不是8的倍数，向上取整</span>
+    <span class="p">{</span> <span class="k">return</span> <span class="p">(((</span><span class="n">__bytes</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="kt">size_t</span><span class="p">)</span> <span class="n">_ALIGN</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">((</span><span class="kt">size_t</span><span class="p">)</span> <span class="n">_ALIGN</span> <span class="o">-</span> <span class="mi">1</span><span class="p">));</span> <span class="p">}</span>
+<span class="n">__PRIVATE</span><span class="o">:</span>
+  <span class="k">union</span> <span class="n">_Obj</span> <span class="p">{</span> <span class="c1">// 空闲链表的每个node的定义</span>
+        <span class="k">union</span> <span class="n">_Obj</span><span class="o">*</span> <span class="n">_M_free_list_link</span><span class="p">;</span>
+        <span class="kt">char</span> <span class="n">_M_client_data</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>   <span class="p">};</span>
+  <span class="k">static</span> <span class="n">_Obj</span><span class="o">*</span> <span class="n">__STL_VOLATILE</span> <span class="n">_S_free_list</span><span class="p">[];</span> <span class="c1">// 空闲链表数组</span>
+  <span class="k">static</span> <span class="kt">size_t</span> <span class="nf">_S_freelist_index</span><span class="p">(</span><span class="kt">size_t</span> <span class="n">__bytes</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// __bytes 对应的free list的index</span>
+        <span class="k">return</span> <span class="p">(((</span><span class="n">__bytes</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="kt">size_t</span><span class="p">)</span><span class="n">_ALIGN</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="kt">size_t</span><span class="p">)</span><span class="n">_ALIGN</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">static</span> <span class="kt">void</span><span class="o">*</span> <span class="nf">_S_refill</span><span class="p">(</span><span class="kt">size_t</span> <span class="n">__n</span><span class="p">);</span> <span class="c1">// 从内存池中申请空间并构建free list，然后从free list中分配空间给用户</span>
+  <span class="k">static</span> <span class="kt">char</span><span class="o">*</span> <span class="nf">_S_chunk_alloc</span><span class="p">(</span><span class="kt">size_t</span> <span class="n">__size</span><span class="p">,</span> <span class="kt">int</span><span class="o">&amp;</span> <span class="n">__nobjs</span><span class="p">);</span> <span class="c1">// 从内存池中分配空间</span>
+  <span class="k">static</span> <span class="kt">char</span><span class="o">*</span> <span class="n">_S_start_free</span><span class="p">;</span>  <span class="c1">// 内存池空闲部分的起始地址</span>
+  <span class="k">static</span> <span class="kt">char</span><span class="o">*</span> <span class="n">_S_end_free</span><span class="p">;</span> <span class="c1">// 内存池结束地址</span>
+  <span class="k">static</span> <span class="kt">size_t</span> <span class="n">_S_heap_size</span><span class="p">;</span> <span class="c1">// 内存池堆大小，主要用于配置内存池的大小</span>
+</pre></table></code></div></div><p>其中 <code class="language-plaintext highlighter-rouge">_S_refill</code> 和 <code class="language-plaintext highlighter-rouge">_S_chunk_alloc</code> 这两个函数是该内存池机制的核心。 <code class="language-plaintext highlighter-rouge">__default_alloc_template</code> 对外提供的 public 的接口有 <code class="language-plaintext highlighter-rouge">allocate</code>, <code class="language-plaintext highlighter-rouge">deallocate</code> 和 <code class="language-plaintext highlighter-rouge">reallocate</code> 这三个，其中涉及内存分配的 <code class="language-plaintext highlighter-rouge">allocate</code> 和 <code class="language-plaintext highlighter-rouge">reallocate</code> 的逻辑思路是，首先看申请的size（已round up）对应的free list是否为空，如果为空，则调用 <code class="language-plaintext highlighter-rouge">_S_refill</code> 来分配，否则直接从对应的free list中分配。而 <code class="language-plaintext highlighter-rouge">deallocate</code> 的逻辑是直接将空间插入到相应free list的最前面。</p><p>函数 <code class="language-plaintext highlighter-rouge">_S_refill</code> 的逻辑是，先调用 <code class="language-plaintext highlighter-rouge">_S_chunk_alloc</code> 从内存池中分配20块小内存（而不是用户申请的1块），将这20块中的第一块返回给用户，而将剩下的19块依次链接，构建一个free list。这样下次再申请同样大小的内存就不用再从内存池中取了。有了 <code class="language-plaintext highlighter-rouge">_S_refill</code> ，用户申请空间时，就不是直接从内存池中取了，而是从 free list 中取。因此 <code class="language-plaintext highlighter-rouge">allocate</code> 和 <code class="language-plaintext highlighter-rouge">reallocate</code> 在相应的free list为空时都只需直接调用 <code class="language-plaintext highlighter-rouge">_S_refill</code> 就行了。</p><p>这里默认是依次申请20块，但如果内存池空间不足以分配20块时，会尽量分配足够多的块，这些处理都在 <code class="language-plaintext highlighter-rouge">_S_chunk_alloc</code> 函数中。该函数的处理逻辑如下（源代码这里就不贴了）：</p><blockquote><p>1) 能够分配20块</p><blockquote><p>从内存池分配20块出来，改变 <code class="language-plaintext highlighter-rouge">_S_start_free</code> 的值，返回分配出来的内存的起始地址</p></blockquote><p>2) 不足以分配20块，但至少能分配一块</p><blockquote><p>分配经量多的块数，改变 <code class="language-plaintext highlighter-rouge">_S_start_free</code> 的值，返回分配出来的内存的起始地址</p></blockquote><p>3) 一块也分配不了</p><blockquote><p>首先计算新内存池大小 <code class="language-plaintext highlighter-rouge">size_t __bytes_to_get = 2 * __total_bytes + _S_round_up(_S_heap_size &gt;&gt; 4)</code><br /> 将现在内存池中剩余空间插入到适当的free list中<br /> 调用 <code class="language-plaintext highlighter-rouge">malloc</code> 来获取一大片空间作为新的内存池：<br /> – 如果分配成功，则调整 <code class="language-plaintext highlighter-rouge">_S_end_free</code> 和 <code class="language-plaintext highlighter-rouge">_S_heap_size</code> 的值，并重新调用自身，从新的内存池中给用户分配空间； – 否则，分配失败，考虑从比当前申请的空间大的free list中分配空间，如果无法找不到这样的非空free list，则调用第一级配置器的allocate，看oom机制能否解决问题</p></blockquote></blockquote><p>SGI STL的轻量级内存池的实现就是酱紫了，其实并不复杂。</p><h2 id="4-sgi-stl-内存池在多线程下的互斥访问"><span class="me-2">4. SGI STL 内存池在多线程下的互斥访问</span><a href="#4-sgi-stl-内存池在多线程下的互斥访问" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>最后，我们来看看SGI STL中如何处理多线程下对内存池互斥访问的（实际上是对相应的free list进行互斥访问，这里访问是只需要对free list进行修改的访问操作）。在SGI的第二级配置器中与内存池互斥访问相关的就是 <code class="language-plaintext highlighter-rouge">_Lock</code> 这个类了，它仅仅只包含一个构造函数和一个析构函数，但这两个函数足够了。在构造函数中对内存池加锁，在析构函数中对内存池解锁：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+</pre><td class="rouge-code"><pre><span class="c1">//// in __default_alloc_template</span>
+<span class="cp"># ifdef __STL_THREADS
+</span>    <span class="k">static</span> <span class="n">_STL_mutex_lock</span> <span class="n">_S_node_allocator_lock</span><span class="p">;</span> <span class="c1">// 互斥锁变量</span>
+<span class="cp"># endif
+</span><span class="k">class</span> <span class="nc">_Lock</span> <span class="p">{</span>
+    <span class="nl">public:</span>
+        <span class="n">_Lock</span><span class="p">()</span> <span class="p">{</span> <span class="n">__NODE_ALLOCATOR_LOCK</span><span class="p">;</span> <span class="p">}</span>
+        <span class="o">~</span><span class="n">_Lock</span><span class="p">()</span> <span class="p">{</span> <span class="n">__NODE_ALLOCATOR_UNLOCK</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">};</span>
+<span class="c1">//// in preprocess</span>
+<span class="cp">#ifdef __STL_THREADS
+# include &lt;stl_threads.h&gt; // stl 的线程，只是对linux或windows线程的一个封装
+# define __NODE_ALLOCATOR_THREADS true
+# ifdef __STL_SGI_THREADS
+#   define __NODE_ALLOCATOR_LOCK if (threads &amp;&amp; __us_rsthread_malloc) \
+                { _S_node_allocator_lock._M_acquire_lock(); }  // 获取锁
+#   define __NODE_ALLOCATOR_UNLOCK if (threads &amp;&amp; __us_rsthread_malloc) \
+                { _S_node_allocator_lock._M_release_lock(); }  // 释放锁
+# else </span><span class="cm">/* !__STL_SGI_THREADS */</span><span class="cp">
+#   define __NODE_ALLOCATOR_LOCK \
+        { if (threads) _S_node_allocator_lock._M_acquire_lock(); }
+#   define __NODE_ALLOCATOR_UNLOCK \
+        { if (threads) _S_node_allocator_lock._M_release_lock(); }
+# endif
+#else </span><span class="cm">/* !__STL_THREADS */</span><span class="cp">
+#   define __NODE_ALLOCATOR_LOCK
+#   define __NODE_ALLOCATOR_UNLOCK
+#   define __NODE_ALLOCATOR_THREADS false
+#endif
+</span></pre></table></code></div></div><p>由于在 <code class="language-plaintext highlighter-rouge">__default_alloc_template</code> 的对外接口中，只有 <code class="language-plaintext highlighter-rouge">allocate</code> 和 <code class="language-plaintext highlighter-rouge">deallocate</code> 中直接涉及到对free list进行修改的操作，所以在这两个函数中，在对free list进行修改之前，都要实例化一个 <code class="language-plaintext highlighter-rouge">_Lock</code> 的对象 <code class="language-plaintext highlighter-rouge">__lock_instance</code> ，此时调用构造函数进行加锁，当函数结束时，的对象 <code class="language-plaintext highlighter-rouge">__lock_instance</code> 自动析构，释放锁。这样，在多线程下，可以保证free list的一致性。</p></div><div class="post-tail-wrapper text-muted"><div class="d-flex justify-content-between align-items-center gap-3 mb-3"><div class="post-meta"> <i class="far fa-folder-open fa-fw me-1"></i> <a href="/blog/categories/program/">Program</a></div></div><div class="post-tags"> <i class="fa fa-tags fa-fw me-1"></i> <a href="/blog/tags/c/" class="post-tag no-text-decoration" >C++</a> <a href="/blog/tags/stl/" class="post-tag no-text-decoration" >STL</a> <a href="/blog/tags/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="post-tag no-text-decoration" >内存管理</a></div><div class=" post-tail-bottom d-flex justify-content-between align-items-center mt-5 pb-2 " ><div class="license-wrapper"> 本文由作者按照 <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> 进行授权</div><div class="share-wrapper d-flex align-items-center"> <span class="share-label text-muted">分享</span> <span class="share-icons"> <a href="https://x.com/intent/tweet?text=%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3STL%E6%BA%90%E7%A0%81(1)%20%E7%A9%BA%E9%97%B4%E9%85%8D%E7%BD%AE%E5%99%A8(allocator)%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F06%2F13%2Fstl-source-insight-1-memory-allocator%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Twitter" aria-label="Twitter"> <i class="fa-fw fa-brands fa-square-x-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3STL%E6%BA%90%E7%A0%81(1)%20%E7%A9%BA%E9%97%B4%E9%85%8D%E7%BD%AE%E5%99%A8(allocator)%20-%20Bill's%20Blog&u=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F06%2F13%2Fstl-source-insight-1-memory-allocator%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Facebook" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://t.me/share/url?url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F06%2F13%2Fstl-source-insight-1-memory-allocator%2F&text=%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3STL%E6%BA%90%E7%A0%81(1)%20%E7%A9%BA%E9%97%B4%E9%85%8D%E7%BD%AE%E5%99%A8(allocator)%20-%20Bill's%20Blog" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Telegram" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <a href="https://service.weibo.com/share/share.php?title=%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3STL%E6%BA%90%E7%A0%81(1)%20%E7%A9%BA%E9%97%B4%E9%85%8D%E7%BD%AE%E5%99%A8(allocator)%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F06%2F13%2Fstl-source-insight-1-memory-allocator%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Weibo" aria-label="Weibo"> <i class="fa-fw fab fa-weibo"></i> </a> <button id="copy-link" aria-label="Copy link" class="btn small" data-bs-toggle="tooltip" data-bs-placement="top" title="分享链接" data-title-succeed="链接已复制！" > <i class="fa-fw fas fa-link pe-none fs-6"></i> </button> </span></div></div></div></article></main><aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 text-muted"><div class="access"><section id="access-lastmod"><h2 class="panel-heading">最近更新</h2><ul class="content list-unstyled ps-0 pb-1 ms-1 mt-2"><li class="text-truncate lh-lg"> <a href="/blog/2026/11/16/anthropic-the-components-of-agent-memory/">【译】Anthropic：智能体记忆的组成部分</a><li class="text-truncate lh-lg"> <a href="/blog/2026/11/09/is-FDE-actually-established-in-China/">前鹅厂王津银：FDE 在中国，到底成立吗？</a><li class="text-truncate lh-lg"> <a href="/blog/2026/09/14/openai-data-agent-skills-interpretation/">OpenAI Data Agent的核心Skill解读：数据Agent如何把问题变成可信的决策</a><li class="text-truncate lh-lg"> <a href="/blog/2026/08/20/data-agent-servey-from-arch-to-practice/">Data Agent全景调研：从技术架构到产业实践</a><li class="text-truncate lh-lg"> <a href="/blog/2026/07/03/FDE-what-why-and-future/">什么是 FDE？从它的爆火看软件研发的职能大洗牌</a></ul></section><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div><div class="toc-border-cover z-3"></div><section id="toc-wrapper" class="invisible position-sticky ps-0 pe-4 pb-4"><h2 class="panel-heading ps-3 pb-2 mb-0">文章内容</h2><nav id="toc"></nav></section></aside></div><div class="row"><div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 px-md-4"><aside id="related-posts" aria-labelledby="related-label"><h3 class="mb-4" id="related-label">相关文章</h3><nav class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4"><article class="col"> <a href="/blog/2014/11/26/insight-into-stl-archive/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1416997140" data-df="YYYY/MM/DD" > 2014/11/26 </time><h4 class="pt-0 my-2">深入理解STL源码系列文章归档</h4><div class="text-muted"><p>前后花了大概快六个月的时间（从6月8日到11月23），终于把侯捷的《STL 源码剖析》看完了，同时也把 SGI 实现 STL 的最新版本看完了。在这段时间里，几乎是每个周末花大约一天的时间来看书和代码，并将相应内容在博客中加以归纳和总结。由于基本上都是在周末抽时间看的，所以周期拉得比较长，但收获还是挺多的，其中印象比较深刻的是 STL 中的迭代器与型别萃取、空间配置与内存池的实现、双端队列 ...</p></div></div></a></article><article class="col"> <a href="/blog/2014/11/23/insight-into-stl-7-adaptor/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1416745260" data-df="YYYY/MM/DD" > 2014/11/23 </time><h4 class="pt-0 my-2">深入理解STL源码(7) 配接器adaptor</h4><div class="text-muted"><p>1. 概述 适配器（adaptor/adapter）在STL组件的灵活运用功能上，扮演着轴承、转换器的角色，将一种容器或迭代器装换或封装成另一种容器或迭代器，例如基于deque容器的stack和queue。Adaptor这个概念，实际上是一种设计模式（design pattern），是《Design Pattern》一书中提及到的23个设计模式之一，其中对adaptor的定义如下： ...</p></div></div></a></article><article class="col"> <a href="/blog/2014/11/15/insight-into-stl-6-functor-or-function-objects/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1416017160" data-df="YYYY/MM/DD" > 2014/11/15 </time><h4 class="pt-0 my-2">深入理解STL源码(6) 仿函数|函数对象</h4><div class="text-muted"><p>1. 仿函数|函数对象概述 在STL的六大组件中，仿函数可说是体积最小、观念最简单、实现最容易的一个，但小兵也能立大功——他扮演一种“策略”角色，可以让STL算法具有更加灵活的“演出”。 在STL的历史上，仿函数(functor)是早期的命名，C++标准规格定下来后采用了新的名称——函数对象(function object)。就实际意义而言，函数对象的称谓更加贴切：一种具有函数特质的对象。...</p></div></div></a></article></nav></aside><nav class="post-navigation d-flex justify-content-between" aria-label="Post Navigation"> <a href="/blog/2014/06/08/stl-source-insight-0-stl-overview/" class="btn btn-outline-primary" aria-label="上一篇" ><p>深入理解STL源码(0) STL简介</p></a> <a href="/blog/2014/06/21/stl-source-insight-2-iterators-and-traits/" class="btn btn-outline-primary" aria-label="下一篇" ><p>深入理解STL源码(2) 迭代器(Iterators)和Traits</p></a></nav><footer aria-label="Site Info" class=" d-flex flex-column justify-content-center text-muted flex-lg-row justify-content-lg-between align-items-lg-center pb-lg-3 " ><p>© <time>2026</time> <a href="https://github.com/ibillxia">Bill Xia</a>. <span data-bs-toggle="tooltip" data-bs-placement="top" title="除非另有说明，本网站上的博客文章均由作者按照知识共享署名 4.0 国际 (CC BY 4.0) 许可协议进行授权。" >保留部分权利。</span></p><p>本站采用 <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> 主题 <a data-bs-toggle="tooltip" data-bs-placement="top" title="v7.6.0" href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener" >Chirpy</a></p></footer></div></div><div id="search-result-wrapper" class="d-flex justify-content-center d-none"><div class="col-11 content"><div id="search-hints"><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><aside aria-label="Scroll to Top"> <button id="back-to-top" type="button" class="btn btn-lg btn-box-shadow"> <i class="fas fa-angle-up"></i> </button></aside></div><div id="mask" class="d-none position-fixed w-100 h-100 z-1"></div><aside id="notification" class="toast w-auto rounded-5 text-nowrap" role="alert" aria-live="assertive" aria-atomic="true" data-bs-animation="true" data-bs-autohide="false" ><div class="d-flex align-items-center"><div class="toast-body ps-3">发现新内容</div><button type="button" class="btn btn-primary btn-sm rounded-2 py-0" aria-label="Update" >更新</button> <button type="button" class="btn-close mx-3 ms-2" data-bs-dismiss="toast" aria-label="Close" ></button></div></aside><script> var disqus_config = function () { this.page.url = 'https://ibillxia.github.io/blog/2014/06/13/stl-source-insight-1-memory-allocator/'; this.page.identifier = '/blog/2014/06/13/stl-source-insight-1-memory-allocator/'; }; function addDisqus() { let disqusThread = document.createElement('div'); let paragraph = document.createElement('p'); disqusThread.id = 'disqus_thread'; paragraph.className = 'text-center text-muted small'; paragraph.innerHTML = 'Comments powered by <a href="https://disqus.com/">Disqus</a>.'; disqusThread.appendChild(paragraph); const footer = document.querySelector('footer'); footer.insertAdjacentElement("beforebegin", disqusThread); }function reloadDisqus(event) { if (event.source === window && event.data && event.data.id === Theme.eventId) {if (typeof DISQUS === 'undefined') { return; } if (document.readyState == 'complete') { DISQUS.reset({ reload: true, config: disqus_config }); } } } addDisqus(); if (Theme.isToggleable) { addEventListener('message', reloadDisqus); }var disqusObserver = new IntersectionObserver( function (entries) { if (entries[0].isIntersecting) { var d = document, s = d.createElement('script'); s.src = 'https://ibillxia.disqus.com/embed.js'; s.setAttribute('data-timestamp', +new Date()); (d.head || d.body).appendChild(s); disqusObserver.disconnect(); } }, { threshold: [0] } ); disqusObserver.observe(document.getElementById('disqus_thread')); </script> <script> document.addEventListener('DOMContentLoaded', () => { SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<article class="px-1 px-sm-2 px-lg-4 px-xl-0"><header><h2><a href="{url}">{title}</a></h2><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div></header><p>{content}</p></article>', noResultsText: '<p class="mt-5">搜索结果为空</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="me-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); }); </script>

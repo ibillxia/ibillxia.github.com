@@ -1,556 +1,245 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>深入理解STL源码(4.1) 关联式容器之红黑树 - Bill's Blog</title>
-  <meta name="author" content="Bill Xia">
-
-  
-  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="https://ibillxia.github.io/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <style type="text/css">
-    body {
-      padding-bottom: 0px;
-    }
-    h1 {
-      margin-bottom: 15px;
-    }
-    img {
-      max-width: 100%;
-    }
-    .sharing, .meta, .pager {
-      margin: 20px 0px 20px 0px;
-    }
-    .page-footer p {
-      text-align: center;
-    }
-  </style>
-  <script src="/javascripts/libs/jquery.js"></script>
-  <script src="/javascripts/libs/modernizr-2.0.js"></script>
-  <script src="/javascripts/libs/bootstrap.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-34DJ0T23LB');
-  </script>
-  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
-  <script type="text/javascript">
-function addBlankTargetForLinks () {
-  $('a[href^="http"]').each(function(){
-      $(this).attr('target', '_blank');
-  });
-}
-
-$(function () {
-  addBlankTargetForLinks();
-  if (typeof MutationObserver !== 'undefined') {
-    new MutationObserver(function () {
-      addBlankTargetForLinks();
-    }).observe(document.body, { childList: true, subtree: true });
-  }
-});
-</script>
-<!-- MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = 'https://ssl.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
-</head>
-
-<body   >
-  <nav role="navigation"><div class="navbar navbar-inverse">
-  <div class="navbar-inner">
-    <div class="container">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-
-      <a class="brand" href="/">Bill's Blog</a>
-
-      <div class="nav-collapse">
-        <ul class="nav">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives/">Archives</a></li>
-  <li><a href="/blog/categories/">Categories</a></li>
-  <li><a href="/blog/tags/">Tags</a></li>
-  <li><a href="/about/">About</a></li>
-</ul>
-
-
-        <ul class="nav pull-right" data-subscription="rss">
-          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-          
-        </ul>
-
-        
-          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
-            <fieldset role="search">
-              <input type="hidden" name="q" value="site:ibillxia.github.io" />
-              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
-            </fieldset>
-          </form>
-        
-      </div>
-    </div>
-  </div>
-</div>
-</nav>
-  <div class="container">
-    <div class="row-fluid">
-      
-<article class="hentry span9" role="article">
-
-  
-  <header class="page-header">
-    
-      <h1 class="entry-title">深入理解STL源码(4.1) 关联式容器之红黑树</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2014-08-03T21:30:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><p>本文涉及到 SGI STL 源码的文件主要是 <code>stl_tree.h</code> 这个文件。</p>
-
-<h2>0. 关联式容器</h2>
-
-<p>之前几篇文章详细介绍了SGI STL中序列式容器的实现，并提到过STL中还有一类关联式的容器。标准的STL管理师容器分为 set（集合）和map（映射表）两大类，以及这两大类的衍生体multiset（多键集合）和multimap（多键映射表），这些容器的底层机制均以RB-Tree（红黑树）完成。RB-Tree是一种非常高效的数据结构，它本质上是一种平衡的二叉搜索树，因而其查找的平均时间复杂度为元素总个数的对数（即logN）。在STL中RB-Tree是一个独立的容器，但并没有对用户的公开接口，仅提供给STL的set和map使用。<br/>
-SGI STL在标准STL之外，还提供了一类关联式容器——hash table（哈希表），以及以此为低层机制的hash set（散列集合）、hash map（散列映射表）、hash multiset（散列多键集合）和hash multimap（散列多键映射表）。相比于RB-Tree，hash table的时间效率更高，插入、删除、查找的时间复杂度均为常数时间，但需要比元素总个数多得多的空间。<br/>
-本文接下来主要介绍树及RB-Tree相关的内容，后续文章将具体介绍SGI STL中set、map、hash table的实现。</p>
-
-<h2>1. 树与二叉搜索树</h2>
-
-<p>树是一种非常常见而且实用的数据结构，几乎所有的操作系统都将文件存放在树状结构里，几乎所有编译器需要实现一个表达式树（expression tree），文件压缩所用的哈夫曼算法也需要用到树状结构，数据库所使用的B-tree则是一种相当复杂的树状结构。<br/>
-关于树的一些基本概念相信大家都比较熟悉，这里就不赘述了，如果需要可以google或看wikipedia，这里重点重温一下数据结构里的二叉搜索树、平衡二叉搜索树、AVL树。<br/>
-<strong>二叉搜索树</strong>：任何节点的键值大于其<strong>左子树</strong>中<strong>每一个</strong>节点的键值，并小于其<strong>右子树</strong>中的<strong>每一个</strong>节点的键值。根据二叉搜索树的定义可知，按照中序遍历该树可以得到一个有序的序列。平均情况下，二叉搜索树可以提供对数时间的插入和访问。其插入和查找的算法也很简单，每次与根节点的键值进行比较，小于根节点的键值则往根节点的左子树插入或查找，大于则往右子树插入或查找，无论是递归实现还是非递归实现都很简单。<br/>
-<strong>平衡二叉搜索树</strong>：上面提到二叉搜索数的<strong>平均</strong>性能为对数时间，这是因为二叉搜索树的深度与数据插入的顺序有关，如果插入的数据本身就比较有序，那么就会产生一个深度过大的树，甚至会退化为一个链表的结构，这中情况下，其查找的效率就是线性时间了。平衡二叉搜索树就是为了解决这个问题而产生的，“平衡”的意义是，没有任何一个节点过深。不同的平衡条件造就出不同的效率表现，以及不同的实现复杂度，如 <a href="http://en.wikipedia.org/wiki/AVL_tree">AVL-Tree</a>、<a href="http://en.wikipedia.org/wiki/Red%E2%80%93black_tree">RB-Tree</a>、<a href="http://en.wikipedia.org/wiki/AA_tree">AA-Tree</a> _等。他们都比简单的二叉搜索树要复杂，特别是插入和删除操作，但他们可以避免高度不平衡的情况，因而查找时间较快。</p>
-
-<!-- more -->
-
-
-<p><strong>AVL树</strong>：AVL-tree（Adelson-Velskii-Landis tree）是一个加上了“额外平衡条件”的二叉搜索树，是一种高度平衡的二叉搜索树，它的这个额外的条件为：任何节点的左右子树高度相差最多1。该条件能够保证整棵树的高度为logN，但其插入和删除的操作也相对比较复杂，因为这些操作可能导致树的失衡，需要调整（或旋转）树的结构，使其保持平衡。插入时出现失衡的情况有如下四种（其中X为最小失衡子树的根节点）：</p>
-
-<blockquote><ol>
-<li>插入点位于X的左子节点的左子树——左左；</li>
-<li>插入点位于X的左子节点的右子树——左右；</li>
-<li>插入点位于X的右子节点的左子树——右左；</li>
-<li>插入点位于X的右子节点的右子树——右右。</li>
-</ol>
-</blockquote>
-
-<p>情况1和4对称，称为外侧插入，可以采用单旋转操作调整恢复平衡；2和3对称，称为内侧插入，可以采用双旋转操作调整恢复平衡：先经过一次旋转变成左左或右右，然后再经过一次旋转恢复平衡。1和2的实例如下图：<br/>
-<img src="/images/2014/IMAG2014080301.jpg"><br/>
-图中从中间到最右情况1的恢复平衡的旋转方法，只是其中节点3为新插入的元素；而最左到最右是情况2的恢复平衡的旋转方法，其中节点4为新插入的元素。情况3和4分别与2和1对称，其调整方法也很类似，就不赘述了。<br/>
-RB-tree是另一种被广泛使用的平衡二叉搜索树，也是SGI STL唯一实现的一种搜索树，作为关联式容器的底层容器。RB-tree的平衡条件不同于AVL-tree，但同样运用了单旋转和双旋转的恢复平衡的机制，下面我们详细介绍RB-tree的实现。</p>
-
-<h2>2. RB-tree的定义及数据结构</h2>
-
-<p>所谓RB-tree，不仅仅是一个二叉搜索树，而且必须满足以下规则：</p>
-
-<blockquote><ol>
-<li>每个节点不是红色就是黑色；</li>
-<li>根节点为黑色；</li>
-<li>每个叶子节点（NIL）为黑色；</li>
-<li>如果节点为红，其左右子节点必为黑；</li>
-<li>对每个节点，从该节点到其子孙中的叶子节点的所有路径上所包含的黑节点数目相同。</li>
-</ol>
-</blockquote>
-
-<p>上面的这些约束保证了这个树大致上是平衡的，这也决定了红黑树的插入、删除、查询等操作是比较快速的。 根据规则5，新增节点必须为红色；根据规则4，新增节点之父节点必须为黑色。当新增节点根据二叉搜索树的规则到达其插入点时，却未能符合上述条件时，就必须调整颜色并旋转树形。下图是一个典型的RB-tree（来自wiki）：<br/>
-<img src="/images/2014/IMAG2014080302.png"><br/>
-SGI STL中RB-tree的数据结构比较简单，其中每个节点的数据结构如下：
-``` cpp
-typedef bool <em>Rb_tree_Color_type;
-const </em>Rb_tree_Color_type <em>S_rb_tree_red = false;
-const </em>Rb_tree_Color_type <em>S_rb_tree_black = true;
-//======================================
-struct </em>Rb_tree_node_base { // 节点的定义
-  typedef <em>Rb_tree_Color_type </em>Color_type;
-  typedef <em>Rb_tree_node_base* </em>Base_ptr;
-  <em>Color_type </em>M_color; // 节点颜色，实际为一个bool型变量
-  <em>Base_ptr </em>M_parent; // 指向父节点，方便遍历
-  <em>Base_ptr </em>M_left;
-  <em>Base_ptr </em>M_right;</p>
-
-<p>  static <em>Base_ptr </em>S_minimum(<em>Base_ptr <strong>x) {
-    while (</strong>x-></em>M_left != 0) <strong>x = </strong>x-><em>M_left;
-    return __x;
-  }
-  static </em>Base_ptr <em>S_maximum(</em>Base_ptr <strong>x) {
-    while (</strong>x-><em>M_right != 0) <strong>x = </strong>x-></em>M_right;
-    return <strong>x;
-  }
-};
-//======================================
-template <class _Value> struct <em>Rb_tree_node : public </em>Rb_tree_node_base { // 节点的定义
-  typedef <em>Rb_tree_node&lt;</em>Value><em> <em>Link_type;
-  </em>Value <em>M_value_field;
-};
-<code>
-其中每个节点主要包含一个标志颜色的bool变量 `_M_color`，3个节点指针 `_M_parent` , `_M_left` , `_M_right`，2个成员函数 `_S_minimum` 和 `_S_maximum` （分别求取最小（最左）、最大（最右）节点）。  
-而RB-tree的定义如下：  
-</code> cpp
-template <class _Tp, class _Alloc> struct </em>Rb_tree_base { // RB-tree的定义
-  typedef <em>Alloc allocator_type;
-  allocator_type get_allocator() const { return allocator_type(); }
-  </em>Rb_tree_base(const allocator_type&amp;)  : <em>M_header(0) { </em>M_header = <em>M_get_node(); } // 构造函数
-  ~</em>Rb_tree_base() { <em>M_put_node(</em>M_header); } // 析构函数
-protected:
-  <em>Rb_tree_node&lt;</em>Tp></em> <em>M_header; // 根节点
-  typedef simple_alloc&lt;</em>Rb_tree_node&lt;<em>Tp>, </em>Alloc> <em>Alloc_type; // 空间配置器
-  </em>Rb_tree_node&lt;<em>Tp>* </em>M_get_node()  { return <em>Alloc_type::allocate(1); } // 分配一个节点的空间
-  void </em>M_put_node(<em>Rb_tree_node&lt;</em>Tp>* </strong>p) { <em>Alloc_type::deallocate(<strong>p, 1); } // 释放</strong>p节点的空间
-};
-//======================================
-template <class _Key, class _Value, class _KeyOfValue, class _Compare,
-          class _Alloc = __STL_DEFAULT_ALLOCATOR(_Value) >
-class </em>Rb_tree : protected <em>Rb_tree_base&lt;</em>Value, <em>Alloc> {
-  typedef </em>Rb_tree_base&lt;<em>Value, </em>Alloc> <em>Base;
-// ...
-};
-<code>``
-可以看到RB-tree的空间配置器是</code>simple_alloc<code>配置器，按</code></em>Rb_tree_node` 节点大小分配空间，每次分配或释放一个节点的空间。</p>
-
-<h2>3. RB-tree的迭代器</h2>
-
-<p>要将RB-tree实现为一个泛型容器并用作set、map的低层容器，迭代器的设计是一个关键。RB-tree的迭代器是一个双向迭代器，但不具备随机访问能力，其引用（dereference）和访问（access）操作与list十分类似，较为特殊的是自增（operator++）和自减（operator--）操作，这里的自增/自减操作是指将迭代器移动到RB-tree按键值大小排序后当前节点的下一个/上一个节点，也即按中序遍历RB-tree时当前节点的下一个/上一个节点。RB-tree的迭代器的定义如下： <br/>
-<code>cpp
-struct _Rb_tree_base_iterator {
-  typedef _Rb_tree_node_base::_Base_ptr _Base_ptr;
-  typedef bidirectional_iterator_tag iterator_category;
-  void _M_increment()  { }
-  void _M_decrement()  { }
-};
-template &lt;class _Value, class _Ref, class _Ptr&gt;
-struct _Rb_tree_iterator : public _Rb_tree_base_iterator {
-  _Self&amp; operator++() { _M_increment(); return *this; }
-  _Self&amp; operator--() { _M_decrement(); return *this; }
-};
-</code>
-可以看到RB-tree的自增和自减操作是使用基迭代器的increment和decrement来实现的，这里仅分析自增操作的实现（自减操作类似的）。RB-tree的自增操作实际上是寻找中序遍历下当前节点的后一个节点，其代码如下：<br/>
-<code>cpp
-  void _M_increment()  { // 自增操作，中序遍历的下一个节点
-    if (_M_node-&gt;_M_right != 0) { // 当前节点有右子树
-      _M_node = _M_node-&gt;_M_right;
-      while (_M_node-&gt;_M_left != 0) // 右子树的最左节点即为所求
-        _M_node = _M_node-&gt;_M_left;
-    } else { // 当前节点没有右子树，找父节点且父节点的右子树不包含当前节点的祖先节点
-      _Base_ptr __y = _M_node-&gt;_M_parent;
-      while (_M_node == __y-&gt;_M_right) { // 当前节点在父节点的右子树中就继续往父节点的父节点找
-        _M_node = __y;
-        __y = __y-&gt;_M_parent;
-      }
-      if (_M_node-&gt;_M_right != __y)
-        _M_node = __y;
-    }
-  }
-</code><br/>
-下面几节主要介绍一下RB-tree的基本操作。</p>
-
-<h2>4. RB-tree的插入操作</h2>
-
-<h4>4.1 基本插入操作</h4>
-
-<p>RB-tree提供两种插入操作，<code>insert_unique()</code> 和 <code>insert_equal()</code>，顾名思义，前者表示被插入的节点的键值在树中是唯一的（如果已经存在，就不需要插入了），后者表示可以存在键值相同的节点。这两个函数都有多个版本，下面以后者的最简单版本（单一参数：被插入的节点的键值）为实例进行介绍。下面是 <code>insert_equal</code> 的实现：
-<code>cpp
-_Rb_tree&lt;_Key,_Value,_KeyOfValue,_Compare,_Alloc&gt; ::insert_equal(const _Value&amp; __v) {
-  _Link_type __y = _M_header;
-  _Link_type __x = _M_root(); // 从根节点开始
-  while (__x != 0) { // 往下寻找插入点
-    __y = __x;
-    // 比较，当前节点的键值比插入值大往左子树找，否则往右子树找
-    __x = _M_key_compare(_KeyOfValue()(__v), _S_key(__x)) ? _S_left(__x) : _S_right(__x);
-  }
-  return _M_insert(__x, __y, __v); // 真正的插入操作，x为新插入节点，y为x的父节点，v为新值
-}
-//真正的插入操作，主要是对RB-tree及新节点的成员变量的设置
-_Rb_tree&lt;_Key,_Value,_KeyOfValue,_Compare,_Alloc&gt; ::_M_insert(_Base_ptr __x_, _Base_ptr __y_, const _Value&amp; __v) {
-  _Link_type __x = (_Link_type) __x_;
-  _Link_type __y = (_Link_type) __y_;
-  _Link_type __z;
-  if (__y == _M_header || __x != 0 || _M_key_compare(_KeyOfValue()(__v), _S_key(__y))) {
-    __z = _M_create_node(__v); // 创建新节点
-    _S_left(__y) = __z;     // makes _M_leftmost() = __z, when __y == _M_header
-    if (__y == _M_header) { // y为header
-      _M_root() = __z;
-      _M_rightmost() = __z;
-    } else if (__y == _M_leftmost()) // y为最左节点
-      _M_leftmost() = __z;  // maintain _M_leftmost() pointing to min node
-  } else {
-    __z = _M_create_node(__v); // 创建新节点。???为什么不放到if-else上面???
-    _S_right(__y) = __z; // 新节点为y的右孩子
-    if (__y == _M_rightmost()) // y为最右节点
-      _M_rightmost() = __z; // maintain _M_rightmost() pointing to max node
-  }
-  _S_parent(__z) = __y; // 设定新节点的父节点
-  _S_left(__z) = 0;
-  _S_right(__z) = 0;
-  _Rb_tree_rebalance(__z, _M_header-&gt;_M_parent); // 调整RB-tree使之恢复平衡
-  ++_M_node_count;
-  return iterator(__z); // 返回指向新节点的迭代器
-}
-</code>
-至此新节点插入完成。然而，由于新节点的插入，可能会引起RB-tree的性质4,5的破坏，需要对RB-tree进行旋转并对相关节点重新着色，这都是在 <code>_Rb_tree_rebalance</code> 这个函数中实现的，下面就主要介绍RB-tree是如何恢复平衡。</p>
-
-<h4>4.2 调整RB-tree使之恢复平衡</h4>
-
-<p>RB-tree的调整与AVL-tree类似但更复杂，因为不仅仅需要旋转，还需要考虑节点的颜色是否符合要求。破坏RB-tree性质4的可能起因是插入了一个红色节点、将一个黑色节点变为红色或者是旋转，而破坏性质5的可能原因是插入一个黑色的节点、节点颜色的改变（红变黑或黑变红）或者是旋转。<br/>
-在讨论 RB-tree 插入操作之前必须明白一点，那就是新插入的节点的颜色必为红色（调整前），因为插入黑点会增加某条路径上黑结点的数目，从而导致整棵树黑高度的不平衡。但如果新结点的父结点为红色时（如下图所示），将会违反红黑树的性质：一条路径上不能出现父子同为红色结点。这时就需要通过一系列操作来使红黑树保持平衡。为了清楚地表示插入操作以下在结点中使用“N”字表示一个新插入的结点，使用“P”字表示新插入点的父结点，使用“U”字表示“P”结点的兄弟结点，使用“G”字表示“P”结点的父结点。插入操作分为以下几种情况：<br/>
-<strong>1）、树为空</strong><br/>
-此时，新插入节点为根节点，上面说过新插入节点均为红色，这不符合RB-tree的性质2，只需要将新节点重新改为黑色即可。<br/>
-<strong>2）、黑父</strong><br/>
-如果新节点的父结点为黑色结点，那么插入一个红点将不会影响红黑树的平衡，此时插入操作完成。红黑树比AVL树优秀的地方之一在于黑父的情况比较常见，从而使红黑树需要旋转的几率相对AVL树来说会少一些。<br/>
-<strong>3）、红父</strong><br/>
-这种情况就比较复杂。由于父节点为红，所以祖父节点必为黑色。由于新节点和父节点均为红，所以需要重新着色或进行旋转，此时就需要考虑叔父节点的颜色，进而可能需要考虑祖父、祖先节点的颜色。
-<strong>3.1）、叔父为红</strong>
-只要将父和叔结点变为黑色，将祖父结点变为红色即可，如下图所示：<br/>
-<img src="/images/2014/IMAG2014080303.png"><br/>
-但由于祖父结点的父结点有可能为红色，从而违反红黑树性质。此时必须将祖父结点作为新的判定点<strong>继续向上</strong>（迭代）进行平衡操作。<br/>
-<strong>3.2）、叔父为黑</strong><br/>
-当叔父结点为黑色时，需要进行旋转，有4中情况（类似AVL），以下图示了所有的旋转可能：<br/>
-<img src="/images/2014/IMAG2014080304.png"><br/>
-可以观察到，当旋转完成后，新的旋转根全部为黑色，此时不需要再向上回溯进行平衡操作，插入操作完成。篇幅原因，相关代码这里就不粘贴出来了，要注意的一点就是case1和case2的变色方案是一样的，虽然从上图中看一个是P由红变黑，一个是N由红变黑，但实际上在case2中，经过一次旋转后，迭代器所指向的节点已经发生改变，这样刚好使得这两个case的变色方案相同，均为P由红变黑而G由黑变红。case3与case4的变色方案也是类似的。</p>
-
-<h2>5. RB-tree的删除操作</h2>
-
-<p>相比于插入操作，RB-tree的删除操作更加复杂。在侯捷的书上并没有讲删除操作，而在算法导论上是有专门的一节内容的，wiki上也有详细的讲述。限于篇幅，这里指讲解一个大概的思路，更详细的介绍请参见wiki或算法导论。RB-tree删除操作的基本思路是这样的，首先按照一般的二叉搜索树进行节点的删除，然后对RB-tree相关节点进行变色或旋转。<br/>
-一般的二叉搜索树删除节点的基本思路是：首先找到待删除节点位置，设为D。如果D同时有左右子树，那么用D的后继（右孩子的最左子节点，该后继最多有一个子节点——右孩子）替代D（<strong>注意</strong>：这里的替代是只key的替代，color不变，仍为D的color），从而将删除位置转移到该后继节点（成为新的D，为叶子节点或只有右孩子）。于是，我们只需要讨论删除只有一个儿子的节点的情况(如果它两个儿子都为空，即均为叶子，我们任意将其中一个看作它的儿子)，设这个儿子节点为N，这仍然需要分三种情况：<br/>
-<strong>1）D为红</strong><br/>
-这种情况比较简单。由于D为红色，所以它的父亲和儿子一定是黑色的，我们可以简单的用它的黑色儿子替换它，并不会破坏性质3和性质4。通过被删除节点的所有路径只是少了一个红色节点，这样可以继续保证性质5。<br/>
-  <strong>2）D为黑且N为红</strong><br/>
-如果只是去除这个黑色节点，用它的红色儿子顶替上来的话，会破坏性质5，可能会破坏性质4，但是如果我们重绘它的儿子为黑色，则曾经通过它的所有路径将通过它的黑色儿子，这样可以继续保持性质5，同时也满足性质4。<br/>
-<strong>3）D为黑且N为黑</strong><br/>
-这是一种复杂的情况。我们首先把要删除的节点D替换为它的（右）儿子N，在新树中（D被N覆盖），设N的父节点为P，兄弟为S，SL为S的左儿子，SR为S的右儿子。此时，以N为根节点的子树的黑高度减少了一，与S为根节点的子树的黑高度不一致，破坏了性质5。为了恢复，可以分为如下情形：<br/>
-<strong>3.1）N为根节点</strong><br/>
-已经满足所有性质，不需要调整。<br/>
-<strong>3.2） N是它父亲P的左儿子</strong><br/>
-<strong>case1、S为红色</strong>：将P改为红色，S改为黑色，以P为中心左旋，旋转后<strong>SL为新的S</strong>，SL和SR是新的S的左右孩子，此时case1就转化为了case2或case3或case4；<br/>
-注：case2~4中S均为黑色（否则是case1）。<br/>
-<strong>case2、SL、SR同为黑色</strong>：将S改为红色，这样黑高度失衡的节点变为P，转到3.1）重新开始判断和调整；<br/>
-<strong>case3、SR为黑</strong>：此时SL为红（否则是case2）。将S改为红色，SL改为黑色，然后以S为中心右旋，旋转后SL为新的S，而原S成为SR且为红色，这就将case3变成了case4；<br/>
-<strong>case4、SR为红</strong>：以P为中心左旋，然后交换P和S的颜色，最后将SR改为黑色，即可完成调整。可以看到调整过程与SL的颜色无关。<br/>
-<strong>3.3）N是它父亲P的右儿子</strong><br/>
-与3.2）类似，这里就不详细展开了。</p>
-
-<h2>6. RB-tree的查询操作</h2>
-
-<p>RB-tree是一个二叉搜索树，元素的查询是其拿手项目，非常简单，以下是RB-tree提供的查询操作：
-``` cpp
-template <class _Key, class _Value, class _KeyOfValue, class _Compare, class _Alloc>
-typename <em>Rb_tree&lt;</em>Key,<em>Value,</em>KeyOfValue,<em>Compare,</em>Alloc>::iterator
-<em>Rb_tree&lt;</em>Key,<em>Value,</em>KeyOfValue,<em>Compare,</em>Alloc>::find(const <em>Key&amp; __k) {
-  </em>Link_type <strong>y = _M_header;      // Last node which is not less than </strong>k.
-  <em>Link_type __x = </em>M_root();      // Current node.</p>
-
-<p>  while (<strong>x != 0) // x为NIL时推出循环
-    if (!<em>M_key_compare(</em>S_key(</strong>x), <strong>k))
-      </strong>y = <strong>x, </strong>x = <em>S_left(<strong>x); // 往左子树找（赋值运算优先于逗号运算，y是x的父节点）
-    else
-      </strong>x = </em>S_right(__x); // 往右子树找</p>
-
-<p>  iterator <strong>j = iterator(</strong>y); <br/>
-  return (<strong>j == end() || _M_key_compare(</strong>k, <em>S_key(__j.</em>M_node))) ?
-     end() : __j; // 没找到返回end()，否则返回相应节点的指针（迭代器）
-}
-```</p>
-
-<h2>小结</h2>
-
-<p>关于RB-tree基本就介绍到这里了，主要是RB-tree的定义、数据结构、插入删除和查找等基本操作，其中最主要也最困难的就是插入和删除操作中恢复平衡的方法。另外，还介绍了二叉搜索树的基本概念和高度平衡的AVL树，可以看到，AVL树保持平衡的方法非常简单易懂，而RB-tree由于引入了节点的颜色属性，使得理解起来相对比较困难，那么问题就来了，为什么不用AVL-tree而用RB-tree作为set和map的低层容器呢？<br/>
-这个问题要问STL的实现者了，其实AVL-tree和RB-tree的平均性能在 <a href="http://en.wikipedia.org/wiki/AVL_tree">AVL-tree的wiki</a> _上是有严格的数学公式的，AVL的平均高度为 $1.44logN$ ，而RB-tree的平均高度为 $2logN$ ，这些数据的来历也有相关的论文，感兴趣的可以更深入的看看。</p>
-</div>
-<div id="copyleft" class="well" >
-	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/</a></br>
-	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
-</div>
-
-
-  <footer>
-    <p class="meta">
-      
-<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
-
-      
-
-
-
-
-
-
-
-
-
-<time datetime="2014-08-03T21:30:00+08:00" pubdate data-updated="true"></time>
-		
-		
-		
-		  <span class="categories">Posted in <a class='category' href='/blog/categories/program/'>Program</a></span>
-		
-		
-		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/c-plus-plus/'>C++</a>, <a class='tag' href='/blog/tags/stl/'>STL</a>, <a class='tag' href='/blog/tags/rong-qi/'>容器</a>, <a class='tag' href='/blog/tags/hong-hei-shu/'>红黑树</a></span>
-		
-    </p>
-    
-      
-         <div class="sharing">
-  
-  
-  
-</div>
-
-      
-    
-	</br>
-	 <ul class="pager">
-      
-      <li class="previous"><a class="basic-alignment left"
-        href="/blog/2014/07/27/stl-source-insight-3-sequential-containers-4-heap-and-priority-queue/" title="Previous Post:
-        深入理解STL源码(3.4) 序列式容器之heap和priority queue">&laquo; 深入理解STL源码(3.4) 序列式容器之heap和priority queue</a></li>
-      
-      <li><a href="/blog/archives/">Blog Archives</a></li>
-      
-      <li class="next"><a class="basic-alignment right" href="/blog/2014/08/17/insight-into-stl-4-associative-containers-2-set-and-multiset/"
-        title="Next Post: 深入理解STL源码(4.2) 关联式容器之set和multiset">深入理解STL源码(4.2) 关联式容器之set和multiset
-        &raquo;</a></li>
-      
-    </ul>
-    
-    <section>
-      <h1>Comments</h1>
-      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-    </section>
-    
-   
-  </footer>
-</article>
-
-<aside class="sidebar-nav span3">
-  
-    
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo" class="page-footer">
-<hr>
-<p>
-  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'ibillxia';
-      
-        
-        // var disqus_developer = 1;
-        var disqus_identifier = 'https://ibillxia.github.io/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/';
-        var disqus_url = 'https://ibillxia.github.io/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/';
-        var disqus_script = 'embed.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-
-
-
-
-
-
-
-
-
-</body>
-</html>
+<!doctype html><html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f7"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1b1b1e"><meta name="viewport" content="width=device-width, user-scalable=no initial-scale=1, shrink-to-fit=no, viewport-fit=cover" ><meta name="generator" content="Jekyll v4.4.1" /><meta property="og:title" content="深入理解STL源码(4.1) 关联式容器之红黑树" /><meta property="og:locale" content="zh_CN" /><meta name="description" content="本文涉及到 SGI STL 源码的文件主要是 stl_tree.h 这个文件。" /><meta name="twitter:description" property="og:description" content="本文涉及到 SGI STL 源码的文件主要是 stl_tree.h 这个文件。" /><link rel="canonical" href="https://ibillxia.github.io/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/" /><meta property="og:url" content="https://ibillxia.github.io/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/" /><meta property="og:site_name" content="Bill’s Blog" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2014-08-03T21:30:00+08:00" /><meta property="article:modified_time" content="2014-08-03T21:30:00+08:00" /><meta property="og:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:card" content="summary_large_image" /><meta property="twitter:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:title" content="深入理解STL源码(4.1) 关联式容器之红黑树" /><meta name="twitter:site" content="@ibillxia" /><meta name="msvalidate.01" content="1538BC1807507674B6BD4942F25493B2" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2014-08-03T21:30:00+08:00","datePublished":"2014-08-03T21:30:00+08:00","description":"本文涉及到 SGI STL 源码的文件主要是 stl_tree.h 这个文件。","headline":"深入理解STL源码(4.1) 关联式容器之红黑树","mainEntityOfPage":{"@type":"WebPage","@id":"https://ibillxia.github.io/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/"},"url":"https://ibillxia.github.io/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/"}</script><title>深入理解STL源码(4.1) 关联式容器之红黑树 | Bill's Blog</title><link rel="icon" type="image/png" href="/assets/img/favicons/favicon-96x96.png" sizes="96x96"><link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico"><link rel="shortcut icon" href="/assets/img/favicon.ico"><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="stylesheet" href="/assets/css/jekyll-theme-chirpy.css"><link rel="stylesheet" href="/assets/lib/fonts/main.css"><link rel="stylesheet" href="/assets/lib/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="/assets/lib/tocbot/tocbot.min.css"><link rel="stylesheet" href="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.min.css"><link rel="stylesheet" href="/assets/lib/glightbox/glightbox.min.css"> <script src="/assets/js/dist/theme.min.js"></script> <script defer src="/assets/lib/simple-jekyll-search/simple-jekyll-search.min.js"></script> <script defer src="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.umd.min.js"></script> <script defer src="/assets/lib/glightbox/glightbox.min.js"></script> <script defer src="/assets/lib/clipboard/clipboard.min.js"></script> <script defer src="/assets/lib/dayjs/dayjs.min.js"></script> <script defer src="/assets/lib/dayjs/locale/en.js"></script> <script defer src="/assets/lib/dayjs/plugin/relativeTime.js"></script> <script defer src="/assets/lib/dayjs/plugin/localizedFormat.js"></script> <script defer src="/assets/lib/tocbot/tocbot.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script defer src="/app.min.js?baseurl=&register=true" ></script> <script defer src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script> <script> document.addEventListener('DOMContentLoaded', () => { window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-34DJ0T23LB'); }); </script><body><aside aria-label="Sidebar" id="sidebar" class="d-flex flex-column align-items-end"><header class="profile-wrapper"> <a href="/" id="avatar" class="rounded-circle"><img src="/assets/img/rock_coder.png" width="112" height="112" alt="avatar" onerror="this.style.display='none'"></a> <a class="site-title d-block" href="/">Bill's Blog</a><p class="site-subtitle fst-italic mb-0">Program Hard, Play Hard, Live Crazy!</p></header><nav class="flex-column flex-grow-1 w-100 ps-0"><ul class="nav"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home"></i> <span>首页</span> </a><li class="nav-item"> <a href="/blog/archives/" class="nav-link"> <i class="fa-fw fas fa-archive"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/blog/categories/" class="nav-link"> <i class="fa-fw fas fa-stream"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/blog/tags/" class="nav-link"> <i class="fa-fw fas fa-tags"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle"></i> <span>关于</span> </a></ul></nav><div class="sidebar-bottom d-flex flex-wrap align-items-center w-100"><div class="btn-group dropup"> <button type="button" class="btn btn-link nav-link" aria-label="Switch Mode" id="mode-toggle" data-bs-toggle="dropdown" ><i class="fa-regular fa-sun" data-theme-mode="light"></i><i class="fa-regular fa-moon" data-theme-mode="dark"></i><i class="fa-solid fa-display" data-theme-mode="system"></i></button><ul class="dropdown-menu rounded-3 mb-1 p-1"><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="light"><i class="fa-regular fa-sun" data-theme-mode="light"></i>浅色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="dark"><i class="fa-regular fa-moon" data-theme-mode="dark"></i>深色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="system"><i class="fa-solid fa-display" data-theme-mode="system"></i>跟随系统</button></ul></div><span class="icon-border"></span> <a href="https://github.com/ibillxia" aria-label="github" target="_blank" rel="noopener noreferrer" > <i class="fab fa-github"></i> </a> <a href="https://x.com/ibillxia" aria-label="x" target="_blank" rel="noopener noreferrer" > <i class="fa-brands fa-x-twitter"></i> </a> <a href="javascript:void(location.href = 'mailto:' + ['ibillxia','gmail.com'].join('@'))" aria-label="email" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" > <i class="fas fa-rss"></i> </a> <a href="https://stackoverflow.com/users/1602285/bill-xia" aria-label="stack-overflow" target="_blank" rel="noopener noreferrer" > <i class="fab fa-stack-overflow"></i> </a> <a href="https://weibo.com/ibillxia" aria-label="weibo" target="_blank" rel="noopener noreferrer" > <i class="fab fa-weibo"></i> </a></div></aside><div id="main-wrapper" class="d-flex justify-content-center"><div class="container d-flex flex-column px-xxl-5"><header id="topbar-wrapper" class="flex-shrink-0" aria-label="Top Bar"><div id="topbar" class="d-flex align-items-center justify-content-between px-lg-3 h-100" ><nav id="breadcrumb" aria-label="Breadcrumb"> <span> <a href="/">首页</a> </span> <span>深入理解STL源码(4.1) 关联式容器之红黑树</span></nav><button type="button" id="sidebar-trigger" class="btn btn-link" aria-label="Sidebar"> <i class="fas fa-bars fa-fw"></i> </button><div id="topbar-title"> 文章</div><button type="button" id="search-trigger" class="btn btn-link" aria-label="Search"> <i class="fas fa-search fa-fw"></i> </button> <search id="search" class="align-items-center ms-3 ms-lg-0"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="搜索..." > </search> <button type="button" class="btn btn-link text-decoration-none" id="search-cancel">取消</button></div></header><div class="row flex-grow-1"><main aria-label="Main Content" class="col-12 col-lg-11 col-xl-9 px-md-4"><article class="px-1" data-toc="true"><header><h1 data-toc-skip>深入理解STL源码(4.1) 关联式容器之红黑树</h1><div class="post-meta text-muted"> <span> 发表于 <time data-ts="1407072600" data-df="YYYY/MM/DD" data-bs-toggle="tooltip" data-bs-placement="bottom" > 2014/08/03 </time> </span><div class="d-flex justify-content-between"> <span> 作者 <em> <a href="https://github.com/ibillxia">Bill Xia</a> </em> </span><div> <span class="readtime" data-bs-toggle="tooltip" data-bs-placement="bottom" title="5671 字" > <em>31 分钟</em>阅读</span></div></div></div></header><div id="toc-bar" class="d-flex align-items-center justify-content-between invisible"> <span class="label text-truncate">深入理解STL源码(4.1) 关联式容器之红黑树</span> <button type="button" class="toc-trigger btn me-1"> <i class="fa-solid fa-list-ul fa-fw"></i> </button></div><button id="toc-solo-trigger" type="button" class="toc-trigger btn btn-outline-secondary btn-sm"> <span class="label ps-2 pe-1">文章内容</span> <i class="fa-solid fa-angle-right fa-fw"></i> </button> <dialog id="toc-popup" class="p-0"><div class="header d-flex flex-row align-items-center justify-content-between"><div class="label text-truncate py-2 ms-4">深入理解STL源码(4.1) 关联式容器之红黑树</div><button id="toc-popup-close" type="button" class="btn-close btn-sm mx-3" aria-label="Close"></button></div><div id="toc-popup-content" class="px-4 py-3 pb-4"></div></dialog><div class="content"><p>本文涉及到 SGI STL 源码的文件主要是 <code class="language-plaintext highlighter-rouge">stl_tree.h</code> 这个文件。</p><h2 id="0-关联式容器"><span class="me-2">0. 关联式容器</span><a href="#0-关联式容器" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>之前几篇文章详细介绍了SGI STL中序列式容器的实现，并提到过STL中还有一类关联式的容器。标准的STL管理师容器分为 set（集合）和map（映射表）两大类，以及这两大类的衍生体multiset（多键集合）和multimap（多键映射表），这些容器的底层机制均以RB-Tree（红黑树）完成。RB-Tree是一种非常高效的数据结构，它本质上是一种平衡的二叉搜索树，因而其查找的平均时间复杂度为元素总个数的对数（即logN）。在STL中RB-Tree是一个独立的容器，但并没有对用户的公开接口，仅提供给STL的set和map使用。<br /> SGI STL在标准STL之外，还提供了一类关联式容器——hash table（哈希表），以及以此为低层机制的hash set（散列集合）、hash map（散列映射表）、hash multiset（散列多键集合）和hash multimap（散列多键映射表）。相比于RB-Tree，hash table的时间效率更高，插入、删除、查找的时间复杂度均为常数时间，但需要比元素总个数多得多的空间。<br /> 本文接下来主要介绍树及RB-Tree相关的内容，后续文章将具体介绍SGI STL中set、map、hash table的实现。</p><h2 id="1-树与二叉搜索树"><span class="me-2">1. 树与二叉搜索树</span><a href="#1-树与二叉搜索树" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>树是一种非常常见而且实用的数据结构，几乎所有的操作系统都将文件存放在树状结构里，几乎所有编译器需要实现一个表达式树（expression tree），文件压缩所用的哈夫曼算法也需要用到树状结构，数据库所使用的B-tree则是一种相当复杂的树状结构。<br /> 关于树的一些基本概念相信大家都比较熟悉，这里就不赘述了，如果需要可以google或看wikipedia，这里重点重温一下数据结构里的二叉搜索树、平衡二叉搜索树、AVL树。<br /> <strong>二叉搜索树</strong>：任何节点的键值大于其<strong>左子树</strong>中<strong>每一个</strong>节点的键值，并小于其<strong>右子树</strong>中的<strong>每一个</strong>节点的键值。根据二叉搜索树的定义可知，按照中序遍历该树可以得到一个有序的序列。平均情况下，二叉搜索树可以提供对数时间的插入和访问。其插入和查找的算法也很简单，每次与根节点的键值进行比较，小于根节点的键值则往根节点的左子树插入或查找，大于则往右子树插入或查找，无论是递归实现还是非递归实现都很简单。<br /> <strong>平衡二叉搜索树</strong>：上面提到二叉搜索数的<strong>平均</strong>性能为对数时间，这是因为二叉搜索树的深度与数据插入的顺序有关，如果插入的数据本身就比较有序，那么就会产生一个深度过大的树，甚至会退化为一个链表的结构，这中情况下，其查找的效率就是线性时间了。平衡二叉搜索树就是为了解决这个问题而产生的，“平衡”的意义是，没有任何一个节点过深。不同的平衡条件造就出不同的效率表现，以及不同的实现复杂度，如 <a href="http://en.wikipedia.org/wiki/AVL_tree">AVL-Tree</a>、<a href="http://en.wikipedia.org/wiki/Red%E2%80%93black_tree">RB-Tree</a>、<a href="http://en.wikipedia.org/wiki/AA_tree">AA-Tree</a> _等。他们都比简单的二叉搜索树要复杂，特别是插入和删除操作，但他们可以避免高度不平衡的情况，因而查找时间较快。<br /></p><p><strong>AVL树</strong>：AVL-tree（Adelson-Velskii-Landis tree）是一个加上了“额外平衡条件”的二叉搜索树，是一种高度平衡的二叉搜索树，它的这个额外的条件为：任何节点的左右子树高度相差最多1。该条件能够保证整棵树的高度为logN，但其插入和删除的操作也相对比较复杂，因为这些操作可能导致树的失衡，需要调整（或旋转）树的结构，使其保持平衡。插入时出现失衡的情况有如下四种（其中X为最小失衡子树的根节点）：</p><blockquote><ol><li>插入点位于X的左子节点的左子树——左左；<li>插入点位于X的左子节点的右子树——左右；<li>插入点位于X的右子节点的左子树——右左；<li>插入点位于X的右子节点的右子树——右右。</ol></blockquote><p>情况1和4对称，称为外侧插入，可以采用单旋转操作调整恢复平衡；2和3对称，称为内侧插入，可以采用双旋转操作调整恢复平衡：先经过一次旋转变成左左或右右，然后再经过一次旋转恢复平衡。1和2的实例如下图：<br /> <a href="/images/2014/IMAG2014080301.jpg" class="popup img-link shimmer"><img src="/images/2014/IMAG2014080301.jpg" alt="" loading="lazy"></a><br /> 图中从中间到最右情况1的恢复平衡的旋转方法，只是其中节点3为新插入的元素；而最左到最右是情况2的恢复平衡的旋转方法，其中节点4为新插入的元素。情况3和4分别与2和1对称，其调整方法也很类似，就不赘述了。<br /> RB-tree是另一种被广泛使用的平衡二叉搜索树，也是SGI STL唯一实现的一种搜索树，作为关联式容器的底层容器。RB-tree的平衡条件不同于AVL-tree，但同样运用了单旋转和双旋转的恢复平衡的机制，下面我们详细介绍RB-tree的实现。</p><h2 id="2-rb-tree的定义及数据结构"><span class="me-2">2. RB-tree的定义及数据结构</span><a href="#2-rb-tree的定义及数据结构" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>所谓RB-tree，不仅仅是一个二叉搜索树，而且必须满足以下规则：</p><blockquote><ol><li>每个节点不是红色就是黑色；<li>根节点为黑色；<li>每个叶子节点（NIL）为黑色；<li>如果节点为红，其左右子节点必为黑；<li>对每个节点，从该节点到其子孙中的叶子节点的所有路径上所包含的黑节点数目相同。</ol></blockquote><p>上面的这些约束保证了这个树大致上是平衡的，这也决定了红黑树的插入、删除、查询等操作是比较快速的。 根据规则5，新增节点必须为红色；根据规则4，新增节点之父节点必须为黑色。当新增节点根据二叉搜索树的规则到达其插入点时，却未能符合上述条件时，就必须调整颜色并旋转树形。下图是一个典型的RB-tree（来自wiki）：<br /> <a href="/images/2014/IMAG2014080302.png" class="popup img-link shimmer"><img src="/images/2014/IMAG2014080302.png" alt="" loading="lazy"></a><br /> SGI STL中RB-tree的数据结构比较简单，其中每个节点的数据结构如下：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+</pre><td class="rouge-code"><pre><span class="k">typedef</span> <span class="kt">bool</span> <span class="n">_Rb_tree_Color_type</span><span class="p">;</span>
+<span class="k">const</span> <span class="n">_Rb_tree_Color_type</span> <span class="n">_S_rb_tree_red</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+<span class="k">const</span> <span class="n">_Rb_tree_Color_type</span> <span class="n">_S_rb_tree_black</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+<span class="c1">//======================================</span>
+<span class="k">struct</span> <span class="nc">_Rb_tree_node_base</span> <span class="p">{</span> <span class="c1">// 节点的定义</span>
+  <span class="k">typedef</span> <span class="n">_Rb_tree_Color_type</span> <span class="n">_Color_type</span><span class="p">;</span>
+  <span class="k">typedef</span> <span class="n">_Rb_tree_node_base</span><span class="o">*</span> <span class="n">_Base_ptr</span><span class="p">;</span>
+  <span class="n">_Color_type</span> <span class="n">_M_color</span><span class="p">;</span> <span class="c1">// 节点颜色，实际为一个bool型变量</span>
+  <span class="n">_Base_ptr</span> <span class="n">_M_parent</span><span class="p">;</span> <span class="c1">// 指向父节点，方便遍历</span>
+  <span class="n">_Base_ptr</span> <span class="n">_M_left</span><span class="p">;</span>
+  <span class="n">_Base_ptr</span> <span class="n">_M_right</span><span class="p">;</span>
+
+  <span class="k">static</span> <span class="n">_Base_ptr</span> <span class="n">_S_minimum</span><span class="p">(</span><span class="n">_Base_ptr</span> <span class="n">__x</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">__x</span><span class="o">-&gt;</span><span class="n">_M_left</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="n">__x</span> <span class="o">=</span> <span class="n">__x</span><span class="o">-&gt;</span><span class="n">_M_left</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">__x</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">static</span> <span class="n">_Base_ptr</span> <span class="nf">_S_maximum</span><span class="p">(</span><span class="n">_Base_ptr</span> <span class="n">__x</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">__x</span><span class="o">-&gt;</span><span class="n">_M_right</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="n">__x</span> <span class="o">=</span> <span class="n">__x</span><span class="o">-&gt;</span><span class="n">_M_right</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">__x</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+<span class="c1">//======================================</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Value</span><span class="p">&gt;</span> <span class="k">struct</span> <span class="nc">_Rb_tree_node</span> <span class="o">:</span> <span class="k">public</span> <span class="n">_Rb_tree_node_base</span> <span class="p">{</span> <span class="c1">// 节点的定义</span>
+  <span class="k">typedef</span> <span class="n">_Rb_tree_node</span><span class="o">&lt;</span><span class="n">_Value</span><span class="o">&gt;*</span> <span class="n">_Link_type</span><span class="p">;</span>
+  <span class="n">_Value</span> <span class="n">_M_value_field</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></table></code></div></div><p>其中每个节点主要包含一个标志颜色的bool变量 <code class="language-plaintext highlighter-rouge">_M_color</code>，3个节点指针 <code class="language-plaintext highlighter-rouge">_M_parent</code> , <code class="language-plaintext highlighter-rouge">_M_left</code> , <code class="language-plaintext highlighter-rouge">_M_right</code>，2个成员函数 <code class="language-plaintext highlighter-rouge">_S_minimum</code> 和 <code class="language-plaintext highlighter-rouge">_S_maximum</code> （分别求取最小（最左）、最大（最右）节点）。<br /> 而RB-tree的定义如下：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre><td class="rouge-code"><pre><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Alloc</span><span class="p">&gt;</span> <span class="k">struct</span> <span class="nc">_Rb_tree_base</span> <span class="p">{</span> <span class="c1">// RB-tree的定义</span>
+  <span class="k">typedef</span> <span class="n">_Alloc</span> <span class="n">allocator_type</span><span class="p">;</span>
+  <span class="n">allocator_type</span> <span class="n">get_allocator</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">allocator_type</span><span class="p">();</span> <span class="p">}</span>
+  <span class="n">_Rb_tree_base</span><span class="p">(</span><span class="k">const</span> <span class="n">allocator_type</span><span class="o">&amp;</span><span class="p">)</span>  <span class="o">:</span> <span class="n">_M_header</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="n">_M_header</span> <span class="o">=</span> <span class="n">_M_get_node</span><span class="p">();</span> <span class="p">}</span> <span class="c1">// 构造函数</span>
+  <span class="o">~</span><span class="n">_Rb_tree_base</span><span class="p">()</span> <span class="p">{</span> <span class="n">_M_put_node</span><span class="p">(</span><span class="n">_M_header</span><span class="p">);</span> <span class="p">}</span> <span class="c1">// 析构函数</span>
+<span class="k">protected</span><span class="o">:</span>
+  <span class="n">_Rb_tree_node</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;*</span> <span class="n">_M_header</span><span class="p">;</span> <span class="c1">// 根节点</span>
+  <span class="k">typedef</span> <span class="n">simple_alloc</span><span class="o">&lt;</span><span class="n">_Rb_tree_node</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">_Alloc</span><span class="o">&gt;</span> <span class="n">_Alloc_type</span><span class="p">;</span> <span class="c1">// 空间配置器</span>
+  <span class="n">_Rb_tree_node</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;*</span> <span class="nf">_M_get_node</span><span class="p">()</span>  <span class="p">{</span> <span class="k">return</span> <span class="n">_Alloc_type</span><span class="o">::</span><span class="n">allocate</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="p">}</span> <span class="c1">// 分配一个节点的空间</span>
+  <span class="kt">void</span> <span class="nf">_M_put_node</span><span class="p">(</span><span class="n">_Rb_tree_node</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="o">&gt;*</span> <span class="n">__p</span><span class="p">)</span> <span class="p">{</span> <span class="n">_Alloc_type</span><span class="o">::</span><span class="n">deallocate</span><span class="p">(</span><span class="n">__p</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="p">}</span> <span class="c1">// 释放__p节点的空间</span>
+<span class="p">};</span>
+<span class="c1">//======================================</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Key</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Value</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_KeyOfValue</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Compare</span><span class="p">,</span>
+          <span class="k">class</span> <span class="nc">_Alloc</span> <span class="o">=</span> <span class="n">__STL_DEFAULT_ALLOCATOR</span><span class="p">(</span><span class="n">_Value</span><span class="p">)</span> <span class="p">&gt;</span>
+<span class="k">class</span> <span class="nc">_Rb_tree</span> <span class="o">:</span> <span class="k">protected</span> <span class="n">_Rb_tree_base</span><span class="o">&lt;</span><span class="n">_Value</span><span class="p">,</span> <span class="n">_Alloc</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="k">typedef</span> <span class="n">_Rb_tree_base</span><span class="o">&lt;</span><span class="n">_Value</span><span class="p">,</span> <span class="n">_Alloc</span><span class="o">&gt;</span> <span class="n">_Base</span><span class="p">;</span>
+<span class="c1">// ... </span>
+<span class="p">};</span>
+</pre></table></code></div></div><p>可以看到RB-tree的空间配置器是 <code class="language-plaintext highlighter-rouge">simple_alloc</code> 配置器，按 <code class="language-plaintext highlighter-rouge">_Rb_tree_node</code> 节点大小分配空间，每次分配或释放一个节点的空间。</p><h2 id="3-rb-tree的迭代器"><span class="me-2">3. RB-tree的迭代器</span><a href="#3-rb-tree的迭代器" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>要将RB-tree实现为一个泛型容器并用作set、map的低层容器，迭代器的设计是一个关键。RB-tree的迭代器是一个双向迭代器，但不具备随机访问能力，其引用（dereference）和访问（access）操作与list十分类似，较为特殊的是自增（operator++）和自减（operator–）操作，这里的自增/自减操作是指将迭代器移动到RB-tree按键值大小排序后当前节点的下一个/上一个节点，也即按中序遍历RB-tree时当前节点的下一个/上一个节点。RB-tree的迭代器的定义如下：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre><td class="rouge-code"><pre><span class="k">struct</span> <span class="nc">_Rb_tree_base_iterator</span> <span class="p">{</span>
+  <span class="k">typedef</span> <span class="n">_Rb_tree_node_base</span><span class="o">::</span><span class="n">_Base_ptr</span> <span class="n">_Base_ptr</span><span class="p">;</span>
+  <span class="k">typedef</span> <span class="n">bidirectional_iterator_tag</span> <span class="n">iterator_category</span><span class="p">;</span>
+  <span class="kt">void</span> <span class="n">_M_increment</span><span class="p">()</span>  <span class="p">{</span> <span class="p">}</span>
+  <span class="kt">void</span> <span class="nf">_M_decrement</span><span class="p">()</span>  <span class="p">{</span> <span class="p">}</span>
+<span class="p">};</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Value</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Ref</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Ptr</span><span class="p">&gt;</span>
+<span class="k">struct</span> <span class="nc">_Rb_tree_iterator</span> <span class="o">:</span> <span class="k">public</span> <span class="n">_Rb_tree_base_iterator</span> <span class="p">{</span>
+  <span class="n">_Self</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">++</span><span class="p">()</span> <span class="p">{</span> <span class="n">_M_increment</span><span class="p">();</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+  <span class="n">_Self</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">--</span><span class="p">()</span> <span class="p">{</span> <span class="n">_M_decrement</span><span class="p">();</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">};</span>
+</pre></table></code></div></div><p>可以看到RB-tree的自增和自减操作是使用基迭代器的increment和decrement来实现的，这里仅分析自增操作的实现（自减操作类似的）。RB-tree的自增操作实际上是寻找中序遍历下当前节点的后一个节点，其代码如下：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre><td class="rouge-code"><pre>  <span class="kt">void</span> <span class="nf">_M_increment</span><span class="p">()</span>  <span class="p">{</span> <span class="c1">// 自增操作，中序遍历的下一个节点</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_right</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 当前节点有右子树</span>
+      <span class="n">_M_node</span> <span class="o">=</span> <span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_right</span><span class="p">;</span>
+      <span class="k">while</span> <span class="p">(</span><span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_left</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="c1">// 右子树的最左节点即为所求</span>
+        <span class="n">_M_node</span> <span class="o">=</span> <span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_left</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// 当前节点没有右子树，找父节点且父节点的右子树不包含当前节点的祖先节点</span>
+      <span class="n">_Base_ptr</span> <span class="n">__y</span> <span class="o">=</span> <span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_parent</span><span class="p">;</span>
+      <span class="k">while</span> <span class="p">(</span><span class="n">_M_node</span> <span class="o">==</span> <span class="n">__y</span><span class="o">-&gt;</span><span class="n">_M_right</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 当前节点在父节点的右子树中就继续往父节点的父节点找</span>
+        <span class="n">_M_node</span> <span class="o">=</span> <span class="n">__y</span><span class="p">;</span>
+        <span class="n">__y</span> <span class="o">=</span> <span class="n">__y</span><span class="o">-&gt;</span><span class="n">_M_parent</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">_M_node</span><span class="o">-&gt;</span><span class="n">_M_right</span> <span class="o">!=</span> <span class="n">__y</span><span class="p">)</span>
+        <span class="n">_M_node</span> <span class="o">=</span> <span class="n">__y</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</pre></table></code></div></div><p>下面几节主要介绍一下RB-tree的基本操作。</p><h2 id="4-rb-tree的插入操作"><span class="me-2">4. RB-tree的插入操作</span><a href="#4-rb-tree的插入操作" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><h4 id="41-基本插入操作"><span class="me-2">4.1 基本插入操作</span><a href="#41-基本插入操作" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4><p>RB-tree提供两种插入操作，<code class="language-plaintext highlighter-rouge">insert_unique()</code> 和 <code class="language-plaintext highlighter-rouge">insert_equal()</code>，顾名思义，前者表示被插入的节点的键值在树中是唯一的（如果已经存在，就不需要插入了），后者表示可以存在键值相同的节点。这两个函数都有多个版本，下面以后者的最简单版本（单一参数：被插入的节点的键值）为实例进行介绍。下面是 <code class="language-plaintext highlighter-rouge">insert_equal</code> 的实现：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+</pre><td class="rouge-code"><pre><span class="n">_Rb_tree</span><span class="o">&lt;</span><span class="n">_Key</span><span class="p">,</span><span class="n">_Value</span><span class="p">,</span><span class="n">_KeyOfValue</span><span class="p">,</span><span class="n">_Compare</span><span class="p">,</span><span class="n">_Alloc</span><span class="o">&gt;</span> <span class="o">::</span><span class="n">insert_equal</span><span class="p">(</span><span class="k">const</span> <span class="n">_Value</span><span class="o">&amp;</span> <span class="n">__v</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">_Link_type</span> <span class="n">__y</span> <span class="o">=</span> <span class="n">_M_header</span><span class="p">;</span>
+  <span class="n">_Link_type</span> <span class="n">__x</span> <span class="o">=</span> <span class="n">_M_root</span><span class="p">();</span> <span class="c1">// 从根节点开始</span>
+  <span class="k">while</span> <span class="p">(</span><span class="n">__x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 往下寻找插入点</span>
+    <span class="n">__y</span> <span class="o">=</span> <span class="n">__x</span><span class="p">;</span>
+    <span class="c1">// 比较，当前节点的键值比插入值大往左子树找，否则往右子树找</span>
+    <span class="n">__x</span> <span class="o">=</span> <span class="n">_M_key_compare</span><span class="p">(</span><span class="n">_KeyOfValue</span><span class="p">()(</span><span class="n">__v</span><span class="p">),</span> <span class="n">_S_key</span><span class="p">(</span><span class="n">__x</span><span class="p">))</span> <span class="o">?</span> <span class="n">_S_left</span><span class="p">(</span><span class="n">__x</span><span class="p">)</span> <span class="o">:</span> <span class="n">_S_right</span><span class="p">(</span><span class="n">__x</span><span class="p">);</span> 
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nf">_M_insert</span><span class="p">(</span><span class="n">__x</span><span class="p">,</span> <span class="n">__y</span><span class="p">,</span> <span class="n">__v</span><span class="p">);</span> <span class="c1">// 真正的插入操作，x为新插入节点，y为x的父节点，v为新值</span>
+<span class="p">}</span>
+<span class="c1">//真正的插入操作，主要是对RB-tree及新节点的成员变量的设置</span>
+<span class="n">_Rb_tree</span><span class="o">&lt;</span><span class="n">_Key</span><span class="p">,</span><span class="n">_Value</span><span class="p">,</span><span class="n">_KeyOfValue</span><span class="p">,</span><span class="n">_Compare</span><span class="p">,</span><span class="n">_Alloc</span><span class="o">&gt;</span> <span class="o">::</span><span class="n">_M_insert</span><span class="p">(</span><span class="n">_Base_ptr</span> <span class="n">__x_</span><span class="p">,</span> <span class="n">_Base_ptr</span> <span class="n">__y_</span><span class="p">,</span> <span class="k">const</span> <span class="n">_Value</span><span class="o">&amp;</span> <span class="n">__v</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">_Link_type</span> <span class="n">__x</span> <span class="o">=</span> <span class="p">(</span><span class="n">_Link_type</span><span class="p">)</span> <span class="n">__x_</span><span class="p">;</span>
+  <span class="n">_Link_type</span> <span class="n">__y</span> <span class="o">=</span> <span class="p">(</span><span class="n">_Link_type</span><span class="p">)</span> <span class="n">__y_</span><span class="p">;</span>
+  <span class="n">_Link_type</span> <span class="n">__z</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">__y</span> <span class="o">==</span> <span class="n">_M_header</span> <span class="o">||</span> <span class="n">__x</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">_M_key_compare</span><span class="p">(</span><span class="n">_KeyOfValue</span><span class="p">()(</span><span class="n">__v</span><span class="p">),</span> <span class="n">_S_key</span><span class="p">(</span><span class="n">__y</span><span class="p">)))</span> <span class="p">{</span>
+    <span class="n">__z</span> <span class="o">=</span> <span class="n">_M_create_node</span><span class="p">(</span><span class="n">__v</span><span class="p">);</span> <span class="c1">// 创建新节点</span>
+    <span class="n">_S_left</span><span class="p">(</span><span class="n">__y</span><span class="p">)</span> <span class="o">=</span> <span class="n">__z</span><span class="p">;</span>     <span class="c1">// makes _M_leftmost() = __z, when __y == _M_header</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">__y</span> <span class="o">==</span> <span class="n">_M_header</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// y为header</span>
+      <span class="n">_M_root</span><span class="p">()</span> <span class="o">=</span> <span class="n">__z</span><span class="p">;</span>
+      <span class="n">_M_rightmost</span><span class="p">()</span> <span class="o">=</span> <span class="n">__z</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">__y</span> <span class="o">==</span> <span class="n">_M_leftmost</span><span class="p">())</span> <span class="c1">// y为最左节点</span>
+      <span class="n">_M_leftmost</span><span class="p">()</span> <span class="o">=</span> <span class="n">__z</span><span class="p">;</span>  <span class="c1">// maintain _M_leftmost() pointing to min node</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="n">__z</span> <span class="o">=</span> <span class="n">_M_create_node</span><span class="p">(</span><span class="n">__v</span><span class="p">);</span> <span class="c1">// 创建新节点。???为什么不放到if-else上面???</span>
+    <span class="n">_S_right</span><span class="p">(</span><span class="n">__y</span><span class="p">)</span> <span class="o">=</span> <span class="n">__z</span><span class="p">;</span> <span class="c1">// 新节点为y的右孩子</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">__y</span> <span class="o">==</span> <span class="n">_M_rightmost</span><span class="p">())</span> <span class="c1">// y为最右节点</span>
+      <span class="n">_M_rightmost</span><span class="p">()</span> <span class="o">=</span> <span class="n">__z</span><span class="p">;</span> <span class="c1">// maintain _M_rightmost() pointing to max node</span>
+  <span class="p">}</span>
+  <span class="n">_S_parent</span><span class="p">(</span><span class="n">__z</span><span class="p">)</span> <span class="o">=</span> <span class="n">__y</span><span class="p">;</span> <span class="c1">// 设定新节点的父节点</span>
+  <span class="n">_S_left</span><span class="p">(</span><span class="n">__z</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">_S_right</span><span class="p">(</span><span class="n">__z</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">_Rb_tree_rebalance</span><span class="p">(</span><span class="n">__z</span><span class="p">,</span> <span class="n">_M_header</span><span class="o">-&gt;</span><span class="n">_M_parent</span><span class="p">);</span> <span class="c1">// 调整RB-tree使之恢复平衡</span>
+  <span class="o">++</span><span class="n">_M_node_count</span><span class="p">;</span>
+  <span class="k">return</span> <span class="nf">iterator</span><span class="p">(</span><span class="n">__z</span><span class="p">);</span> <span class="c1">// 返回指向新节点的迭代器</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>至此新节点插入完成。然而，由于新节点的插入，可能会引起RB-tree的性质4,5的破坏，需要对RB-tree进行旋转并对相关节点重新着色，这都是在 <code class="language-plaintext highlighter-rouge">_Rb_tree_rebalance</code> 这个函数中实现的，下面就主要介绍RB-tree是如何恢复平衡。</p><p>####4.2 调整RB-tree使之恢复平衡 RB-tree的调整与AVL-tree类似但更复杂，因为不仅仅需要旋转，还需要考虑节点的颜色是否符合要求。破坏RB-tree性质4的可能起因是插入了一个红色节点、将一个黑色节点变为红色或者是旋转，而破坏性质5的可能原因是插入一个黑色的节点、节点颜色的改变（红变黑或黑变红）或者是旋转。<br /> 在讨论 RB-tree 插入操作之前必须明白一点，那就是新插入的节点的颜色必为红色（调整前），因为插入黑点会增加某条路径上黑结点的数目，从而导致整棵树黑高度的不平衡。但如果新结点的父结点为红色时（如下图所示），将会违反红黑树的性质：一条路径上不能出现父子同为红色结点。这时就需要通过一系列操作来使红黑树保持平衡。为了清楚地表示插入操作以下在结点中使用“N”字表示一个新插入的结点，使用“P”字表示新插入点的父结点，使用“U”字表示“P”结点的兄弟结点，使用“G”字表示“P”结点的父结点。插入操作分为以下几种情况：<br /> <strong>1）、树为空</strong><br /> 此时，新插入节点为根节点，上面说过新插入节点均为红色，这不符合RB-tree的性质2，只需要将新节点重新改为黑色即可。<br /> <strong>2）、黑父</strong><br /> 如果新节点的父结点为黑色结点，那么插入一个红点将不会影响红黑树的平衡，此时插入操作完成。红黑树比AVL树优秀的地方之一在于黑父的情况比较常见，从而使红黑树需要旋转的几率相对AVL树来说会少一些。<br /> <strong>3）、红父</strong><br /> 这种情况就比较复杂。由于父节点为红，所以祖父节点必为黑色。由于新节点和父节点均为红，所以需要重新着色或进行旋转，此时就需要考虑叔父节点的颜色，进而可能需要考虑祖父、祖先节点的颜色。 <strong>3.1）、叔父为红</strong> 只要将父和叔结点变为黑色，将祖父结点变为红色即可，如下图所示：<br /> <a href="/images/2014/IMAG2014080303.png" class="popup img-link shimmer"><img src="/images/2014/IMAG2014080303.png" alt="" loading="lazy"></a><br /> 但由于祖父结点的父结点有可能为红色，从而违反红黑树性质。此时必须将祖父结点作为新的判定点<strong>继续向上</strong>（迭代）进行平衡操作。<br /> <strong>3.2）、叔父为黑</strong><br /> 当叔父结点为黑色时，需要进行旋转，有4中情况（类似AVL），以下图示了所有的旋转可能：<br /> <a href="/images/2014/IMAG2014080304.png" class="popup img-link shimmer"><img src="/images/2014/IMAG2014080304.png" alt="" loading="lazy"></a><br /> 可以观察到，当旋转完成后，新的旋转根全部为黑色，此时不需要再向上回溯进行平衡操作，插入操作完成。篇幅原因，相关代码这里就不粘贴出来了，要注意的一点就是case1和case2的变色方案是一样的，虽然从上图中看一个是P由红变黑，一个是N由红变黑，但实际上在case2中，经过一次旋转后，迭代器所指向的节点已经发生改变，这样刚好使得这两个case的变色方案相同，均为P由红变黑而G由黑变红。case3与case4的变色方案也是类似的。</p><h2 id="5-rb-tree的删除操作"><span class="me-2">5. RB-tree的删除操作</span><a href="#5-rb-tree的删除操作" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>相比于插入操作，RB-tree的删除操作更加复杂。在侯捷的书上并没有讲删除操作，而在算法导论上是有专门的一节内容的，wiki上也有详细的讲述。限于篇幅，这里指讲解一个大概的思路，更详细的介绍请参见wiki或算法导论。RB-tree删除操作的基本思路是这样的，首先按照一般的二叉搜索树进行节点的删除，然后对RB-tree相关节点进行变色或旋转。<br /> 一般的二叉搜索树删除节点的基本思路是：首先找到待删除节点位置，设为D。如果D同时有左右子树，那么用D的后继（右孩子的最左子节点，该后继最多有一个子节点——右孩子）替代D（<strong>注意</strong>：这里的替代是只key的替代，color不变，仍为D的color），从而将删除位置转移到该后继节点（成为新的D，为叶子节点或只有右孩子）。于是，我们只需要讨论删除只有一个儿子的节点的情况(如果它两个儿子都为空，即均为叶子，我们任意将其中一个看作它的儿子)，设这个儿子节点为N，这仍然需要分三种情况：<br /> <strong>1）D为红</strong><br /> 这种情况比较简单。由于D为红色，所以它的父亲和儿子一定是黑色的，我们可以简单的用它的黑色儿子替换它，并不会破坏性质3和性质4。通过被删除节点的所有路径只是少了一个红色节点，这样可以继续保证性质5。<br /> <strong>2）D为黑且N为红</strong><br /> 如果只是去除这个黑色节点，用它的红色儿子顶替上来的话，会破坏性质5，可能会破坏性质4，但是如果我们重绘它的儿子为黑色，则曾经通过它的所有路径将通过它的黑色儿子，这样可以继续保持性质5，同时也满足性质4。<br /> <strong>3）D为黑且N为黑</strong><br /> 这是一种复杂的情况。我们首先把要删除的节点D替换为它的（右）儿子N，在新树中（D被N覆盖），设N的父节点为P，兄弟为S，SL为S的左儿子，SR为S的右儿子。此时，以N为根节点的子树的黑高度减少了一，与S为根节点的子树的黑高度不一致，破坏了性质5。为了恢复，可以分为如下情形：<br /> <strong>3.1）N为根节点</strong><br /> 已经满足所有性质，不需要调整。<br /> <strong>3.2） N是它父亲P的左儿子</strong><br /> <strong>case1、S为红色</strong>：将P改为红色，S改为黑色，以P为中心左旋，旋转后<strong>SL为新的S</strong>，SL和SR是新的S的左右孩子，此时case1就转化为了case2或case3或case4；<br /> 注：case2~4中S均为黑色（否则是case1）。<br /> <strong>case2、SL、SR同为黑色</strong>：将S改为红色，这样黑高度失衡的节点变为P，转到3.1）重新开始判断和调整；<br /> <strong>case3、SR为黑</strong>：此时SL为红（否则是case2）。将S改为红色，SL改为黑色，然后以S为中心右旋，旋转后SL为新的S，而原S成为SR且为红色，这就将case3变成了case4；<br /> <strong>case4、SR为红</strong>：以P为中心左旋，然后交换P和S的颜色，最后将SR改为黑色，即可完成调整。可以看到调整过程与SL的颜色无关。<br /> <strong>3.3）N是它父亲P的右儿子</strong><br /> 与3.2）类似，这里就不详细展开了。</p><h2 id="6-rb-tree的查询操作"><span class="me-2">6. RB-tree的查询操作</span><a href="#6-rb-tree的查询操作" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>RB-tree是一个二叉搜索树，元素的查询是其拿手项目，非常简单，以下是RB-tree提供的查询操作：</p><div class="language-cpp highlighter-rouge"><div class="code-header"> <span data-label-text="Cpp"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre><td class="rouge-code"><pre><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Key</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Value</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_KeyOfValue</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Compare</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Alloc</span><span class="p">&gt;</span>
+<span class="k">typename</span> <span class="n">_Rb_tree</span><span class="o">&lt;</span><span class="n">_Key</span><span class="p">,</span><span class="n">_Value</span><span class="p">,</span><span class="n">_KeyOfValue</span><span class="p">,</span><span class="n">_Compare</span><span class="p">,</span><span class="n">_Alloc</span><span class="o">&gt;::</span><span class="n">iterator</span> 
+<span class="n">_Rb_tree</span><span class="o">&lt;</span><span class="n">_Key</span><span class="p">,</span><span class="n">_Value</span><span class="p">,</span><span class="n">_KeyOfValue</span><span class="p">,</span><span class="n">_Compare</span><span class="p">,</span><span class="n">_Alloc</span><span class="o">&gt;::</span><span class="n">find</span><span class="p">(</span><span class="k">const</span> <span class="n">_Key</span><span class="o">&amp;</span> <span class="n">__k</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">_Link_type</span> <span class="n">__y</span> <span class="o">=</span> <span class="n">_M_header</span><span class="p">;</span>      <span class="c1">// Last node which is not less than __k. </span>
+  <span class="n">_Link_type</span> <span class="n">__x</span> <span class="o">=</span> <span class="n">_M_root</span><span class="p">();</span>      <span class="c1">// Current node. </span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="n">__x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="c1">// x为NIL时推出循环</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">_M_key_compare</span><span class="p">(</span><span class="n">_S_key</span><span class="p">(</span><span class="n">__x</span><span class="p">),</span> <span class="n">__k</span><span class="p">))</span>
+      <span class="n">__y</span> <span class="o">=</span> <span class="n">__x</span><span class="p">,</span> <span class="n">__x</span> <span class="o">=</span> <span class="n">_S_left</span><span class="p">(</span><span class="n">__x</span><span class="p">);</span> <span class="c1">// 往左子树找（赋值运算优先于逗号运算，y是x的父节点）</span>
+    <span class="k">else</span>
+      <span class="n">__x</span> <span class="o">=</span> <span class="n">_S_right</span><span class="p">(</span><span class="n">__x</span><span class="p">);</span> <span class="c1">// 往右子树找</span>
+
+  <span class="n">iterator</span> <span class="n">__j</span> <span class="o">=</span> <span class="n">iterator</span><span class="p">(</span><span class="n">__y</span><span class="p">);</span>   
+  <span class="k">return</span> <span class="p">(</span><span class="n">__j</span> <span class="o">==</span> <span class="n">end</span><span class="p">()</span> <span class="o">||</span> <span class="n">_M_key_compare</span><span class="p">(</span><span class="n">__k</span><span class="p">,</span> <span class="n">_S_key</span><span class="p">(</span><span class="n">__j</span><span class="p">.</span><span class="n">_M_node</span><span class="p">)))</span> <span class="o">?</span> 
+     <span class="n">end</span><span class="p">()</span> <span class="o">:</span> <span class="n">__j</span><span class="p">;</span> <span class="c1">// 没找到返回end()，否则返回相应节点的指针（迭代器）</span>
+<span class="p">}</span>
+</pre></table></code></div></div><h2 id="小结"><span class="me-2">小结</span><a href="#小结" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>关于RB-tree基本就介绍到这里了，主要是RB-tree的定义、数据结构、插入删除和查找等基本操作，其中最主要也最困难的就是插入和删除操作中恢复平衡的方法。另外，还介绍了二叉搜索树的基本概念和高度平衡的AVL树，可以看到，AVL树保持平衡的方法非常简单易懂，而RB-tree由于引入了节点的颜色属性，使得理解起来相对比较困难，那么问题就来了，为什么不用AVL-tree而用RB-tree作为set和map的低层容器呢？<br /> 这个问题要问STL的实现者了，其实AVL-tree和RB-tree的平均性能在 <a href="http://en.wikipedia.org/wiki/AVL_tree">AVL-tree的wiki</a> _上是有严格的数学公式的，AVL的平均高度为 $1.44logN$ ，而RB-tree的平均高度为 $2logN$ ，这些数据的来历也有相关的论文，感兴趣的可以更深入的看看。</p></div><div class="post-tail-wrapper text-muted"><div class="d-flex justify-content-between align-items-center gap-3 mb-3"><div class="post-meta"> <i class="far fa-folder-open fa-fw me-1"></i> <a href="/blog/categories/program/">Program</a></div></div><div class="post-tags"> <i class="fa fa-tags fa-fw me-1"></i> <a href="/blog/tags/c/" class="post-tag no-text-decoration" >C++</a> <a href="/blog/tags/stl/" class="post-tag no-text-decoration" >STL</a> <a href="/blog/tags/%E5%AE%B9%E5%99%A8/" class="post-tag no-text-decoration" >容器</a> <a href="/blog/tags/%E7%BA%A2%E9%BB%91%E6%A0%91/" class="post-tag no-text-decoration" >红黑树</a></div><div class=" post-tail-bottom d-flex justify-content-between align-items-center mt-5 pb-2 " ><div class="license-wrapper"> 本文由作者按照 <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> 进行授权</div><div class="share-wrapper d-flex align-items-center"> <span class="share-label text-muted">分享</span> <span class="share-icons"> <a href="https://x.com/intent/tweet?text=%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3STL%E6%BA%90%E7%A0%81(4.1)%20%E5%85%B3%E8%81%94%E5%BC%8F%E5%AE%B9%E5%99%A8%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F08%2F03%2Finsight-into-stl-4-associative-containers-1-red-black-tree%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Twitter" aria-label="Twitter"> <i class="fa-fw fa-brands fa-square-x-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3STL%E6%BA%90%E7%A0%81(4.1)%20%E5%85%B3%E8%81%94%E5%BC%8F%E5%AE%B9%E5%99%A8%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91%20-%20Bill's%20Blog&u=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F08%2F03%2Finsight-into-stl-4-associative-containers-1-red-black-tree%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Facebook" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://t.me/share/url?url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F08%2F03%2Finsight-into-stl-4-associative-containers-1-red-black-tree%2F&text=%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3STL%E6%BA%90%E7%A0%81(4.1)%20%E5%85%B3%E8%81%94%E5%BC%8F%E5%AE%B9%E5%99%A8%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91%20-%20Bill's%20Blog" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Telegram" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <a href="https://service.weibo.com/share/share.php?title=%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3STL%E6%BA%90%E7%A0%81(4.1)%20%E5%85%B3%E8%81%94%E5%BC%8F%E5%AE%B9%E5%99%A8%E4%B9%8B%E7%BA%A2%E9%BB%91%E6%A0%91%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2014%2F08%2F03%2Finsight-into-stl-4-associative-containers-1-red-black-tree%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Weibo" aria-label="Weibo"> <i class="fa-fw fab fa-weibo"></i> </a> <button id="copy-link" aria-label="Copy link" class="btn small" data-bs-toggle="tooltip" data-bs-placement="top" title="分享链接" data-title-succeed="链接已复制！" > <i class="fa-fw fas fa-link pe-none fs-6"></i> </button> </span></div></div></div></article></main><aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 text-muted"><div class="access"><section id="access-lastmod"><h2 class="panel-heading">最近更新</h2><ul class="content list-unstyled ps-0 pb-1 ms-1 mt-2"><li class="text-truncate lh-lg"> <a href="/blog/2026/11/16/anthropic-the-components-of-agent-memory/">【译】Anthropic：智能体记忆的组成部分</a><li class="text-truncate lh-lg"> <a href="/blog/2026/11/09/is-FDE-actually-established-in-China/">前鹅厂王津银：FDE 在中国，到底成立吗？</a><li class="text-truncate lh-lg"> <a href="/blog/2026/09/14/openai-data-agent-skills-interpretation/">OpenAI Data Agent的核心Skill解读：数据Agent如何把问题变成可信的决策</a><li class="text-truncate lh-lg"> <a href="/blog/2026/08/20/data-agent-servey-from-arch-to-practice/">Data Agent全景调研：从技术架构到产业实践</a><li class="text-truncate lh-lg"> <a href="/blog/2026/07/03/FDE-what-why-and-future/">什么是 FDE？从它的爆火看软件研发的职能大洗牌</a></ul></section><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div><div class="toc-border-cover z-3"></div><section id="toc-wrapper" class="invisible position-sticky ps-0 pe-4 pb-4"><h2 class="panel-heading ps-3 pb-2 mb-0">文章内容</h2><nav id="toc"></nav></section></aside></div><div class="row"><div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 px-md-4"><aside id="related-posts" aria-labelledby="related-label"><h3 class="mb-4" id="related-label">相关文章</h3><nav class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4"><article class="col"> <a href="/blog/2014/09/27/insight-into-stl-4-associative-containers-5-hashset-and-hashmap/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1411824600" data-df="YYYY/MM/DD" > 2014/09/27 </time><h4 class="pt-0 my-2">深入理解STL源码(4.5) 关联式容器之hashset和hashmap</h4><div class="text-muted"><p>本文涉及到 SGI STL 源码的文件主要是 stl_hash_set.h、stl_hash_map.h 等文件。 1. hashset 和 hash_multi_set 需要说明的是，STL 标准只规范了复杂度与接口，并没有规范实现方法，但 STL 实现的版本中 set 大多以 RB-tree 为底层机制，SGI STL 在实现了以 RB-tree 为底层机制的 set 外，还实现了以 ...</p></div></div></a></article><article class="col"> <a href="/blog/2014/09/13/insight-into-stl-4-associative-containers-4-hashtable/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1410615000" data-df="YYYY/MM/DD" > 2014/09/13 </time><h4 class="pt-0 my-2">深入理解STL源码(4.4) 关联式容器之hashtable</h4><div class="text-muted"><p>本文涉及到 SGI STL 源码的文件主要是 stl_hashtable.h、stl_hash_fun.h 等文件。 1. hashtable 简介 在数据结构中我们知道，有种数据结构的插入、删除、查找等操作的性能是常数时间，但需要比元素个数更多的空间，这种数据结构就是哈希表。哈希表的基本思想是，将数据存储在与其数值大小相关的地方，比如对该数取模，然后存储在以余数为下表的数组中。但这样会出...</p></div></div></a></article><article class="col"> <a href="/blog/2014/08/31/insight-into-stl-4-associative-containers-3-map-and-multimap/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1409491800" data-df="YYYY/MM/DD" > 2014/08/31 </time><h4 class="pt-0 my-2">深入理解STL源码(4.3) 关联式容器之map和multimap</h4><div class="text-muted"><p>本文涉及到 SGI STL 源码的文件主要是 stl_map.h、stl_multimap.h、stl_pair.h、map.h、 multimap.h、 map 等文件。 1. map 简介 map 的特性是，所有元素都是键值对，用一个 pair 表示，pair 的第一个元素是键值（key），第二个元素是实值（value），map 不允许两个元素的键值相同。 与 set 类似的，map...</p></div></div></a></article></nav></aside><nav class="post-navigation d-flex justify-content-between" aria-label="Post Navigation"> <a href="/blog/2014/07/27/stl-source-insight-3-sequential-containers-4-heap-and-priority-queue/" class="btn btn-outline-primary" aria-label="上一篇" ><p>深入理解STL源码(3.4) 序列式容器之heap和priority queue</p></a> <a href="/blog/2014/08/17/insight-into-stl-4-associative-containers-2-set-and-multiset/" class="btn btn-outline-primary" aria-label="下一篇" ><p>深入理解STL源码(4.2) 关联式容器之set和multiset</p></a></nav><footer aria-label="Site Info" class=" d-flex flex-column justify-content-center text-muted flex-lg-row justify-content-lg-between align-items-lg-center pb-lg-3 " ><p>© <time>2026</time> <a href="https://github.com/ibillxia">Bill Xia</a>. <span data-bs-toggle="tooltip" data-bs-placement="top" title="除非另有说明，本网站上的博客文章均由作者按照知识共享署名 4.0 国际 (CC BY 4.0) 许可协议进行授权。" >保留部分权利。</span></p><p>本站采用 <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> 主题 <a data-bs-toggle="tooltip" data-bs-placement="top" title="v7.6.0" href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener" >Chirpy</a></p></footer></div></div><div id="search-result-wrapper" class="d-flex justify-content-center d-none"><div class="col-11 content"><div id="search-hints"><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><aside aria-label="Scroll to Top"> <button id="back-to-top" type="button" class="btn btn-lg btn-box-shadow"> <i class="fas fa-angle-up"></i> </button></aside></div><div id="mask" class="d-none position-fixed w-100 h-100 z-1"></div><aside id="notification" class="toast w-auto rounded-5 text-nowrap" role="alert" aria-live="assertive" aria-atomic="true" data-bs-animation="true" data-bs-autohide="false" ><div class="d-flex align-items-center"><div class="toast-body ps-3">发现新内容</div><button type="button" class="btn btn-primary btn-sm rounded-2 py-0" aria-label="Update" >更新</button> <button type="button" class="btn-close mx-3 ms-2" data-bs-dismiss="toast" aria-label="Close" ></button></div></aside><script> var disqus_config = function () { this.page.url = 'https://ibillxia.github.io/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/'; this.page.identifier = '/blog/2014/08/03/insight-into-stl-4-associative-containers-1-red-black-tree/'; }; function addDisqus() { let disqusThread = document.createElement('div'); let paragraph = document.createElement('p'); disqusThread.id = 'disqus_thread'; paragraph.className = 'text-center text-muted small'; paragraph.innerHTML = 'Comments powered by <a href="https://disqus.com/">Disqus</a>.'; disqusThread.appendChild(paragraph); const footer = document.querySelector('footer'); footer.insertAdjacentElement("beforebegin", disqusThread); }function reloadDisqus(event) { if (event.source === window && event.data && event.data.id === Theme.eventId) {if (typeof DISQUS === 'undefined') { return; } if (document.readyState == 'complete') { DISQUS.reset({ reload: true, config: disqus_config }); } } } addDisqus(); if (Theme.isToggleable) { addEventListener('message', reloadDisqus); }var disqusObserver = new IntersectionObserver( function (entries) { if (entries[0].isIntersecting) { var d = document, s = d.createElement('script'); s.src = 'https://ibillxia.disqus.com/embed.js'; s.setAttribute('data-timestamp', +new Date()); (d.head || d.body).appendChild(s); disqusObserver.disconnect(); } }, { threshold: [0] } ); disqusObserver.observe(document.getElementById('disqus_thread')); </script> <script> document.addEventListener('DOMContentLoaded', () => { SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<article class="px-1 px-sm-2 px-lg-4 px-xl-0"><header><h2><a href="{url}">{title}</a></h2><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div></header><p>{content}</p></article>', noResultsText: '<p class="mt-5">搜索结果为空</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="me-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); }); </script>

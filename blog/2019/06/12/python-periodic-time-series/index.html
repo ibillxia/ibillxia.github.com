@@ -1,228 +1,19 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>用Python预测周期性时间序列 - Bill's Blog</title>
-  <meta name="author" content="Bill Xia">
-
-  
-  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="https://ibillxia.github.io/blog/2019/06/12/python-periodic-time-series/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <style type="text/css">
-    body {
-      padding-bottom: 0px;
-    }
-    h1 {
-      margin-bottom: 15px;
-    }
-    img {
-      max-width: 100%;
-    }
-    .sharing, .meta, .pager {
-      margin: 20px 0px 20px 0px;
-    }
-    .page-footer p {
-      text-align: center;
-    }
-  </style>
-  <script src="/javascripts/libs/jquery.js"></script>
-  <script src="/javascripts/libs/modernizr-2.0.js"></script>
-  <script src="/javascripts/libs/bootstrap.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-34DJ0T23LB');
-  </script>
-  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
-  <script type="text/javascript">
-function addBlankTargetForLinks () {
-  $('a[href^="http"]').each(function(){
-      $(this).attr('target', '_blank');
-  });
-}
-
-$(function () {
-  addBlankTargetForLinks();
-  if (typeof MutationObserver !== 'undefined') {
-    new MutationObserver(function () {
-      addBlankTargetForLinks();
-    }).observe(document.body, { childList: true, subtree: true });
-  }
-});
-</script>
-<!-- MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = 'https://ssl.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
-</head>
-
-<body   >
-  <nav role="navigation"><div class="navbar navbar-inverse">
-  <div class="navbar-inner">
-    <div class="container">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-
-      <a class="brand" href="/">Bill's Blog</a>
-
-      <div class="nav-collapse">
-        <ul class="nav">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives/">Archives</a></li>
-  <li><a href="/blog/categories/">Categories</a></li>
-  <li><a href="/blog/tags/">Tags</a></li>
-  <li><a href="/about/">About</a></li>
-</ul>
-
-
-        <ul class="nav pull-right" data-subscription="rss">
-          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-          
-        </ul>
-
-        
-          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
-            <fieldset role="search">
-              <input type="hidden" name="q" value="site:ibillxia.github.io" />
-              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
-            </fieldset>
-          </form>
-        
-      </div>
-    </div>
-  </div>
-</div>
-</nav>
-  <div class="container">
-    <div class="row-fluid">
-      
-<article class="hentry span9" role="article">
-
-  
-  <header class="page-header">
-    
-      <h1 class="entry-title">用Python预测周期性时间序列</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2019-06-12T19:45:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><p>原文链接： <a href="https://juejin.cn/post/6844903585742848013">https://juejin.cn/post/6844903585742848013</a>  <br/>
-github项目： <a href="https://github.com/scarlettgin/cyclical_series_predict">https://github.com/scarlettgin/cyclical_series_predict</a></p>
-
-<h1>1、背景</h1>
-
-<p>公司平台上有不同的api，供内部或外部调用，这些api承担着不同的功能，如查询账号、发版、抢红包等等。日志会记录下每分钟某api被访问了多少次，即一个api每天会有1440条记录（1440分钟），将每天的数据连起来观察，有点类似于股票走势的意思。我想通过前N天的历史数据预测出第N+1天的流量访问情况，预测值即作为合理参考，供新一天与真实值做实时对比。当真实流量跟预测值有较大出入，则认为有异常访问，触发报警。</p>
-
-<h1>2、数据探索</h1>
-
-<p>我放了一份样例数据在data文件夹下，看一下数据大小和结构</p>
-
-<pre><code>data = pd.read_csv(filename)
+<!doctype html><html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f7"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1b1b1e"><meta name="viewport" content="width=device-width, user-scalable=no initial-scale=1, shrink-to-fit=no, viewport-fit=cover" ><meta name="generator" content="Jekyll v4.4.1" /><meta property="og:title" content="用Python预测周期性时间序列" /><meta property="og:locale" content="zh_CN" /><meta name="description" content="原文链接： https://juejin.cn/post/6844903585742848013 github项目： https://github.com/scarlettgin/cyclical_series_predict" /><meta name="twitter:description" property="og:description" content="原文链接： https://juejin.cn/post/6844903585742848013 github项目： https://github.com/scarlettgin/cyclical_series_predict" /><link rel="canonical" href="https://ibillxia.github.io/blog/2019/06/12/python-periodic-time-series/" /><meta property="og:url" content="https://ibillxia.github.io/blog/2019/06/12/python-periodic-time-series/" /><meta property="og:site_name" content="Bill’s Blog" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2019-06-12T19:45:00+08:00" /><meta property="article:modified_time" content="2019-06-12T19:45:00+08:00" /><meta property="og:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:card" content="summary_large_image" /><meta property="twitter:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:title" content="用Python预测周期性时间序列" /><meta name="twitter:site" content="@ibillxia" /><meta name="msvalidate.01" content="1538BC1807507674B6BD4942F25493B2" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2019-06-12T19:45:00+08:00","datePublished":"2019-06-12T19:45:00+08:00","description":"原文链接： https://juejin.cn/post/6844903585742848013 github项目： https://github.com/scarlettgin/cyclical_series_predict","headline":"用Python预测周期性时间序列","mainEntityOfPage":{"@type":"WebPage","@id":"https://ibillxia.github.io/blog/2019/06/12/python-periodic-time-series/"},"url":"https://ibillxia.github.io/blog/2019/06/12/python-periodic-time-series/"}</script><title>用Python预测周期性时间序列 | Bill's Blog</title><link rel="icon" type="image/png" href="/assets/img/favicons/favicon-96x96.png" sizes="96x96"><link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico"><link rel="shortcut icon" href="/assets/img/favicon.ico"><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="stylesheet" href="/assets/css/jekyll-theme-chirpy.css"><link rel="stylesheet" href="/assets/lib/fonts/main.css"><link rel="stylesheet" href="/assets/lib/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="/assets/lib/tocbot/tocbot.min.css"><link rel="stylesheet" href="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.min.css"><link rel="stylesheet" href="/assets/lib/glightbox/glightbox.min.css"> <script src="/assets/js/dist/theme.min.js"></script> <script defer src="/assets/lib/simple-jekyll-search/simple-jekyll-search.min.js"></script> <script defer src="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.umd.min.js"></script> <script defer src="/assets/lib/glightbox/glightbox.min.js"></script> <script defer src="/assets/lib/clipboard/clipboard.min.js"></script> <script defer src="/assets/lib/dayjs/dayjs.min.js"></script> <script defer src="/assets/lib/dayjs/locale/en.js"></script> <script defer src="/assets/lib/dayjs/plugin/relativeTime.js"></script> <script defer src="/assets/lib/dayjs/plugin/localizedFormat.js"></script> <script defer src="/assets/lib/tocbot/tocbot.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script defer src="/app.min.js?baseurl=&register=true" ></script> <script defer src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script> <script> document.addEventListener('DOMContentLoaded', () => { window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-34DJ0T23LB'); }); </script><body><aside aria-label="Sidebar" id="sidebar" class="d-flex flex-column align-items-end"><header class="profile-wrapper"> <a href="/" id="avatar" class="rounded-circle"><img src="/assets/img/rock_coder.png" width="112" height="112" alt="avatar" onerror="this.style.display='none'"></a> <a class="site-title d-block" href="/">Bill's Blog</a><p class="site-subtitle fst-italic mb-0">Program Hard, Play Hard, Live Crazy!</p></header><nav class="flex-column flex-grow-1 w-100 ps-0"><ul class="nav"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home"></i> <span>首页</span> </a><li class="nav-item"> <a href="/blog/archives/" class="nav-link"> <i class="fa-fw fas fa-archive"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/blog/categories/" class="nav-link"> <i class="fa-fw fas fa-stream"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/blog/tags/" class="nav-link"> <i class="fa-fw fas fa-tags"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle"></i> <span>关于</span> </a></ul></nav><div class="sidebar-bottom d-flex flex-wrap align-items-center w-100"><div class="btn-group dropup"> <button type="button" class="btn btn-link nav-link" aria-label="Switch Mode" id="mode-toggle" data-bs-toggle="dropdown" ><i class="fa-regular fa-sun" data-theme-mode="light"></i><i class="fa-regular fa-moon" data-theme-mode="dark"></i><i class="fa-solid fa-display" data-theme-mode="system"></i></button><ul class="dropdown-menu rounded-3 mb-1 p-1"><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="light"><i class="fa-regular fa-sun" data-theme-mode="light"></i>浅色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="dark"><i class="fa-regular fa-moon" data-theme-mode="dark"></i>深色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="system"><i class="fa-solid fa-display" data-theme-mode="system"></i>跟随系统</button></ul></div><span class="icon-border"></span> <a href="https://github.com/ibillxia" aria-label="github" target="_blank" rel="noopener noreferrer" > <i class="fab fa-github"></i> </a> <a href="https://x.com/ibillxia" aria-label="x" target="_blank" rel="noopener noreferrer" > <i class="fa-brands fa-x-twitter"></i> </a> <a href="javascript:void(location.href = 'mailto:' + ['ibillxia','gmail.com'].join('@'))" aria-label="email" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" > <i class="fas fa-rss"></i> </a> <a href="https://stackoverflow.com/users/1602285/bill-xia" aria-label="stack-overflow" target="_blank" rel="noopener noreferrer" > <i class="fab fa-stack-overflow"></i> </a> <a href="https://weibo.com/ibillxia" aria-label="weibo" target="_blank" rel="noopener noreferrer" > <i class="fab fa-weibo"></i> </a></div></aside><div id="main-wrapper" class="d-flex justify-content-center"><div class="container d-flex flex-column px-xxl-5"><header id="topbar-wrapper" class="flex-shrink-0" aria-label="Top Bar"><div id="topbar" class="d-flex align-items-center justify-content-between px-lg-3 h-100" ><nav id="breadcrumb" aria-label="Breadcrumb"> <span> <a href="/">首页</a> </span> <span>用Python预测周期性时间序列</span></nav><button type="button" id="sidebar-trigger" class="btn btn-link" aria-label="Sidebar"> <i class="fas fa-bars fa-fw"></i> </button><div id="topbar-title"> 文章</div><button type="button" id="search-trigger" class="btn btn-link" aria-label="Search"> <i class="fas fa-search fa-fw"></i> </button> <search id="search" class="align-items-center ms-3 ms-lg-0"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="搜索..." > </search> <button type="button" class="btn btn-link text-decoration-none" id="search-cancel">取消</button></div></header><div class="row flex-grow-1"><main aria-label="Main Content" class="col-12 col-lg-11 col-xl-9 px-md-4"><article class="px-1" data-toc="true"><header><h1 data-toc-skip>用Python预测周期性时间序列</h1><div class="post-meta text-muted"> <span> 发表于 <time data-ts="1560339900" data-df="YYYY/MM/DD" data-bs-toggle="tooltip" data-bs-placement="bottom" > 2019/06/12 </time> </span><div class="d-flex justify-content-between"> <span> 作者 <em> <a href="https://github.com/ibillxia">Bill Xia</a> </em> </span><div> <span class="readtime" data-bs-toggle="tooltip" data-bs-placement="bottom" title="2239 字" > <em>12 分钟</em>阅读</span></div></div></div></header><div id="toc-bar" class="d-flex align-items-center justify-content-between invisible"> <span class="label text-truncate">用Python预测周期性时间序列</span> <button type="button" class="toc-trigger btn me-1"> <i class="fa-solid fa-list-ul fa-fw"></i> </button></div><button id="toc-solo-trigger" type="button" class="toc-trigger btn btn-outline-secondary btn-sm"> <span class="label ps-2 pe-1">文章内容</span> <i class="fa-solid fa-angle-right fa-fw"></i> </button> <dialog id="toc-popup" class="p-0"><div class="header d-flex flex-row align-items-center justify-content-between"><div class="label text-truncate py-2 ms-4">用Python预测周期性时间序列</div><button id="toc-popup-close" type="button" class="btn-close btn-sm mx-3" aria-label="Close"></button></div><div id="toc-popup-content" class="px-4 py-3 pb-4"></div></dialog><div class="content"><p>原文链接： <a href="https://juejin.cn/post/6844903585742848013">https://juejin.cn/post/6844903585742848013</a> <br /> github项目： <a href="https://github.com/scarlettgin/cyclical_series_predict">https://github.com/scarlettgin/cyclical_series_predict</a></p><h1 id="1背景">1、背景</h1><p>公司平台上有不同的api，供内部或外部调用，这些api承担着不同的功能，如查询账号、发版、抢红包等等。日志会记录下每分钟某api被访问了多少次，即一个api每天会有1440条记录（1440分钟），将每天的数据连起来观察，有点类似于股票走势的意思。我想通过前N天的历史数据预测出第N+1天的流量访问情况，预测值即作为合理参考，供新一天与真实值做实时对比。当真实流量跟预测值有较大出入，则认为有异常访问，触发报警。</p><h1 id="2数据探索">2、数据探索</h1><p>我放了一份样例数据在data文件夹下，看一下数据大小和结构</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre>data = pd.read_csv(filename)
 print('size: ',data.shape)
 print(data.head())
-</code></pre>
-
-
-
-<center><img src="/images/2019/IMAG2019061201.webp"></center>
-
-
-<p><br></p>
-
-<!--more-->
-
-
-<blockquote><p>数据大小：共10080条记录，即10080分钟，七天的数据。字段含义：date：时间，单位分钟count：该分钟该api被访问的次数</p></blockquote>
-
-<p>画图看一下序列的走势:（一些画图等探索类的方法放在了test_stationarity.py 文件中，包含时间序列图，移动平均图，有兴趣的可以自己尝试下）。</p>
-
-<pre><code>def draw_ts(timeseries):
+</pre></table></code></div></div><center><a href="/images/2019/IMAG2019061201.webp" class="popup img-link shimmer"><img src="/images/2019/IMAG2019061201.webp" alt="" loading="lazy"></a></center><p><br /></p><blockquote><p>数据大小：共10080条记录，即10080分钟，七天的数据。字段含义：date：时间，单位分钟count：该分钟该api被访问的次数</p></blockquote><p>画图看一下序列的走势:（一些画图等探索类的方法放在了test_stationarity.py 文件中，包含时间序列图，移动平均图，有兴趣的可以自己尝试下）。</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre>def draw_ts(timeseries):
     timeseries.plot()
     plt.show()
 
@@ -231,53 +22,45 @@ data = data.set_index('date')
 data.index = pd.to_datetime(data.index)
 ts = data['count']
 draw_ts(ts)
-</code></pre>
-
-
-
-<center><img src="/images/2019/IMAG2019061202.webp"></center>
-
-
-<p><br></p>
-
-<p>看这糟心的图，那些骤降为0的点这就是我遇到的第一个坑，我当初一拿到这份数据就开始做了。后来折腾了好久才发现，那些骤降为0的点是由于数据缺失，ETL的同学自动补零造成的，沟通晚了(TДT)。</p>
-
-<p>把坑填上，用前后值的均值把缺失值补上，再看一眼：</p>
-
-<center><img src="/images/2019/IMAG2019061203.webp"></center>
-
-
-<p><br></p>
-
-<p>发现这份数据有这样几个特点，在模型设计和数据预处理的时候要考虑到：</p>
-
-<ul>
-<li><p>1)、这是一个周期性的时间序列，数值有规律的以天为周期上下波动，图中这个api，在每天下午和晚上访问较为活跃，在早上和凌晨较为稀少。在建模之前需要做分解。</p></li>
-<li><p>2)、我的第二个坑：数据本身并不平滑，骤突骤降较多，而这样是不利于预测的，毕竟模型需要学习好正常的序列才能对未知数据给出客观判断，否则会出现频繁的误报，令气氛变得十分尴尬( ´Д｀)，所以必须进行平滑处理。</p></li>
-<li><p>3)、这只是一个api的序列图，而不同的api的形态差距是很大的，毕竟承担的功能不同，如何使模型适应不同形态的api也是需要考虑的问题。</p></li>
-</ul>
-
-
-<h1>3、预处理</h1>
-
-<h2>3.1 划分训练测试集</h2>
-
-<p>前六天的数据做训练，第七天做测试集。</p>
-
-<pre><code>class ModelDecomp(object):
+</pre></table></code></div></div><center><a href="/images/2019/IMAG2019061202.webp" class="popup img-link shimmer"><img src="/images/2019/IMAG2019061202.webp" alt="" loading="lazy"></a></center><p><br /></p><p>看这糟心的图，那些骤降为0的点这就是我遇到的第一个坑，我当初一拿到这份数据就开始做了。后来折腾了好久才发现，那些骤降为0的点是由于数据缺失，ETL的同学自动补零造成的，沟通晚了(TДT)。</p><p>把坑填上，用前后值的均值把缺失值补上，再看一眼：</p><center><a href="/images/2019/IMAG2019061203.webp" class="popup img-link shimmer"><img src="/images/2019/IMAG2019061203.webp" alt="" loading="lazy"></a></center><p><br /></p><p>发现这份数据有这样几个特点，在模型设计和数据预处理的时候要考虑到：</p><ul><li><p>1)、这是一个周期性的时间序列，数值有规律的以天为周期上下波动，图中这个api，在每天下午和晚上访问较为活跃，在早上和凌晨较为稀少。在建模之前需要做分解。</p><li><p>2)、我的第二个坑：数据本身并不平滑，骤突骤降较多，而这样是不利于预测的，毕竟模型需要学习好正常的序列才能对未知数据给出客观判断，否则会出现频繁的误报，令气氛变得十分尴尬( ´Д｀)，所以必须进行平滑处理。</p><li><p>3)、这只是一个api的序列图，而不同的api的形态差距是很大的，毕竟承担的功能不同，如何使模型适应不同形态的api也是需要考虑的问题。</p></ul><h1 id="3预处理">3、预处理</h1><h2 id="31-划分训练测试集"><span class="me-2">3.1 划分训练测试集</span><a href="#31-划分训练测试集" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>前六天的数据做训练，第七天做测试集。</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre>class ModelDecomp(object):
     def __init__(self, file, test_size=1440):
         self.ts = self.read_data(file)
         self.test_size = test_size
         self.train_size = len(self.ts) - self.test_size
         self.train = self.ts[:len(self.ts)-test_size]
         self.test = self.ts[-test_size:]
-</code></pre>
-
-<h2>3.2 对训练数据进行平滑处理</h2>
-
-<p>消除数据的毛刺，可以用移动平均法，我这里没有采用，因为我试过发现对于我的数据来说，移动平均处理完后并不能使数据平滑，我这里采用的方法很简单，但效果还不错：把每个点与上一点的变化值作为一个新的序列，对这里边的异常值，也就是变化比较离谱的值剃掉，用前后数据的均值填充，注意可能会连续出现变化较大的点：</p>
-
-<pre><code>def _diff_smooth(self, ts):
+</pre></table></code></div></div><h2 id="32-对训练数据进行平滑处理"><span class="me-2">3.2 对训练数据进行平滑处理</span><a href="#32-对训练数据进行平滑处理" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>消除数据的毛刺，可以用移动平均法，我这里没有采用，因为我试过发现对于我的数据来说，移动平均处理完后并不能使数据平滑，我这里采用的方法很简单，但效果还不错：把每个点与上一点的变化值作为一个新的序列，对这里边的异常值，也就是变化比较离谱的值剃掉，用前后数据的均值填充，注意可能会连续出现变化较大的点：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+</pre><td class="rouge-code"><pre>def _diff_smooth(self, ts):
     dif = ts.diff().dropna() # 差分序列
     td = dif.describe() # 描述性统计得到：min，25%，50%，75%，max值
     high = td['75%'] + 1.5 * (td['75%'] - td['25%']) # 定义高点阈值，1.5倍四分位距之外
@@ -301,20 +84,19 @@ draw_ts(ts)
 
 self.train = self._diff_smooth(self.train)
 draw_ts(self.train)
-</code></pre>
-
-<p>平滑后的训练数据：</p>
-
-<center><img src="/images/2019/IMAG2019061204.webp"></center>
-
-
-<p><br></p>
-
-<h2>3.3 将训练数据进行周期性分解</h2>
-
-<p>采用statsmodels工具包：</p>
-
-<pre><code>from statsmodels.tsa.seasonal import seasonal_decompose
+</pre></table></code></div></div><p>平滑后的训练数据：</p><center><a href="/images/2019/IMAG2019061204.webp" class="popup img-link shimmer"><img src="/images/2019/IMAG2019061204.webp" alt="" loading="lazy"></a></center><p><br /></p><h2 id="33-将训练数据进行周期性分解"><span class="me-2">3.3 将训练数据进行周期性分解</span><a href="#33-将训练数据进行周期性分解" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>采用statsmodels工具包：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre><td class="rouge-code"><pre>from statsmodels.tsa.seasonal import seasonal_decompose
 
 decomposition = seasonal_decompose(self.ts, freq=freq, two_sided=False)
 # self.ts:时间序列，series类型; 
@@ -326,233 +108,142 @@ self.seasonal = decomposition.seasonal
 self.residual = decomposition.resid
 decomposition.plot()
 plt.show()
-</code></pre>
-
-
-
-<center><img src="/images/2019/IMAG2019061205.webp"></center>
-
-
-<p><br></p>
-
-<p>第一行observed：原始数据；第二行trend：分解出来的趋势部分；第三行seasonal：周期部分；最后residual：残差部分。我采用的是seasonal_decompose的加法模型进行的分解，即 observed = trend + seasonal + residual，另还有乘法模型。在建模的时候，只针对trend部分学习和预测，如何将trend的预测结果加工成合理的最终结果？当然是再做加法，后面会详细写。</p>
-
-<h1>4、模型</h1>
-
-<h2>4.1 训练</h2>
-
-<p>对分解出来的趋势部分单独用arima模型做训练：</p>
-
-<pre><code>def trend_model(self, order):
+</pre></table></code></div></div><center><a href="/images/2019/IMAG2019061205.webp" class="popup img-link shimmer"><img src="/images/2019/IMAG2019061205.webp" alt="" loading="lazy"></a></center><p><br /></p><p>第一行observed：原始数据；第二行trend：分解出来的趋势部分；第三行seasonal：周期部分；最后residual：残差部分。我采用的是seasonal_decompose的加法模型进行的分解，即 observed = trend + seasonal + residual，另还有乘法模型。在建模的时候，只针对trend部分学习和预测，如何将trend的预测结果加工成合理的最终结果？当然是再做加法，后面会详细写。</p><h1 id="4模型">4、模型</h1><h2 id="41-训练"><span class="me-2">4.1 训练</span><a href="#41-训练" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>对分解出来的趋势部分单独用arima模型做训练：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre>def trend_model(self, order):
     self.trend.dropna(inplace=True)
     train = self.trend[:len(self.trend)-self.test_size]
     # arima的训练参数order =（p,d,q），具体意义查看官方文档，调参过程略。
     self.trend_model = ARIMA(train, order).fit(disp=-1, method='css')
-</code></pre>
-
-<h2>4.2 预测</h2>
-
-<p>预测出趋势数据后，加上周期数据即作为最终的预测结果，但更重要的是，我们要得到的不是具体的值，而是一个合理区间，当真实数据超过了这个区间，则触发报警，误差高低区间的设定来自刚刚分解出来的残差residual数据：</p>
-
-<pre><code>d = self.residual.describe()
+</pre></table></code></div></div><h2 id="42-预测"><span class="me-2">4.2 预测</span><a href="#42-预测" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>预测出趋势数据后，加上周期数据即作为最终的预测结果，但更重要的是，我们要得到的不是具体的值，而是一个合理区间，当真实数据超过了这个区间，则触发报警，误差高低区间的设定来自刚刚分解出来的残差residual数据：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre>d = self.residual.describe()
 delta = d['75%'] - d['25%']
 self.low_error, self.high_error = (d['25%'] - 1 * delta, d['75%'] + 1 * delta)
-</code></pre>
-
-<p>预测并完成最后的加法处理，得到第七天的预测值即高低置信区间：</p>
-
-<pre><code>def predict_new(self):
-    '''
-    预测新数据
-    '''
-    #续接train，生成长度为n的时间索引，赋给预测序列
-    n = self.test_size
-    self.pred_time_index= pd.date_range(start=self.train.index[-1], periods=n+1, freq='1min')[1:]
-    self.trend_pred= self.trend_model.forecast(n)[0]
-    self.add_season()
+</pre></table></code></div></div><p>预测并完成最后的加法处理，得到第七天的预测值即高低置信区间：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+</pre><td class="rouge-code"><pre>def predict_new(self):
+	'''
+	预测新数据
+	'''
+	#续接train，生成长度为n的时间索引，赋给预测序列
+	n = self.test_size
+	self.pred_time_index= pd.date_range(start=self.train.index[-1], periods=n+1, freq='1min')[1:]
+	self.trend_pred= self.trend_model.forecast(n)[0]
+	self.add_season()
 
 def add_season(self):
-    '''
-    为预测出的趋势数据添加周期数据和残差数据
-    '''
-    self.train_season = self.seasonal[:self.train_size]
-    values = []
-    low_conf_values = []
-    high_conf_values = []
-
-    for i, t in enumerate(self.pred_time_index):
-        trend_part = self.trend_pred[i]
-
-        # 相同时间点的周期数据均值
-        season_part = self.train_season[
-            self.train_season.index.time == t.time()
-            ].mean()
-
-        # 趋势 + 周期 + 误差界限
-        predict = trend_part + season_part
-        low_bound = trend_part + season_part + self.low_error
-        high_bound = trend_part + season_part + self.high_error
-
-        values.append(predict)
-        low_conf_values.append(low_bound)
-        high_conf_values.append(high_bound)
-
-    # 得到预测值，误差上界和下界
-    self.final_pred = pd.Series(values, index=self.pred_time_index, name='predict')
-    self.low_conf = pd.Series(low_conf_values, index=self.pred_time_index, name='low_conf')
-    self.high_conf = pd.Series(high_conf_values, index=self.pred_time_index, name='high_conf')
-</code></pre>
-
-<h2>4.3 评估：</h2>
-
-<p>对第七天作出预测，评估的指标为均方根误差rmse，画图对比和真实值的差距：</p>
-
-<pre><code>    md = ModelDecomp(file=filename, test_size=1440)
-    md.decomp(freq=1440)
-    md.trend_model(order=(1, 1, 3)) # arima模型的参数order
-    md.predict_new() 
-    pred = md.final_pred
-    test = md.test
-
-    plt.subplot(211)
-    plt.plot(md.ts) # 平滑过的训练数据加未做处理的测试数据
-    plt.title(filename.split('.')[0])
-
-    plt.subplot(212)
-    pred.plot(color='blue', label='Predict') # 预测值
-    test.plot(color='red', label='Original') # 真实值
-    md.low_conf.plot(color='grey', label='low') # 低置信区间
-    md.high_conf.plot(color='grey', label='high') # 高置信区间
-
-    plt.legend(loc='best')
-    plt.title('RMSE: %.4f' % np.sqrt(sum((pred.values - test.values) ** 2) / test.size))
-    plt.tight_layout()
-    plt.show()
-</code></pre>
-
-
-
-<center><img src="/images/2019/IMAG2019061206.webp"></center>
-
-
-<p><br></p>
-
-<p>可以看到，均方根误差462.8，相对于原始数据几千的量级，还是可以的。测试数据中的两个突变的点，也超过了置信区间，能准确报出来。</p>
-
-<h1>5、结语</h1>
-
-<p>前文提到不同的api形态差异巨大，本文只展示了一个，我在该项目中还接触了其他形态的序列，有的有明显的上升或下降趋势；有的开始比较平缓，后面开始增长... ... ,但是都属于典型的周期性时间序列，它的核心思想很简单：做好分解，做好预测结果的还原，和置信区间的设置，具体操作可根据具体业务逻辑做调整，祝大家建模愉快:-D。</p>
-</div>
-<div id="copyleft" class="well" >
-	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2019/06/12/python-periodic-time-series/</a></br>
-	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
-</div>
-
-
-  <footer>
-    <p class="meta">
-      
-<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
-
-      
-
-
-
-
-
-
-
-
-
-<time datetime="2019-06-12T19:45:00+08:00" pubdate data-updated="true"></time>
+	'''
+	为预测出的趋势数据添加周期数据和残差数据
+	'''
+	self.train_season = self.seasonal[:self.train_size]
+	values = []
+	low_conf_values = []
+	high_conf_values = []
+	
+	for i, t in enumerate(self.pred_time_index):
+		trend_part = self.trend_pred[i]
 		
+		# 相同时间点的周期数据均值
+		season_part = self.train_season[
+			self.train_season.index.time == t.time()
+			].mean()
+
+		# 趋势 + 周期 + 误差界限
+		predict = trend_part + season_part
+		low_bound = trend_part + season_part + self.low_error
+		high_bound = trend_part + season_part + self.high_error
 		
-		
-		  <span class="categories">Posted in <a class='category' href='/blog/categories/datascience/'>DataScience</a></span>
-		
-		
-		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/python/'>Python</a>, <a class='tag' href='/blog/tags/shi-jian-xu-lie/'>时间序列</a>, <a class='tag' href='/blog/tags/yu-ce/'>预测</a></span>
-		
-    </p>
-    
-      
-         <div class="sharing">
-  
-  
-  
-</div>
+		values.append(predict)
+		low_conf_values.append(low_bound)
+		high_conf_values.append(high_bound)
 
-      
-    
-	</br>
-	 <ul class="pager">
-      
-      <li class="previous"><a class="basic-alignment left"
-        href="/blog/2019/06/05/druid-based-kylin-storage/" title="Previous Post:
-        【美团】基于Druid的Kylin存储引擎实践">&laquo; 【美团】基于Druid的Kylin存储引擎实践</a></li>
-      
-      <li><a href="/blog/archives/">Blog Archives</a></li>
-      
-      <li class="next"><a class="basic-alignment right" href="/blog/2019/06/14/apache-kylin-guide/"
-        title="Next Post: Apache Kylin入门、指南与实践">Apache Kylin入门、指南与实践
-        &raquo;</a></li>
-      
-    </ul>
-    
-    <section>
-      <h1>Comments</h1>
-      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-    </section>
-    
-   
-  </footer>
-</article>
+	# 得到预测值，误差上界和下界
+	self.final_pred = pd.Series(values, index=self.pred_time_index, name='predict')
+	self.low_conf = pd.Series(low_conf_values, index=self.pred_time_index, name='low_conf')
+	self.high_conf = pd.Series(high_conf_values, index=self.pred_time_index, name='high_conf')
+</pre></table></code></div></div><h2 id="43-评估"><span class="me-2">4.3 评估：</span><a href="#43-评估" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>对第七天作出预测，评估的指标为均方根误差rmse，画图对比和真实值的差距：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+</pre><td class="rouge-code"><pre>	md = ModelDecomp(file=filename, test_size=1440)
+	md.decomp(freq=1440)
+	md.trend_model(order=(1, 1, 3)) # arima模型的参数order
+	md.predict_new() 
+	pred = md.final_pred
+	test = md.test
 
-<aside class="sidebar-nav span3">
-  
-    
-  
-</aside>
+	plt.subplot(211)
+	plt.plot(md.ts) # 平滑过的训练数据加未做处理的测试数据
+	plt.title(filename.split('.')[0])
 
+	plt.subplot(212)
+	pred.plot(color='blue', label='Predict') # 预测值
+	test.plot(color='red', label='Original') # 真实值
+	md.low_conf.plot(color='grey', label='low') # 低置信区间
+	md.high_conf.plot(color='grey', label='high') # 高置信区间
 
-    </div>
-  </div>
-  <footer role="contentinfo" class="page-footer">
-<hr>
-<p>
-  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'ibillxia';
-      
-        
-        // var disqus_developer = 1;
-        var disqus_identifier = 'https://ibillxia.github.io/blog/2019/06/12/python-periodic-time-series/';
-        var disqus_url = 'https://ibillxia.github.io/blog/2019/06/12/python-periodic-time-series/';
-        var disqus_script = 'embed.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-
-
-
-
-
-
-
-
-
-</body>
-</html>
+	plt.legend(loc='best')
+	plt.title('RMSE: %.4f' % np.sqrt(sum((pred.values - test.values) ** 2) / test.size))
+	plt.tight_layout()
+	plt.show()
+</pre></table></code></div></div><center><a href="/images/2019/IMAG2019061206.webp" class="popup img-link shimmer"><img src="/images/2019/IMAG2019061206.webp" alt="" loading="lazy"></a></center><p><br /></p><p>可以看到，均方根误差462.8，相对于原始数据几千的量级，还是可以的。测试数据中的两个突变的点，也超过了置信区间，能准确报出来。</p><h1 id="5结语">5、结语</h1><p>前文提到不同的api形态差异巨大，本文只展示了一个，我在该项目中还接触了其他形态的序列，有的有明显的上升或下降趋势；有的开始比较平缓，后面开始增长… … ,但是都属于典型的周期性时间序列，它的核心思想很简单：做好分解，做好预测结果的还原，和置信区间的设置，具体操作可根据具体业务逻辑做调整，祝大家建模愉快:-D。</p></div><div class="post-tail-wrapper text-muted"><div class="d-flex justify-content-between align-items-center gap-3 mb-3"><div class="post-meta"> <i class="far fa-folder-open fa-fw me-1"></i> <a href="/blog/categories/datascience/">DataScience</a></div></div><div class="post-tags"> <i class="fa fa-tags fa-fw me-1"></i> <a href="/blog/tags/python/" class="post-tag no-text-decoration" >Python</a> <a href="/blog/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/" class="post-tag no-text-decoration" >时间序列</a> <a href="/blog/tags/%E9%A2%84%E6%B5%8B/" class="post-tag no-text-decoration" >预测</a></div><div class=" post-tail-bottom d-flex justify-content-between align-items-center mt-5 pb-2 " ><div class="license-wrapper"> 本文由作者按照 <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> 进行授权</div><div class="share-wrapper d-flex align-items-center"> <span class="share-label text-muted">分享</span> <span class="share-icons"> <a href="https://x.com/intent/tweet?text=%E7%94%A8Python%E9%A2%84%E6%B5%8B%E5%91%A8%E6%9C%9F%E6%80%A7%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2019%2F06%2F12%2Fpython-periodic-time-series%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Twitter" aria-label="Twitter"> <i class="fa-fw fa-brands fa-square-x-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=%E7%94%A8Python%E9%A2%84%E6%B5%8B%E5%91%A8%E6%9C%9F%E6%80%A7%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%20-%20Bill's%20Blog&u=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2019%2F06%2F12%2Fpython-periodic-time-series%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Facebook" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://t.me/share/url?url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2019%2F06%2F12%2Fpython-periodic-time-series%2F&text=%E7%94%A8Python%E9%A2%84%E6%B5%8B%E5%91%A8%E6%9C%9F%E6%80%A7%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%20-%20Bill's%20Blog" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Telegram" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <a href="https://service.weibo.com/share/share.php?title=%E7%94%A8Python%E9%A2%84%E6%B5%8B%E5%91%A8%E6%9C%9F%E6%80%A7%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2019%2F06%2F12%2Fpython-periodic-time-series%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Weibo" aria-label="Weibo"> <i class="fa-fw fab fa-weibo"></i> </a> <button id="copy-link" aria-label="Copy link" class="btn small" data-bs-toggle="tooltip" data-bs-placement="top" title="分享链接" data-title-succeed="链接已复制！" > <i class="fa-fw fas fa-link pe-none fs-6"></i> </button> </span></div></div></div></article></main><aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 text-muted"><div class="access"><section id="access-lastmod"><h2 class="panel-heading">最近更新</h2><ul class="content list-unstyled ps-0 pb-1 ms-1 mt-2"><li class="text-truncate lh-lg"> <a href="/blog/2026/11/16/anthropic-the-components-of-agent-memory/">【译】Anthropic：智能体记忆的组成部分</a><li class="text-truncate lh-lg"> <a href="/blog/2026/11/09/is-FDE-actually-established-in-China/">前鹅厂王津银：FDE 在中国，到底成立吗？</a><li class="text-truncate lh-lg"> <a href="/blog/2026/09/14/openai-data-agent-skills-interpretation/">OpenAI Data Agent的核心Skill解读：数据Agent如何把问题变成可信的决策</a><li class="text-truncate lh-lg"> <a href="/blog/2026/08/20/data-agent-servey-from-arch-to-practice/">Data Agent全景调研：从技术架构到产业实践</a><li class="text-truncate lh-lg"> <a href="/blog/2026/07/03/FDE-what-why-and-future/">什么是 FDE？从它的爆火看软件研发的职能大洗牌</a></ul></section><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div><div class="toc-border-cover z-3"></div><section id="toc-wrapper" class="invisible position-sticky ps-0 pe-4 pb-4"><h2 class="panel-heading ps-3 pb-2 mb-0">文章内容</h2><nav id="toc"></nav></section></aside></div><div class="row"><div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 px-md-4"><aside id="related-posts" aria-labelledby="related-label"><h3 class="mb-4" id="related-label">相关文章</h3><nav class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4"><article class="col"> <a href="/blog/2013/05/29/audio-signal-processing-time-domain-pitch-tracking-and-python-realization/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1369834620" data-df="YYYY/MM/DD" > 2013/05/29 </time><h4 class="pt-0 my-2">语音信号处理之时域分析-音高追踪及其Python实现</h4><div class="text-muted"><p>1.概述 在音高及其Python实现一文 中，我们使用了简单的“观察法”来计算音高，这并不太难，但这并不有好而且费时费力，那么我们就想，如何通过分析和计算，使用算法来自动计算音高呢？ 用算法让计算机自动抓取音高的过程，称为音高追踪(Pitch Tracking)。所得到的音高信息有如下一些应用：&lt;/br&gt; ·旋律识别(Melody Recognition)：或称为“哼唱选歌”，也...</p></div></div></a></article><article class="col"> <a href="/blog/2013/05/22/audio-signal-processing-time-domain-Voice-Activity-Detection/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1369232520" data-df="YYYY/MM/DD" > 2013/05/22 </time><h4 class="pt-0 my-2">语音信号处理之时域分析-端点检测及Python实现</h4><div class="text-muted"><p>端点检测 端点检测（End-Point Detection，EPD）的目标是要决定信号的语音开始和结束的位置，所以又可以称为Speech Detection或Voice Activity Detection（VAD）。 端点检测在语音预处理中扮演着一个非常重要的角色。 常见的端点检测方法大致可以分为如下两类：&lt;/br&gt; （1）时域（Time Domain）的方法：计算量比较小，...</p></div></div></a></article><article class="col"> <a href="/blog/2013/05/18/audio-signal-processing-time-domain-timbre-python-realization/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1368885420" data-df="YYYY/MM/DD" > 2013/05/18 </time><h4 class="pt-0 my-2">语音信号处理之时域分析-音色及其Python实现</h4><div class="text-muted"><p>音色（Timbre） 音色是一个很模糊的概念，它泛指语音的内容，例如“天书”这两个字的发音，虽然都是一声（即他们的音高应该是相同或接近的）， 但由于音色不同，我们可以分辨这两个音。直觉而言，音色的不同，意味着基本波形的不同，因此我们可以用基本周期的波形来代表音色。 若要从基本周期的波形来直接分析音色是一件很困难的事情。通常我们的做法是将每一个帧进行频谱分析（Spectral Analys...</p></div></div></a></article></nav></aside><nav class="post-navigation d-flex justify-content-between" aria-label="Post Navigation"> <a href="/blog/2019/06/05/druid-based-kylin-storage/" class="btn btn-outline-primary" aria-label="上一篇" ><p>【美团】基于Druid的Kylin存储引擎实践</p></a> <a href="/blog/2019/06/14/apache-kylin-guide/" class="btn btn-outline-primary" aria-label="下一篇" ><p>Apache Kylin入门、指南与实践</p></a></nav><footer aria-label="Site Info" class=" d-flex flex-column justify-content-center text-muted flex-lg-row justify-content-lg-between align-items-lg-center pb-lg-3 " ><p>© <time>2026</time> <a href="https://github.com/ibillxia">Bill Xia</a>. <span data-bs-toggle="tooltip" data-bs-placement="top" title="除非另有说明，本网站上的博客文章均由作者按照知识共享署名 4.0 国际 (CC BY 4.0) 许可协议进行授权。" >保留部分权利。</span></p><p>本站采用 <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> 主题 <a data-bs-toggle="tooltip" data-bs-placement="top" title="v7.6.0" href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener" >Chirpy</a></p></footer></div></div><div id="search-result-wrapper" class="d-flex justify-content-center d-none"><div class="col-11 content"><div id="search-hints"><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><aside aria-label="Scroll to Top"> <button id="back-to-top" type="button" class="btn btn-lg btn-box-shadow"> <i class="fas fa-angle-up"></i> </button></aside></div><div id="mask" class="d-none position-fixed w-100 h-100 z-1"></div><aside id="notification" class="toast w-auto rounded-5 text-nowrap" role="alert" aria-live="assertive" aria-atomic="true" data-bs-animation="true" data-bs-autohide="false" ><div class="d-flex align-items-center"><div class="toast-body ps-3">发现新内容</div><button type="button" class="btn btn-primary btn-sm rounded-2 py-0" aria-label="Update" >更新</button> <button type="button" class="btn-close mx-3 ms-2" data-bs-dismiss="toast" aria-label="Close" ></button></div></aside><script> var disqus_config = function () { this.page.url = 'https://ibillxia.github.io/blog/2019/06/12/python-periodic-time-series/'; this.page.identifier = '/blog/2019/06/12/python-periodic-time-series/'; }; function addDisqus() { let disqusThread = document.createElement('div'); let paragraph = document.createElement('p'); disqusThread.id = 'disqus_thread'; paragraph.className = 'text-center text-muted small'; paragraph.innerHTML = 'Comments powered by <a href="https://disqus.com/">Disqus</a>.'; disqusThread.appendChild(paragraph); const footer = document.querySelector('footer'); footer.insertAdjacentElement("beforebegin", disqusThread); }function reloadDisqus(event) { if (event.source === window && event.data && event.data.id === Theme.eventId) {if (typeof DISQUS === 'undefined') { return; } if (document.readyState == 'complete') { DISQUS.reset({ reload: true, config: disqus_config }); } } } addDisqus(); if (Theme.isToggleable) { addEventListener('message', reloadDisqus); }var disqusObserver = new IntersectionObserver( function (entries) { if (entries[0].isIntersecting) { var d = document, s = d.createElement('script'); s.src = 'https://ibillxia.disqus.com/embed.js'; s.setAttribute('data-timestamp', +new Date()); (d.head || d.body).appendChild(s); disqusObserver.disconnect(); } }, { threshold: [0] } ); disqusObserver.observe(document.getElementById('disqus_thread')); </script> <script> document.addEventListener('DOMContentLoaded', () => { SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<article class="px-1 px-sm-2 px-lg-4 px-xl-0"><header><h2><a href="{url}">{title}</a></h2><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div></header><p>{content}</p></article>', noResultsText: '<p class="mt-5">搜索结果为空</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="me-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); }); </script>

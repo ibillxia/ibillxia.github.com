@@ -1,433 +1,148 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>XGBoost算法原理详解 - Bill's Blog</title>
-  <meta name="author" content="Bill Xia">
-
-  
-  <meta name="description" content="Yesterday is History, Tomorrow a Mystery, Today is a Gift, Thats why it's called the Present！">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="https://ibillxia.github.io/blog/2017/09/05/xgboost-algorithm-explained/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/bootstrap/bootstrap.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/bootstrap/responsive.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/syntax/syntax.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <style type="text/css">
-    body {
-      padding-bottom: 0px;
-    }
-    h1 {
-      margin-bottom: 15px;
-    }
-    img {
-      max-width: 100%;
-    }
-    .sharing, .meta, .pager {
-      margin: 20px 0px 20px 0px;
-    }
-    .page-footer p {
-      text-align: center;
-    }
-  </style>
-  <script src="/javascripts/libs/jquery.js"></script>
-  <script src="/javascripts/libs/modernizr-2.0.js"></script>
-  <script src="/javascripts/libs/bootstrap.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-34DJ0T23LB');
-  </script>
-  <link href="/atom.xml" rel="alternate" title="Bill's Blog" type="application/atom+xml">
-  <script type="text/javascript">
-function addBlankTargetForLinks () {
-  $('a[href^="http"]').each(function(){
-      $(this).attr('target', '_blank');
-  });
-}
-
-$(function () {
-  addBlankTargetForLinks();
-  if (typeof MutationObserver !== 'undefined') {
-    new MutationObserver(function () {
-      addBlankTargetForLinks();
-    }).observe(document.body, { childList: true, subtree: true });
-  }
-});
-</script>
-<!-- MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'G-34DJ0T23LB']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = 'https://ssl.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5786957483481554" crossorigin="anonymous"></script>
-</head>
-
-<body   >
-  <nav role="navigation"><div class="navbar navbar-inverse">
-  <div class="navbar-inner">
-    <div class="container">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-
-      <a class="brand" href="/">Bill's Blog</a>
-
-      <div class="nav-collapse">
-        <ul class="nav">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives/">Archives</a></li>
-  <li><a href="/blog/categories/">Categories</a></li>
-  <li><a href="/blog/tags/">Tags</a></li>
-  <li><a href="/about/">About</a></li>
-</ul>
-
-
-        <ul class="nav pull-right" data-subscription="rss">
-          <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-          
-        </ul>
-
-        
-          <form class="pull-right navbar-search" action="https://www.google.com/" method="get">
-            <fieldset role="search">
-              <input type="hidden" name="q" value="site:ibillxia.github.io" />
-              <input class="search-query" type="text" name="q" results="0" placeholder="Search"/>
-            </fieldset>
-          </form>
-        
-      </div>
-    </div>
-  </div>
-</div>
-</nav>
-  <div class="container">
-    <div class="row-fluid">
-      
-<article class="hentry span9" role="article">
-
-  
-  <header class="page-header">
-    
-      <h1 class="entry-title">XGBoost算法原理详解</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2017-09-05T21:38:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><p>文章内容可能会相对比较多，读者可以点击上方目录，直接阅读自己感兴趣的章节。</p>
-
-<h1>1.序</h1>
-
-<p>关于xgboost的原理网络上的资源很少，大多数还停留在应用层面，本文通过学习陈天奇博士的PPT、论文、一些网络资源，希望对xgboost原理进行深入理解。（笔者在最后的参考文献中会给出地址）</p>
-
-<h1>2.xgboost vs gbdt</h1>
-
-<p>说到xgboost，不得不说gbdt，两者都是boosting方法（如图1所示），了解gbdt可以看我这篇文章 地址。</p>
-
-<center><img src="/images/2017/IMAG2017090501.png"></center>
-
-
-<center>图1</center>
-
-
-<!--more-->
-
-
-<p><br>
-如果不考虑工程实现、解决问题上的一些差异，xgboost与gbdt比较大的不同就是目标函数的定义。</p>
-
-<center><img src="/images/2017/IMAG2017090502.png"></center>
-
-
-<p><br>
-注：红色箭头指向的l即为损失函数；红色方框为正则项，包括L1、L2；红色圆圈为常数项。xgboost利用泰勒展开三项，做一个近似，我们可以很清晰地看到，最终的目标函数只依赖于每个数据点的在误差函数上的一阶导数和二阶导数。</p>
-
-<h1>3.原理</h1>
-
-<p>对于上面给出的目标函数，我们可以进一步化简</p>
-
-<p>（1）定义树的复杂度</p>
-
-<p>对于f的定义做一下细化，把树拆分成结构部分q和叶子权重部分w。下图是一个具体的例子。结构函数q把输入映射到叶子的索引号上面去，而w给定了每个索引号对应的叶子分数是什么。</p>
-
-<center><img src="/images/2017/IMAG2017090503.png"></center>
-
-
-<p><br>
-定义这个复杂度包含了一棵树里面节点的个数，以及每个树叶子节点上面输出分数的L2模平方。当然这不是唯一的一种定义方式，不过这一定义方式学习出的树效果一般都比较不错。下图还给出了复杂度计算的一个例子。</p>
-
-<center><img src="/images/2017/IMAG2017090504.png"></center>
-
-
-<p><br>
-注：方框部分在最终的模型公式中控制这部分的比重,对应模型参数中的lambda ，gamma</p>
-
-<p>在这种新的定义下，我们可以把目标函数进行如下改写，其中I被定义为每个叶子上面样本集合</p>
-
-<center><img src="/images/2017/IMAG2017090505.gif"></center>
-
-
-<p><br>
-g是一阶导数，h是二阶导数</p>
-
-<center><img src="/images/2017/IMAG2017090506.png"></center>
-
-
-<p><br>
-这一个目标包含了T个相互独立的单变量二次函数。我们可以定义</p>
-
-<center><img src="/images/2017/IMAG2017090507.png"></center>
-
-
-<p><br>
-最终公式可以化简为</p>
-
-<center><img src="/images/2017/IMAG2017090508.png"></center>
-
-
-<p><br>
-通过对求导等于0，可以得到</p>
-
-<center><img src="/images/2017/IMAG2017090509.png"></center>
-
-
-<p><br>
-然后把最优解代入得到：</p>
-
-<center><img src="/images/2017/IMAG2017090510.png"></center>
-
-
-<p><br>
-（2）打分函数计算示例</p>
-
-<p>Obj代表了当我们指定一个树的结构的时候，我们在目标上面最多减少多少。我们可以把它叫做结构分数(structure score)</p>
-
-<center><img src="/images/2017/IMAG2017090511.png"></center>
-
-
-<p><br>
-（3）分裂节点</p>
-
-<p>论文中给出了两种分裂节点的方法</p>
-
-<p>（1）贪心法：</p>
-
-<p>每一次尝试去对已有的叶子加入一个分割</p>
-
-<center><img src="/images/2017/IMAG2017090512.png"></center>
-
-
-<p><br>
-对于每次扩展，我们还是要枚举所有可能的分割方案，如何高效地枚举所有的分割呢？我假设我们要枚举所有x &lt; a 这样的条件，对于某个特定的分割a我们要计算a左边和右边的导数和。</p>
-
-<center><img src="/images/2017/IMAG2017090513.png"></center>
-
-
-<p><br>
-我们可以发现对于所有的a，我们只要做一遍从左到右的扫描就可以枚举出所有分割的梯度和GL和GR。然后用上面的公式计算每个分割方案的分数就可以了。</p>
-
-<p>观察这个目标函数，大家会发现第二个值得注意的事情就是引入分割不一定会使得情况变好，因为我们有一个引入新叶子的惩罚项。优化这个目标对应了树的剪枝， 当引入的分割带来的增益小于一个阀值的时候，我们可以剪掉这个分割。大家可以发现，当我们正式地推导目标的时候，像计算分数和剪枝这样的策略都会自然地出现，而不再是一种因为heuristic（启发式）而进行的操作了。</p>
-
-<p>下面是论文中的算法</p>
-
-<center><img src="/images/2017/IMAG2017090514.png"></center>
-
-
-<p><br>
-（2）近似算法：</p>
-
-<p>主要针对数据太大，不能直接进行计算</p>
-
-<center><img src="/images/2017/IMAG2017090515.png"></center>
-
-
-<p><br></p>
-
-<h1>4.自定义损失函数（指定grad、hess）</h1>
-
-<p>（1）损失函数</p>
-
-<center><img src="/images/2017/IMAG2017090516.png"></center>
-
-
-<p><br>
-（2）grad、hess推导</p>
-
-<center><img src="/images/2017/IMAG2017090517.png"></center>
-
-
-<p><br>
-（3）官方代码</p>
-
-<pre><code class="python">#!/usr/bin/python
-import numpy as np
-import xgboost as xgb
-###
+<!doctype html><html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f7"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1b1b1e"><meta name="viewport" content="width=device-width, user-scalable=no initial-scale=1, shrink-to-fit=no, viewport-fit=cover" ><meta name="generator" content="Jekyll v4.4.1" /><meta property="og:title" content="XGBoost算法原理详解" /><meta property="og:locale" content="zh_CN" /><meta name="description" content="文章内容可能会相对比较多，读者可以点击上方目录，直接阅读自己感兴趣的章节。" /><meta name="twitter:description" property="og:description" content="文章内容可能会相对比较多，读者可以点击上方目录，直接阅读自己感兴趣的章节。" /><link rel="canonical" href="https://ibillxia.github.io/blog/2017/09/05/xgboost-algorithm-explained/" /><meta property="og:url" content="https://ibillxia.github.io/blog/2017/09/05/xgboost-algorithm-explained/" /><meta property="og:site_name" content="Bill’s Blog" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2017-09-05T21:38:00+08:00" /><meta property="article:modified_time" content="2017-09-05T21:38:00+08:00" /><meta property="og:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:card" content="summary_large_image" /><meta property="twitter:image" content="https://ibillxia.github.io/images/bg_zju.jpg" /><meta name="twitter:title" content="XGBoost算法原理详解" /><meta name="twitter:site" content="@ibillxia" /><meta name="msvalidate.01" content="1538BC1807507674B6BD4942F25493B2" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2017-09-05T21:38:00+08:00","datePublished":"2017-09-05T21:38:00+08:00","description":"文章内容可能会相对比较多，读者可以点击上方目录，直接阅读自己感兴趣的章节。","headline":"XGBoost算法原理详解","mainEntityOfPage":{"@type":"WebPage","@id":"https://ibillxia.github.io/blog/2017/09/05/xgboost-algorithm-explained/"},"url":"https://ibillxia.github.io/blog/2017/09/05/xgboost-algorithm-explained/"}</script><title>XGBoost算法原理详解 | Bill's Blog</title><link rel="icon" type="image/png" href="/assets/img/favicons/favicon-96x96.png" sizes="96x96"><link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico"><link rel="shortcut icon" href="/assets/img/favicon.ico"><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="stylesheet" href="/assets/css/jekyll-theme-chirpy.css"><link rel="stylesheet" href="/assets/lib/fonts/main.css"><link rel="stylesheet" href="/assets/lib/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="/assets/lib/tocbot/tocbot.min.css"><link rel="stylesheet" href="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.min.css"><link rel="stylesheet" href="/assets/lib/glightbox/glightbox.min.css"> <script src="/assets/js/dist/theme.min.js"></script> <script defer src="/assets/lib/simple-jekyll-search/simple-jekyll-search.min.js"></script> <script defer src="/assets/lib/loading-attribute-polyfill/loading-attribute-polyfill.umd.min.js"></script> <script defer src="/assets/lib/glightbox/glightbox.min.js"></script> <script defer src="/assets/lib/clipboard/clipboard.min.js"></script> <script defer src="/assets/lib/dayjs/dayjs.min.js"></script> <script defer src="/assets/lib/dayjs/locale/en.js"></script> <script defer src="/assets/lib/dayjs/plugin/relativeTime.js"></script> <script defer src="/assets/lib/dayjs/plugin/localizedFormat.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script defer src="/app.min.js?baseurl=&register=true" ></script> <script defer src="https://www.googletagmanager.com/gtag/js?id=G-34DJ0T23LB"></script> <script> document.addEventListener('DOMContentLoaded', () => { window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-34DJ0T23LB'); }); </script><body><aside aria-label="Sidebar" id="sidebar" class="d-flex flex-column align-items-end"><header class="profile-wrapper"> <a href="/" id="avatar" class="rounded-circle"><img src="/assets/img/rock_coder.png" width="112" height="112" alt="avatar" onerror="this.style.display='none'"></a> <a class="site-title d-block" href="/">Bill's Blog</a><p class="site-subtitle fst-italic mb-0">Program Hard, Play Hard, Live Crazy!</p></header><nav class="flex-column flex-grow-1 w-100 ps-0"><ul class="nav"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home"></i> <span>首页</span> </a><li class="nav-item"> <a href="/blog/archives/" class="nav-link"> <i class="fa-fw fas fa-archive"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/blog/categories/" class="nav-link"> <i class="fa-fw fas fa-stream"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/blog/tags/" class="nav-link"> <i class="fa-fw fas fa-tags"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle"></i> <span>关于</span> </a></ul></nav><div class="sidebar-bottom d-flex flex-wrap align-items-center w-100"><div class="btn-group dropup"> <button type="button" class="btn btn-link nav-link" aria-label="Switch Mode" id="mode-toggle" data-bs-toggle="dropdown" ><i class="fa-regular fa-sun" data-theme-mode="light"></i><i class="fa-regular fa-moon" data-theme-mode="dark"></i><i class="fa-solid fa-display" data-theme-mode="system"></i></button><ul class="dropdown-menu rounded-3 mb-1 p-1"><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="light"><i class="fa-regular fa-sun" data-theme-mode="light"></i>浅色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="dark"><i class="fa-regular fa-moon" data-theme-mode="dark"></i>深色</button><li> <button class="dropdown-item d-flex align-items-center" type="button" data-theme-mode="system"><i class="fa-solid fa-display" data-theme-mode="system"></i>跟随系统</button></ul></div><span class="icon-border"></span> <a href="https://github.com/ibillxia" aria-label="github" target="_blank" rel="noopener noreferrer" > <i class="fab fa-github"></i> </a> <a href="https://x.com/ibillxia" aria-label="x" target="_blank" rel="noopener noreferrer" > <i class="fa-brands fa-x-twitter"></i> </a> <a href="javascript:void(location.href = 'mailto:' + ['ibillxia','gmail.com'].join('@'))" aria-label="email" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" > <i class="fas fa-rss"></i> </a> <a href="https://stackoverflow.com/users/1602285/bill-xia" aria-label="stack-overflow" target="_blank" rel="noopener noreferrer" > <i class="fab fa-stack-overflow"></i> </a> <a href="https://weibo.com/ibillxia" aria-label="weibo" target="_blank" rel="noopener noreferrer" > <i class="fab fa-weibo"></i> </a></div></aside><div id="main-wrapper" class="d-flex justify-content-center"><div class="container d-flex flex-column px-xxl-5"><header id="topbar-wrapper" class="flex-shrink-0" aria-label="Top Bar"><div id="topbar" class="d-flex align-items-center justify-content-between px-lg-3 h-100" ><nav id="breadcrumb" aria-label="Breadcrumb"> <span> <a href="/">首页</a> </span> <span>XGBoost算法原理详解</span></nav><button type="button" id="sidebar-trigger" class="btn btn-link" aria-label="Sidebar"> <i class="fas fa-bars fa-fw"></i> </button><div id="topbar-title"> 文章</div><button type="button" id="search-trigger" class="btn btn-link" aria-label="Search"> <i class="fas fa-search fa-fw"></i> </button> <search id="search" class="align-items-center ms-3 ms-lg-0"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="搜索..." > </search> <button type="button" class="btn btn-link text-decoration-none" id="search-cancel">取消</button></div></header><div class="row flex-grow-1"><main aria-label="Main Content" class="col-12 col-lg-11 col-xl-9 px-md-4"><article class="px-1" data-toc="false"><header><h1 data-toc-skip>XGBoost算法原理详解</h1><div class="post-meta text-muted"> <span> 发表于 <time data-ts="1504618680" data-df="YYYY/MM/DD" data-bs-toggle="tooltip" data-bs-placement="bottom" > 2017/09/05 </time> </span><div class="d-flex justify-content-between"> <span> 作者 <em> <a href="https://github.com/ibillxia">Bill Xia</a> </em> </span><div> <span class="readtime" data-bs-toggle="tooltip" data-bs-placement="bottom" title="4709 字" > <em>26 分钟</em>阅读</span></div></div></div></header><div class="content"><p>文章内容可能会相对比较多，读者可以点击上方目录，直接阅读自己感兴趣的章节。</p><h1 id="1序">1.序</h1><p>关于xgboost的原理网络上的资源很少，大多数还停留在应用层面，本文通过学习陈天奇博士的PPT、论文、一些网络资源，希望对xgboost原理进行深入理解。（笔者在最后的参考文献中会给出地址）</p><h1 id="2xgboost-vs-gbdt">2.xgboost vs gbdt</h1><p>说到xgboost，不得不说gbdt，两者都是boosting方法（如图1所示），了解gbdt可以看我这篇文章 地址。</p><center><a href="/images/2017/IMAG2017090501.png" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090501.png" alt="" loading="lazy"></a></center> <center>图1</center><p><br /> 如果不考虑工程实现、解决问题上的一些差异，xgboost与gbdt比较大的不同就是目标函数的定义。</p><center><a href="/images/2017/IMAG2017090502.png" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090502.png" alt="" loading="lazy"></a></center><p><br /> 注：红色箭头指向的l即为损失函数；红色方框为正则项，包括L1、L2；红色圆圈为常数项。xgboost利用泰勒展开三项，做一个近似，我们可以很清晰地看到，最终的目标函数只依赖于每个数据点的在误差函数上的一阶导数和二阶导数。</p><h1 id="3原理">3.原理</h1><p>对于上面给出的目标函数，我们可以进一步化简</p><p>（1）定义树的复杂度</p><p>对于f的定义做一下细化，把树拆分成结构部分q和叶子权重部分w。下图是一个具体的例子。结构函数q把输入映射到叶子的索引号上面去，而w给定了每个索引号对应的叶子分数是什么。</p><center><a href="/images/2017/IMAG2017090503.png" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090503.png" alt="" loading="lazy"></a></center><p><br /> 定义这个复杂度包含了一棵树里面节点的个数，以及每个树叶子节点上面输出分数的L2模平方。当然这不是唯一的一种定义方式，不过这一定义方式学习出的树效果一般都比较不错。下图还给出了复杂度计算的一个例子。</p><center><a href="/images/2017/IMAG2017090504.png" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090504.png" alt="" loading="lazy"></a></center><p><br /> 注：方框部分在最终的模型公式中控制这部分的比重,对应模型参数中的lambda ，gamma</p><p>在这种新的定义下，我们可以把目标函数进行如下改写，其中I被定义为每个叶子上面样本集合</p><center><a href="/images/2017/IMAG2017090505.gif" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090505.gif" alt="" loading="lazy"></a></center><p><br /> g是一阶导数，h是二阶导数</p><center><a href="/images/2017/IMAG2017090506.png" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090506.png" alt="" loading="lazy"></a></center><p><br /> 这一个目标包含了T个相互独立的单变量二次函数。我们可以定义</p><center><a href="/images/2017/IMAG2017090507.png" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090507.png" alt="" loading="lazy"></a></center><p><br /> 最终公式可以化简为</p><center><a href="/images/2017/IMAG2017090508.png" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090508.png" alt="" loading="lazy"></a></center><p><br /> 通过对求导等于0，可以得到</p><center><a href="/images/2017/IMAG2017090509.png" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090509.png" alt="" loading="lazy"></a></center><p><br /> 然后把最优解代入得到：</p><center><a href="/images/2017/IMAG2017090510.png" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090510.png" alt="" loading="lazy"></a></center><p><br /> （2）打分函数计算示例</p><p>Obj代表了当我们指定一个树的结构的时候，我们在目标上面最多减少多少。我们可以把它叫做结构分数(structure score)</p><center><a href="/images/2017/IMAG2017090511.png" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090511.png" alt="" loading="lazy"></a></center><p><br /> （3）分裂节点</p><p>论文中给出了两种分裂节点的方法</p><p>（1）贪心法：</p><p>每一次尝试去对已有的叶子加入一个分割</p><center><a href="/images/2017/IMAG2017090512.png" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090512.png" alt="" loading="lazy"></a></center><p><br /> 对于每次扩展，我们还是要枚举所有可能的分割方案，如何高效地枚举所有的分割呢？我假设我们要枚举所有x &lt; a 这样的条件，对于某个特定的分割a我们要计算a左边和右边的导数和。</p><center><a href="/images/2017/IMAG2017090513.png" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090513.png" alt="" loading="lazy"></a></center><p><br /> 我们可以发现对于所有的a，我们只要做一遍从左到右的扫描就可以枚举出所有分割的梯度和GL和GR。然后用上面的公式计算每个分割方案的分数就可以了。</p><p>观察这个目标函数，大家会发现第二个值得注意的事情就是引入分割不一定会使得情况变好，因为我们有一个引入新叶子的惩罚项。优化这个目标对应了树的剪枝， 当引入的分割带来的增益小于一个阀值的时候，我们可以剪掉这个分割。大家可以发现，当我们正式地推导目标的时候，像计算分数和剪枝这样的策略都会自然地出现，而不再是一种因为heuristic（启发式）而进行的操作了。</p><p>下面是论文中的算法</p><center><a href="/images/2017/IMAG2017090514.png" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090514.png" alt="" loading="lazy"></a></center><p><br /> （2）近似算法：</p><p>主要针对数据太大，不能直接进行计算</p><center><a href="/images/2017/IMAG2017090515.png" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090515.png" alt="" loading="lazy"></a></center><p><br /></p><h1 id="4自定义损失函数指定gradhess">4.自定义损失函数（指定grad、hess）</h1><p>（1）损失函数</p><center><a href="/images/2017/IMAG2017090516.png" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090516.png" alt="" loading="lazy"></a></center><p><br /> （2）grad、hess推导</p><center><a href="/images/2017/IMAG2017090517.png" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090517.png" alt="" loading="lazy"></a></center><p><br /> （3）官方代码</p><div class="language-python highlighter-rouge"><div class="code-header"> <span data-label-text="Python"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+</pre><td class="rouge-code"><pre><span class="c1">#!/usr/bin/python
+</span><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">xgboost</span> <span class="k">as</span> <span class="n">xgb</span>
+<span class="c1">###
 # advanced: customized loss function
 #
-print ('start running example to used customized objective function')
+</span><span class="nf">print </span><span class="p">(</span><span class="sh">'</span><span class="s">start running example to used customized objective function</span><span class="sh">'</span><span class="p">)</span>
 
-dtrain = xgb.DMatrix('../data/agaricus.txt.train')
-dtest = xgb.DMatrix('../data/agaricus.txt.test')
+<span class="n">dtrain</span> <span class="o">=</span> <span class="n">xgb</span><span class="p">.</span><span class="nc">DMatrix</span><span class="p">(</span><span class="sh">'</span><span class="s">../data/agaricus.txt.train</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">dtest</span> <span class="o">=</span> <span class="n">xgb</span><span class="p">.</span><span class="nc">DMatrix</span><span class="p">(</span><span class="sh">'</span><span class="s">../data/agaricus.txt.test</span><span class="sh">'</span><span class="p">)</span>
 
-# note: for customized objective function, we leave objective as default
+<span class="c1"># note: for customized objective function, we leave objective as default
 # note: what we are getting is margin value in prediction
 # you must know what you are doing
-param = {'max_depth': 2, 'eta': 1, 'silent': 1}
-watchlist = [(dtest, 'eval'), (dtrain, 'train')]
-num_round = 2
+</span><span class="n">param</span> <span class="o">=</span> <span class="p">{</span><span class="sh">'</span><span class="s">max_depth</span><span class="sh">'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="sh">'</span><span class="s">eta</span><span class="sh">'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="sh">'</span><span class="s">silent</span><span class="sh">'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<span class="n">watchlist</span> <span class="o">=</span> <span class="p">[(</span><span class="n">dtest</span><span class="p">,</span> <span class="sh">'</span><span class="s">eval</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="n">dtrain</span><span class="p">,</span> <span class="sh">'</span><span class="s">train</span><span class="sh">'</span><span class="p">)]</span>
+<span class="n">num_round</span> <span class="o">=</span> <span class="mi">2</span>
 
-# user define objective function, given prediction, return gradient and second order gradient
+<span class="c1"># user define objective function, given prediction, return gradient and second order gradient
 # this is log likelihood loss
-def logregobj(preds, dtrain):
-    labels = dtrain.get_label()
-    preds = 1.0 / (1.0 + np.exp(-preds))
-    grad = preds - labels
-    hess = preds * (1.0-preds)
-    return grad, hess
+</span><span class="k">def</span> <span class="nf">logregobj</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">dtrain</span><span class="p">):</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">dtrain</span><span class="p">.</span><span class="nf">get_label</span><span class="p">()</span>
+    <span class="n">preds</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">np</span><span class="p">.</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="n">preds</span><span class="p">))</span>
+    <span class="n">grad</span> <span class="o">=</span> <span class="n">preds</span> <span class="o">-</span> <span class="n">labels</span>
+    <span class="n">hess</span> <span class="o">=</span> <span class="n">preds</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">preds</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">grad</span><span class="p">,</span> <span class="n">hess</span>
 
-# user defined evaluation function, return a pair metric_name, result
+<span class="c1"># user defined evaluation function, return a pair metric_name, result
 # NOTE: when you do customized loss function, the default prediction value is margin
 # this may make builtin evaluation metric not function properly
 # for example, we are doing logistic loss, the prediction is score before logistic transformation
 # the builtin evaluation error assumes input is after logistic transformation
 # Take this in mind when you use the customization, and maybe you need write customized evaluation function
-def evalerror(preds, dtrain):
-    labels = dtrain.get_label()
-    # return a pair metric_name, result
-    # since preds are margin(before logistic transformation, cutoff at 0)
-    return 'error', float(sum(labels != (preds &gt; 0.0))) / len(labels)
+</span><span class="k">def</span> <span class="nf">evalerror</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">dtrain</span><span class="p">):</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">dtrain</span><span class="p">.</span><span class="nf">get_label</span><span class="p">()</span>
+    <span class="c1"># return a pair metric_name, result
+</span>    <span class="c1"># since preds are margin(before logistic transformation, cutoff at 0)
+</span>    <span class="k">return</span> <span class="sh">'</span><span class="s">error</span><span class="sh">'</span><span class="p">,</span> <span class="nf">float</span><span class="p">(</span><span class="nf">sum</span><span class="p">(</span><span class="n">labels</span> <span class="o">!=</span> <span class="p">(</span><span class="n">preds</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)))</span> <span class="o">/</span> <span class="nf">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
 
-# training with customized objective, we can also do step by step training
+<span class="c1"># training with customized objective, we can also do step by step training
 # simply look at xgboost.py's implementation of train
-bst = xgb.train(param, dtrain, num_round, watchlist, logregobj, evalerror)
-</code></pre>
+</span><span class="n">bst</span> <span class="o">=</span> <span class="n">xgb</span><span class="p">.</span><span class="nf">train</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">dtrain</span><span class="p">,</span> <span class="n">num_round</span><span class="p">,</span> <span class="n">watchlist</span><span class="p">,</span> <span class="n">logregobj</span><span class="p">,</span> <span class="n">evalerror</span><span class="p">)</span>
 
-<h1>5.Xgboost调参</h1>
-
-<p>由于xgboost的参数过多，这里介绍三种思路</p>
-
-<p>（1）GridSearch</p>
-
-<p>（2）Hyperopt</p>
-
-<h1>6.工程实现优化</h1>
-
-<p>（1）Column Blocks and Parallelization</p>
-
-<center><img src="/images/2017/IMAG2017090518.png"></center>
-
-
-<p><br>
-（2）Cache Aware Access</p>
-
-<ul>
-<li><p>A thread pre-fetches data from non-continuous memory into a continuous buffer.</p></li>
-<li><p>The main thread accumulates gradients statistics in the continuous buffer.</p></li>
-</ul>
-
-
-<p>（3）System Tricks</p>
-
-<ul>
-<li><p>Block pre-fetching.</p></li>
-<li><p>Utilize multiple disks to parallelize disk operations.</p></li>
-<li><p>LZ4 compression(popular recent years for outstanding performance).</p></li>
-<li><p>Unrolling loops.</p></li>
-<li><p>OpenMP</p></li>
-</ul>
-
-
-<h1>7.代码走读</h1>
-
-<p>这块非常感谢杨军老师的无私奉献【4】</p>
-
-<p>个人看代码用的是SourceInsight，由于xgboost有些文件是cc后缀名，可以通过以下命令修改下（默认的识别不了）</p>
-
-<pre><code>find ./-name"*.cc"| awk -F"."'{print $2}'| xargs -i-t mv ./{}.cc  ./{}.cpp
-</code></pre>
-
-<p>实际上，对XGBoost的源码进行走读分析之后，能够看到下面的主流程：</p>
-
-<pre><code>cli_main.cc:
+</pre></table></code></div></div><h1 id="5xgboost调参">5.Xgboost调参</h1><p>由于xgboost的参数过多，这里介绍三种思路</p><p>（1）GridSearch</p><p>（2）Hyperopt</p><h1 id="6工程实现优化">6.工程实现优化</h1><p>（1）Column Blocks and Parallelization</p><center><a href="/images/2017/IMAG2017090518.png" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090518.png" alt="" loading="lazy"></a></center><p><br /> （2）Cache Aware Access</p><ul><li><p>A thread pre-fetches data from non-continuous memory into a continuous buffer.</p><li><p>The main thread accumulates gradients statistics in the continuous buffer.</p></ul><p>（3）System Tricks</p><ul><li><p>Block pre-fetching.</p><li><p>Utilize multiple disks to parallelize disk operations.</p><li><p>LZ4 compression(popular recent years for outstanding performance).</p><li><p>Unrolling loops.</p><li><p>OpenMP</p></ul><h1 id="7代码走读">7.代码走读</h1><p>这块非常感谢杨军老师的无私奉献【4】</p><p>个人看代码用的是SourceInsight，由于xgboost有些文件是cc后缀名，可以通过以下命令修改下（默认的识别不了）</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>find ./-name"*.cc"| awk -F"."'{print $2}'| xargs -i-t mv ./{}.cc  ./{}.cpp
+</pre></table></code></div></div><p>实际上，对XGBoost的源码进行走读分析之后，能够看到下面的主流程：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+</pre><td class="rouge-code"><pre>cli_main.cc:
 main()
      -&gt; CLIRunTask()
           -&gt; CLITrain()
@@ -483,32 +198,48 @@ Create()
                   GlobalProposalHistMaker/
                   QuantileHistMaker(updater_histmaker.cc)/
         TreeSyncher(updater_sync.cc)
-</code></pre>
-
-<p>从上面的代码主流程可以看到，在XGBoost的实现中，对算法进行了模块化的拆解，几个重要的部分分别是：</p>
-
-<ol type="a">
-<li>ObjFunction：对应于不同的Loss Function，可以完成一阶和二阶导数的计算。</li>
-</ol>
-
-
-<p>II. GradientBooster：用于管理Boost方法生成的Model，注意，这里的Booster Model既可以对应于线性Booster Model，也可以对应于Tree Booster Model。</p>
-
-<p>III. Updater：用于建树，根据具体的建树策略不同，也会有多种Updater。比如，在XGBoost里为了性能优化，既提供了单机多线程并行加速，也支持多机分布式加速。也就提供了若干种不同的并行建树的updater实现，按并行策略的不同，包括：</p>
-
-<p>I). inter-feature exact parallelism （特征级精确并行）</p>
-
-<p>II). inter-feature approximate parallelism（特征级近似并行，基于特征分bin计算，减少了枚举所有特征分裂点的开销）</p>
-
-<p>III). intra-feature parallelism （特征内并行）</p>
-
-<p>此外，为了避免overfit，还提供了一个用于对树进行剪枝的updater(TreePruner)，以及一个用于在分布式场景下完成结点模型参数信息通信的updater(TreeSyncher)，这样设计，关于建树的主要操作都可以通过Updater链的方式串接起来，比较一致干净，算是Decorator设计模式[4]的一种应用。</p>
-
-<p>XGBoost的实现中，最重要的就是建树环节，而建树对应的代码中，最主要的也是Updater的实现。所以我们会以Updater的实现作为介绍的入手点。</p>
-
-<p>以ColMaker（单机版的inter-feature parallelism，实现了精确建树的策略）为例，其建树操作大致如下：</p>
-
-<pre><code>updater_colmaker.cc:
+</pre></table></code></div></div><p>从上面的代码主流程可以看到，在XGBoost的实现中，对算法进行了模块化的拆解，几个重要的部分分别是：</p><p>I. ObjFunction：对应于不同的Loss Function，可以完成一阶和二阶导数的计算。</p><p>II. GradientBooster：用于管理Boost方法生成的Model，注意，这里的Booster Model既可以对应于线性Booster Model，也可以对应于Tree Booster Model。</p><p>III. Updater：用于建树，根据具体的建树策略不同，也会有多种Updater。比如，在XGBoost里为了性能优化，既提供了单机多线程并行加速，也支持多机分布式加速。也就提供了若干种不同的并行建树的updater实现，按并行策略的不同，包括：</p><p>I). inter-feature exact parallelism （特征级精确并行）</p><p>II). inter-feature approximate parallelism（特征级近似并行，基于特征分bin计算，减少了枚举所有特征分裂点的开销）</p><p>III). intra-feature parallelism （特征内并行）</p><p>此外，为了避免overfit，还提供了一个用于对树进行剪枝的updater(TreePruner)，以及一个用于在分布式场景下完成结点模型参数信息通信的updater(TreeSyncher)，这样设计，关于建树的主要操作都可以通过Updater链的方式串接起来，比较一致干净，算是Decorator设计模式[4]的一种应用。</p><p>XGBoost的实现中，最重要的就是建树环节，而建树对应的代码中，最主要的也是Updater的实现。所以我们会以Updater的实现作为介绍的入手点。</p><p>以ColMaker（单机版的inter-feature parallelism，实现了精确建树的策略）为例，其建树操作大致如下：</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+</pre><td class="rouge-code"><pre>updater_colmaker.cc:
 ColMaker::Update()
      -&gt; Builder builder;
      -&gt; builder.Update()
@@ -549,511 +280,570 @@ ColMaker::Update()
                       // 将待扩展分割的叶子结点用于替换qexpand_，作为下一轮split的
                       //起始基础
                -&gt; InitNewNode()  // 为可用于split的树结点计算统计量
-</code></pre>
+</pre></table></code></div></div><h1 id="8pythonr对于xgboost的简单使用">8.python、R对于xgboost的简单使用</h1><p>任务：二分类，存在样本不均衡问题（scale_pos_weight可以一定程度上解读此问题）</p><p>【python】</p><center><a href="/images/2017/IMAG2017090519.png" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090519.png" alt="" loading="lazy"></a></center><p><br /> 【R】</p><center><a href="/images/2017/IMAG2017090520.png" class="popup img-link shimmer"><img src="/images/2017/IMAG2017090520.png" alt="" loading="lazy"></a></center><p><br /></p><h1 id="9xgboost中比较重要的参数介绍">9.xgboost中比较重要的参数介绍</h1><p>（1）objective [ default=reg:linear ] 定义学习任务及相应的学习目标，可选的目标函数如下：</p><ul><li><p>“reg:linear” –线性回归。</p><li><p>“reg:logistic” –逻辑回归。</p><li><p>“binary:logistic” –二分类的逻辑回归问题，输出为概率。</p><li><p>“binary:logitraw” –二分类的逻辑回归问题，输出的结果为wTx。</p><li><p>“count:poisson” –计数问题的poisson回归，输出结果为poisson分布。 在poisson回归中，max_delta_step的缺省值为0.7。(used to safeguard optimization)</p><li><p>“multi:softmax” –让XGBoost采用softmax目标函数处理多分类问题，同时需要设置参数num_class（类别个数）</p><li><p>“multi:softprob” –和softmax一样，但是输出的是ndata * nclass的向量，可以将该向量reshape成ndata行nclass列的矩阵。没行数据表示样本所属于每个类别的概率。</p><li><p>“rank:pairwise” –set XGBoost to do ranking task by minimizing the pairwise loss</p></ul><p>（2）’eval_metric’ The choices are listed below，评估指标:</p><ul><li><p>“rmse”: root mean square error</p><li><p>“logloss”: negative log-likelihood</p><li><p>“error”: Binary classification error rate. It is calculated as #(wrong cases)/#(all cases). For the predictions, the evaluation will regard the instances with prediction value larger than 0.5 as positive instances, and the others as negative instances.</p><li><p>“merror”: Multiclass classification error rate. It is calculated as #(wrong cases)/#(all cases).</p><li><p>“mlogloss”: Multiclass logloss</p><li><p>“auc”: Area under the curve for ranking evaluation.</p><li><p>“ndcg”:Normalized Discounted Cumulative Gain</p><li><p>“map”:Mean average precision</p><li><p>“ndcg@n”,”map@n”: n can be assigned as an integer to cut off the top positions in the lists for evaluation.</p><li><p>“ndcg-“,”map-“,”ndcg@n-“,”map@n-“: In XGBoost, NDCG and MAP will evaluate the score of a list without any positive samples as 1. By adding “-” in the evaluation metric XGBoost will evaluate these score as 0 to be consistent under some conditions.</p></ul><p>（3）lambda [default=0] L2 正则的惩罚系数</p><p>（4）alpha [default=0] L1 正则的惩罚系数</p><p>（5）lambda_bias 在偏置上的L2正则。缺省值为0（在L1上没有偏置项的正则，因为L1时偏置不重要）</p><p>（6）eta [default=0.3]</p><p>为了防止过拟合，更新过程中用到的收缩步长。在每次提升计算之后，算法会直接获得新特征的权重。 eta通过缩减特征的权重使提升计算过程更加保守。缺省值为0.3</p><p>取值范围为：[0,1]</p><p>（7）max_depth [default=6] 数的最大深度。缺省值为6 ，取值范围为：[1,∞]</p><p>（8）min_child_weight [default=1]</p><p>孩子节点中最小的样本权重和。如果一个叶子节点的样本权重和小于min_child_weight则拆分过程结束。在现行回归模型中，这个参数是指建立每个模型所需要的最小样本数。该成熟越大算法越conservative</p><p>取值范围为: [0,∞]</p><h1 id="10dart">10.DART</h1><p>核心思想就是将dropout引入XGBoost</p><p>示例代码</p><div class="language-python highlighter-rouge"><div class="code-header"> <span data-label-text="Python"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre><td class="rouge-code"><pre><span class="kn">import</span> <span class="n">xgboost</span> <span class="k">as</span> <span class="n">xgb</span>
+<span class="c1"># read in data
+</span><span class="n">dtrain</span> <span class="o">=</span> <span class="n">xgb</span><span class="p">.</span><span class="nc">DMatrix</span><span class="p">(</span><span class="sh">'</span><span class="s">demo/data/agaricus.txt.train?format=libsvm</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">dtest</span> <span class="o">=</span> <span class="n">xgb</span><span class="p">.</span><span class="nc">DMatrix</span><span class="p">(</span><span class="sh">'</span><span class="s">demo/data/agaricus.txt.test?format=libsvm</span><span class="sh">'</span><span class="p">)</span>
+<span class="c1"># specify parameters via map
+</span><span class="n">param</span> <span class="o">=</span> <span class="p">{</span><span class="sh">'</span><span class="s">max_depth</span><span class="sh">'</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="sh">'</span><span class="s">learning_rate</span><span class="sh">'</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+         <span class="sh">'</span><span class="s">objective</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">binary:logistic</span><span class="sh">'</span><span class="p">,</span>
+         <span class="sh">'</span><span class="s">sample_type</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">uniform</span><span class="sh">'</span><span class="p">,</span>
+         <span class="sh">'</span><span class="s">normalize_type</span><span class="sh">'</span><span class="p">:</span> <span class="sh">'</span><span class="s">tree</span><span class="sh">'</span><span class="p">,</span>
+         <span class="sh">'</span><span class="s">rate_drop</span><span class="sh">'</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+         <span class="sh">'</span><span class="s">skip_drop</span><span class="sh">'</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">}</span>
+<span class="n">num_round</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">bst</span> <span class="o">=</span> <span class="n">xgb</span><span class="p">.</span><span class="nf">train</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">dtrain</span><span class="p">,</span> <span class="n">num_round</span><span class="p">)</span>
+<span class="n">preds</span> <span class="o">=</span> <span class="n">bst</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">dtest</span><span class="p">)</span>
+</pre></table></code></div></div><p>更多细节可以阅读参考文献5</p><h1 id="11csr_matrix训练xgboost">11.csr_matrix训练XGBoost</h1><p>当数据规模比较大、较多列比较稀疏时，可以使用csr_matrix训练XGBoost模型，从而节约内存。</p><p>下面是Kaggle比赛中TalkingData开源的代码，可以学习一下，详见参考文献6。</p><div class="language-python highlighter-rouge"><div class="code-header"> <span data-label-text="Python"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+</pre><td class="rouge-code"><pre><span class="kn">import</span> <span class="n">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">seaborn</span> <span class="k">as</span> <span class="n">sns</span>
+<span class="kn">import</span> <span class="n">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="n">os</span>
+<span class="kn">from</span> <span class="n">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">LabelEncoder</span>
+<span class="kn">from</span> <span class="n">scipy.sparse</span> <span class="kn">import</span> <span class="n">csr_matrix</span><span class="p">,</span> <span class="n">hstack</span>
+<span class="kn">import</span> <span class="n">xgboost</span> <span class="k">as</span> <span class="n">xgb</span>
+<span class="kn">from</span> <span class="n">sklearn.cross_validation</span> <span class="kn">import</span> <span class="n">StratifiedKFold</span>
+<span class="kn">from</span> <span class="n">sklearn.metrics</span> <span class="kn">import</span> <span class="n">log_loss</span>
 
-<h1>8.python、R对于xgboost的简单使用</h1>
+<span class="n">datadir</span> <span class="o">=</span> <span class="sh">'</span><span class="s">../input</span><span class="sh">'</span>
+<span class="n">gatrain</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nf">read_csv</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span><span class="sh">'</span><span class="s">gender_age_train.csv</span><span class="sh">'</span><span class="p">),</span>
+                      <span class="n">index_col</span><span class="o">=</span><span class="sh">'</span><span class="s">device_id</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">gatest</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nf">read_csv</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span><span class="sh">'</span><span class="s">gender_age_test.csv</span><span class="sh">'</span><span class="p">),</span>
+                     <span class="n">index_col</span> <span class="o">=</span> <span class="sh">'</span><span class="s">device_id</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">phone</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nf">read_csv</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span><span class="sh">'</span><span class="s">phone_brand_device_model.csv</span><span class="sh">'</span><span class="p">))</span>
+<span class="c1"># Get rid of duplicate device ids in phone
+</span><span class="n">phone</span> <span class="o">=</span> <span class="n">phone</span><span class="p">.</span><span class="nf">drop_duplicates</span><span class="p">(</span><span class="sh">'</span><span class="s">device_id</span><span class="sh">'</span><span class="p">,</span><span class="n">keep</span><span class="o">=</span><span class="sh">'</span><span class="s">first</span><span class="sh">'</span><span class="p">).</span><span class="nf">set_index</span><span class="p">(</span><span class="sh">'</span><span class="s">device_id</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">events</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nf">read_csv</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span><span class="sh">'</span><span class="s">events.csv</span><span class="sh">'</span><span class="p">),</span>
+                     <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="sh">'</span><span class="s">timestamp</span><span class="sh">'</span><span class="p">],</span> <span class="n">index_col</span><span class="o">=</span><span class="sh">'</span><span class="s">event_id</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">appevents</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nf">read_csv</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span><span class="sh">'</span><span class="s">app_events.csv</span><span class="sh">'</span><span class="p">),</span> 
+                        <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="sh">'</span><span class="s">event_id</span><span class="sh">'</span><span class="p">,</span><span class="sh">'</span><span class="s">app_id</span><span class="sh">'</span><span class="p">,</span><span class="sh">'</span><span class="s">is_active</span><span class="sh">'</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="sh">'</span><span class="s">is_active</span><span class="sh">'</span><span class="p">:</span><span class="nb">bool</span><span class="p">})</span>
+<span class="n">applabels</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nf">read_csv</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span><span class="sh">'</span><span class="s">app_labels.csv</span><span class="sh">'</span><span class="p">))</span>
 
-<p>任务：二分类，存在样本不均衡问题（scale_pos_weight可以一定程度上解读此问题）</p>
+<span class="n">gatrain</span><span class="p">[</span><span class="sh">'</span><span class="s">trainrow</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="n">gatrain</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">gatest</span><span class="p">[</span><span class="sh">'</span><span class="s">testrow</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="n">gatest</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-<p>【python】</p>
+<span class="n">brandencoder</span> <span class="o">=</span> <span class="nc">LabelEncoder</span><span class="p">().</span><span class="nf">fit</span><span class="p">(</span><span class="n">phone</span><span class="p">.</span><span class="n">phone_brand</span><span class="p">)</span>
+<span class="n">phone</span><span class="p">[</span><span class="sh">'</span><span class="s">brand</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">brandencoder</span><span class="p">.</span><span class="nf">transform</span><span class="p">(</span><span class="n">phone</span><span class="p">[</span><span class="sh">'</span><span class="s">phone_brand</span><span class="sh">'</span><span class="p">])</span>
+<span class="n">gatrain</span><span class="p">[</span><span class="sh">'</span><span class="s">brand</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">phone</span><span class="p">[</span><span class="sh">'</span><span class="s">brand</span><span class="sh">'</span><span class="p">]</span>
+<span class="n">gatest</span><span class="p">[</span><span class="sh">'</span><span class="s">brand</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">phone</span><span class="p">[</span><span class="sh">'</span><span class="s">brand</span><span class="sh">'</span><span class="p">]</span>
+<span class="n">Xtr_brand</span> <span class="o">=</span> <span class="nf">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">gatrain</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> 
+                       <span class="p">(</span><span class="n">gatrain</span><span class="p">.</span><span class="n">trainrow</span><span class="p">,</span> <span class="n">gatrain</span><span class="p">.</span><span class="n">brand</span><span class="p">)))</span>
+<span class="n">Xte_brand</span> <span class="o">=</span> <span class="nf">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">gatest</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> 
+                       <span class="p">(</span><span class="n">gatest</span><span class="p">.</span><span class="n">testrow</span><span class="p">,</span> <span class="n">gatest</span><span class="p">.</span><span class="n">brand</span><span class="p">)))</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">Brand features: train shape {}, test shape {}</span><span class="sh">'</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="n">Xtr_brand</span><span class="p">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">Xte_brand</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
 
-<center><img src="/images/2017/IMAG2017090519.png"></center>
+<span class="n">m</span> <span class="o">=</span> <span class="n">phone</span><span class="p">.</span><span class="n">phone_brand</span><span class="p">.</span><span class="nb">str</span><span class="p">.</span><span class="nf">cat</span><span class="p">(</span><span class="n">phone</span><span class="p">.</span><span class="n">device_model</span><span class="p">)</span>
+<span class="n">modelencoder</span> <span class="o">=</span> <span class="nc">LabelEncoder</span><span class="p">().</span><span class="nf">fit</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+<span class="n">phone</span><span class="p">[</span><span class="sh">'</span><span class="s">model</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">modelencoder</span><span class="p">.</span><span class="nf">transform</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+<span class="n">gatrain</span><span class="p">[</span><span class="sh">'</span><span class="s">model</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">phone</span><span class="p">[</span><span class="sh">'</span><span class="s">model</span><span class="sh">'</span><span class="p">]</span>
+<span class="n">gatest</span><span class="p">[</span><span class="sh">'</span><span class="s">model</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">phone</span><span class="p">[</span><span class="sh">'</span><span class="s">model</span><span class="sh">'</span><span class="p">]</span>
+<span class="n">Xtr_model</span> <span class="o">=</span> <span class="nf">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">gatrain</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> 
+                       <span class="p">(</span><span class="n">gatrain</span><span class="p">.</span><span class="n">trainrow</span><span class="p">,</span> <span class="n">gatrain</span><span class="p">.</span><span class="n">model</span><span class="p">)))</span>
+<span class="n">Xte_model</span> <span class="o">=</span> <span class="nf">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">gatest</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> 
+                       <span class="p">(</span><span class="n">gatest</span><span class="p">.</span><span class="n">testrow</span><span class="p">,</span> <span class="n">gatest</span><span class="p">.</span><span class="n">model</span><span class="p">)))</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">Model features: train shape {}, test shape {}</span><span class="sh">'</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="n">Xtr_model</span><span class="p">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">Xte_model</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
 
+<span class="n">appencoder</span> <span class="o">=</span> <span class="nc">LabelEncoder</span><span class="p">().</span><span class="nf">fit</span><span class="p">(</span><span class="n">appevents</span><span class="p">.</span><span class="n">app_id</span><span class="p">)</span>
+<span class="n">appevents</span><span class="p">[</span><span class="sh">'</span><span class="s">app</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">appencoder</span><span class="p">.</span><span class="nf">transform</span><span class="p">(</span><span class="n">appevents</span><span class="p">.</span><span class="n">app_id</span><span class="p">)</span>
+<span class="n">napps</span> <span class="o">=</span> <span class="nf">len</span><span class="p">(</span><span class="n">appencoder</span><span class="p">.</span><span class="n">classes_</span><span class="p">)</span>
+<span class="n">deviceapps</span> <span class="o">=</span> <span class="p">(</span><span class="n">appevents</span><span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="n">events</span><span class="p">[[</span><span class="sh">'</span><span class="s">device_id</span><span class="sh">'</span><span class="p">]],</span> <span class="n">how</span><span class="o">=</span><span class="sh">'</span><span class="s">left</span><span class="sh">'</span><span class="p">,</span><span class="n">left_on</span><span class="o">=</span><span class="sh">'</span><span class="s">event_id</span><span class="sh">'</span><span class="p">,</span><span class="n">right_index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                       <span class="p">.</span><span class="nf">groupby</span><span class="p">([</span><span class="sh">'</span><span class="s">device_id</span><span class="sh">'</span><span class="p">,</span><span class="sh">'</span><span class="s">app</span><span class="sh">'</span><span class="p">])[</span><span class="sh">'</span><span class="s">app</span><span class="sh">'</span><span class="p">].</span><span class="nf">agg</span><span class="p">([</span><span class="sh">'</span><span class="s">size</span><span class="sh">'</span><span class="p">])</span>
+                       <span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="n">gatrain</span><span class="p">[[</span><span class="sh">'</span><span class="s">trainrow</span><span class="sh">'</span><span class="p">]],</span> <span class="n">how</span><span class="o">=</span><span class="sh">'</span><span class="s">left</span><span class="sh">'</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                       <span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="n">gatest</span><span class="p">[[</span><span class="sh">'</span><span class="s">testrow</span><span class="sh">'</span><span class="p">]],</span> <span class="n">how</span><span class="o">=</span><span class="sh">'</span><span class="s">left</span><span class="sh">'</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                       <span class="p">.</span><span class="nf">reset_index</span><span class="p">())</span>
 
-<p><br>
-【R】</p>
+<span class="n">d</span> <span class="o">=</span> <span class="n">deviceapps</span><span class="p">.</span><span class="nf">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="sh">'</span><span class="s">trainrow</span><span class="sh">'</span><span class="p">])</span>
+<span class="n">Xtr_app</span> <span class="o">=</span> <span class="nf">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">trainrow</span><span class="p">,</span> <span class="n">d</span><span class="p">.</span><span class="n">app</span><span class="p">)),</span> 
+                      <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">gatrain</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">napps</span><span class="p">))</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">deviceapps</span><span class="p">.</span><span class="nf">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="sh">'</span><span class="s">testrow</span><span class="sh">'</span><span class="p">])</span>
+<span class="n">Xte_app</span> <span class="o">=</span> <span class="nf">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">testrow</span><span class="p">,</span> <span class="n">d</span><span class="p">.</span><span class="n">app</span><span class="p">)),</span> 
+                      <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">gatest</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">napps</span><span class="p">))</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">Apps data: train shape {}, test shape {}</span><span class="sh">'</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="n">Xtr_app</span><span class="p">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">Xte_app</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
 
-<center><img src="/images/2017/IMAG2017090520.png"></center>
+<span class="n">applabels</span> <span class="o">=</span> <span class="n">applabels</span><span class="p">.</span><span class="n">loc</span><span class="p">[</span><span class="n">applabels</span><span class="p">.</span><span class="n">app_id</span><span class="p">.</span><span class="nf">isin</span><span class="p">(</span><span class="n">appevents</span><span class="p">.</span><span class="n">app_id</span><span class="p">.</span><span class="nf">unique</span><span class="p">())]</span>
+<span class="n">applabels</span><span class="p">[</span><span class="sh">'</span><span class="s">app</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">appencoder</span><span class="p">.</span><span class="nf">transform</span><span class="p">(</span><span class="n">applabels</span><span class="p">.</span><span class="n">app_id</span><span class="p">)</span>
+<span class="n">labelencoder</span> <span class="o">=</span> <span class="nc">LabelEncoder</span><span class="p">().</span><span class="nf">fit</span><span class="p">(</span><span class="n">applabels</span><span class="p">.</span><span class="n">label_id</span><span class="p">)</span>
+<span class="n">applabels</span><span class="p">[</span><span class="sh">'</span><span class="s">label</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">labelencoder</span><span class="p">.</span><span class="nf">transform</span><span class="p">(</span><span class="n">applabels</span><span class="p">.</span><span class="n">label_id</span><span class="p">)</span>
+<span class="n">nlabels</span> <span class="o">=</span> <span class="nf">len</span><span class="p">(</span><span class="n">labelencoder</span><span class="p">.</span><span class="n">classes_</span><span class="p">)</span>
 
+<span class="n">devicelabels</span> <span class="o">=</span> <span class="p">(</span><span class="n">deviceapps</span><span class="p">[[</span><span class="sh">'</span><span class="s">device_id</span><span class="sh">'</span><span class="p">,</span><span class="sh">'</span><span class="s">app</span><span class="sh">'</span><span class="p">]]</span>
+                <span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="n">applabels</span><span class="p">[[</span><span class="sh">'</span><span class="s">app</span><span class="sh">'</span><span class="p">,</span><span class="sh">'</span><span class="s">label</span><span class="sh">'</span><span class="p">]])</span>
+                <span class="p">.</span><span class="nf">groupby</span><span class="p">([</span><span class="sh">'</span><span class="s">device_id</span><span class="sh">'</span><span class="p">,</span><span class="sh">'</span><span class="s">label</span><span class="sh">'</span><span class="p">])[</span><span class="sh">'</span><span class="s">app</span><span class="sh">'</span><span class="p">].</span><span class="nf">agg</span><span class="p">([</span><span class="sh">'</span><span class="s">size</span><span class="sh">'</span><span class="p">])</span>
+                <span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="n">gatrain</span><span class="p">[[</span><span class="sh">'</span><span class="s">trainrow</span><span class="sh">'</span><span class="p">]],</span> <span class="n">how</span><span class="o">=</span><span class="sh">'</span><span class="s">left</span><span class="sh">'</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                <span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="n">gatest</span><span class="p">[[</span><span class="sh">'</span><span class="s">testrow</span><span class="sh">'</span><span class="p">]],</span> <span class="n">how</span><span class="o">=</span><span class="sh">'</span><span class="s">left</span><span class="sh">'</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                <span class="p">.</span><span class="nf">reset_index</span><span class="p">())</span>
+<span class="n">devicelabels</span><span class="p">.</span><span class="nf">head</span><span class="p">()</span>
 
-<p><br></p>
+<span class="n">d</span> <span class="o">=</span> <span class="n">devicelabels</span><span class="p">.</span><span class="nf">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="sh">'</span><span class="s">trainrow</span><span class="sh">'</span><span class="p">])</span>
+<span class="n">Xtr_label</span> <span class="o">=</span> <span class="nf">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">trainrow</span><span class="p">,</span> <span class="n">d</span><span class="p">.</span><span class="n">label</span><span class="p">)),</span> 
+                      <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">gatrain</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">nlabels</span><span class="p">))</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">devicelabels</span><span class="p">.</span><span class="nf">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="sh">'</span><span class="s">testrow</span><span class="sh">'</span><span class="p">])</span>
+<span class="n">Xte_label</span> <span class="o">=</span> <span class="nf">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">testrow</span><span class="p">,</span> <span class="n">d</span><span class="p">.</span><span class="n">label</span><span class="p">)),</span> 
+                      <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">gatest</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">nlabels</span><span class="p">))</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">Labels data: train shape {}, test shape {}</span><span class="sh">'</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="n">Xtr_label</span><span class="p">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">Xte_label</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
 
-<h1>9.xgboost中比较重要的参数介绍</h1>
+<span class="n">Xtrain</span> <span class="o">=</span> <span class="nf">hstack</span><span class="p">((</span><span class="n">Xtr_brand</span><span class="p">,</span> <span class="n">Xtr_model</span><span class="p">,</span> <span class="n">Xtr_app</span><span class="p">,</span> <span class="n">Xtr_label</span><span class="p">),</span> <span class="nb">format</span><span class="o">=</span><span class="sh">'</span><span class="s">csr</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">Xtest</span> <span class="o">=</span>  <span class="nf">hstack</span><span class="p">((</span><span class="n">Xte_brand</span><span class="p">,</span> <span class="n">Xte_model</span><span class="p">,</span> <span class="n">Xte_app</span><span class="p">,</span> <span class="n">Xte_label</span><span class="p">),</span> <span class="nb">format</span><span class="o">=</span><span class="sh">'</span><span class="s">csr</span><span class="sh">'</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">All features: train shape {}, test shape {}</span><span class="sh">'</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="n">Xtrain</span><span class="p">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">Xtest</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
 
-<p>（1）objective [ default=reg:linear ] 定义学习任务及相应的学习目标，可选的目标函数如下：</p>
+<span class="n">targetencoder</span> <span class="o">=</span> <span class="nc">LabelEncoder</span><span class="p">().</span><span class="nf">fit</span><span class="p">(</span><span class="n">gatrain</span><span class="p">.</span><span class="n">group</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">targetencoder</span><span class="p">.</span><span class="nf">transform</span><span class="p">(</span><span class="n">gatrain</span><span class="p">.</span><span class="n">group</span><span class="p">)</span>
 
-<ul>
-<li><p>“reg:linear” –线性回归。</p></li>
-<li><p>“reg:logistic” –逻辑回归。</p></li>
-<li><p>“binary:logistic” –二分类的逻辑回归问题，输出为概率。</p></li>
-<li><p>“binary:logitraw” –二分类的逻辑回归问题，输出的结果为wTx。</p></li>
-<li><p>“count:poisson” –计数问题的poisson回归，输出结果为poisson分布。 在poisson回归中，max_delta_step的缺省值为0.7。(used to safeguard optimization)</p></li>
-<li><p>“multi:softmax” –让XGBoost采用softmax目标函数处理多分类问题，同时需要设置参数num_class（类别个数）</p></li>
-<li><p>“multi:softprob” –和softmax一样，但是输出的是ndata * nclass的向量，可以将该向量reshape成ndata行nclass列的矩阵。没行数据表示样本所属于每个类别的概率。</p></li>
-<li><p>“rank:pairwise” –set XGBoost to do ranking task by minimizing the pairwise loss</p></li>
-</ul>
+<span class="c1">########## XGBOOST ##########
+</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">booster</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="sh">'</span><span class="s">gblinear</span><span class="sh">'</span>
+<span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">objective</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="sh">"</span><span class="s">multi:softprob</span><span class="sh">"</span>
+<span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">eval_metric</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="sh">'</span><span class="s">mlogloss</span><span class="sh">'</span>
+<span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">eta</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.005</span>
+<span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">num_class</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">12</span>
+<span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">lambda</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">alpha</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
 
+<span class="c1"># Random 10% for validation
+</span><span class="n">kf</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="nc">StratifiedKFold</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">4242</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
 
-<p>（2）’eval_metric’ The choices are listed below，评估指标:</p>
+<span class="n">Xtr</span><span class="p">,</span> <span class="n">Xte</span> <span class="o">=</span> <span class="n">Xtrain</span><span class="p">[</span><span class="n">kf</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:],</span> <span class="n">Xtrain</span><span class="p">[</span><span class="n">kf</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">:]</span>
+<span class="n">ytr</span><span class="p">,</span> <span class="n">yte</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">kf</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">y</span><span class="p">[</span><span class="n">kf</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
 
-<ul>
-<li><p>“rmse”: root mean square error</p></li>
-<li><p>“logloss”: negative log-likelihood</p></li>
-<li><p>“error”: Binary classification error rate. It is calculated as #(wrong cases)/#(all cases). For the predictions, the evaluation will regard the instances with prediction value larger than 0.5 as positive instances, and the others as negative instances.</p></li>
-<li><p>“merror”: Multiclass classification error rate. It is calculated as #(wrong cases)/#(all cases).</p></li>
-<li><p>“mlogloss”: Multiclass logloss</p></li>
-<li><p>“auc”: Area under the curve for ranking evaluation.</p></li>
-<li><p>“ndcg”:Normalized Discounted Cumulative Gain</p></li>
-<li><p>“map”:Mean average precision</p></li>
-<li><p>“ndcg@n”,”map@n”: n can be assigned as an integer to cut off the top positions in the lists for evaluation.</p></li>
-<li><p>“ndcg-“,”map-“,”ndcg@n-“,”map@n-“: In XGBoost, NDCG and MAP will evaluate the score of a list without any positive samples as 1. By adding “-” in the evaluation metric XGBoost will evaluate these score as 0 to be consistent under some conditions.</p></li>
-</ul>
+<span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">Training set: </span><span class="sh">'</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">Xtr</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">Validation set: </span><span class="sh">'</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">Xte</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
 
+<span class="n">d_train</span> <span class="o">=</span> <span class="n">xgb</span><span class="p">.</span><span class="nc">DMatrix</span><span class="p">(</span><span class="n">Xtr</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">ytr</span><span class="p">)</span>
+<span class="n">d_valid</span> <span class="o">=</span> <span class="n">xgb</span><span class="p">.</span><span class="nc">DMatrix</span><span class="p">(</span><span class="n">Xte</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">yte</span><span class="p">)</span>
 
-<p>（3）lambda [default=0] L2 正则的惩罚系数</p>
+<span class="n">watchlist</span> <span class="o">=</span> <span class="p">[(</span><span class="n">d_train</span><span class="p">,</span> <span class="sh">'</span><span class="s">train</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="n">d_valid</span><span class="p">,</span> <span class="sh">'</span><span class="s">eval</span><span class="sh">'</span><span class="p">)]</span>
 
-<p>（4）alpha [default=0] L1 正则的惩罚系数</p>
+<span class="n">clf</span> <span class="o">=</span> <span class="n">xgb</span><span class="p">.</span><span class="nf">train</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">d_train</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">watchlist</span><span class="p">,</span> <span class="n">early_stopping_rounds</span><span class="o">=</span><span class="mi">25</span><span class="p">)</span>
 
-<p>（5）lambda_bias 在偏置上的L2正则。缺省值为0（在L1上没有偏置项的正则，因为L1时偏置不重要）</p>
+<span class="n">pred</span> <span class="o">=</span> <span class="n">clf</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">xgb</span><span class="p">.</span><span class="nc">DMatrix</span><span class="p">(</span><span class="n">Xtest</span><span class="p">))</span>
 
-<p>（6）eta [default=0.3]</p>
+<span class="n">pred</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nc">DataFrame</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">gatest</span><span class="p">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">targetencoder</span><span class="p">.</span><span class="n">classes_</span><span class="p">)</span>
+<span class="n">pred</span><span class="p">.</span><span class="nf">head</span><span class="p">()</span>
+<span class="n">pred</span><span class="p">.</span><span class="nf">to_csv</span><span class="p">(</span><span class="sh">'</span><span class="s">sparse_xgb.csv</span><span class="sh">'</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<p>为了防止过拟合，更新过程中用到的收缩步长。在每次提升计算之后，算法会直接获得新特征的权重。 eta通过缩减特征的权重使提升计算过程更加保守。缺省值为0.3</p>
-
-<p>取值范围为：[0,1]</p>
-
-<p>（7）max_depth [default=6] 数的最大深度。缺省值为6 ，取值范围为：[1,∞]</p>
-
-<p>（8）min_child_weight [default=1]</p>
-
-<p>孩子节点中最小的样本权重和。如果一个叶子节点的样本权重和小于min_child_weight则拆分过程结束。在现行回归模型中，这个参数是指建立每个模型所需要的最小样本数。该成熟越大算法越conservative</p>
-
-<p>取值范围为: [0,∞]</p>
-
-<h1>10.DART</h1>
-
-<p>核心思想就是将dropout引入XGBoost</p>
-
-<p>示例代码</p>
-
-<pre><code class="python">import xgboost as xgb
-# read in data
-dtrain = xgb.DMatrix('demo/data/agaricus.txt.train?format=libsvm')
-dtest = xgb.DMatrix('demo/data/agaricus.txt.test?format=libsvm')
-# specify parameters via map
-param = {'max_depth': 5, 'learning_rate': 0.1,
-         'objective': 'binary:logistic',
-         'sample_type': 'uniform',
-         'normalize_type': 'tree',
-         'rate_drop': 0.1,
-         'skip_drop': 0.5}
-num_round = 50
-bst = xgb.train(param, dtrain, num_round)
-preds = bst.predict(dtest)
-</code></pre>
-
-<p>更多细节可以阅读参考文献5</p>
-
-<h1>11.csr_matrix训练XGBoost</h1>
-
-<p>当数据规模比较大、较多列比较稀疏时，可以使用csr_matrix训练XGBoost模型，从而节约内存。</p>
-
-<p>下面是Kaggle比赛中TalkingData开源的代码，可以学习一下，详见参考文献6。</p>
-
-<pre><code class="python">import pandas as pd
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-import os
-from sklearn.preprocessing import LabelEncoder
-from scipy.sparse import csr_matrix, hstack
-import xgboost as xgb
-from sklearn.cross_validation import StratifiedKFold
-from sklearn.metrics import log_loss
-
-datadir = '../input'
-gatrain = pd.read_csv(os.path.join(datadir,'gender_age_train.csv'),
-                      index_col='device_id')
-gatest = pd.read_csv(os.path.join(datadir,'gender_age_test.csv'),
-                     index_col = 'device_id')
-phone = pd.read_csv(os.path.join(datadir,'phone_brand_device_model.csv'))
-# Get rid of duplicate device ids in phone
-phone = phone.drop_duplicates('device_id',keep='first').set_index('device_id')
-events = pd.read_csv(os.path.join(datadir,'events.csv'),
-                     parse_dates=['timestamp'], index_col='event_id')
-appevents = pd.read_csv(os.path.join(datadir,'app_events.csv'), 
-                        usecols=['event_id','app_id','is_active'],
-                        dtype={'is_active':bool})
-applabels = pd.read_csv(os.path.join(datadir,'app_labels.csv'))
-
-gatrain['trainrow'] = np.arange(gatrain.shape[0])
-gatest['testrow'] = np.arange(gatest.shape[0])
-
-brandencoder = LabelEncoder().fit(phone.phone_brand)
-phone['brand'] = brandencoder.transform(phone['phone_brand'])
-gatrain['brand'] = phone['brand']
-gatest['brand'] = phone['brand']
-Xtr_brand = csr_matrix((np.ones(gatrain.shape[0]), 
-                       (gatrain.trainrow, gatrain.brand)))
-Xte_brand = csr_matrix((np.ones(gatest.shape[0]), 
-                       (gatest.testrow, gatest.brand)))
-print('Brand features: train shape {}, test shape {}'.format(Xtr_brand.shape, Xte_brand.shape))
-
-m = phone.phone_brand.str.cat(phone.device_model)
-modelencoder = LabelEncoder().fit(m)
-phone['model'] = modelencoder.transform(m)
-gatrain['model'] = phone['model']
-gatest['model'] = phone['model']
-Xtr_model = csr_matrix((np.ones(gatrain.shape[0]), 
-                       (gatrain.trainrow, gatrain.model)))
-Xte_model = csr_matrix((np.ones(gatest.shape[0]), 
-                       (gatest.testrow, gatest.model)))
-print('Model features: train shape {}, test shape {}'.format(Xtr_model.shape, Xte_model.shape))
-
-appencoder = LabelEncoder().fit(appevents.app_id)
-appevents['app'] = appencoder.transform(appevents.app_id)
-napps = len(appencoder.classes_)
-deviceapps = (appevents.merge(events[['device_id']], how='left',left_on='event_id',right_index=True)
-                       .groupby(['device_id','app'])['app'].agg(['size'])
-                       .merge(gatrain[['trainrow']], how='left', left_index=True, right_index=True)
-                       .merge(gatest[['testrow']], how='left', left_index=True, right_index=True)
-                       .reset_index())
-
-d = deviceapps.dropna(subset=['trainrow'])
-Xtr_app = csr_matrix((np.ones(d.shape[0]), (d.trainrow, d.app)), 
-                      shape=(gatrain.shape[0],napps))
-d = deviceapps.dropna(subset=['testrow'])
-Xte_app = csr_matrix((np.ones(d.shape[0]), (d.testrow, d.app)), 
-                      shape=(gatest.shape[0],napps))
-print('Apps data: train shape {}, test shape {}'.format(Xtr_app.shape, Xte_app.shape))
-
-applabels = applabels.loc[applabels.app_id.isin(appevents.app_id.unique())]
-applabels['app'] = appencoder.transform(applabels.app_id)
-labelencoder = LabelEncoder().fit(applabels.label_id)
-applabels['label'] = labelencoder.transform(applabels.label_id)
-nlabels = len(labelencoder.classes_)
-
-devicelabels = (deviceapps[['device_id','app']]
-                .merge(applabels[['app','label']])
-                .groupby(['device_id','label'])['app'].agg(['size'])
-                .merge(gatrain[['trainrow']], how='left', left_index=True, right_index=True)
-                .merge(gatest[['testrow']], how='left', left_index=True, right_index=True)
-                .reset_index())
-devicelabels.head()
-
-d = devicelabels.dropna(subset=['trainrow'])
-Xtr_label = csr_matrix((np.ones(d.shape[0]), (d.trainrow, d.label)), 
-                      shape=(gatrain.shape[0],nlabels))
-d = devicelabels.dropna(subset=['testrow'])
-Xte_label = csr_matrix((np.ones(d.shape[0]), (d.testrow, d.label)), 
-                      shape=(gatest.shape[0],nlabels))
-print('Labels data: train shape {}, test shape {}'.format(Xtr_label.shape, Xte_label.shape))
-
-Xtrain = hstack((Xtr_brand, Xtr_model, Xtr_app, Xtr_label), format='csr')
-Xtest =  hstack((Xte_brand, Xte_model, Xte_app, Xte_label), format='csr')
-print('All features: train shape {}, test shape {}'.format(Xtrain.shape, Xtest.shape))
-
-targetencoder = LabelEncoder().fit(gatrain.group)
-y = targetencoder.transform(gatrain.group)
-
-########## XGBOOST ##########
-
-params = {}
-params['booster'] = 'gblinear'
-params['objective'] = "multi:softprob"
-params['eval_metric'] = 'mlogloss'
-params['eta'] = 0.005
-params['num_class'] = 12
-params['lambda'] = 3
-params['alpha'] = 2
-
-# Random 10% for validation
-kf = list(StratifiedKFold(y, n_folds=10, shuffle=True, random_state=4242))[0]
-
-Xtr, Xte = Xtrain[kf[0], :], Xtrain[kf[1], :]
-ytr, yte = y[kf[0]], y[kf[1]]
-
-print('Training set: ' + str(Xtr.shape))
-print('Validation set: ' + str(Xte.shape))
-
-d_train = xgb.DMatrix(Xtr, label=ytr)
-d_valid = xgb.DMatrix(Xte, label=yte)
-
-watchlist = [(d_train, 'train'), (d_valid, 'eval')]
-
-clf = xgb.train(params, d_train, 1000, watchlist, early_stopping_rounds=25)
-
-pred = clf.predict(xgb.DMatrix(Xtest))
-
-pred = pd.DataFrame(pred, index = gatest.index, columns=targetencoder.classes_)
-pred.head()
-pred.to_csv('sparse_xgb.csv', index=True)
-
-#params['lambda'] = 1
+<span class="c1">#params['lambda'] = 1
 #for alpha in [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]:
 #    params['alpha'] = alpha
 #    clf = xgb.train(params, d_train, 1000, watchlist, early_stopping_rounds=25)
 #    print('^' + str(alpha))import pandas as pd
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-import os
-from sklearn.preprocessing import LabelEncoder
-from scipy.sparse import csr_matrix, hstack
-import xgboost as xgb
-from sklearn.cross_validation import StratifiedKFold
-from sklearn.metrics import log_loss
+</span><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">seaborn</span> <span class="k">as</span> <span class="n">sns</span>
+<span class="kn">import</span> <span class="n">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="n">os</span>
+<span class="kn">from</span> <span class="n">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">LabelEncoder</span>
+<span class="kn">from</span> <span class="n">scipy.sparse</span> <span class="kn">import</span> <span class="n">csr_matrix</span><span class="p">,</span> <span class="n">hstack</span>
+<span class="kn">import</span> <span class="n">xgboost</span> <span class="k">as</span> <span class="n">xgb</span>
+<span class="kn">from</span> <span class="n">sklearn.cross_validation</span> <span class="kn">import</span> <span class="n">StratifiedKFold</span>
+<span class="kn">from</span> <span class="n">sklearn.metrics</span> <span class="kn">import</span> <span class="n">log_loss</span>
 
-datadir = '../input'
-gatrain = pd.read_csv(os.path.join(datadir,'gender_age_train.csv'),
-                      index_col='device_id')
-gatest = pd.read_csv(os.path.join(datadir,'gender_age_test.csv'),
-                     index_col = 'device_id')
-phone = pd.read_csv(os.path.join(datadir,'phone_brand_device_model.csv'))
-# Get rid of duplicate device ids in phone
-phone = phone.drop_duplicates('device_id',keep='first').set_index('device_id')
-events = pd.read_csv(os.path.join(datadir,'events.csv'),
-                     parse_dates=['timestamp'], index_col='event_id')
-appevents = pd.read_csv(os.path.join(datadir,'app_events.csv'), 
-                        usecols=['event_id','app_id','is_active'],
-                        dtype={'is_active':bool})
-applabels = pd.read_csv(os.path.join(datadir,'app_labels.csv'))
+<span class="n">datadir</span> <span class="o">=</span> <span class="sh">'</span><span class="s">../input</span><span class="sh">'</span>
+<span class="n">gatrain</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nf">read_csv</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span><span class="sh">'</span><span class="s">gender_age_train.csv</span><span class="sh">'</span><span class="p">),</span>
+                      <span class="n">index_col</span><span class="o">=</span><span class="sh">'</span><span class="s">device_id</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">gatest</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nf">read_csv</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span><span class="sh">'</span><span class="s">gender_age_test.csv</span><span class="sh">'</span><span class="p">),</span>
+                     <span class="n">index_col</span> <span class="o">=</span> <span class="sh">'</span><span class="s">device_id</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">phone</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nf">read_csv</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span><span class="sh">'</span><span class="s">phone_brand_device_model.csv</span><span class="sh">'</span><span class="p">))</span>
+<span class="c1"># Get rid of duplicate device ids in phone
+</span><span class="n">phone</span> <span class="o">=</span> <span class="n">phone</span><span class="p">.</span><span class="nf">drop_duplicates</span><span class="p">(</span><span class="sh">'</span><span class="s">device_id</span><span class="sh">'</span><span class="p">,</span><span class="n">keep</span><span class="o">=</span><span class="sh">'</span><span class="s">first</span><span class="sh">'</span><span class="p">).</span><span class="nf">set_index</span><span class="p">(</span><span class="sh">'</span><span class="s">device_id</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">events</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nf">read_csv</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span><span class="sh">'</span><span class="s">events.csv</span><span class="sh">'</span><span class="p">),</span>
+                     <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="sh">'</span><span class="s">timestamp</span><span class="sh">'</span><span class="p">],</span> <span class="n">index_col</span><span class="o">=</span><span class="sh">'</span><span class="s">event_id</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">appevents</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nf">read_csv</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span><span class="sh">'</span><span class="s">app_events.csv</span><span class="sh">'</span><span class="p">),</span> 
+                        <span class="n">usecols</span><span class="o">=</span><span class="p">[</span><span class="sh">'</span><span class="s">event_id</span><span class="sh">'</span><span class="p">,</span><span class="sh">'</span><span class="s">app_id</span><span class="sh">'</span><span class="p">,</span><span class="sh">'</span><span class="s">is_active</span><span class="sh">'</span><span class="p">],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="sh">'</span><span class="s">is_active</span><span class="sh">'</span><span class="p">:</span><span class="nb">bool</span><span class="p">})</span>
+<span class="n">applabels</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nf">read_csv</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span><span class="sh">'</span><span class="s">app_labels.csv</span><span class="sh">'</span><span class="p">))</span>
 
-gatrain['trainrow'] = np.arange(gatrain.shape[0])
-gatest['testrow'] = np.arange(gatest.shape[0])
+<span class="n">gatrain</span><span class="p">[</span><span class="sh">'</span><span class="s">trainrow</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="n">gatrain</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">gatest</span><span class="p">[</span><span class="sh">'</span><span class="s">testrow</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="n">gatest</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-brandencoder = LabelEncoder().fit(phone.phone_brand)
-phone['brand'] = brandencoder.transform(phone['phone_brand'])
-gatrain['brand'] = phone['brand']
-gatest['brand'] = phone['brand']
-Xtr_brand = csr_matrix((np.ones(gatrain.shape[0]), 
-                       (gatrain.trainrow, gatrain.brand)))
-Xte_brand = csr_matrix((np.ones(gatest.shape[0]), 
-                       (gatest.testrow, gatest.brand)))
-print('Brand features: train shape {}, test shape {}'.format(Xtr_brand.shape, Xte_brand.shape))
+<span class="n">brandencoder</span> <span class="o">=</span> <span class="nc">LabelEncoder</span><span class="p">().</span><span class="nf">fit</span><span class="p">(</span><span class="n">phone</span><span class="p">.</span><span class="n">phone_brand</span><span class="p">)</span>
+<span class="n">phone</span><span class="p">[</span><span class="sh">'</span><span class="s">brand</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">brandencoder</span><span class="p">.</span><span class="nf">transform</span><span class="p">(</span><span class="n">phone</span><span class="p">[</span><span class="sh">'</span><span class="s">phone_brand</span><span class="sh">'</span><span class="p">])</span>
+<span class="n">gatrain</span><span class="p">[</span><span class="sh">'</span><span class="s">brand</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">phone</span><span class="p">[</span><span class="sh">'</span><span class="s">brand</span><span class="sh">'</span><span class="p">]</span>
+<span class="n">gatest</span><span class="p">[</span><span class="sh">'</span><span class="s">brand</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">phone</span><span class="p">[</span><span class="sh">'</span><span class="s">brand</span><span class="sh">'</span><span class="p">]</span>
+<span class="n">Xtr_brand</span> <span class="o">=</span> <span class="nf">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">gatrain</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> 
+                       <span class="p">(</span><span class="n">gatrain</span><span class="p">.</span><span class="n">trainrow</span><span class="p">,</span> <span class="n">gatrain</span><span class="p">.</span><span class="n">brand</span><span class="p">)))</span>
+<span class="n">Xte_brand</span> <span class="o">=</span> <span class="nf">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">gatest</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> 
+                       <span class="p">(</span><span class="n">gatest</span><span class="p">.</span><span class="n">testrow</span><span class="p">,</span> <span class="n">gatest</span><span class="p">.</span><span class="n">brand</span><span class="p">)))</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">Brand features: train shape {}, test shape {}</span><span class="sh">'</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="n">Xtr_brand</span><span class="p">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">Xte_brand</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
 
-m = phone.phone_brand.str.cat(phone.device_model)
-modelencoder = LabelEncoder().fit(m)
-phone['model'] = modelencoder.transform(m)
-gatrain['model'] = phone['model']
-gatest['model'] = phone['model']
-Xtr_model = csr_matrix((np.ones(gatrain.shape[0]), 
-                       (gatrain.trainrow, gatrain.model)))
-Xte_model = csr_matrix((np.ones(gatest.shape[0]), 
-                       (gatest.testrow, gatest.model)))
-print('Model features: train shape {}, test shape {}'.format(Xtr_model.shape, Xte_model.shape))
+<span class="n">m</span> <span class="o">=</span> <span class="n">phone</span><span class="p">.</span><span class="n">phone_brand</span><span class="p">.</span><span class="nb">str</span><span class="p">.</span><span class="nf">cat</span><span class="p">(</span><span class="n">phone</span><span class="p">.</span><span class="n">device_model</span><span class="p">)</span>
+<span class="n">modelencoder</span> <span class="o">=</span> <span class="nc">LabelEncoder</span><span class="p">().</span><span class="nf">fit</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+<span class="n">phone</span><span class="p">[</span><span class="sh">'</span><span class="s">model</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">modelencoder</span><span class="p">.</span><span class="nf">transform</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+<span class="n">gatrain</span><span class="p">[</span><span class="sh">'</span><span class="s">model</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">phone</span><span class="p">[</span><span class="sh">'</span><span class="s">model</span><span class="sh">'</span><span class="p">]</span>
+<span class="n">gatest</span><span class="p">[</span><span class="sh">'</span><span class="s">model</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">phone</span><span class="p">[</span><span class="sh">'</span><span class="s">model</span><span class="sh">'</span><span class="p">]</span>
+<span class="n">Xtr_model</span> <span class="o">=</span> <span class="nf">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">gatrain</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> 
+                       <span class="p">(</span><span class="n">gatrain</span><span class="p">.</span><span class="n">trainrow</span><span class="p">,</span> <span class="n">gatrain</span><span class="p">.</span><span class="n">model</span><span class="p">)))</span>
+<span class="n">Xte_model</span> <span class="o">=</span> <span class="nf">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">gatest</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> 
+                       <span class="p">(</span><span class="n">gatest</span><span class="p">.</span><span class="n">testrow</span><span class="p">,</span> <span class="n">gatest</span><span class="p">.</span><span class="n">model</span><span class="p">)))</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">Model features: train shape {}, test shape {}</span><span class="sh">'</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="n">Xtr_model</span><span class="p">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">Xte_model</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
 
-appencoder = LabelEncoder().fit(appevents.app_id)
-appevents['app'] = appencoder.transform(appevents.app_id)
-napps = len(appencoder.classes_)
-deviceapps = (appevents.merge(events[['device_id']], how='left',left_on='event_id',right_index=True)
-                       .groupby(['device_id','app'])['app'].agg(['size'])
-                       .merge(gatrain[['trainrow']], how='left', left_index=True, right_index=True)
-                       .merge(gatest[['testrow']], how='left', left_index=True, right_index=True)
-                       .reset_index())
+<span class="n">appencoder</span> <span class="o">=</span> <span class="nc">LabelEncoder</span><span class="p">().</span><span class="nf">fit</span><span class="p">(</span><span class="n">appevents</span><span class="p">.</span><span class="n">app_id</span><span class="p">)</span>
+<span class="n">appevents</span><span class="p">[</span><span class="sh">'</span><span class="s">app</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">appencoder</span><span class="p">.</span><span class="nf">transform</span><span class="p">(</span><span class="n">appevents</span><span class="p">.</span><span class="n">app_id</span><span class="p">)</span>
+<span class="n">napps</span> <span class="o">=</span> <span class="nf">len</span><span class="p">(</span><span class="n">appencoder</span><span class="p">.</span><span class="n">classes_</span><span class="p">)</span>
+<span class="n">deviceapps</span> <span class="o">=</span> <span class="p">(</span><span class="n">appevents</span><span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="n">events</span><span class="p">[[</span><span class="sh">'</span><span class="s">device_id</span><span class="sh">'</span><span class="p">]],</span> <span class="n">how</span><span class="o">=</span><span class="sh">'</span><span class="s">left</span><span class="sh">'</span><span class="p">,</span><span class="n">left_on</span><span class="o">=</span><span class="sh">'</span><span class="s">event_id</span><span class="sh">'</span><span class="p">,</span><span class="n">right_index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                       <span class="p">.</span><span class="nf">groupby</span><span class="p">([</span><span class="sh">'</span><span class="s">device_id</span><span class="sh">'</span><span class="p">,</span><span class="sh">'</span><span class="s">app</span><span class="sh">'</span><span class="p">])[</span><span class="sh">'</span><span class="s">app</span><span class="sh">'</span><span class="p">].</span><span class="nf">agg</span><span class="p">([</span><span class="sh">'</span><span class="s">size</span><span class="sh">'</span><span class="p">])</span>
+                       <span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="n">gatrain</span><span class="p">[[</span><span class="sh">'</span><span class="s">trainrow</span><span class="sh">'</span><span class="p">]],</span> <span class="n">how</span><span class="o">=</span><span class="sh">'</span><span class="s">left</span><span class="sh">'</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                       <span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="n">gatest</span><span class="p">[[</span><span class="sh">'</span><span class="s">testrow</span><span class="sh">'</span><span class="p">]],</span> <span class="n">how</span><span class="o">=</span><span class="sh">'</span><span class="s">left</span><span class="sh">'</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                       <span class="p">.</span><span class="nf">reset_index</span><span class="p">())</span>
 
-d = deviceapps.dropna(subset=['trainrow'])
-Xtr_app = csr_matrix((np.ones(d.shape[0]), (d.trainrow, d.app)), 
-                      shape=(gatrain.shape[0],napps))
-d = deviceapps.dropna(subset=['testrow'])
-Xte_app = csr_matrix((np.ones(d.shape[0]), (d.testrow, d.app)), 
-                      shape=(gatest.shape[0],napps))
-print('Apps data: train shape {}, test shape {}'.format(Xtr_app.shape, Xte_app.shape))
+<span class="n">d</span> <span class="o">=</span> <span class="n">deviceapps</span><span class="p">.</span><span class="nf">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="sh">'</span><span class="s">trainrow</span><span class="sh">'</span><span class="p">])</span>
+<span class="n">Xtr_app</span> <span class="o">=</span> <span class="nf">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">trainrow</span><span class="p">,</span> <span class="n">d</span><span class="p">.</span><span class="n">app</span><span class="p">)),</span> 
+                      <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">gatrain</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">napps</span><span class="p">))</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">deviceapps</span><span class="p">.</span><span class="nf">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="sh">'</span><span class="s">testrow</span><span class="sh">'</span><span class="p">])</span>
+<span class="n">Xte_app</span> <span class="o">=</span> <span class="nf">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">testrow</span><span class="p">,</span> <span class="n">d</span><span class="p">.</span><span class="n">app</span><span class="p">)),</span> 
+                      <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">gatest</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">napps</span><span class="p">))</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">Apps data: train shape {}, test shape {}</span><span class="sh">'</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="n">Xtr_app</span><span class="p">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">Xte_app</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
 
-applabels = applabels.loc[applabels.app_id.isin(appevents.app_id.unique())]
-applabels['app'] = appencoder.transform(applabels.app_id)
-labelencoder = LabelEncoder().fit(applabels.label_id)
-applabels['label'] = labelencoder.transform(applabels.label_id)
-nlabels = len(labelencoder.classes_)
+<span class="n">applabels</span> <span class="o">=</span> <span class="n">applabels</span><span class="p">.</span><span class="n">loc</span><span class="p">[</span><span class="n">applabels</span><span class="p">.</span><span class="n">app_id</span><span class="p">.</span><span class="nf">isin</span><span class="p">(</span><span class="n">appevents</span><span class="p">.</span><span class="n">app_id</span><span class="p">.</span><span class="nf">unique</span><span class="p">())]</span>
+<span class="n">applabels</span><span class="p">[</span><span class="sh">'</span><span class="s">app</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">appencoder</span><span class="p">.</span><span class="nf">transform</span><span class="p">(</span><span class="n">applabels</span><span class="p">.</span><span class="n">app_id</span><span class="p">)</span>
+<span class="n">labelencoder</span> <span class="o">=</span> <span class="nc">LabelEncoder</span><span class="p">().</span><span class="nf">fit</span><span class="p">(</span><span class="n">applabels</span><span class="p">.</span><span class="n">label_id</span><span class="p">)</span>
+<span class="n">applabels</span><span class="p">[</span><span class="sh">'</span><span class="s">label</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">labelencoder</span><span class="p">.</span><span class="nf">transform</span><span class="p">(</span><span class="n">applabels</span><span class="p">.</span><span class="n">label_id</span><span class="p">)</span>
+<span class="n">nlabels</span> <span class="o">=</span> <span class="nf">len</span><span class="p">(</span><span class="n">labelencoder</span><span class="p">.</span><span class="n">classes_</span><span class="p">)</span>
 
-devicelabels = (deviceapps[['device_id','app']]
-                .merge(applabels[['app','label']])
-                .groupby(['device_id','label'])['app'].agg(['size'])
-                .merge(gatrain[['trainrow']], how='left', left_index=True, right_index=True)
-                .merge(gatest[['testrow']], how='left', left_index=True, right_index=True)
-                .reset_index())
-devicelabels.head()
+<span class="n">devicelabels</span> <span class="o">=</span> <span class="p">(</span><span class="n">deviceapps</span><span class="p">[[</span><span class="sh">'</span><span class="s">device_id</span><span class="sh">'</span><span class="p">,</span><span class="sh">'</span><span class="s">app</span><span class="sh">'</span><span class="p">]]</span>
+                <span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="n">applabels</span><span class="p">[[</span><span class="sh">'</span><span class="s">app</span><span class="sh">'</span><span class="p">,</span><span class="sh">'</span><span class="s">label</span><span class="sh">'</span><span class="p">]])</span>
+                <span class="p">.</span><span class="nf">groupby</span><span class="p">([</span><span class="sh">'</span><span class="s">device_id</span><span class="sh">'</span><span class="p">,</span><span class="sh">'</span><span class="s">label</span><span class="sh">'</span><span class="p">])[</span><span class="sh">'</span><span class="s">app</span><span class="sh">'</span><span class="p">].</span><span class="nf">agg</span><span class="p">([</span><span class="sh">'</span><span class="s">size</span><span class="sh">'</span><span class="p">])</span>
+                <span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="n">gatrain</span><span class="p">[[</span><span class="sh">'</span><span class="s">trainrow</span><span class="sh">'</span><span class="p">]],</span> <span class="n">how</span><span class="o">=</span><span class="sh">'</span><span class="s">left</span><span class="sh">'</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                <span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="n">gatest</span><span class="p">[[</span><span class="sh">'</span><span class="s">testrow</span><span class="sh">'</span><span class="p">]],</span> <span class="n">how</span><span class="o">=</span><span class="sh">'</span><span class="s">left</span><span class="sh">'</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                <span class="p">.</span><span class="nf">reset_index</span><span class="p">())</span>
+<span class="n">devicelabels</span><span class="p">.</span><span class="nf">head</span><span class="p">()</span>
 
-d = devicelabels.dropna(subset=['trainrow'])
-Xtr_label = csr_matrix((np.ones(d.shape[0]), (d.trainrow, d.label)), 
-                      shape=(gatrain.shape[0],nlabels))
-d = devicelabels.dropna(subset=['testrow'])
-Xte_label = csr_matrix((np.ones(d.shape[0]), (d.testrow, d.label)), 
-                      shape=(gatest.shape[0],nlabels))
-print('Labels data: train shape {}, test shape {}'.format(Xtr_label.shape, Xte_label.shape))
+<span class="n">d</span> <span class="o">=</span> <span class="n">devicelabels</span><span class="p">.</span><span class="nf">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="sh">'</span><span class="s">trainrow</span><span class="sh">'</span><span class="p">])</span>
+<span class="n">Xtr_label</span> <span class="o">=</span> <span class="nf">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">trainrow</span><span class="p">,</span> <span class="n">d</span><span class="p">.</span><span class="n">label</span><span class="p">)),</span> 
+                      <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">gatrain</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">nlabels</span><span class="p">))</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">devicelabels</span><span class="p">.</span><span class="nf">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="sh">'</span><span class="s">testrow</span><span class="sh">'</span><span class="p">])</span>
+<span class="n">Xte_label</span> <span class="o">=</span> <span class="nf">csr_matrix</span><span class="p">((</span><span class="n">np</span><span class="p">.</span><span class="nf">ones</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">testrow</span><span class="p">,</span> <span class="n">d</span><span class="p">.</span><span class="n">label</span><span class="p">)),</span> 
+                      <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">gatest</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">nlabels</span><span class="p">))</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">Labels data: train shape {}, test shape {}</span><span class="sh">'</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="n">Xtr_label</span><span class="p">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">Xte_label</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
 
-Xtrain = hstack((Xtr_brand, Xtr_model, Xtr_app, Xtr_label), format='csr')
-Xtest =  hstack((Xte_brand, Xte_model, Xte_app, Xte_label), format='csr')
-print('All features: train shape {}, test shape {}'.format(Xtrain.shape, Xtest.shape))
+<span class="n">Xtrain</span> <span class="o">=</span> <span class="nf">hstack</span><span class="p">((</span><span class="n">Xtr_brand</span><span class="p">,</span> <span class="n">Xtr_model</span><span class="p">,</span> <span class="n">Xtr_app</span><span class="p">,</span> <span class="n">Xtr_label</span><span class="p">),</span> <span class="nb">format</span><span class="o">=</span><span class="sh">'</span><span class="s">csr</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">Xtest</span> <span class="o">=</span>  <span class="nf">hstack</span><span class="p">((</span><span class="n">Xte_brand</span><span class="p">,</span> <span class="n">Xte_model</span><span class="p">,</span> <span class="n">Xte_app</span><span class="p">,</span> <span class="n">Xte_label</span><span class="p">),</span> <span class="nb">format</span><span class="o">=</span><span class="sh">'</span><span class="s">csr</span><span class="sh">'</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">All features: train shape {}, test shape {}</span><span class="sh">'</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="n">Xtrain</span><span class="p">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">Xtest</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
 
-targetencoder = LabelEncoder().fit(gatrain.group)
-y = targetencoder.transform(gatrain.group)
+<span class="n">targetencoder</span> <span class="o">=</span> <span class="nc">LabelEncoder</span><span class="p">().</span><span class="nf">fit</span><span class="p">(</span><span class="n">gatrain</span><span class="p">.</span><span class="n">group</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">targetencoder</span><span class="p">.</span><span class="nf">transform</span><span class="p">(</span><span class="n">gatrain</span><span class="p">.</span><span class="n">group</span><span class="p">)</span>
 
-########## XGBOOST ##########
+<span class="c1">########## XGBOOST ##########
+</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">booster</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="sh">'</span><span class="s">gblinear</span><span class="sh">'</span>
+<span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">objective</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="sh">"</span><span class="s">multi:softprob</span><span class="sh">"</span>
+<span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">eval_metric</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="sh">'</span><span class="s">mlogloss</span><span class="sh">'</span>
+<span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">eta</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.005</span>
+<span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">num_class</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">12</span>
+<span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">lambda</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">params</span><span class="p">[</span><span class="sh">'</span><span class="s">alpha</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
 
-params = {}
-params['booster'] = 'gblinear'
-params['objective'] = "multi:softprob"
-params['eval_metric'] = 'mlogloss'
-params['eta'] = 0.005
-params['num_class'] = 12
-params['lambda'] = 3
-params['alpha'] = 2
+<span class="c1"># Random 10% for validation
+</span><span class="n">kf</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="nc">StratifiedKFold</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">4242</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
 
-# Random 10% for validation
-kf = list(StratifiedKFold(y, n_folds=10, shuffle=True, random_state=4242))[0]
+<span class="n">Xtr</span><span class="p">,</span> <span class="n">Xte</span> <span class="o">=</span> <span class="n">Xtrain</span><span class="p">[</span><span class="n">kf</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:],</span> <span class="n">Xtrain</span><span class="p">[</span><span class="n">kf</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">:]</span>
+<span class="n">ytr</span><span class="p">,</span> <span class="n">yte</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">kf</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">y</span><span class="p">[</span><span class="n">kf</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
 
-Xtr, Xte = Xtrain[kf[0], :], Xtrain[kf[1], :]
-ytr, yte = y[kf[0]], y[kf[1]]
+<span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">Training set: </span><span class="sh">'</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">Xtr</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">'</span><span class="s">Validation set: </span><span class="sh">'</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">Xte</span><span class="p">.</span><span class="n">shape</span><span class="p">))</span>
 
-print('Training set: ' + str(Xtr.shape))
-print('Validation set: ' + str(Xte.shape))
+<span class="n">d_train</span> <span class="o">=</span> <span class="n">xgb</span><span class="p">.</span><span class="nc">DMatrix</span><span class="p">(</span><span class="n">Xtr</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">ytr</span><span class="p">)</span>
+<span class="n">d_valid</span> <span class="o">=</span> <span class="n">xgb</span><span class="p">.</span><span class="nc">DMatrix</span><span class="p">(</span><span class="n">Xte</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">yte</span><span class="p">)</span>
 
-d_train = xgb.DMatrix(Xtr, label=ytr)
-d_valid = xgb.DMatrix(Xte, label=yte)
+<span class="n">watchlist</span> <span class="o">=</span> <span class="p">[(</span><span class="n">d_train</span><span class="p">,</span> <span class="sh">'</span><span class="s">train</span><span class="sh">'</span><span class="p">),</span> <span class="p">(</span><span class="n">d_valid</span><span class="p">,</span> <span class="sh">'</span><span class="s">eval</span><span class="sh">'</span><span class="p">)]</span>
 
-watchlist = [(d_train, 'train'), (d_valid, 'eval')]
+<span class="n">clf</span> <span class="o">=</span> <span class="n">xgb</span><span class="p">.</span><span class="nf">train</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">d_train</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">watchlist</span><span class="p">,</span> <span class="n">early_stopping_rounds</span><span class="o">=</span><span class="mi">25</span><span class="p">)</span>
 
-clf = xgb.train(params, d_train, 1000, watchlist, early_stopping_rounds=25)
+<span class="n">pred</span> <span class="o">=</span> <span class="n">clf</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">xgb</span><span class="p">.</span><span class="nc">DMatrix</span><span class="p">(</span><span class="n">Xtest</span><span class="p">))</span>
 
-pred = clf.predict(xgb.DMatrix(Xtest))
+<span class="n">pred</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nc">DataFrame</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">gatest</span><span class="p">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">targetencoder</span><span class="p">.</span><span class="n">classes_</span><span class="p">)</span>
+<span class="n">pred</span><span class="p">.</span><span class="nf">head</span><span class="p">()</span>
+<span class="n">pred</span><span class="p">.</span><span class="nf">to_csv</span><span class="p">(</span><span class="sh">'</span><span class="s">sparse_xgb.csv</span><span class="sh">'</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-pred = pd.DataFrame(pred, index = gatest.index, columns=targetencoder.classes_)
-pred.head()
-pred.to_csv('sparse_xgb.csv', index=True)
-
-#params['lambda'] = 1
+<span class="c1">#params['lambda'] = 1
 #for alpha in [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]:
 #    params['alpha'] = alpha
 #    clf = xgb.train(params, d_train, 1000, watchlist, early_stopping_rounds=25)
 #    print('^' + str(alpha))
-</code></pre>
-
-<h1>12.Tip</h1>
-
-<p>（1）含有缺失进行训练</p>
-
-<pre><code class="python">dtrain = xgb.DMatrix(x_train, y_train, missing=np.nan）
-</code></pre>
-
-<h1>13.参考文献</h1>
-
-<p>（1）<a href="http://pan.baidu.com/s/1gfA6FK3">xgboost导读和实战</a></p>
-
-<p>（2）<a href="http://pan.baidu.com/s/1eR7ADge">xgboost</a></p>
-
-<p>（3）<a href="https://github.com/dmlc/xgboost/blob/master/demo/guide-python/custom_objective.py">自定义目标函数</a></p>
-
-<p>（4）<a href="https://www.zhihu.com/question/41354392">机器学习算法中GBDT和XGBOOST的区别有哪些？</a></p>
-
-<p>（5）<a href="http://xgboost.readthedocs.io/en/latest/tutorials/dart.html">DART</a></p>
-
-<p>（6）<a href="https://www.kaggle.com/anokas/sparse-xgboost-starter-2-26857/code">https://www.kaggle.com/anokas/sparse-xgboost-starter-2-26857/code</a></p>
-
-<p>（7）<a href="http://learningsys.org/papers/LearningSys_2015_paper_32.pdf">XGBoost: Reliable Large-scale Tree Boosting System</a></p>
-
-<p>（8）<a href="http://delivery.acm.org/10.1145/2940000/2939785/p785-chen.pdf?ip=202.118.228.100&amp;id=2939785&amp;acc=ACTIVE%20SERVICE&amp;key=BF85BBA5741FDC6E.5C4511229FC427D6.4D4702B0C3E38B35.4D4702B0C3E38B35&amp;CFID=905733202&amp;CFTOKEN=53852884&amp;__acm__=1488265641_ffdebf36cef2b1bf7f3f76abf6bfe426">XGBoost: A Scalable Tree Boosting System</a></p>
-</div>
-<div id="copyleft" class="well" >
-	<span>Original Link: <a rel="full-article" href="">https://ibillxia.github.io/blog/2017/09/05/xgboost-algorithm-explained/</a></br>
-	Attribution - NON-Commercial - ShareAlike - Copyright &copy; <a href="http://about.me/ibillxia">Bill Xia</a> <span>
-</div>
-
-
-  <footer>
-    <p class="meta">
-      
-<span class="byline author vcard">Posted by <span class="fn"><a href="http://about.me/ibillxia">Bill Xia</a></span></span>
-
-      
-
-
-
-
-
-
-
-
-
-<time datetime="2017-09-05T21:38:00+08:00" pubdate data-updated="true"></time>
-		
-		
-		
-		  <span class="categories">Posted in <a class='category' href='/blog/categories/datascience/'>DataScience</a></span>
-		
-		
-		  <span class="tags">Tagged with <a class='tag' href='/blog/tags/xgboost/'>XGBoost</a>, <a class='tag' href='/blog/tags/ji-qi-xue-xi/'>机器学习</a>, <a class='tag' href='/blog/tags/ti-du-ti-sheng/'>梯度提升</a></span>
-		
-    </p>
-    
-      
-         <div class="sharing">
-  
-  
-  
-</div>
-
-      
-    
-	</br>
-	 <ul class="pager">
-      
-      <li class="previous"><a class="basic-alignment left"
-        href="/blog/2017/07/06/ctr-prediction-fm-ffm/" title="Previous Post:
-        【美团】深入FFM原理与实践">&laquo; 【美团】深入FFM原理与实践</a></li>
-      
-      <li><a href="/blog/archives/">Blog Archives</a></li>
-      
-      <li class="next"><a class="basic-alignment right" href="/blog/2017/10/23/content-product-user-lifecycle/"
-        title="Next Post: 内容类产品用户生命周期的数据指标体系">内容类产品用户生命周期的数据指标体系
-        &raquo;</a></li>
-      
-    </ul>
-    
-    <section>
-      <h1>Comments</h1>
-      <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-    </section>
-    
-   
-  </footer>
-</article>
-
-<aside class="sidebar-nav span3">
-  
-    
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo" class="page-footer">
-<hr>
-<p>
-  Copyright &copy; 2009 - 2026 - <a href="http://about.me/ibillxia">Bill Xia</a> -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> - Theme by <a href="https://github.com/bkutil/bootstrap-theme">bootstrap-theme</a> </span>
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'ibillxia';
-      
-        
-        // var disqus_developer = 1;
-        var disqus_identifier = 'https://ibillxia.github.io/blog/2017/09/05/xgboost-algorithm-explained/';
-        var disqus_url = 'https://ibillxia.github.io/blog/2017/09/05/xgboost-algorithm-explained/';
-        var disqus_script = 'embed.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-
-
-
-
-
-
-
-
-
-</body>
-</html>
+</span>
+</pre></table></code></div></div><h1 id="12tip">12.Tip</h1><p>（1）含有缺失进行训练</p><div class="language-python highlighter-rouge"><div class="code-header"> <span data-label-text="Python"><i class="fas fa-code fa-fw small"></i></span> <button aria-label="copy" data-title-succeed="已复制！"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="n">dtrain</span> <span class="o">=</span> <span class="n">xgb</span><span class="p">.</span><span class="n">DMatrix</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="n">np</span><span class="p">.</span><span class="n">nan</span><span class="err">）</span>
+</pre></table></code></div></div><h1 id="13参考文献">13.参考文献</h1><p>（1）<a href="http://pan.baidu.com/s/1gfA6FK3">xgboost导读和实战</a></p><p>（2）<a href="http://pan.baidu.com/s/1eR7ADge">xgboost</a></p><p>（3）<a href="https://github.com/dmlc/xgboost/blob/master/demo/guide-python/custom_objective.py">自定义目标函数</a></p><p>（4）<a href="https://www.zhihu.com/question/41354392">机器学习算法中GBDT和XGBOOST的区别有哪些？</a></p><p>（5）<a href="http://xgboost.readthedocs.io/en/latest/tutorials/dart.html">DART</a></p><p>（6）<a href="https://www.kaggle.com/anokas/sparse-xgboost-starter-2-26857/code">https://www.kaggle.com/anokas/sparse-xgboost-starter-2-26857/code</a></p><p>（7）<a href="http://learningsys.org/papers/LearningSys_2015_paper_32.pdf">XGBoost: Reliable Large-scale Tree Boosting System</a></p><p>（8）<a href="http://delivery.acm.org/10.1145/2940000/2939785/p785-chen.pdf?ip=202.118.228.100&amp;id=2939785&amp;acc=ACTIVE%20SERVICE&amp;key=BF85BBA5741FDC6E.5C4511229FC427D6.4D4702B0C3E38B35.4D4702B0C3E38B35&amp;CFID=905733202&amp;CFTOKEN=53852884&amp;__acm__=1488265641_ffdebf36cef2b1bf7f3f76abf6bfe426">XGBoost: A Scalable Tree Boosting System</a></p></div><div class="post-tail-wrapper text-muted"><div class="d-flex justify-content-between align-items-center gap-3 mb-3"><div class="post-meta"> <i class="far fa-folder-open fa-fw me-1"></i> <a href="/blog/categories/datascience/">DataScience</a></div></div><div class="post-tags"> <i class="fa fa-tags fa-fw me-1"></i> <a href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="post-tag no-text-decoration" >机器学习</a> <a href="/blog/tags/xgboost/" class="post-tag no-text-decoration" >XGBoost</a> <a href="/blog/tags/%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87/" class="post-tag no-text-decoration" >梯度提升</a></div><div class=" post-tail-bottom d-flex justify-content-between align-items-center mt-5 pb-2 " ><div class="license-wrapper"> 本文由作者按照 <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> 进行授权</div><div class="share-wrapper d-flex align-items-center"> <span class="share-label text-muted">分享</span> <span class="share-icons"> <a href="https://x.com/intent/tweet?text=XGBoost%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2017%2F09%2F05%2Fxgboost-algorithm-explained%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Twitter" aria-label="Twitter"> <i class="fa-fw fa-brands fa-square-x-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=XGBoost%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3%20-%20Bill's%20Blog&u=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2017%2F09%2F05%2Fxgboost-algorithm-explained%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Facebook" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://t.me/share/url?url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2017%2F09%2F05%2Fxgboost-algorithm-explained%2F&text=XGBoost%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3%20-%20Bill's%20Blog" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Telegram" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <a href="https://service.weibo.com/share/share.php?title=XGBoost%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3%20-%20Bill's%20Blog&url=https%3A%2F%2Fibillxia.github.io%2Fblog%2F2017%2F09%2F05%2Fxgboost-algorithm-explained%2F" target="_blank" rel="noopener" data-bs-toggle="tooltip" data-bs-placement="top" title="Weibo" aria-label="Weibo"> <i class="fa-fw fab fa-weibo"></i> </a> <button id="copy-link" aria-label="Copy link" class="btn small" data-bs-toggle="tooltip" data-bs-placement="top" title="分享链接" data-title-succeed="链接已复制！" > <i class="fa-fw fas fa-link pe-none fs-6"></i> </button> </span></div></div></div></article></main><aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 text-muted"><div class="access"><section id="access-lastmod"><h2 class="panel-heading">最近更新</h2><ul class="content list-unstyled ps-0 pb-1 ms-1 mt-2"><li class="text-truncate lh-lg"> <a href="/blog/2026/11/16/anthropic-the-components-of-agent-memory/">【译】Anthropic：智能体记忆的组成部分</a><li class="text-truncate lh-lg"> <a href="/blog/2026/11/09/is-FDE-actually-established-in-China/">前鹅厂王津银：FDE 在中国，到底成立吗？</a><li class="text-truncate lh-lg"> <a href="/blog/2026/09/14/openai-data-agent-skills-interpretation/">OpenAI Data Agent的核心Skill解读：数据Agent如何把问题变成可信的决策</a><li class="text-truncate lh-lg"> <a href="/blog/2026/08/20/data-agent-servey-from-arch-to-practice/">Data Agent全景调研：从技术架构到产业实践</a><li class="text-truncate lh-lg"> <a href="/blog/2026/07/03/FDE-what-why-and-future/">什么是 FDE？从它的爆火看软件研发的职能大洗牌</a></ul></section><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div></aside></div><div class="row"><div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 px-md-4"><aside id="related-posts" aria-labelledby="related-label"><h3 class="mb-4" id="related-label">相关文章</h3><nav class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mb-4"><article class="col"> <a href="/blog/2020/02/21/tree-ensemble-models-comparison/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1582286400" data-df="YYYY/MM/DD" > 2020/02/21 </time><h4 class="pt-0 my-2">集成树模型详解：RandomForest、GBDT、XGBoost与LightGBM</h4><div class="text-muted"><p>本文主要介绍基于集成学习的决策树，然后对其中重要的、使用广泛的方法进行对比：RF（随机森林））, GBDT（梯度提升决策树）, XGBoost, lightGBM。 一、集成学习 常见的集成学习框架有三种：Bagging，Boosting 和 Stacking。三种集成学习框架在基学习器的产生和综合结果的方式上会有些区别，我们先做些简单的介绍。 1.1 Bagging Ba...</p></div></div></a></article><article class="col"> <a href="/blog/2018/07/07/reading-neural-networks-a-comprehensive-approach/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1530977880" data-df="YYYY/MM/DD" > 2018/07/07 </time><h4 class="pt-0 my-2">《Neural Networks: A Comprehensive Foundation》读书笔记</h4><div class="text-muted"><p>近几年AI大火，深度学习作为AI领域最火的研究子方向，从最早的RBM、Auto-encoder、最原始的CNN、RNN到LeNet、AlexNet、VGG、GoogLeNet、ResNet等多样化的深度网络，深度学习的算法和模型层出不穷，发展迅猛，但所有这些模型的低层原理和子单元却是大同小异殊途同归的。Simon Haykins 这本书详细解读了神经网模型的底层原理、中层的方法论和思想总结、...</p></div></div></a></article><article class="col"> <a href="/blog/2017/07/06/ctr-prediction-fm-ffm/" class="post-preview card h-100"><div class="card-body"> <time data-ts="1499316840" data-df="YYYY/MM/DD" > 2017/07/06 </time><h4 class="pt-0 my-2">【美团】深入FFM原理与实践</h4><div class="text-muted"><p>FM和FFM模型是最近几年提出的模型，凭借其在数据量比较大并且特征稀疏的情况下，仍然能够得到优秀的性能和效果的特性，屡次在各大公司举办的CTR预估比赛中获得不错的战绩。美团点评技术团队在搭建DSP的过程中，探索并使用了FM和FFM模型进行CTR和CVR预估，并且取得了不错的效果。本文旨在把我们对FM和FFM原理的探索和应用的经验介绍给有兴趣的读者。 前言 在计算广告领域，点击率CTR（c...</p></div></div></a></article></nav></aside><nav class="post-navigation d-flex justify-content-between" aria-label="Post Navigation"> <a href="/blog/2017/07/06/ctr-prediction-fm-ffm/" class="btn btn-outline-primary" aria-label="上一篇" ><p>【美团】深入FFM原理与实践</p></a> <a href="/blog/2017/10/23/content-product-user-lifecycle/" class="btn btn-outline-primary" aria-label="下一篇" ><p>内容类产品用户生命周期的数据指标体系</p></a></nav><footer aria-label="Site Info" class=" d-flex flex-column justify-content-center text-muted flex-lg-row justify-content-lg-between align-items-lg-center pb-lg-3 " ><p>© <time>2026</time> <a href="https://github.com/ibillxia">Bill Xia</a>. <span data-bs-toggle="tooltip" data-bs-placement="top" title="除非另有说明，本网站上的博客文章均由作者按照知识共享署名 4.0 国际 (CC BY 4.0) 许可协议进行授权。" >保留部分权利。</span></p><p>本站采用 <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> 主题 <a data-bs-toggle="tooltip" data-bs-placement="top" title="v7.6.0" href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener" >Chirpy</a></p></footer></div></div><div id="search-result-wrapper" class="d-flex justify-content-center d-none"><div class="col-11 content"><div id="search-hints"><section><h2 class="panel-heading">热门标签</h2><div class="d-flex flex-wrap mt-3 mb-1 me-3"> <a class="post-tag btn btn-outline-primary" href="/blog/tags/c/">C++</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/stl/">STL</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/speech/">Speech</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/zju/">ZJU</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">信号处理</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">推荐系统</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a> <a class="post-tag btn btn-outline-primary" href="/blog/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络</a></div></section></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><aside aria-label="Scroll to Top"> <button id="back-to-top" type="button" class="btn btn-lg btn-box-shadow"> <i class="fas fa-angle-up"></i> </button></aside></div><div id="mask" class="d-none position-fixed w-100 h-100 z-1"></div><aside id="notification" class="toast w-auto rounded-5 text-nowrap" role="alert" aria-live="assertive" aria-atomic="true" data-bs-animation="true" data-bs-autohide="false" ><div class="d-flex align-items-center"><div class="toast-body ps-3">发现新内容</div><button type="button" class="btn btn-primary btn-sm rounded-2 py-0" aria-label="Update" >更新</button> <button type="button" class="btn-close mx-3 ms-2" data-bs-dismiss="toast" aria-label="Close" ></button></div></aside><script> var disqus_config = function () { this.page.url = 'https://ibillxia.github.io/blog/2017/09/05/xgboost-algorithm-explained/'; this.page.identifier = '/blog/2017/09/05/xgboost-algorithm-explained/'; }; function addDisqus() { let disqusThread = document.createElement('div'); let paragraph = document.createElement('p'); disqusThread.id = 'disqus_thread'; paragraph.className = 'text-center text-muted small'; paragraph.innerHTML = 'Comments powered by <a href="https://disqus.com/">Disqus</a>.'; disqusThread.appendChild(paragraph); const footer = document.querySelector('footer'); footer.insertAdjacentElement("beforebegin", disqusThread); }function reloadDisqus(event) { if (event.source === window && event.data && event.data.id === Theme.eventId) {if (typeof DISQUS === 'undefined') { return; } if (document.readyState == 'complete') { DISQUS.reset({ reload: true, config: disqus_config }); } } } addDisqus(); if (Theme.isToggleable) { addEventListener('message', reloadDisqus); }var disqusObserver = new IntersectionObserver( function (entries) { if (entries[0].isIntersecting) { var d = document, s = d.createElement('script'); s.src = 'https://ibillxia.disqus.com/embed.js'; s.setAttribute('data-timestamp', +new Date()); (d.head || d.body).appendChild(s); disqusObserver.disconnect(); } }, { threshold: [0] } ); disqusObserver.observe(document.getElementById('disqus_thread')); </script> <script> document.addEventListener('DOMContentLoaded', () => { SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<article class="px-1 px-sm-2 px-lg-4 px-xl-0"><header><h2><a href="{url}">{title}</a></h2><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div></header><p>{content}</p></article>', noResultsText: '<p class="mt-5">搜索结果为空</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="me-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); }); </script>
