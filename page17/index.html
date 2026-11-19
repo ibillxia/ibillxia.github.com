@@ -171,6 +171,106 @@ $(function () {
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2012/03/03/07-zju-program-test-solution/">07年浙大复试机试题解</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-03-03T22:05:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2012/03/03/07-zju-program-test-solution/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>
+07年浙大研究生复试机试题解
+</p>
+
+
+
+
+<h3>A题：最小长方形（hdoj1859）（九度1020）</h3>
+
+
+<p>水题，不解释，代码如下：</p>
+
+
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem A </span></figcaption>
+<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">lx</span><span class="p">,</span><span class="n">ly</span><span class="p">,</span><span class="n">rx</span><span class="p">,</span><span class="n">ry</span><span class="p">,</span><span class="n">tx</span><span class="p">,</span><span class="n">ty</span><span class="p">;</span>
+</span><span class='line'><span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
+</span><span class='line'><span class="w">        </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d %d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">tx</span><span class="p">,</span><span class="o">&amp;</span><span class="n">ty</span><span class="p">);</span>
+</span><span class='line'><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">tx</span><span class="o">==</span><span class="mi">0</span><span class="o">&amp;&amp;</span><span class="n">ty</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span><span class="k">break</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="n">lx</span><span class="o">=</span><span class="n">rx</span><span class="o">=</span><span class="n">tx</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="n">ly</span><span class="o">=</span><span class="n">ry</span><span class="o">=</span><span class="n">ty</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
+</span><span class='line'><span class="w">            </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d %d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">tx</span><span class="p">,</span><span class="o">&amp;</span><span class="n">ty</span><span class="p">);</span>
+</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">tx</span><span class="o">==</span><span class="mi">0</span><span class="o">&amp;&amp;</span><span class="n">ty</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span><span class="k">break</span><span class="p">;</span>
+</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">tx</span><span class="o">&lt;</span><span class="n">lx</span><span class="p">)</span><span class="n">lx</span><span class="o">=</span><span class="n">tx</span><span class="p">;</span>
+</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">ty</span><span class="o">&lt;</span><span class="n">ly</span><span class="p">)</span><span class="n">ly</span><span class="o">=</span><span class="n">ty</span><span class="p">;</span>
+</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">tx</span><span class="o">&gt;</span><span class="n">rx</span><span class="p">)</span><span class="n">rx</span><span class="o">=</span><span class="n">tx</span><span class="p">;</span>
+</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">ty</span><span class="o">&gt;</span><span class="n">ry</span><span class="p">)</span><span class="n">ry</span><span class="o">=</span><span class="n">ty</span><span class="p">;</span>
+</span><span class='line'><span class="w">        </span><span class="p">}</span>
+</span><span class='line'><span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d %d %d %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">lx</span><span class="p">,</span><span class="n">ly</span><span class="p">,</span><span class="n">rx</span><span class="p">,</span><span class="n">ry</span><span class="p">);</span>
+</span><span class='line'><span class="w">    </span><span class="p">}</span>
+</span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/03/03/07-zju-program-test-solution/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2012/03/02/06-zju-program-test-solution/">06年浙大复试机试题解</a></h1>
     
     
@@ -808,85 +908,6 @@ C语言用va_start等宏来处理这些可变参数。这些宏看起来很复�
   
     <footer>
       <a rel="full-article" href="/blog/2011/04/17/my-understanding-of-micro-blog/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2011/04/11/14-theories-of-gaining-profits-in-web-system/">14个网站盈利的理论</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2011-04-11T18:27:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2011/04/11/14-theories-of-gaining-profits-in-web-system/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h3>1.250定律</h3>
-
-
-<p>拉德认为：每一位顾客身后，大体有250名亲朋好友。如果您赢得了一位顾客的好感，就意味着赢得了250个人的好感；反之，如果你得罪了一名顾客，
-也就意味着得罪了250 名顾客。在你的网站访客中，一个访客可能可以带来一群访客，任何网站都有起步和发展的过程，这 个过程中此定律尤其重要。</p>
-
-
-
-
-<h3>2.达维多定律</h3>
-
-
-<p>达维多认为，一个企业要想在市场上总是占据主导地位，那么就要做到第一个开发出新产品，又第一个淘汰自己的老产品。国内网站跟风太严重，比如
-前段时间的格子网，乞讨网，博客网，一个成功了，大家一拥而上。但实际效果是，第一个出名的往往最成功，所以在网站的定位上，要动自己的脑筋，
-不是去捡人家剩下的客户。同理，买人家出售的数据来建站效果是很糟糕的。</p>
-
-
-
-
-<h3>3.木桶定律</h3>
-
-
-<p>水桶定律是指，一只水桶能装多少水，完全取决于它最短的那块木板。这就是说任何一个组 织都可能面临的一个共同问题，即构成组织的各个部分往往
-决定了整个组织的水平。注意审视自己的网站，是速度最糟糕？美工最糟糕？宣传最糟糕？你首先要做的，不是改进你最强的，而应该是你最薄弱的。</p>
-
-
-
-
-<h3>4.马太效应</h3>
-
-
-<p>《新约》中有这样一个故事，一个国王远行前，交给三个仆人每人一锭银子，吩咐他们：“你们去做生意，等我回来时，再来见我。”国王回来时，第一个
-仆人说：“主人，你交给我们的一锭银子，我已赚了10锭。”于是国王奖励他10座城邑。第二个仆人报告说：“主人，你给我的一锭银子，我已赚了5锭。” 于是
-国王例奖励了他5座城邑。第三个仆人报告说：“主人，你给我的一锭银子，我一直包在手巾里存着，我怕丢失，一直没有拿出来。”于是国王命令将第三个仆人
-的一锭银子也赏给第一个仆人，并且说：“凡是少的，就连他所有的也要夺过来。凡是多的，还要给他，叫他多多益善。”这就是马太效应。在同类网站中，马太
-效应是很明显的。一个出名的社区，比一个新建的社区，更容易吸引到新客户。启示是，如果你无法把网站做大，那么你要做专。作专之后再做大就更容易。</p>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2011/04/11/14-theories-of-gaining-profits-in-web-system/">Read on &rarr;</a>
     </footer>
   
 

@@ -171,6 +171,69 @@ $(function () {
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2024/07/02/ai-painting-clip-dalle-stable-diffusion/">AI绘画原理解析：从CLIP、DALLE到Stable Diffusion</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2024-07-02T15:16:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2024/07/02/ai-painting-clip-dalle-stable-diffusion/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>原文链接：<a href="https://blog.csdn.net/v_JULY_v/article/details/131205615">https://blog.csdn.net/v_JULY_v/article/details/131205615</a></p>
+
+<h1>前言</h1>
+
+<p>关于Stable Diffusion，可以先看下这篇<a href="https://jalammar.github.io/illustrated-stable-diffusion/">图解Stable Diffusion</a>的文章(此篇文章也是本文的参考之一)</p>
+
+<ol>
+<li>23年3月中旬，当OpenAI宣称GPT4具备了CV多模态的能力之后，让我对AI绘画和CV多模态有了更强的动力去研究探索，并把背后的技术细节写出来</li>
+</ol>
+
+
+<p>其实当时就想写了，但当时因为写各种开源平替模型的原理、部署、微调去了，所以一直没来得及写，包括之前计划的100篇论文也因此耽搁</p>
+
+<p>4.23，我所讲的ChatGPT原理课开课之后，终于有时间开写这篇多模态博客，然想写清楚stable diffusion和midjourney背后的技术细节，不得不先从扩散模型开始，于此便有了上一篇<a href="https://blog.csdn.net/v_JULY_v/article/details/130361959">《图像生成发展起源：从VAE、扩散模型DDPM、DETR到ViT、Swin transformer》</a>「且如果你此前不了解何谓扩散模型、何谓DDPM，务必先看该文，不然没法看懂本文」</p>
+
+<p>援引上一篇文章的这段话“AI绘画随着去年stable diffusion和Midjourney的推出，使得文生图火爆异常，各种游戏的角色设计、网上店铺的商品/页面设计都用上了AI绘画这样的工具，更有不少朋友利用AI绘画取得了不少的创收，省时省力还能赚钱，真香”，此外，包括我司LLM项目团队开发的AIGC模特生成系统也用到了这方面的技术：基于SD二次开发“</p>
+
+<p>沿着上文之后，本文将写清楚下面表格中带下划线的模型</p>
+
+<center><img src="/images/2024/IMAG2024070201.png"></center>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2024/07/02/ai-painting-clip-dalle-stable-diffusion/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2024/06/27/multimodal-llm-survey/">多模态大语言模型调研</a></h1>
     
     
@@ -643,53 +706,6 @@ $(function () {
   
     <footer>
       <a rel="full-article" href="/blog/2022/10/06/maven-settings-configuration/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2022/06/01/flink-state-management/">Apache Flink漫谈系列：State状态管理</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2022-06-01T11:28:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2022/06/01/flink-state-management/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>原文链接：<a href="https://developer.aliyun.com/article/667562">阿里云开发者社区：Apache Flink 漫谈系列(04) - State</a></p>
-
-<h1>实际问题</h1>
-
-<p>在流计算场景中，数据会源源不断的流入Apache Flink系统，每条数据进入Apache Flink系统都会触发计算。如果我们想进行一个Count聚合计算，那么每次触发计算是将历史上所有流入的数据重新新计算一次，还是每次计算都是在上一次计算结果之上进行增量计算呢？答案是肯定的，Apache Flink是基于上一次的计算结果进行增量计算的。那么问题来了: “上一次的计算结果保存在哪里，保存在内存可以吗？”，</p>
-
-<p>答案是否定的，如果保存在内存，在由于网络，硬件等原因造成某个计算节点失败的情况下，上一次计算结果会丢失，在节点恢复的时候，就需要将历史上所有数据（可能十几天，上百天的数据）重新计算一次，所以为了避免这种灾难性的问题发生，Apache Flink 会利用State存储计算结果。本篇将会为大家介绍Apache Flink State的相关内容。</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2022/06/01/flink-state-management/">Read on &rarr;</a>
     </footer>
   
 

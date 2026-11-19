@@ -171,6 +171,53 @@ $(function () {
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2022/06/01/flink-state-management/">Apache Flink漫谈系列：State状态管理</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2022-06-01T11:28:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2022/06/01/flink-state-management/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>原文链接：<a href="https://developer.aliyun.com/article/667562">阿里云开发者社区：Apache Flink 漫谈系列(04) - State</a></p>
+
+<h1>实际问题</h1>
+
+<p>在流计算场景中，数据会源源不断的流入Apache Flink系统，每条数据进入Apache Flink系统都会触发计算。如果我们想进行一个Count聚合计算，那么每次触发计算是将历史上所有流入的数据重新新计算一次，还是每次计算都是在上一次计算结果之上进行增量计算呢？答案是肯定的，Apache Flink是基于上一次的计算结果进行增量计算的。那么问题来了: “上一次的计算结果保存在哪里，保存在内存可以吗？”，</p>
+
+<p>答案是否定的，如果保存在内存，在由于网络，硬件等原因造成某个计算节点失败的情况下，上一次计算结果会丢失，在节点恢复的时候，就需要将历史上所有数据（可能十几天，上百天的数据）重新计算一次，所以为了避免这种灾难性的问题发生，Apache Flink 会利用State存储计算结果。本篇将会为大家介绍Apache Flink State的相关内容。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2022/06/01/flink-state-management/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2022/05/16/google-long-term-ab-testing/">Google长期AB测试：避免短期收益陷阱</a></h1>
     
     
@@ -631,62 +678,6 @@ $(function () {
   
     <footer>
       <a rel="full-article" href="/blog/2019/09/17/spark-rdd-dataframe-dataset/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2019/08/11/apache-flink-introduction/">Apache Flink入门教程与资料汇总</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2019-08-11T16:53:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2019/08/11/apache-flink-introduction/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><center><img src="/images/2019/IMAG2019081100.png"></center>
-
-
-<p><br></p>
-
-<h1>一、教程&amp;博客</h1>
-
-<h2>1. Flink中文视频教程</h2>
-
-<p>Flink系列视频教程：https://github.com/flink-china/flink-training-course</p>
-
-<p>基础篇 https://ververica.cn/developers/flink-training-course-basics/</p>
-
-<p>进阶篇 https://ververica.cn/developers/flink-training-course-advanced/</p>
-
-<p>运维篇 https://ververica.cn/developers/flink-training-course-operation/</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2019/08/11/apache-flink-introduction/">Read on &rarr;</a>
     </footer>
   
 

@@ -171,6 +171,72 @@ $(function () {
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2012/08/13/GMM-SVM-NAP-Method-in-Speaker-Recognition/">GMM-SVM-NAP Method in Speaker Recognition</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+<time datetime="2012-08-13T22:38:00+08:00" pubdate data-updated="true"></time>
+        
+         | <a href="/blog/2012/08/13/GMM-SVM-NAP-Method-in-Speaker-Recognition/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>1.Gaussian Mixture Models(GMM)</h2>
+
+
+<p>For a D-dimensional feature vector, x, the mixture density used for the likelihood function is deﬁned as</br>
+<center>$p(x|\lambda) = \sum_{i=1}^{M}w_{i}p_{i}(x)$.</center></br>
+The density is a weighted linear combination of $M$ unimodal Gaussian densities , $p_{i}(x)$</br>
+<center>$p_{i}(x) = \frac{1}{(2\pi)^{D/2}|\sum _{i}|^{1/2}} exp[-\frac{1}{2}(x-\mu_{i})^{T}(\sum _{i})^{-1}(x-\mu_{i})]$.</center></br>
+</p>
+
+
+
+
+<h2>2.Support Vector Machines(SVM)</h2>
+
+
+<p>An SVM is a two-class classifier constructed from sums of a kernel function $K(• , •)$</br>
+<center>$f(x) = \sum_{i=1}{N}\alpha_{i} t_{i} K(x,x_{i}) + d$.</center></br>
+$t_{i}$ are the ideal outputs,  $\sum_{i=1}{N}\alpha_{i} t_{i}=0$ and $\alpha_{i} > 0$,$x_{i}$ are support vectors and obtained 
+from the training set by an optimization process.</br>
+$K(. , .)$ is constrained to have certain properties (the Mercer condition), so that it can be expressed as</br>
+<center>$K(x,y) = b(x)^{T} b(y)$.</center></br>
+Kernel function examples: <a href="http://www.shamoxia.com/html/y2010/2292.html">http://www.shamoxia.com/html/y2010/2292.html</a>
+</p>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/08/13/GMM-SVM-NAP-Method-in-Speaker-Recognition/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2012/07/20/PCA-based-speaker-recognition/">基于主成分分析分类器的说话人识别</a></h1>
     
     
@@ -917,106 +983,6 @@ matlab生成的结果变量只贮存在内存空间中，一旦matlab关闭则�
   
     <footer>
       <a rel="full-article" href="/blog/2012/03/04/08-zju-program-test-solution/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header class="page-header">
-    
-      <h1 class="entry-title"><a href="/blog/2012/03/03/07-zju-program-test-solution/">07年浙大复试机试题解</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-
-<time datetime="2012-03-03T22:05:00+08:00" pubdate data-updated="true"></time>
-        
-         | <a href="/blog/2012/03/03/07-zju-program-test-solution/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>
-07年浙大研究生复试机试题解
-</p>
-
-
-
-
-<h3>A题：最小长方形（hdoj1859）（九度1020）</h3>
-
-
-<p>水题，不解释，代码如下：</p>
-
-
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Problem A </span></figcaption>
-<div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
-</span><span class='line'><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">lx</span><span class="p">,</span><span class="n">ly</span><span class="p">,</span><span class="n">rx</span><span class="p">,</span><span class="n">ry</span><span class="p">,</span><span class="n">tx</span><span class="p">,</span><span class="n">ty</span><span class="p">;</span>
-</span><span class='line'><span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
-</span><span class='line'><span class="w">        </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d %d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">tx</span><span class="p">,</span><span class="o">&amp;</span><span class="n">ty</span><span class="p">);</span>
-</span><span class='line'><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">tx</span><span class="o">==</span><span class="mi">0</span><span class="o">&amp;&amp;</span><span class="n">ty</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span><span class="k">break</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="n">lx</span><span class="o">=</span><span class="n">rx</span><span class="o">=</span><span class="n">tx</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="n">ly</span><span class="o">=</span><span class="n">ry</span><span class="o">=</span><span class="n">ty</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
-</span><span class='line'><span class="w">            </span><span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%d %d&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">tx</span><span class="p">,</span><span class="o">&amp;</span><span class="n">ty</span><span class="p">);</span>
-</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">tx</span><span class="o">==</span><span class="mi">0</span><span class="o">&amp;&amp;</span><span class="n">ty</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span><span class="k">break</span><span class="p">;</span>
-</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">tx</span><span class="o">&lt;</span><span class="n">lx</span><span class="p">)</span><span class="n">lx</span><span class="o">=</span><span class="n">tx</span><span class="p">;</span>
-</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">ty</span><span class="o">&lt;</span><span class="n">ly</span><span class="p">)</span><span class="n">ly</span><span class="o">=</span><span class="n">ty</span><span class="p">;</span>
-</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">tx</span><span class="o">&gt;</span><span class="n">rx</span><span class="p">)</span><span class="n">rx</span><span class="o">=</span><span class="n">tx</span><span class="p">;</span>
-</span><span class='line'><span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">ty</span><span class="o">&gt;</span><span class="n">ry</span><span class="p">)</span><span class="n">ry</span><span class="o">=</span><span class="n">ty</span><span class="p">;</span>
-</span><span class='line'><span class="w">        </span><span class="p">}</span>
-</span><span class='line'><span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d %d %d %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">lx</span><span class="p">,</span><span class="n">ly</span><span class="p">,</span><span class="n">rx</span><span class="p">,</span><span class="n">ry</span><span class="p">);</span>
-</span><span class='line'><span class="w">    </span><span class="p">}</span>
-</span><span class='line'><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/03/03/07-zju-program-test-solution/">Read on &rarr;</a>
     </footer>
   
 
